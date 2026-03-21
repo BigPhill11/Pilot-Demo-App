@@ -1,0 +1,28 @@
+project_id = "aqqbxivolegafwuurxxm"
+
+[functions.process-video-transcript]
+verify_jwt = true
+
+[functions.market-data]
+verify_jwt = true
+
+[functions.market-headlines]
+verify_jwt = true
+
+[functions.marketstack-data]
+verify_jwt = true
+
+[functions.fred-data]
+verify_jwt = true
+
+[functions.securities-search]
+verify_jwt = true
+
+[functions.enhanced-market-data]
+verify_jwt = true
+
+[functions.scheduled-market-refresh]
+verify_jwt = true
+
+[functions.AskPhil]
+verify_jwt = true

@@ -1,0 +1,608 @@
+import { BossGameConfig, GameMeters } from '@/types/boss-game';
+
+export const theWealthBuilderBossGame: BossGameConfig = {
+  id: 'the-wealth-builder',
+  moduleId: 'wealth-fundamentals',
+  title: 'The Wealth Builder',
+  subtitle: 'Build True Wealth Over Time',
+  description: 'You are starting your wealth journey from zero. Over 20 years (5 phases), you will learn the difference between income and wealth, build systems that compound, and adjust risk as your life changes. True wealth is not about looking rich—it is about building sustainable freedom.',
+  totalMonths: 5,
+  initialMeters: {
+    income: 30,           // Net Worth Level (assets minus liabilities)
+    hourlyValue: 40,      // Monthly Cash Flow (surplus after expenses)
+    energy: 70,           // System Strength (automated habits)
+    replaceability: 60,   // Resilience (ability to handle shocks)
+    optionality: 30,      // Time Freedom (work optionality)
+  },
+  months: [
+    // DECADE 1: Early Years (Years 1-4)
+    {
+      month: 1,
+      title: 'Decade One: Foundation (Years 1-4)',
+      openingNarration: `You just started your career earning $50,000/year. Some friends already look rich—nice cars, expensive clothes, impressive apartments. You look at your modest lifestyle and wonder if you are doing something wrong.
+
+A message appears: "Wealth is what you keep, not what you spend. Income is not the same as wealth."`,
+      decisions: [
+        {
+          id: 'd1-lifestyle-choice',
+          category: 'money',
+          title: 'The Lifestyle Decision',
+          description: 'Your income allows for lifestyle choices. How do you live?',
+          pandaDialogue: 'My friends have nicer things. Should I upgrade too?',
+          options: [
+            {
+              id: 'lifestyle-creep',
+              label: 'Upgrade lifestyle with income',
+              description: 'You earned it, enjoy it',
+              meterChanges: { income: -20, hourlyValue: -25, replaceability: -20 },
+              storyResponse: 'Your apartment, car, and wardrobe look impressive. But at month-end, nothing is left. No wealth building.',
+            },
+            {
+              id: 'live-below-means',
+              label: 'Live significantly below your means',
+              description: 'Modest lifestyle, aggressive saving',
+              meterChanges: { income: 20, hourlyValue: 25, replaceability: 15, optionality: 10 },
+              storyResponse: 'You look average but your savings grow $1,500/month. In 4 years, you have $72,000 in assets.',
+              unlocks: ['frugal-foundation'],
+            },
+            {
+              id: 'balanced-lifestyle',
+              label: 'Find a sustainable middle ground',
+              description: 'Enjoy life while building wealth',
+              meterChanges: { income: 10, hourlyValue: 10, replaceability: 5 },
+              storyResponse: 'You save 20% of income while still enjoying experiences. Slower wealth building but sustainable.',
+              unlocks: ['balanced-builder'],
+            },
+          ],
+        },
+        {
+          id: 'd1-first-assets',
+          category: 'skill',
+          title: 'First Asset Purchases',
+          description: 'You have $10,000 saved. What do you buy?',
+          options: [
+            {
+              id: 'buy-depreciating',
+              label: 'Buy a nicer car',
+              description: 'Your current car works but is embarrassing',
+              meterChanges: { income: -15, hourlyValue: -10, replaceability: -15 },
+              storyResponse: 'The car loses 20% value when you drive off the lot. It costs money to own, not the reverse.',
+            },
+            {
+              id: 'invest-market',
+              label: 'Invest in diversified index funds',
+              description: 'Buy ownership in the economy',
+              meterChanges: { income: 15, optionality: 15, replaceability: 10 },
+              storyResponse: 'You now own small pieces of thousands of companies. Your money works while you sleep.',
+              unlocks: ['investor'],
+            },
+            {
+              id: 'emergency-fund',
+              label: 'Build a full emergency fund first',
+              description: 'Six months of expenses in savings',
+              meterChanges: { replaceability: 30, hourlyValue: 5, energy: 10 },
+              storyResponse: 'You have a financial cushion. Job loss, medical bills, or car repairs will not break you.',
+              unlocks: ['emergency-secured'],
+            },
+          ],
+        },
+        {
+          id: 'd1-understanding-wealth',
+          category: 'work',
+          title: 'Wealth vs Income',
+          description: 'You meet a neighbor. She earns less than you but owns her home and investments. She seems financially calm while you feel stressed.',
+          pandaDialogue: 'How does she feel so secure earning less than me?',
+          options: [
+            {
+              id: 'dismiss-example',
+              label: 'Assume she got lucky or had help',
+              description: 'Her situation is different',
+              meterChanges: { energy: -10, optionality: -10 },
+              storyResponse: 'You missed the lesson. She built wealth through decades of consistent choices.',
+            },
+            {
+              id: 'ask-and-learn',
+              label: 'Ask her to share her approach',
+              description: 'Learn from someone further ahead',
+              meterChanges: { energy: 15, optionality: 15, income: 5 },
+              storyResponse: 'She explains: assets, not income, create security. She spends less than she earns and owns things that grow.',
+              unlocks: ['wealth-mentor'],
+            },
+            {
+              id: 'read-about-wealth',
+              label: 'Research wealth building yourself',
+              description: 'Books and courses on building wealth',
+              meterChanges: { energy: 10, optionality: 10, hourlyValue: 5 },
+              storyResponse: 'You read The Millionaire Next Door. Wealth looks different than you thought.',
+              unlocks: ['wealth-educated'],
+            },
+          ],
+        },
+      ],
+      closingNarration: 'Years 1-4 complete. You understand that income is not wealth. Assets are. Net worth: $50,000.',
+    },
+    // DECADE 1: Mid Years (Years 5-8)
+    {
+      month: 2,
+      title: 'Decade One: Systems (Years 5-8)',
+      openingNarration: 'You have been trying to save and invest manually. Sometimes you remember, sometimes you do not. Your progress is inconsistent. It is time to build systems.',
+      decisions: [
+        {
+          id: 'd1m-automation',
+          category: 'skill',
+          title: 'Building Automatic Systems',
+          description: 'How do you handle saving and investing?',
+          pandaDialogue: 'I know I should save more but I keep forgetting or spending it first.',
+          options: [
+            {
+              id: 'manual-saving',
+              label: 'Continue manual saving',
+              description: 'Transfer money when you remember',
+              meterChanges: { income: -10, energy: -15, hourlyValue: -10 },
+              storyResponse: 'You saved 3 months out of 12. Willpower failed. Net worth growth is minimal.',
+            },
+            {
+              id: 'automate-basic',
+              label: 'Set up automatic transfers',
+              description: 'Money moves without your input',
+              meterChanges: { income: 20, energy: 25, hourlyValue: 15 },
+              storyResponse: 'Every paycheck, 25% moves to investments automatically. In 4 years, you saved $60,000 without thinking.',
+              unlocks: ['automated-saver'],
+            },
+            {
+              id: 'full-automation',
+              label: 'Fully automate your finances',
+              description: 'Bills, savings, investments all automatic',
+              meterChanges: { income: 25, energy: 35, hourlyValue: 20, replaceability: 10 },
+              storyResponse: 'Your entire financial life runs on autopilot. You check quarterly. Systems beat discipline.',
+              unlocks: ['fully-automated'],
+            },
+          ],
+        },
+        {
+          id: 'd1m-compound-patience',
+          category: 'money',
+          title: 'The Compounding Test',
+          description: 'Your investments are up 15% then down 12%. You feel like you are getting nowhere.',
+          options: [
+            {
+              id: 'give-up-investing',
+              label: 'Stop investing until markets are stable',
+              description: 'This is not working',
+              meterChanges: { income: -15, energy: -20, optionality: -15 },
+              storyResponse: 'You sat in cash during the recovery. Your money did not compound for 3 years.',
+            },
+            {
+              id: 'stay-consistent',
+              label: 'Keep investing the same amount',
+              description: 'Trust the long-term math',
+              meterChanges: { income: 20, energy: 15, hourlyValue: 10 },
+              storyResponse: 'You bought shares at lower prices. When markets recovered, your wealth jumped 40%.',
+              unlocks: ['patient-investor'],
+            },
+            {
+              id: 'increase-during-dip',
+              label: 'Invest more during the dip',
+              description: 'Stocks are on sale',
+              meterChanges: { income: 30, energy: 10, hourlyValue: 5 },
+              storyResponse: 'You bought aggressively during fear. The recovery doubled that money in 3 years.',
+              unlocks: ['dip-buyer'],
+            },
+          ],
+        },
+        {
+          id: 'd1m-habit-stack',
+          category: 'work',
+          title: 'Habit Building',
+          description: 'Beyond investing, what habits do you build?',
+          options: [
+            {
+              id: 'no-new-habits',
+              label: 'Current habits are fine',
+              description: 'Do not overthink it',
+              meterChanges: { energy: -10, optionality: -10 },
+              storyResponse: 'Your habits stay the same. Results stay the same. No acceleration.',
+            },
+            {
+              id: 'spending-awareness',
+              label: 'Track every dollar spent',
+              description: 'Know exactly where money goes',
+              meterChanges: { hourlyValue: 20, energy: 10, income: 10 },
+              storyResponse: 'You found $400/month in waste. Redirected to investments, that is $57,000 over 10 years.',
+              unlocks: ['spending-tracker'],
+            },
+            {
+              id: 'net-worth-tracking',
+              label: 'Track net worth monthly',
+              description: 'Watch wealth, not just spending',
+              meterChanges: { income: 15, energy: 15, optionality: 10 },
+              storyResponse: 'Seeing your net worth grow creates a positive feedback loop. The graph becomes addicting.',
+              unlocks: ['net-worth-tracker'],
+            },
+          ],
+        },
+      ],
+      closingNarration: 'Years 5-8 complete. Your systems run automatically. Wealth builds without constant attention. Net worth: $150,000.',
+      specialEvents: [
+        {
+          condition: (meters: GameMeters, unlocks: string[]) => unlocks.includes('fully-automated'),
+          event: 'Your financial system runs itself. You spend 30 minutes a month on finances. The rest is automatic.',
+        },
+      ],
+    },
+    // DECADE 2: Early Years (Years 9-12)
+    {
+      month: 3,
+      title: 'Decade Two: Risk Adjustment (Years 9-12)',
+      openingNarration: 'Life is getting more complex. You might have a family now, or want one. A home purchase is possible. The risks you could take at 25 feel different at 35. Time to think about risk across life stages.',
+      decisions: [
+        {
+          id: 'd2e-life-changes',
+          category: 'work',
+          title: 'Life Stage Shifts',
+          description: 'Your responsibilities have grown. How does this affect your financial approach?',
+          pandaDialogue: 'When I was single, I could take any risk. Now others depend on me.',
+          options: [
+            {
+              id: 'ignore-life-stage',
+              label: 'Keep the same aggressive approach',
+              description: 'Risk tolerance should not change',
+              meterChanges: { replaceability: -20, optionality: 10, income: 10 },
+              storyResponse: 'A market crash hit right when you needed stability. Emergency dipped into long-term investments.',
+            },
+            {
+              id: 'moderate-risk',
+              label: 'Adjust portfolio to life stage',
+              description: 'More stability as responsibilities grow',
+              meterChanges: { replaceability: 20, income: 5, optionality: -5 },
+              storyResponse: 'Your portfolio is now 60% stocks, 40% bonds. Less exciting but you sleep better.',
+              unlocks: ['life-stage-aware'],
+            },
+            {
+              id: 'bucket-approach',
+              label: 'Create buckets for different goals',
+              description: 'Short-term safe, long-term aggressive',
+              meterChanges: { replaceability: 25, income: 15, energy: 10 },
+              storyResponse: 'Emergency fund in cash, house fund in bonds, retirement in stocks. Each bucket matched to timeline.',
+              unlocks: ['bucket-strategist'],
+            },
+          ],
+        },
+        {
+          id: 'd2e-home-purchase',
+          category: 'money',
+          title: 'The Home Question',
+          description: 'You have enough for a down payment. Buy a home or keep investing?',
+          options: [
+            {
+              id: 'rent-forever',
+              label: 'Keep renting, invest the difference',
+              description: 'Renting is not throwing away money',
+              meterChanges: { income: 15, optionality: 20, replaceability: -10 },
+              storyResponse: 'Your investment portfolio grows faster than home equity would. Flexibility preserved.',
+              unlocks: ['rent-investor'],
+            },
+            {
+              id: 'buy-home',
+              label: 'Buy a reasonable home',
+              description: 'Build equity, stable housing cost',
+              meterChanges: { income: 10, replaceability: 20, optionality: -15 },
+              storyResponse: 'Mortgage payment locks in housing cost. In 15 years, you own an appreciating asset outright.',
+              unlocks: ['homeowner'],
+            },
+            {
+              id: 'house-hack',
+              label: 'Buy and rent out part of it',
+              description: 'Have tenants pay your mortgage',
+              meterChanges: { income: 25, energy: -15, optionality: 10 },
+              storyResponse: 'Rental income covers 60% of your mortgage. Your effective housing cost drops dramatically.',
+              unlocks: ['house-hacker'],
+            },
+          ],
+        },
+        {
+          id: 'd2e-insurance-protection',
+          category: 'skill',
+          title: 'Protecting Your Wealth',
+          description: 'You have built something worth protecting. How do you think about insurance and protection?',
+          options: [
+            {
+              id: 'minimal-insurance',
+              label: 'Minimize insurance costs',
+              description: 'Self-insure what you can',
+              meterChanges: { hourlyValue: 10, replaceability: -25 },
+              storyResponse: 'You saved on premiums until a $50,000 medical bill wiped out two years of savings.',
+            },
+            {
+              id: 'proper-coverage',
+              label: 'Get comprehensive coverage',
+              description: 'Protect against catastrophic loss',
+              meterChanges: { hourlyValue: -5, replaceability: 30, income: 5 },
+              storyResponse: 'When a covered event happened, insurance handled it. Your wealth stayed intact.',
+              unlocks: ['properly-insured'],
+            },
+            {
+              id: 'umbrella-liability',
+              label: 'Add umbrella liability coverage',
+              description: 'Protect against lawsuits too',
+              meterChanges: { replaceability: 35, hourlyValue: -10, optionality: 10 },
+              storyResponse: 'A freak accident lawsuit was covered by your umbrella policy. Without it, your wealth would be gone.',
+              unlocks: ['umbrella-protected'],
+            },
+          ],
+        },
+      ],
+      closingNarration: 'Years 9-12 complete. Your risk approach matches your life stage. Wealth is protected. Net worth: $350,000.',
+    },
+    // DECADE 2: Mid Years (Years 13-16)
+    {
+      month: 4,
+      title: 'Decade Two: Acceleration (Years 13-16)',
+      openingNarration: 'Your net worth has reached a critical mass. Compounding is becoming visible. Each year adds more than the previous. The system is working.',
+      decisions: [
+        {
+          id: 'd2m-compound-visible',
+          category: 'money',
+          title: 'Compounding in Action',
+          description: 'Your investments earned $40,000 this year—more than you saved from income. This changes the math.',
+          pandaDialogue: 'My money made almost as much as my labor. Is this how it works?',
+          options: [
+            {
+              id: 'spend-gains',
+              label: 'Spend the investment gains',
+              description: 'Reward yourself for success',
+              meterChanges: { income: -20, hourlyValue: -15, energy: -10 },
+              storyResponse: 'You interrupted compounding. That $40,000 spent would have become $160,000 in 10 more years.',
+            },
+            {
+              id: 'reinvest-all',
+              label: 'Reinvest everything',
+              description: 'Let compounding work fully',
+              meterChanges: { income: 25, optionality: 20, energy: 10 },
+              storyResponse: 'Your wealth accelerates. Each year the gains are larger. The snowball is rolling.',
+              unlocks: ['compound-master'],
+            },
+            {
+              id: 'reinvest-most',
+              label: 'Reinvest 90%, enjoy 10%',
+              description: 'Balance wealth building with life',
+              meterChanges: { income: 20, optionality: 15, hourlyValue: 10 },
+              storyResponse: 'You use a small portion for experiences while compounding continues mostly uninterrupted.',
+              unlocks: ['balanced-compounder'],
+            },
+          ],
+        },
+        {
+          id: 'd2m-income-diversification',
+          category: 'skill',
+          title: 'Income Diversification',
+          description: 'All your income still comes from one job. All your wealth is in one type of investment. Is diversification needed?',
+          options: [
+            {
+              id: 'concentration-wins',
+              label: 'Stay concentrated, it is working',
+              description: 'Why fix what is not broken',
+              meterChanges: { income: 10, replaceability: -15, optionality: -10 },
+              storyResponse: 'Concentration works until it does not. A sector crash or job loss could hurt badly.',
+            },
+            {
+              id: 'diversify-income',
+              label: 'Build additional income streams',
+              description: 'Reduce dependence on one source',
+              meterChanges: { income: 15, replaceability: 20, optionality: 20, energy: -15 },
+              storyResponse: 'Side income and investment dividends now cover basic expenses. Job loss is survivable.',
+              unlocks: ['income-diversified'],
+            },
+            {
+              id: 'diversify-assets',
+              label: 'Diversify across asset classes',
+              description: 'Stocks, bonds, real estate, alternatives',
+              meterChanges: { income: 10, replaceability: 25, optionality: 15 },
+              storyResponse: 'When stocks crashed, bonds rallied. Real estate provided steady income. Diversification smoothed the ride.',
+              unlocks: ['asset-diversified'],
+            },
+          ],
+        },
+        {
+          id: 'd2m-lifestyle-question',
+          category: 'work',
+          title: 'Lifestyle Inflation Pressure',
+          description: 'Your net worth is $400,000. Friends with similar incomes but no wealth are living larger. Do you feel pressure?',
+          options: [
+            {
+              id: 'upgrade-finally',
+              label: 'Time to upgrade lifestyle',
+              description: 'You have been frugal long enough',
+              meterChanges: { income: -15, hourlyValue: -20, optionality: -10, energy: 5 },
+              storyResponse: 'Your lifestyle expenses doubled. Wealth building slowed significantly. The gap to freedom widened.',
+            },
+            {
+              id: 'stay-course',
+              label: 'Maintain current lifestyle',
+              description: 'Stay the course, accelerate wealth',
+              meterChanges: { income: 15, hourlyValue: 15, optionality: 10 },
+              storyResponse: 'While others spent, you compounded. The gap between you and them widened—in your favor.',
+              unlocks: ['lifestyle-discipline'],
+            },
+            {
+              id: 'strategic-upgrade',
+              label: 'Upgrade only what matters to you',
+              description: 'Selective improvement, not blanket inflation',
+              meterChanges: { income: 5, hourlyValue: 5, optionality: 5, energy: 10 },
+              storyResponse: 'You upgraded housing quality but kept the same car. Targeted spending on what you value.',
+              unlocks: ['intentional-spender'],
+            },
+          ],
+        },
+      ],
+      closingNarration: 'Years 13-16 complete. Compounding is your best employee. It works 24/7 without complaint. Net worth: $600,000.',
+      specialEvents: [
+        {
+          condition: (meters: GameMeters, unlocks: string[]) => unlocks.includes('compound-master'),
+          event: 'Your investment gains now exceed your annual savings. Money is making more money than you can through labor.',
+        },
+      ],
+    },
+    // DECADE 2: Late Years (Years 17-20)
+    {
+      month: 5,
+      title: 'Decade Two: Freedom (Years 17-20)',
+      openingNarration: 'Twenty years of building. Your net worth approaches a million. The question shifts from "Can I survive?" to "What kind of life do I want?" Wealth has created options.',
+      decisions: [
+        {
+          id: 'd2l-freedom-question',
+          category: 'work',
+          title: 'The Freedom Question',
+          description: 'Your wealth could support a basic lifestyle without work. What do you do?',
+          pandaDialogue: 'I could technically stop working. But should I?',
+          options: [
+            {
+              id: 'keep-working-same',
+              label: 'Keep working the same way',
+              description: 'Why change what works',
+              meterChanges: { income: 15, optionality: -10, energy: -10 },
+              storyResponse: 'You continue accumulating beyond what you need. Wealth grows but time does not.',
+            },
+            {
+              id: 'work-optional',
+              label: 'Shift to work-optional mindset',
+              description: 'Work because you want to, not because you have to',
+              meterChanges: { optionality: 30, energy: 25, income: 5 },
+              storyResponse: 'You negotiate reduced hours. Same impact, more freedom. The math supports this lifestyle.',
+              unlocks: ['work-optional'],
+            },
+            {
+              id: 'full-retirement',
+              label: 'Consider early retirement',
+              description: 'Your wealth can support you',
+              meterChanges: { optionality: 40, energy: 30, income: -10 },
+              storyResponse: 'You step back from full-time work. Investments cover expenses. Time is now yours.',
+              unlocks: ['early-retired'],
+            },
+          ],
+        },
+        {
+          id: 'd2l-legacy-thinking',
+          category: 'money',
+          title: 'Legacy Considerations',
+          description: 'Your wealth will outlive you. What happens to it?',
+          options: [
+            {
+              id: 'spend-it-all',
+              label: 'Plan to spend it all',
+              description: 'Die with zero',
+              meterChanges: { hourlyValue: 15, optionality: 10, energy: 10 },
+              storyResponse: 'You plan to maximize experiences and die with nothing. A valid philosophy.',
+              unlocks: ['die-with-zero'],
+            },
+            {
+              id: 'build-legacy',
+              label: 'Build generational wealth',
+              description: 'Leave wealth to family',
+              meterChanges: { income: 15, optionality: 5, energy: 5 },
+              storyResponse: 'Your children will have a foundation you never had. Generational wealth begins with you.',
+              unlocks: ['legacy-builder'],
+            },
+            {
+              id: 'give-while-living',
+              label: 'Give while you can see the impact',
+              description: 'Strategic giving and philanthropy',
+              meterChanges: { hourlyValue: -5, energy: 20, optionality: 15 },
+              storyResponse: 'You fund education for others, start scholarships, contribute to causes. Wealth creates meaning.',
+              unlocks: ['living-giver'],
+            },
+          ],
+        },
+        {
+          id: 'd2l-final-mindset',
+          category: 'skill',
+          title: 'Wealth Mindset',
+          description: 'After 20 years, what does wealth mean to you?',
+          options: [
+            {
+              id: 'wealth-is-security',
+              label: 'Wealth is security',
+              description: 'Protection against uncertainty',
+              meterChanges: { replaceability: 25, optionality: 10, energy: 10 },
+              storyResponse: 'You have built a fortress. Whatever happens, you are protected. Security achieved.',
+              unlocks: ['security-focused'],
+            },
+            {
+              id: 'wealth-is-freedom',
+              label: 'Wealth is freedom',
+              description: 'Options and time control',
+              meterChanges: { optionality: 30, energy: 15, hourlyValue: 10 },
+              storyResponse: 'You own your time. No one can force you to do anything for money. True freedom.',
+              unlocks: ['freedom-focused'],
+            },
+            {
+              id: 'wealth-is-impact',
+              label: 'Wealth is impact',
+              description: 'Ability to help others and create change',
+              meterChanges: { energy: 25, optionality: 20, income: 5 },
+              storyResponse: 'Your wealth funds opportunities for others. Impact extends beyond your own life.',
+              unlocks: ['impact-focused'],
+            },
+          ],
+        },
+      ],
+      closingNarration: 'Twenty years complete. You built wealth, not just income. True financial independence means choosing how you spend your time.',
+      specialEvents: [
+        {
+          condition: (meters: GameMeters) => meters.optionality >= 80,
+          event: 'You have achieved financial independence. Work is optional. Time is yours. This is what wealth actually feels like.',
+        },
+        {
+          condition: (meters: GameMeters, unlocks: string[]) => unlocks.includes('work-optional') && unlocks.includes('compound-master'),
+          event: 'Your wealth generates more than you spend. It will grow forever even if you never work again.',
+        },
+      ],
+    },
+  ],
+  endings: [
+    {
+      id: 'wealth-master',
+      title: 'Wealth Master',
+      description: 'You built true wealth and achieved financial independence.',
+      trajectory: 'momentum',
+      futureSnapshot: 'Net worth: $1.5M+. Passive income exceeds expenses. Work is optional. You choose how to spend every day. Time freedom achieved.',
+      conditions: (meters: GameMeters, unlocks: string[]) => 
+        meters.income >= 70 && meters.optionality >= 70 && meters.energy >= 50,
+    },
+    {
+      id: 'steady-builder',
+      title: 'Steady Builder',
+      description: 'You built significant wealth through consistent habits.',
+      trajectory: 'growing',
+      futureSnapshot: 'Net worth: $800K. On track for traditional retirement. Secure but still working. The foundation is solid.',
+      conditions: (meters: GameMeters) => 
+        meters.income >= 55 && meters.replaceability >= 50,
+    },
+    {
+      id: 'high-income-trap',
+      title: 'High Income Trap',
+      description: 'You earned well but did not convert income to wealth.',
+      trajectory: 'stuck',
+      futureSnapshot: 'Net worth: $200K despite high career earnings. Lifestyle consumed income. Still dependent on paycheck. Working is mandatory.',
+      conditions: (meters: GameMeters) => 
+        meters.income < 40 && meters.hourlyValue < 40,
+    },
+    {
+      id: 'fragile-wealth',
+      title: 'Fragile Wealth',
+      description: 'You accumulated wealth but lack resilience to protect it.',
+      trajectory: 'burnout',
+      futureSnapshot: 'Net worth: $500K but vulnerable. Concentrated positions, inadequate insurance, no emergency reserves. One shock away from trouble.',
+      conditions: (meters: GameMeters) => 
+        meters.income >= 50 && meters.replaceability < 35,
+    },
+    {
+      id: 'default-path',
+      title: 'The Standard Path',
+      description: 'You built modest wealth with conventional approaches.',
+      trajectory: 'balanced',
+      futureSnapshot: 'Net worth: $400K. Traditional retirement possible at 65. Average outcome but not a bad life. Security without abundance.',
+      conditions: () => true,
+    },
+  ],
+};

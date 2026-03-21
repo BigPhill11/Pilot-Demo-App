@@ -1,0 +1,35 @@
+name: Zip Entire App
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - dev
+      - develop
+  workflow_dispatch:
+
+jobs:
+  zip-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then npm ci; elif [ -f yarn.lock ]; then yarn install --frozen-lockfile; fi
+
+      - name: Build (Vite default)
+        run: |
+          if [ -f package.json ]; then npm run build || true; fi
+
+      - name: Zip entire repository
+        run: |
+          zip -r app-full.zip . -x "*.git*" "node_modules/*" "*.next/*" "*.cache/*" "*.DS_Store" "*.zip"
+
+      - name: Upload zipped app as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: money-panda-learn-full-app
+          path: app-full.zip

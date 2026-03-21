@@ -1,0 +1,606 @@
+import { BossGameConfig, GameMeters } from '@/types/boss-game';
+
+export const theCareerArchitectBossGame: BossGameConfig = {
+  id: 'the-career-architect',
+  moduleId: 'career-income',
+  title: 'The Career Architect',
+  subtitle: 'Build Your Income Engine',
+  description: 'You are starting your career with endless potential and limited experience. Over 10 years (5 phases), you will build skills, negotiate raises, switch jobs strategically, and create multiple income streams. Your goal is not just income but sustainable wealth-generating capacity.',
+  totalMonths: 5,
+  initialMeters: {
+    income: 40,           // Current Income Level
+    hourlyValue: 30,      // Market Value (what you could command elsewhere)
+    energy: 90,           // Energy/Burnout (sustainability)
+    replaceability: 60,   // How replaceable you are (lower is better)
+    optionality: 40,      // Future Paths Available
+  },
+  months: [
+    // PHASE 1: Years 1-2
+    {
+      month: 1,
+      title: 'Phase One: First Career Moves (Years 1-2)',
+      openingNarration: `You just graduated and landed your first real job at $48,000/year. It feels like a lot until you see what senior people make. Your career is a 40-year investment. These early moves matter more than you think.
+
+A message appears: "Your career is your biggest asset. Invest in it wisely."`,
+      decisions: [
+        {
+          id: 'p1-first-job-approach',
+          category: 'work',
+          title: 'First Job Philosophy',
+          description: 'How do you approach your first job out of school?',
+          pandaDialogue: 'Should I focus on earning more or learning more right now?',
+          options: [
+            {
+              id: 'maximize-salary',
+              label: 'Focus on maximizing current salary',
+              description: 'Every dollar counts',
+              meterChanges: { income: 15, hourlyValue: -10, optionality: -15 },
+              storyResponse: 'You negotiated hard for an extra $3,000. But you took a role with limited growth potential.',
+            },
+            {
+              id: 'optimize-learning',
+              label: 'Prioritize learning opportunities',
+              description: 'Skills compound over time',
+              meterChanges: { income: -5, hourlyValue: 15, optionality: 20, replaceability: -15 },
+              storyResponse: 'You took a slightly lower salary for a role with mentorship and exposure to multiple areas.',
+              unlocks: ['learning-focused'],
+            },
+            {
+              id: 'balanced-start',
+              label: 'Find a balance of both',
+              description: 'Reasonable pay with growth potential',
+              meterChanges: { income: 5, hourlyValue: 10, optionality: 10 },
+              storyResponse: 'Not the highest pay, not the steepest learning curve, but solid on both fronts.',
+              unlocks: ['balanced-start'],
+            },
+          ],
+        },
+        {
+          id: 'p1-skill-investment',
+          category: 'skill',
+          title: 'Early Skill Building',
+          description: 'How do you invest in skills outside work hours?',
+          options: [
+            {
+              id: 'no-extra-learning',
+              label: 'Work is enough learning',
+              description: 'Focus on the job',
+              meterChanges: { energy: 15, hourlyValue: -10, replaceability: 15 },
+              storyResponse: 'You learn at work but stay within what the job teaches. Others are building skills faster.',
+            },
+            {
+              id: 'industry-certifications',
+              label: 'Get relevant certifications',
+              description: 'Credentials that boost your resume',
+              meterChanges: { hourlyValue: 15, income: 5, replaceability: -10, energy: -10 },
+              storyResponse: 'The certification takes 6 months of nights and weekends. It opens doors to better positions.',
+              unlocks: ['certified'],
+            },
+            {
+              id: 'adjacent-skills',
+              label: 'Learn complementary skills',
+              description: 'Code, design, or communication skills',
+              meterChanges: { hourlyValue: 20, optionality: 15, replaceability: -20, energy: -15 },
+              storyResponse: 'You became the person who understands both business and technical sides. Rare and valuable.',
+              unlocks: ['skill-stacker'],
+            },
+          ],
+        },
+        {
+          id: 'p1-visibility',
+          category: 'negotiation',
+          title: 'Office Visibility',
+          description: 'Your work is good. Does anyone notice?',
+          options: [
+            {
+              id: 'head-down',
+              label: 'Head down, let work speak',
+              description: 'Good work gets noticed eventually',
+              meterChanges: { energy: 10, hourlyValue: -5, optionality: -10 },
+              storyResponse: 'Your manager barely knows what you do. Someone else got credit for a project you led.',
+            },
+            {
+              id: 'strategic-visibility',
+              label: 'Document and share wins strategically',
+              description: 'Make sure decision-makers see your impact',
+              meterChanges: { income: 10, hourlyValue: 15, optionality: 10 },
+              storyResponse: 'You send monthly updates to your manager. They know exactly what you contribute.',
+              unlocks: ['visibility-master'],
+            },
+            {
+              id: 'volunteer-high-profile',
+              label: 'Volunteer for high-visibility projects',
+              description: 'Take on risky but visible work',
+              meterChanges: { income: 15, optionality: 20, energy: -15, hourlyValue: 10 },
+              storyResponse: 'The project was stressful but executives now know your name. Doors are opening.',
+              unlocks: ['high-profile-experience'],
+            },
+          ],
+        },
+      ],
+      closingNarration: 'Years 1-2 complete. You are no longer the newest person. Skills and reputation are building.',
+    },
+    // PHASE 2: Years 3-4
+    {
+      month: 2,
+      title: 'Phase Two: Knowing Your Worth (Years 3-4)',
+      openingNarration: 'You have 3 years of experience now. Recruiters are reaching out. You sense you might be underpaid, but how do you know for sure?',
+      decisions: [
+        {
+          id: 'p2-market-research',
+          category: 'skill',
+          title: 'Understanding Your Market Value',
+          description: 'How do you figure out what you should be earning?',
+          pandaDialogue: 'I think I am underpaid but I do not actually know what the market rate is.',
+          options: [
+            {
+              id: 'guess',
+              label: 'Guess based on job postings',
+              description: 'Ranges are listed sometimes',
+              meterChanges: { hourlyValue: -5, optionality: -5 },
+              storyResponse: 'Posted ranges are often incomplete. You underestimate your market value by $15,000.',
+            },
+            {
+              id: 'industry-data',
+              label: 'Research salary data systematically',
+              description: 'Levels.fyi, Glassdoor, compensation surveys',
+              meterChanges: { hourlyValue: 20, optionality: 15 },
+              storyResponse: 'You discover you are $20,000 below market. This data will fuel your next move.',
+              unlocks: ['market-informed'],
+            },
+            {
+              id: 'interview-to-learn',
+              label: 'Interview at other companies',
+              description: 'Real offers show real market value',
+              meterChanges: { hourlyValue: 25, optionality: 20, energy: -10 },
+              storyResponse: 'Another company offers $25,000 more. Now you know exactly what you are worth.',
+              unlocks: ['offer-informed'],
+            },
+          ],
+        },
+        {
+          id: 'p2-stay-or-go',
+          category: 'work',
+          title: 'The Jump Question',
+          description: 'You could get a 30% raise by switching companies. Should you?',
+          options: [
+            {
+              id: 'loyalty-stay',
+              label: 'Stay loyal to your company',
+              description: 'Relationships matter',
+              meterChanges: { income: -10, energy: 10, optionality: -15, hourlyValue: -10 },
+              storyResponse: 'Your loyalty was rewarded with a 3% raise. The gap between you and market grows.',
+            },
+            {
+              id: 'strategic-jump',
+              label: 'Make the jump strategically',
+              description: 'New company, new opportunity, new salary',
+              meterChanges: { income: 25, hourlyValue: 20, energy: -10, optionality: 15 },
+              storyResponse: 'You joined a company that values you. The 30% raise resets your earning trajectory.',
+              unlocks: ['strategic-jumper'],
+            },
+            {
+              id: 'leverage-offer',
+              label: 'Use the offer to negotiate staying',
+              description: 'Counter-offer leverage',
+              meterChanges: { income: 15, hourlyValue: 10, energy: 5 },
+              storyResponse: 'Your company matched partially. You stayed but proved your market value.',
+              unlocks: ['negotiation-leverage'],
+            },
+          ],
+        },
+        {
+          id: 'p2-network-building',
+          category: 'negotiation',
+          title: 'Building Your Network',
+          description: 'Opportunities often come through people you know. How do you network?',
+          options: [
+            {
+              id: 'no-networking',
+              label: 'Focus on work, not networking',
+              description: 'Quality over quantity',
+              meterChanges: { optionality: -20, hourlyValue: -10, energy: 10 },
+              storyResponse: 'When you need a new opportunity, you have no warm connections. Cold applications are harder.',
+            },
+            {
+              id: 'industry-events',
+              label: 'Attend industry events regularly',
+              description: 'Meet people in your field',
+              meterChanges: { optionality: 15, hourlyValue: 10, energy: -10 },
+              storyResponse: 'You built a network of peers who share opportunities and advice.',
+              unlocks: ['network-builder'],
+            },
+            {
+              id: 'online-presence',
+              label: 'Build an online presence',
+              description: 'LinkedIn thought leadership, writing',
+              meterChanges: { optionality: 25, hourlyValue: 20, replaceability: -15, energy: -15 },
+              storyResponse: 'Recruiters contact you regularly. Your reputation extends beyond your employer.',
+              unlocks: ['online-brand'],
+            },
+          ],
+        },
+      ],
+      closingNarration: 'Years 3-4 complete. You understand your market value and have options. Salary: $70,000.',
+      specialEvents: [
+        {
+          condition: (meters: GameMeters) => meters.hourlyValue > 60 && meters.income < 50,
+          event: 'You are significantly underpaid relative to your market value. This gap is costing you thousands.',
+        },
+      ],
+    },
+    // PHASE 3: Years 5-6
+    {
+      month: 3,
+      title: 'Phase Three: The Skill Leverage (Years 5-6)',
+      openingNarration: 'Five years in. You are not entry-level anymore. The skills you build now will define your earning potential for decades. Some skills multiply income. Others keep you stuck.',
+      decisions: [
+        {
+          id: 'p3-specialization',
+          category: 'skill',
+          title: 'Specialization Decision',
+          description: 'Do you go deep in one area or stay broad?',
+          pandaDialogue: 'Specialists earn more but generalists have more options. What is right for me?',
+          options: [
+            {
+              id: 'stay-generalist',
+              label: 'Stay a generalist',
+              description: 'Flexibility and adaptability',
+              meterChanges: { optionality: 15, hourlyValue: -5, replaceability: 10 },
+              storyResponse: 'You can do many things adequately. But companies pay premiums for deep expertise.',
+            },
+            {
+              id: 'specialize-deep',
+              label: 'Specialize in high-demand area',
+              description: 'Become the expert in something',
+              meterChanges: { hourlyValue: 25, income: 15, replaceability: -25, optionality: -10 },
+              storyResponse: 'You became the go-to expert. Your rate doubled because few people can do what you do.',
+              unlocks: ['specialist'],
+            },
+            {
+              id: 't-shape',
+              label: 'Build a T-shaped skill set',
+              description: 'Broad knowledge, one deep specialty',
+              meterChanges: { hourlyValue: 20, optionality: 15, replaceability: -15, income: 10 },
+              storyResponse: 'The best of both worlds. Deep expertise plus broad context. Highly valuable.',
+              unlocks: ['t-shaped'],
+            },
+          ],
+        },
+        {
+          id: 'p3-leadership-track',
+          category: 'work',
+          title: 'The Leadership Question',
+          description: 'Do you want to manage people or go deeper on technical/specialist work?',
+          options: [
+            {
+              id: 'management-track',
+              label: 'Move into management',
+              description: 'Lead teams, grow the ladder',
+              meterChanges: { income: 20, optionality: -10, energy: -15, replaceability: 5 },
+              storyResponse: 'You manage 5 people now. More money, more stress, different skills required.',
+              unlocks: ['manager'],
+            },
+            {
+              id: 'individual-contributor',
+              label: 'Stay as an individual contributor',
+              description: 'Master your craft',
+              meterChanges: { hourlyValue: 20, energy: 10, replaceability: -20 },
+              storyResponse: 'You went deeper instead of wider. Senior IC roles pay as much as management.',
+              unlocks: ['senior-ic'],
+            },
+            {
+              id: 'try-management',
+              label: 'Try management but keep options open',
+              description: 'Test the waters',
+              meterChanges: { income: 10, optionality: 10, energy: -10 },
+              storyResponse: 'You managed a small team to see if you like it. Now you know before committing.',
+              unlocks: ['management-tested'],
+            },
+          ],
+        },
+        {
+          id: 'p3-learning-roi',
+          category: 'money',
+          title: 'Major Learning Investment',
+          description: 'An MBA or advanced degree costs $80,000 and 2 years. Is it worth it?',
+          options: [
+            {
+              id: 'skip-degree',
+              label: 'Skip it, learn on the job',
+              description: 'Save money and time',
+              meterChanges: { income: 5, energy: 10, optionality: -5 },
+              storyResponse: 'You avoided the cost. Experience is your teacher. Some doors stay closed without the credential.',
+            },
+            {
+              id: 'full-time-mba',
+              label: 'Get a full-time MBA from top school',
+              description: 'All in on career change',
+              meterChanges: { income: -15, optionality: 30, hourlyValue: 25, energy: -25 },
+              storyResponse: 'Two years without income, then $40,000 salary jump. Network is priceless.',
+              unlocks: ['mba-grad'],
+            },
+            {
+              id: 'part-time-program',
+              label: 'Executive or part-time program',
+              description: 'Keep earning while learning',
+              meterChanges: { income: 5, optionality: 15, hourlyValue: 15, energy: -20 },
+              storyResponse: 'Exhausting but effective. Credentials plus continued earnings. Slower but sustainable.',
+              unlocks: ['executive-educated'],
+            },
+          ],
+        },
+      ],
+      closingNarration: 'Years 5-6 complete. Your skills are differentiating you from the pack. Salary: $95,000.',
+    },
+    // PHASE 4: Years 7-8
+    {
+      month: 4,
+      title: 'Phase Four: The Negotiation Years (Years 7-8)',
+      openingNarration: 'You are established now. Every interaction is a negotiation. Raises, promotions, responsibilities, work-life balance. The ability to advocate for yourself separates high earners from average ones.',
+      decisions: [
+        {
+          id: 'p4-raise-request',
+          category: 'negotiation',
+          title: 'The Promotion Conversation',
+          description: 'You have been at the same level for 2 years despite strong performance. What do you do?',
+          pandaDialogue: 'I do great work. Shouldn not that speak for itself?',
+          options: [
+            {
+              id: 'wait-recognition',
+              label: 'Wait to be recognized',
+              description: 'Good work gets rewarded eventually',
+              meterChanges: { income: -10, hourlyValue: -10, energy: 5 },
+              storyResponse: 'You waited another year. The promotion went to someone who asked directly.',
+            },
+            {
+              id: 'build-case',
+              label: 'Build a business case and ask',
+              description: 'Document impact, request formally',
+              meterChanges: { income: 20, hourlyValue: 15, energy: -5 },
+              storyResponse: 'You showed exactly how you contributed $500,000 in value. The promotion and raise were approved.',
+              unlocks: ['self-advocate'],
+            },
+            {
+              id: 'get-offer',
+              label: 'Get an outside offer as leverage',
+              description: 'Force the decision with options',
+              meterChanges: { income: 25, hourlyValue: 20, optionality: 15, energy: -10 },
+              storyResponse: 'The outside offer forced a decision. Counter-offer exceeded your expectations.',
+              unlocks: ['leverage-master'],
+            },
+          ],
+        },
+        {
+          id: 'p4-work-life',
+          category: 'work',
+          title: 'Work-Life Negotiation',
+          description: 'You are burning out. High performance is not sustainable at this pace.',
+          options: [
+            {
+              id: 'grind-through',
+              label: 'Keep pushing through',
+              description: 'This is what success requires',
+              meterChanges: { income: 10, energy: -30, optionality: -10 },
+              storyResponse: 'You kept going. Burnout hit hard. Performance dropped. Health suffered.',
+            },
+            {
+              id: 'set-boundaries',
+              label: 'Set clear boundaries',
+              description: 'Protect your energy',
+              meterChanges: { energy: 25, income: -5, replaceability: 5 },
+              storyResponse: 'Some peers judged you. But your sustained performance outlasted their burnout cycles.',
+              unlocks: ['boundaries-set'],
+            },
+            {
+              id: 'negotiate-flexibility',
+              label: 'Negotiate for flexibility',
+              description: 'Remote work, flexible hours',
+              meterChanges: { energy: 20, optionality: 15, hourlyValue: 5 },
+              storyResponse: 'You proved results matter more than hours. Flexibility became part of your package.',
+              unlocks: ['flexible-arrangement'],
+            },
+          ],
+        },
+        {
+          id: 'p4-equity-negotiation',
+          category: 'money',
+          title: 'Equity Opportunity',
+          description: 'A growing company offers less salary but significant equity. Do you take the risk?',
+          options: [
+            {
+              id: 'stay-cash-focused',
+              label: 'Stick with high guaranteed salary',
+              description: 'Certain money over possible money',
+              meterChanges: { income: 10, optionality: -10, energy: 10 },
+              storyResponse: 'You stayed with the safe money. The startup later sold for $2 billion. Your equity would have been $800,000.',
+            },
+            {
+              id: 'take-equity-bet',
+              label: 'Take the equity-heavy offer',
+              description: 'Bet on yourself and the company',
+              meterChanges: { income: -10, optionality: 30, energy: -15 },
+              storyResponse: 'The startup succeeded. Your equity vested over 4 years. Life-changing outcome.',
+              unlocks: ['equity-winner'],
+            },
+            {
+              id: 'negotiate-hybrid',
+              label: 'Negotiate a hybrid package',
+              description: 'Some salary guarantee, some equity',
+              meterChanges: { income: 5, optionality: 15, hourlyValue: 10 },
+              storyResponse: 'You balanced risk and reward. Not the biggest win, not the biggest loss.',
+              unlocks: ['balanced-package'],
+            },
+          ],
+        },
+      ],
+      closingNarration: 'Years 7-8 complete. You have learned to negotiate for what you deserve. Salary: $130,000.',
+      specialEvents: [
+        {
+          condition: (meters: GameMeters) => meters.energy < 40,
+          event: 'Warning: Your energy is dangerously low. Burnout can set back your career by years.',
+        },
+      ],
+    },
+    // PHASE 5: Years 9-10
+    {
+      month: 5,
+      title: 'Phase Five: Multiple Income Streams (Years 9-10)',
+      openingNarration: 'A decade in. You realize that even high salaries have limits. True financial independence requires income from multiple sources. It is time to think beyond your paycheck.',
+      decisions: [
+        {
+          id: 'p5-side-income',
+          category: 'money',
+          title: 'Building Side Income',
+          description: 'Your skills have value beyond your employer. How do you capture it?',
+          pandaDialogue: 'I trade hours for dollars at work. Can I create income that does not require my constant attention?',
+          options: [
+            {
+              id: 'no-side-income',
+              label: 'Focus entirely on main job',
+              description: 'One income is enough',
+              meterChanges: { energy: 10, optionality: -20, income: 5 },
+              storyResponse: 'Your income depends entirely on one employer. Layoffs would be devastating.',
+            },
+            {
+              id: 'consulting-freelance',
+              label: 'Build a consulting practice',
+              description: 'Your expertise is worth $300/hour',
+              meterChanges: { income: 25, hourlyValue: 20, energy: -20, optionality: 15 },
+              storyResponse: 'You consult 10 hours/month at $300/hour. An extra $36,000/year. Time-intensive but lucrative.',
+              unlocks: ['consultant'],
+            },
+            {
+              id: 'productized-income',
+              label: 'Create a digital product',
+              description: 'Course, book, or software',
+              meterChanges: { optionality: 30, income: 10, energy: -25, replaceability: -20 },
+              storyResponse: 'Your course sells while you sleep. It took 6 months to create but now earns $2,000/month passively.',
+              unlocks: ['product-creator'],
+            },
+          ],
+        },
+        {
+          id: 'p5-investment-income',
+          category: 'skill',
+          title: 'Capital Allocation',
+          description: 'You have savings now. How do you put your money to work?',
+          options: [
+            {
+              id: 'keep-cash',
+              label: 'Keep it in savings',
+              description: 'Safety first',
+              meterChanges: { energy: 10, optionality: -10, income: -5 },
+              storyResponse: 'Inflation eats your purchasing power. Your money shrinks while you sleep.',
+            },
+            {
+              id: 'index-investing',
+              label: 'Invest in diversified index funds',
+              description: 'Market returns over time',
+              meterChanges: { income: 15, optionality: 15, energy: 5 },
+              storyResponse: 'Your investment portfolio generates passive returns. Wealth builds automatically.',
+              unlocks: ['investor'],
+            },
+            {
+              id: 'real-estate',
+              label: 'Buy income-producing real estate',
+              description: 'Rental properties',
+              meterChanges: { income: 20, optionality: 10, energy: -15, replaceability: -10 },
+              storyResponse: 'Your rental property generates $1,500/month in cash flow after expenses.',
+              unlocks: ['real-estate-investor'],
+            },
+          ],
+        },
+        {
+          id: 'p5-legacy-position',
+          category: 'work',
+          title: 'Long-Term Positioning',
+          description: 'How do you position yourself for the next 20 years?',
+          options: [
+            {
+              id: 'stable-senior-role',
+              label: 'Secure a stable senior position',
+              description: 'High salary, low risk',
+              meterChanges: { income: 20, energy: 15, optionality: -10, hourlyValue: 10 },
+              storyResponse: 'You found a senior role you can hold for years. Good income, sustainable pace.',
+              unlocks: ['senior-stable'],
+            },
+            {
+              id: 'executive-track',
+              label: 'Push for executive leadership',
+              description: 'C-suite or bust',
+              meterChanges: { income: 35, hourlyValue: 25, energy: -25, optionality: -15 },
+              storyResponse: 'You became a VP. Salary $250,000. But the job owns your life.',
+              unlocks: ['executive'],
+            },
+            {
+              id: 'portfolio-career',
+              label: 'Build a portfolio career',
+              description: 'Multiple income sources, maximum freedom',
+              meterChanges: { optionality: 35, income: 15, hourlyValue: 20, replaceability: -25 },
+              storyResponse: 'Consulting, board seats, investments, and writing. No single employer owns your time.',
+              unlocks: ['portfolio-career'],
+            },
+          ],
+        },
+      ],
+      closingNarration: 'Years 9-10 complete. You transformed from an employee to an income architect. Total earnings from all sources: $200,000+/year.',
+      specialEvents: [
+        {
+          condition: (meters: GameMeters, unlocks: string[]) => unlocks.includes('product-creator') && unlocks.includes('investor'),
+          event: 'You have passive income from products and investments. You could survive without a job. True financial independence.',
+        },
+        {
+          condition: (meters: GameMeters) => meters.energy < 30,
+          event: 'You achieved financial success but at great personal cost. Was it worth it?',
+        },
+      ],
+    },
+  ],
+  endings: [
+    {
+      id: 'income-architect',
+      title: 'Income Architect',
+      description: 'You built multiple income streams and sustainable earning power.',
+      trajectory: 'momentum',
+      futureSnapshot: 'In 10 years, you earn $300,000+ from salary, consulting, investments, and products. Work is optional. You continue because you enjoy it, not because you need to.',
+      conditions: (meters: GameMeters, unlocks: string[]) => 
+        meters.income >= 75 && meters.optionality >= 65 && meters.energy >= 45,
+    },
+    {
+      id: 'career-climber',
+      title: 'Career Climber',
+      description: 'You built a successful traditional career with high income.',
+      trajectory: 'growing',
+      futureSnapshot: 'In 10 years, you are a senior executive earning $200,000. Single income source but it is substantial. Comfortable but dependent on employment.',
+      conditions: (meters: GameMeters) => 
+        meters.income >= 70 && meters.hourlyValue >= 60,
+    },
+    {
+      id: 'burned-out-success',
+      title: 'Burned Out Success',
+      description: 'You achieved financial success at the cost of your wellbeing.',
+      trajectory: 'burnout',
+      futureSnapshot: 'In 10 years, you earn well but health and relationships suffered. You wonder if a different path would have been better.',
+      conditions: (meters: GameMeters) => 
+        meters.income >= 60 && meters.energy < 35,
+    },
+    {
+      id: 'stuck-in-place',
+      title: 'Stuck in Place',
+      description: 'Your career plateaued despite your potential.',
+      trajectory: 'stuck',
+      futureSnapshot: 'In 10 years, you are at the same level with modest raises. Comfortable but unfulfilled. You wonder what happened to your ambition.',
+      conditions: (meters: GameMeters) => 
+        meters.hourlyValue < 45 && meters.optionality < 45,
+    },
+    {
+      id: 'default-path',
+      title: 'The Standard Path',
+      description: 'You built a respectable career with steady growth.',
+      trajectory: 'balanced',
+      futureSnapshot: 'In 10 years, you earn $120,000 in a stable role. Average outcome but not a bad life. You have options if you want more.',
+      conditions: () => true,
+    },
+  ],
+};

@@ -1,0 +1,13 @@
+
+```json
+{
+  "appId": "app.lovable.cd17b77043bd4fbb966fb67cec75466c",
+  "appName": "money-panda-learn",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "https://cd17b770-43bd-4fbb-966f-b67cec75466c.lovableproject.com?forceHideBadge=true",
+    "cleartext": true
+  }
+}
+```
