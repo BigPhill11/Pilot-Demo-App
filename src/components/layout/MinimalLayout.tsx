@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
@@ -7,12 +8,14 @@ import ProfileSettings from '@/components/profile/ProfileSettings';
 import GameProgressBadge from '@/components/ui/game-progress-badge';
 import PageNavigationTabs from '@/components/layout/PageNavigationTabs';
 import PhilChatAssistant from '@/components/ai/PhilChatAssistant';
+import PersonalStatsDashboard from '@/components/dashboard/PersonalStatsDashboard';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAskPhilUi } from '@/contexts/AskPhilUiContext';
+import { usePersonalDashboard } from '@/contexts/PersonalDashboardContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useUnifiedStreak } from '@/hooks/useUnifiedStreak';
-import { LogOut, User, Flame, Moon, Sun, MessageCircle } from 'lucide-react';
+import { LogOut, User, Flame, Moon, Sun, MessageCircle, BarChart2 } from 'lucide-react';
 interface MinimalLayoutProps {
   children: React.ReactNode;
 }
@@ -34,7 +37,14 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
     streakMultiplier
   } = useUnifiedStreak();
   const { isOpen: isAskPhilOpen, openAskPhil, closeAskPhil } = useAskPhilUi();
+  const { isOpen: isDashboardOpen, openDashboard, closeDashboard } = usePersonalDashboard();
+  const navigate = useNavigate();
   const isGuest = !user;
+
+  const handleDashboardNavigate = (tab: string) => {
+    closeDashboard();
+    navigate(`/learn?tab=${tab}`);
+  };
   const getLevelBadgeColor = (level: string) => {
     switch (level) {
       case 'beginner':
@@ -64,6 +74,18 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
             
             {/* User Info and Actions */}
             <div className="flex items-center space-x-2 md:space-x-4">
+              {/* My Progress Button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={openDashboard}
+                className="gap-1.5"
+                aria-label="My Progress"
+              >
+                <BarChart2 className="h-4 w-4" />
+                <span className="hidden sm:inline text-sm">My Progress</span>
+              </Button>
+
               {/* Ask Phil Button */}
               <Button
                 variant="ghost"
@@ -129,6 +151,24 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
       <main className="flex-1">
         {children}
       </main>
+
+      {/* Personal Stats Dashboard Sheet */}
+      <Sheet open={isDashboardOpen} onOpenChange={(open) => (open ? openDashboard() : closeDashboard())}>
+        <SheetContent side="right" className="w-full sm:max-w-md p-0 flex flex-col overflow-hidden">
+          <SheetHeader className="px-4 pt-4 pb-2 border-b border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
+            <SheetTitle className="flex items-center gap-2 text-green-800">
+              <BarChart2 className="h-5 w-5 text-green-600" />
+              My Progress
+            </SheetTitle>
+            <SheetDescription className="text-green-600/80">
+              Track your journey through Phil's jungle
+            </SheetDescription>
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto">
+            <PersonalStatsDashboard onNavigate={handleDashboardNavigate} />
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Ask Phil Chat Sheet */}
       <Sheet open={isAskPhilOpen} onOpenChange={(open) => (open ? openAskPhil() : closeAskPhil())}>

@@ -76,46 +76,44 @@ const MarketIntelligenceTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-emerald-900/40 via-teal-900/30 to-cyan-900/40 border border-emerald-500/20 p-6">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-500/10 via-transparent to-transparent" />
-        
+      {/* Header - Light sage/emerald theme matching dashboard */}
+      <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 border border-green-300 p-6">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="space-y-2">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-emerald-500/20 border border-emerald-500/30">
-                <BarChart3 className="h-6 w-6 text-emerald-400" />
+              <div className="p-2 rounded-lg bg-emerald-100 border border-emerald-200">
+                <BarChart3 className="h-6 w-6 text-emerald-600" />
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-white">
+                <h1 className="text-2xl md:text-3xl font-bold text-green-800">
                   Market Intelligence
                 </h1>
-                <p className="text-emerald-200/70 text-sm md:text-base">
+                <p className="text-green-600/80 text-sm md:text-base">
                   Learn to read markets and make informed investment decisions
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             {/* Streak Badge */}
             {currentStreak > 0 && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/20 border border-orange-500/30">
-                <Flame className="h-4 w-4 text-orange-400" />
-                <span className="text-sm font-medium text-orange-300">{currentStreak} day streak</span>
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-50 border border-orange-200">
+                <Flame className="h-4 w-4 text-orange-500" />
+                <span className="text-sm font-medium text-orange-700">{currentStreak} day streak</span>
               </div>
             )}
 
             {/* Progress Summary */}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20">
-              <span className="text-sm text-white/70">Progress:</span>
-              <span className="text-sm font-bold text-white">{overallProgress}%</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-100 border border-green-200">
+              <span className="text-sm text-green-700">Progress:</span>
+              <span className="text-sm font-bold text-green-800">{overallProgress}%</span>
             </div>
 
             {/* Continue Button */}
             <Button 
               onClick={handleContinueLearning}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white"
+              className="bg-green-600 hover:bg-green-700 text-white"
             >
               Continue
               <ChevronRight className="ml-1 h-4 w-4" />

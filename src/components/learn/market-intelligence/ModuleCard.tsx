@@ -45,40 +45,40 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
     setShowDialog(false);
   };
 
-  // Theme-specific styling
+  // Theme-specific styling - all using Phil's sage/emerald palette
   const getThemeStyles = () => {
     switch (theme) {
       case 'newspaper':
         return {
-          card: 'bg-[#faf8f0] border-slate-300 hover:border-slate-400',
-          title: 'text-slate-900 font-serif',
-          description: 'text-slate-700 font-serif',
-          badge: 'bg-slate-200 text-slate-700',
-          button: 'bg-slate-800 hover:bg-slate-900 text-white',
+          card: 'bg-[#faf8f0] border-green-300 hover:border-green-400',
+          title: 'text-green-900 font-serif',
+          description: 'text-green-800/80 font-serif',
+          badge: 'bg-green-100 text-green-700 border border-green-200',
+          button: 'bg-green-700 hover:bg-green-800 text-white',
         };
       case 'wealth':
         return {
-          card: 'bg-gradient-to-br from-violet-950/80 to-indigo-950/80 border-violet-500/30 hover:border-violet-400/50',
-          title: 'text-white',
-          description: 'text-violet-200/80',
-          badge: 'bg-violet-900/50 text-violet-300',
-          button: 'bg-violet-600 hover:bg-violet-700 text-white',
+          card: 'bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200 hover:border-emerald-300',
+          title: 'text-green-800',
+          description: 'text-green-700/80',
+          badge: 'bg-emerald-100 text-emerald-700 border border-emerald-200',
+          button: 'bg-emerald-600 hover:bg-emerald-700 text-white',
         };
       case 'glossary':
         return {
-          card: 'bg-gradient-to-br from-amber-950/80 to-orange-950/80 border-amber-500/30 hover:border-amber-400/50',
-          title: 'text-white',
-          description: 'text-amber-200/80',
-          badge: 'bg-amber-900/50 text-amber-300',
-          button: 'bg-amber-600 hover:bg-amber-700 text-white',
+          card: 'bg-gradient-to-br from-green-50 to-teal-50 border-green-200 hover:border-green-300',
+          title: 'text-green-800',
+          description: 'text-green-700/80',
+          badge: 'bg-teal-100 text-teal-700 border border-teal-200',
+          button: 'bg-teal-600 hover:bg-teal-700 text-white',
         };
       default: // corporate
         return {
-          card: 'bg-gradient-to-br from-slate-900 to-slate-800 border-slate-600/50 hover:border-slate-500/70',
-          title: 'text-white',
-          description: 'text-slate-300',
-          badge: 'bg-slate-700 text-slate-300',
-          button: 'bg-blue-600 hover:bg-blue-700 text-white',
+          card: 'bg-white border-green-200 hover:border-green-300',
+          title: 'text-green-800',
+          description: 'text-green-700/80',
+          badge: 'bg-green-100 text-green-700 border border-green-200',
+          button: 'bg-green-600 hover:bg-green-700 text-white',
         };
     }
   };
@@ -127,9 +127,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
             </div>
 
             {/* Arrow */}
-            <ChevronRight className={`h-5 w-5 flex-shrink-0 ${
-              theme === 'newspaper' ? 'text-slate-400' : 'text-slate-500'
-            }`} />
+            <ChevronRight className="h-5 w-5 flex-shrink-0 text-green-400" />
           </div>
         </CardContent>
       </Card>
@@ -176,13 +174,13 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
             )}
 
             {/* Rewards */}
-            <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-emerald-950/50 to-teal-950/50 border border-emerald-500/30">
-              <span className="text-sm text-emerald-300">Completion Reward</span>
+            <div className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200">
+              <span className="text-sm text-green-700">Completion Reward</span>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-white">
+                <span className="text-sm font-medium text-green-800">
                   +{module.rewards?.bamboo ?? 10} 🎋
                 </span>
-                <span className="text-sm font-medium text-white">
+                <span className="text-sm font-medium text-green-800">
                   +{module.rewards?.xp ?? 2} XP
                 </span>
               </div>
@@ -190,9 +188,9 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
 
             {/* Action Button */}
             {progress.completed ? (
-              <div className="flex items-center justify-center gap-2 p-3 rounded-lg bg-green-900/30 border border-green-500/30">
-                <Check className="h-5 w-5 text-green-500" />
-                <span className="text-green-300 font-medium">Completed</span>
+              <div className="flex items-center justify-center gap-2 p-3 rounded-lg bg-green-100 border border-green-300">
+                <Check className="h-5 w-5 text-green-600" />
+                <span className="text-green-700 font-medium">Completed</span>
               </div>
             ) : (
               <Button 

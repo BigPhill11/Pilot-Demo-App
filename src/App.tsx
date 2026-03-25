@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ProgressProvider } from "@/contexts/ProgressContext";
 import { AskPhilUiProvider } from "@/contexts/AskPhilUiContext";
+import { PersonalDashboardProvider } from "@/contexts/PersonalDashboardContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import MinimalLayout from "@/components/layout/MinimalLayout";
 import GameStateInitializer from "@/components/game/GameStateInitializer";
@@ -29,17 +30,19 @@ function App() {
             <Toaster />
             <BrowserRouter>
               <AskPhilUiProvider>
-                <ProtectedRoute>
-                  <MinimalLayout>
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/empire" element={<EmpirePage />} />
-                      <Route path="/learn" element={<LearnPage />} />
-                      <Route path="/ask-phil" element={<AskPhilPage />} />
-                      <Route path="*" element={<Navigate to="/" replace />} />
-                    </Routes>
-                  </MinimalLayout>
-                </ProtectedRoute>
+                <PersonalDashboardProvider>
+                  <ProtectedRoute>
+                    <MinimalLayout>
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/empire" element={<EmpirePage />} />
+                        <Route path="/learn" element={<LearnPage />} />
+                        <Route path="/ask-phil" element={<AskPhilPage />} />
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                      </Routes>
+                    </MinimalLayout>
+                  </ProtectedRoute>
+                </PersonalDashboardProvider>
               </AskPhilUiProvider>
             </BrowserRouter>
           </TooltipProvider>

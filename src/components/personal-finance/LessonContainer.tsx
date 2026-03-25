@@ -5,12 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Lesson } from '@/types/personal-finance';
 import MicroLesson from './MicroLesson';
+import MicroLessonComic from './MicroLessonComic';
 import LessonFlashcards from './LessonFlashcards';
 import TimeValueSimulator from './TimeValueSimulator';
 import LessonQuiz from './LessonQuiz';
 import MiniReflection from './MiniReflection';
 import PowerMove from './PowerMove';
 import { cn } from '@/lib/utils';
+
+/** Lessons that use the comic micro-lesson UI (roll out module-by-module). */
+const COMIC_MICRO_LESSON_IDS = new Set<string>(['active-income-basics']);
 
 interface LessonContainerProps {
   lesson: Lesson;
@@ -104,7 +108,17 @@ const LessonContainer: React.FC<LessonContainerProps> = ({
         );
 
       case 'micro-lesson':
-        return (
+        return COMIC_MICRO_LESSON_IDS.has(lesson.id) ? (
+          <MicroLessonComic
+            lessonId={lesson.id}
+            content={lesson.microLesson}
+            lessonTitle={lesson.title}
+            onComplete={() => {
+              handleStepComplete(15, 1);
+              goToNextStep();
+            }}
+          />
+        ) : (
           <MicroLesson
             content={lesson.microLesson}
             onComplete={() => {

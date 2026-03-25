@@ -3,41 +3,29 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PersonalFinanceTab from "@/components/learn/PersonalFinanceTab";
 import LearningDashboard from "@/components/learning/LearningDashboard";
 import AdaptiveFlashcards from "@/components/learning/AdaptiveFlashcards";
+import MarketIntelligenceTab from "@/components/learn/MarketIntelligenceTab";
+import CareersInFinanceTab from "@/components/learn/CareersInFinanceTab";
 
 import { MobileTabNav } from "@/components/ui/mobile-nav";
 import { useIsMobile } from "@/hooks/use-mobile";
-import ComingSoonDialog from "@/components/ui/ComingSoonDialog";
 import { 
   LayoutDashboard, 
   Wallet, 
   TrendingUp, 
   Briefcase,
-  Layers,
-  Lock
+  Layers
 } from 'lucide-react';
 
 const LearnPage = () => {
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState('interactive-hub');
-  const [showComingSoon, setShowComingSoon] = useState(false);
-  const [comingSoonFeature, setComingSoonFeature] = useState('');
 
   const handleTabChange = (value: string) => {
-    if (value === 'companies') {
-      setComingSoonFeature('Market Intelligence');
-      setShowComingSoon(true);
-      return;
-    }
-    if (value === 'careers') {
-      setComingSoonFeature('Careers in Finance');
-      setShowComingSoon(true);
-      return;
-    }
     setActiveTab(value);
   };
 
   const handleNavigateToTab = (tabValue: string) => {
-    handleTabChange(tabValue);
+    setActiveTab(tabValue);
   };
 
   // Mobile navigation items
@@ -45,8 +33,8 @@ const LearnPage = () => {
     { value: 'interactive-hub', label: 'Dashboard', icon: <LayoutDashboard className="h-5 w-5" /> },
     { value: 'adaptive-flashcards', label: 'Flashcards', icon: <Layers className="h-5 w-5" /> },
     { value: 'personal-finance', label: 'Finance', icon: <Wallet className="h-5 w-5" /> },
-    { value: 'companies', label: 'Markets', icon: <Lock className="h-4 w-4" /> },
-    { value: 'careers', label: 'Careers', icon: <Lock className="h-4 w-4" /> },
+    { value: 'companies', label: 'Markets', icon: <TrendingUp className="h-5 w-5" /> },
+    { value: 'careers', label: 'Careers', icon: <Briefcase className="h-5 w-5" /> },
   ];
 
   return (
@@ -68,12 +56,12 @@ const LearnPage = () => {
                 <Wallet className="h-4 w-4" />
                 Personal Finance
               </TabsTrigger>
-              <TabsTrigger value="companies" className="gap-2 opacity-60">
-                <Lock className="h-3 w-3" />
+              <TabsTrigger value="companies" className="gap-2">
+                <TrendingUp className="h-4 w-4" />
                 Markets
               </TabsTrigger>
-              <TabsTrigger value="careers" className="gap-2 opacity-60">
-                <Lock className="h-3 w-3" />
+              <TabsTrigger value="careers" className="gap-2">
+                <Briefcase className="h-4 w-4" />
                 Careers
               </TabsTrigger>
             </TabsList>
@@ -90,6 +78,14 @@ const LearnPage = () => {
           <TabsContent value="interactive-hub" className="mt-0">
             <LearningDashboard onNavigateToTab={handleNavigateToTab} />
           </TabsContent>
+
+          <TabsContent value="companies" className={isMobile ? "mt-2" : "mt-6"}>
+            <MarketIntelligenceTab />
+          </TabsContent>
+
+          <TabsContent value="careers" className={isMobile ? "mt-2" : "mt-6"}>
+            <CareersInFinanceTab />
+          </TabsContent>
         </Tabs>
       </div>
 
@@ -98,13 +94,6 @@ const LearnPage = () => {
         items={mobileNavItems}
         activeValue={activeTab}
         onValueChange={handleTabChange}
-      />
-
-      {/* Coming Soon Dialog */}
-      <ComingSoonDialog
-        isOpen={showComingSoon}
-        onClose={() => setShowComingSoon(false)}
-        featureName={comingSoonFeature}
       />
     </div>
   );
