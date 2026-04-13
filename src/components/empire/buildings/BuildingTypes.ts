@@ -193,9 +193,17 @@ export const getBuildingStats = (type: BuildingType, level: number) => {
   };
 };
 
-export const getUpgradeCost = (type: BuildingType, currentLevel: number): number => {
+/** Per-tier exponent for upgrade price (current level → next level). Higher = steeper costs. */
+const UPGRADE_COST_EXPONENT = 1.65;
+
+/**
+ * Bamboo cost to upgrade from `fromLevel` to `fromLevel + 1`.
+ * Pass the building's current `level` (before paying).
+ */
+export const getUpgradeCost = (type: BuildingType, fromLevel: number): number => {
   const def = BUILDING_DEFINITIONS[type];
-  return Math.floor(def.cost * Math.pow(1.5, currentLevel));
+  const level = Math.max(1, Math.floor(fromLevel));
+  return Math.floor(def.cost * Math.pow(UPGRADE_COST_EXPONENT, level));
 };
 
 export const isBuildingUnlocked = (type: BuildingType, currentXP: number): boolean => {

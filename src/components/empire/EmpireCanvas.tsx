@@ -1,8 +1,9 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Home, Plus, History, CreditCard } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTutorialTrigger } from '@/hooks/useTutorial';
+import { useEmpireViewport } from './hooks/useEmpireViewport';
 
 // Canvas components
 import { IsometricGrid, TerrainType } from './canvas';
@@ -69,12 +70,14 @@ const EmpireCanvas: React.FC = () => {
   const bamboo = useGameStore((state) => state.bamboo);
   const spendBamboo = useGameStore((state) => state.spendBamboo);
   const addBamboo = useGameStore((state) => state.addBamboo);
+  const empireProductivity = useGameStore((state) => state.empireProductivity);
+  const productivityFactor = Math.max(0.05, Math.min(1, empireProductivity / 100));
   
   // Credit store
   const { purchaseWithCredit, enabled: creditEnabled } = useCreditStore();
   
   // Credit manager
-  const { canUseCredit, isOverdue } = useCreditManager({
+  const { isOverdue } = useCreditManager({
     onLateFee: (fee, scoreChange) => {
       console.log(`Late fee applied: ${fee}, score change: ${scoreChange}`);
     },
@@ -99,6 +102,10 @@ const EmpireCanvas: React.FC = () => {
   
   const showEventBanner = activeEvent && dismissedEvent !== activeEvent.event.id;
 
+  const handleEventBannerDismiss = useCallback(() => {
+    if (activeEvent) setDismissedEvent(activeEvent.event.id);
+  }, [activeEvent]);
+
   // Production manager
   const handleOfflineEarnings = useCallback((earnings: number, duration: string) => {
     setOfflineEarnings({ amount: earnings, duration });
@@ -109,7 +116,10 @@ const EmpireCanvas: React.FC = () => {
     onOfflineEarnings: handleOfflineEarnings,
     productionMultiplier,
     storageMultiplier: activeEvent?.event.effect.storageMultiplier ?? 1,
+    productivityFactor,
   });
+
+  const viewport = useEmpireViewport();
   
   // Handle tile click
   const handleTileClick = useCallback((x: number, y: number, terrain: TerrainType) => {
@@ -215,17 +225,22 @@ const EmpireCanvas: React.FC = () => {
     : false;
 
   return (
-    <div
-      className="relative w-full h-full overflow-hidden select-none"
-    >
-      {/* SVG Canvas */}
-      <svg
-        className="w-full h-full"
-        viewBox={viewBox}
-        preserveAspectRatio="xMidYMid meet"
-        style={{ background: 'linear-gradient(to bottom, #065f46, #064e3b)' }}
-        data-tutorial="empire-grid"
-      >
+    <div className="relative w-full h-full overflow-hidden select-none touch-none">
+      <div ref={viewport.wheelRef} className="absolute inset-0 touch-none">
+        <div
+          ref={viewport.transformRef}
+          className="h-full w-full touch-none will-change-transform"
+        >
+          <svg
+            className="block h-full w-full"
+            viewBox={viewBox}
+            preserveAspectRatio="xMidYMid meet"
+            style={{
+              background: 'linear-gradient(to bottom, #065f46, #064e3b)',
+            }}
+            data-tutorial="empire-grid"
+            onPointerDownCapture={viewport.onPointerDownCapture}
+          >
         {/* Definitions */}
         <defs>
           {/* Water shimmer gradient */}
@@ -296,49 +311,35 @@ const EmpireCanvas: React.FC = () => {
             />
           )}
         </g>
-      </svg>
-      
-      {/* Coin Counter */}
-      <CoinCounter totalStorage={totalStorage} />
-      
-      {/* Top Right Buttons */}
-      <div className="absolute top-4 right-4 z-10 flex gap-2">
-        {creditEnabled && (
-          <button
-            onClick={() => setShowCreditPanel(true)}
-            className={`p-3 rounded-xl shadow-lg transition-colors relative ${
-              isOverdue 
-                ? 'bg-red-500 text-white hover:bg-red-600' 
-                : 'bg-white/90 dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-700'
-            }`}
-            aria-label="Credit Card"
-          >
-            <CreditCard className="w-5 h-5" />
-            {isOverdue && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full text-black text-xs flex items-center justify-center font-bold">
-                !
-              </span>
-            )}
-          </button>
-        )}
+        </svg>
+        </div>
+      </div>
+
+      <CoinCounter
+        totalStorage={totalStorage}
+        onOpenCredit={creditEnabled ? () => setShowCreditPanel(true) : undefined}
+        onOpenEventHistory={() => setShowEventHistory(true)}
+        onGoHome={() => navigate('/')}
+        eventHistoryCount={eventHistory.length}
+        creditOverdue={isOverdue}
+      />
+
+      <div className="absolute bottom-20 right-3 z-10 flex flex-col gap-1 sm:bottom-24">
         <button
-          onClick={() => setShowEventHistory(true)}
-          className="p-3 rounded-xl bg-white/90 dark:bg-gray-800/90 shadow-lg hover:bg-white dark:hover:bg-gray-700 transition-colors relative"
-          aria-label="Event History"
+          type="button"
+          onClick={viewport.zoomIn}
+          className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/90 text-gray-800 shadow-lg dark:bg-gray-800/90 dark:text-white"
+          aria-label="Zoom in"
         >
-          <History className="w-5 h-5" />
-          {eventHistory.length > 0 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">
-              {eventHistory.length > 9 ? '9+' : eventHistory.length}
-            </span>
-          )}
+          <Plus className="h-5 w-5" />
         </button>
         <button
-          onClick={() => navigate('/')}
-          className="p-3 rounded-xl bg-white/90 dark:bg-gray-800/90 shadow-lg hover:bg-white dark:hover:bg-gray-700 transition-colors"
-          aria-label="Return to Home"
+          type="button"
+          onClick={viewport.zoomOut}
+          className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/90 text-gray-800 shadow-lg dark:bg-gray-800/90 dark:text-white"
+          aria-label="Zoom out"
         >
-          <Home className="w-5 h-5" />
+          <Minus className="h-5 w-5" />
         </button>
       </div>
       
@@ -348,7 +349,7 @@ const EmpireCanvas: React.FC = () => {
           activeEvent={activeEvent}
           getRemainingTime={getRemainingTime}
           insuranceProtection={insuranceProtection}
-          onDismiss={activeEvent?.event.duration === 0 ? () => setDismissedEvent(activeEvent.event.id) : undefined}
+          onDismiss={activeEvent?.event.duration === 0 ? handleEventBannerDismiss : undefined}
         />
       )}
       

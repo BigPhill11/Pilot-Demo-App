@@ -2,21 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Heart, TrendingUp, Award, ChevronLeft, ChevronRight, Trophy, Target, Clock, Zap } from 'lucide-react';
+import { Heart, ChevronLeft, ChevronRight, Trophy, Target, Clock } from 'lucide-react';
 import TinderCard from './TinderCard';
 import SwipeActions from './SwipeActions';
 import TinderTutorial from './TinderTutorial';
 import MatchesCollection from './MatchesCollection';
-import Leaderboard from './Leaderboard';
 import { useTinderSwipe } from './hooks/useTinderSwipe';
-import { useGameStats } from './hooks/useGameStats';
 import { useDailyChallenges } from './hooks/useDailyChallenges';
+import {
+  getBaseSwipeRewards,
+  readSuperLikesRemaining,
+  consumeSuperLike,
+  incrementTinderSwipeCountInStorage,
+} from './tinderRewards';
 import { CompanyProfile } from '@/components/learn/CompanySwipeCard';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
-import StatsPanel from './StatsPanel';
-import { getLevelFromTotalXp } from '@/lib/progression';
 import { MacroScenario, getDailyMacroScenario, getSectorBias } from './macroScenarios';
 import { usePlatformIntegration } from '@/hooks/usePlatformIntegration';
 
@@ -36,8 +38,6 @@ const CompanyTinderGame: React.FC<CompanyTinderGameProps> = ({
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialComplete, setTutorialComplete] = useState(false);
   const [showMatches, setShowMatches] = useState(false);
-  const [showStats, setShowStats] = useState(false);
-  const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [cardKey, setCardKey] = useState(0);
   
   // Mode-specific state
@@ -77,20 +77,11 @@ const CompanyTinderGame: React.FC<CompanyTinderGameProps> = ({
     totalCompanies,
   } = useTinderSwipe(companies);
 
-  const {
-    stats,
-    achievements,
-    loading: statsLoading,
-    addXP,
-    incrementStat,
-    unlockAchievement,
-  } = useGameStats();
+  const [superLikesRemaining, setSuperLikesRemaining] = useState(() =>
+    readSuperLikesRemaining()
+  );
 
-  const {
-    challenge,
-    loading: challengeLoading,
-    updateChallengeProgress,
-  } = useDailyChallenges();
+  const { challenge, updateChallengeProgress } = useDailyChallenges();
 
   useEffect(() => {
     // Check if tutorial has been completed
@@ -115,21 +106,28 @@ const CompanyTinderGame: React.FC<CompanyTinderGameProps> = ({
     localStorage.setItem('tinderTutorialComplete', 'true');
     setShowTutorial(false);
     setTutorialComplete(true);
-    
-    // Award tutorial completion rewards
-    addXP(100);
-    unlockAchievement('speed_dater');
-    
-    toast.success('🎉 Tutorial Complete! +100 XP', {
-      description: 'You earned the Speed Dater badge!',
+
+    awardResources(25, 15, 'Tinder tutorial', false);
+    toast.success('Tutorial complete!', {
+      description: '+25 bamboo and +15 XP added to your Bamboo Empire.',
     });
   };
 
   const onSwipe = async (action: Parameters<typeof handleSwipe>[0]) => {
-    const result = await handleSwipe(action);
-    const previousLevel = getLevelFromTotalXp(stats.totalXP);
-    
-    // Mode-specific scoring bonus
+    if (action === 'super_like' && superLikesRemaining <= 0) {
+      return;
+    }
+
+    await handleSwipe(action);
+
+    if (action === 'super_like') {
+      consumeSuperLike();
+      setSuperLikesRemaining(readSuperLikesRemaining());
+    }
+
+    const base = getBaseSwipeRewards(action);
+
+    // Mode-specific scoring bonus (extra bamboo + XP via existing ratio)
     let modeBonus = 0;
     let macroCorrect = false;
     
@@ -163,137 +161,112 @@ const CompanyTinderGame: React.FC<CompanyTinderGameProps> = ({
       setSelectedHorizon(null); // Reset for next card
     }
     
+    let challengeRunNextCount: number | null = null;
+
     if (mode === 'challenge-run') {
-      // Track challenge run progress
+      // Track challenge run progress (use synchronous next count/score so completion fires on swipe 10, not 11)
       const marketCapNum = typeof currentCompany?.marketCap === 'number' 
         ? currentCompany.marketCap 
         : parseFloat(String(currentCompany?.marketCap || '0').replace(/[^0-9.]/g, '')) * 1000000000;
-      const isGoodDecision = currentCompany && (
+      const isGoodDecision = Boolean(currentCompany && (
         (action === 'like' && marketCapNum > 10000000000) ||
         (action === 'pass' && marketCapNum < 1000000000)
-      );
-      if (isGoodDecision) {
-        setChallengeRunScore(prev => prev + 10);
-      }
-      setChallengeRunCount(prev => prev + 1);
-      
-      // Check if challenge run is complete
-      if (challengeRunCount + 1 >= 10) {
-        const finalScore = challengeRunScore + (isGoodDecision ? 10 : 0);
-        const bonus = Math.floor(finalScore / 2);
+      ));
+      const nextCount = challengeRunCount + 1;
+      const nextScore = challengeRunScore + (isGoodDecision ? 10 : 0);
+      challengeRunNextCount = nextCount;
+      setChallengeRunScore(nextScore);
+      setChallengeRunCount(nextCount);
+
+      if (nextCount >= 10) {
+        const bonus = Math.floor(nextScore / 2);
         awardResources(bonus, Math.floor(bonus / 5), 'Challenge Run Complete', true);
         setShowChallengeResults(true);
       }
     }
-    
-    // Update stats
-    let totalXpEarned = result.xpEarned + Math.max(0, modeBonus);
-    addXP(result.xpEarned);
-    incrementStat('swipeCount');
-    
-    if (action === 'like') {
-      incrementStat('likeCount');
-    } else if (action === 'super_like') {
-      incrementStat('superLikeCount');
-    } else if (action === 'pass') {
-      incrementStat('passCount');
+
+    // Apply mode bonus/penalty (macro-aware can be negative)
+    const bonusBamboo = modeBonus;
+    const bonusXp = Math.floor(modeBonus / 5);
+    const totalBamboo = Math.max(0, base.bamboo + bonusBamboo);
+    const totalXp = Math.max(0, base.xp + bonusXp);
+
+    if (action !== 'skip') {
+      incrementTinderSwipeCountInStorage();
     }
-    
-    // Award Bamboo Empire resources for swipes
-    if (modeBonus > 0) {
-      awardResources(modeBonus, Math.floor(modeBonus / 5), `Tinder ${mode}`, false);
+
+    if (totalBamboo > 0 || totalXp > 0) {
+      // Streak multiplies bamboo inside usePlatformIntegration
+      awardResources(totalBamboo, totalXp, 'Company Tinder swipe', false);
     }
 
     // Update challenge progress
     if (currentCompany) {
       const challengeResult = await updateChallengeProgress(currentCompany, action);
-      if (challengeResult?.completed) {
-        totalXpEarned += challengeResult.xpReward;
-        addXP(challengeResult.xpReward);
+      if (challengeResult?.completed && challengeResult.xpReward > 0) {
+        const chXp = challengeResult.xpReward;
+        const chBamboo = Math.floor(chXp / 2);
+        awardResources(chBamboo, chXp, 'Tinder daily challenge', true);
         confetti({
           particleCount: 100,
           spread: 70,
-          origin: { y: 0.6 }
-        });
-        toast.success('🎯 Challenge Complete!', {
-          description: `+${challengeResult.xpReward} bonus XP earned!`,
+          origin: { y: 0.6 },
         });
       }
     }
 
-    // Show feedback
     const actionMessages = {
-      pass: '➡️ Passed',
-      like: '💚 Liked!',
-      super_like: '⭐ Super Liked!',
-      skip: '⏭️ Skipped',
-      never: '🚫 Hidden',
+      pass: 'Passed',
+      like: 'Liked!',
+      super_like: 'Super liked!',
+      skip: 'Skipped',
+      never: 'Hidden',
     };
-    
-    // Mode-specific feedback
-    let feedbackDesc = `+${result.xpEarned} XP`;
+
+    const rewardParts: string[] = [];
+    if (base.bamboo > 0) rewardParts.push(`+${base.bamboo} bamboo`);
+    if (base.xp > 0) rewardParts.push(`+${base.xp} XP`);
+    if (bonusBamboo !== 0) {
+      rewardParts.push(`${bonusBamboo > 0 ? '+' : ''}${bonusBamboo} bonus bamboo`);
+    }
+    if (bonusXp !== 0) {
+      rewardParts.push(`${bonusXp > 0 ? '+' : ''}${bonusXp} bonus XP`);
+    }
+
+    let feedbackDesc =
+      rewardParts.length > 0
+        ? rewardParts.join(' · ')
+        : action === 'skip'
+          ? 'No rewards — card stays in the deck.'
+          : '—';
+
     if (mode === 'macro-aware' && macroCorrect) {
-      feedbackDesc = `+${result.xpEarned} XP • Macro-aligned! +${modeBonus} 🎋`;
+      feedbackDesc = [feedbackDesc, 'Macro-aligned pick!'].filter(Boolean).join(' ');
+    } else if (mode === 'macro-aware' && modeBonus < 0) {
+      feedbackDesc = [feedbackDesc, 'Macro penalty — pick aligned with the backdrop next time.'].filter(Boolean).join(' ');
     } else if (mode === 'thesis-builder' && modeBonus > 0) {
-      feedbackDesc = `+${result.xpEarned} XP • Thesis bonus! +${modeBonus} 🎋`;
-    } else if (mode === 'challenge-run') {
-      feedbackDesc = `+${result.xpEarned} XP • ${challengeRunCount + 1}/10 companies`;
+      feedbackDesc = [feedbackDesc, 'Thesis bonus applied.'].filter(Boolean).join(' ');
+    } else if (mode === 'challenge-run' && challengeRunNextCount !== null) {
+      feedbackDesc = `Run progress: ${challengeRunNextCount}/10 · ${feedbackDesc}`;
     }
 
     toast.success(actionMessages[action], {
       description: feedbackDesc,
     });
 
-    // Check for level up
-    const newLevel = getLevelFromTotalXp(stats.totalXP + totalXpEarned);
-    if (newLevel > previousLevel) {
-      confetti({
-        particleCount: 150,
-        spread: 180,
-        origin: { y: 0.5 }
-      });
-      toast.success(`🎉 Level Up! You're now Level ${newLevel}!`, {
-        description: 'Keep swiping to unlock more achievements!',
-      });
-    }
-
-    // Check for special achievements
     if (action === 'super_like') {
       confetti({
         particleCount: 50,
         spread: 60,
-        origin: { y: 0.8 }
+        origin: { y: 0.8 },
       });
     }
 
-    // Streak notification
-    if (stats.currentStreak > 0 && stats.currentStreak % 7 === 0) {
-      toast.success(`🔥 ${stats.currentStreak} Day Streak!`, {
-        description: 'You\'re on fire! Keep it going!',
-      });
-    }
-
-    // Force card re-render with animation
     setCardKey(prev => prev + 1);
   };
 
   if (showMatches) {
     return <MatchesCollection onBack={() => setShowMatches(false)} companies={companies} />;
-  }
-
-  if (showStats) {
-    return (
-      <StatsPanel 
-        stats={stats}
-        achievements={achievements}
-        challenge={challenge}
-        onClose={() => setShowStats(false)}
-      />
-    );
-  }
-
-  if (showLeaderboard) {
-    return <Leaderboard onClose={() => setShowLeaderboard(false)} />;
   }
 
   // Challenge Run Results
@@ -344,10 +317,9 @@ const CompanyTinderGame: React.FC<CompanyTinderGameProps> = ({
           <p className="text-lg text-muted-foreground">
             You've swiped through all {totalCompanies} companies
           </p>
-          <div className="space-y-2">
-            <p className="text-sm">Total XP Earned: <strong>{stats.totalXP}</strong></p>
-            <p className="text-sm">Matches Made: <strong>{matches.length}</strong></p>
-          </div>
+          <p className="text-sm text-muted-foreground">
+            Matches saved: <strong className="text-foreground">{matches.length}</strong>
+          </p>
           <div className="flex justify-center space-x-4">
             <Button onClick={resetDeck}>
               Start Over
@@ -372,51 +344,24 @@ const CompanyTinderGame: React.FC<CompanyTinderGameProps> = ({
         onComplete={handleTutorialComplete}
       />
 
-      {/* Header with Stats */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge 
-            variant="outline" 
-            className="px-3 py-1 cursor-pointer hover:bg-accent transition-colors"
-            onClick={() => setShowStats(true)}
-          >
-            <TrendingUp className="mr-2 h-4 w-4" />
-            Level {getLevelFromTotalXp(stats.totalXP)} • {stats.totalXP} XP
-          </Badge>
-          <Badge 
-            variant="outline" 
-            className="px-3 py-1 cursor-pointer hover:bg-accent transition-colors"
-            onClick={() => setShowStats(true)}
-          >
-            <Award className="mr-2 h-4 w-4" />
-            {achievements.filter(a => a.unlocked).length}/{achievements.length} Badges
-          </Badge>
-          {stats.currentStreak > 0 && (
-            <Badge variant="outline" className="px-3 py-1 bg-orange-500/10 border-orange-500/20">
-              🔥 {stats.currentStreak} Day Streak
-            </Badge>
-          )}
+      {/* Header — matches & tutorial only (stats/leaderboard removed) */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/[0.07] via-background to-muted/30 px-4 py-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <img
+            src="/lovable-uploads/ae543fd6-94e8-4c76-a9aa-b6cb9460a647.png"
+            alt=""
+            className="h-10 w-10 shrink-0 rounded-lg object-contain shadow-sm ring-1 ring-primary/15"
+          />
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-foreground truncate">Phil&apos;s Financials</p>
+            <p className="text-xs text-muted-foreground truncate">Company discovery</p>
+          </div>
         </div>
-
         <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setShowStats(true)}
-          >
-            📊 Stats
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowLeaderboard(true)}
-          >
-            <Trophy className="mr-2 h-4 w-4" />
-            Leaderboard
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
+            className="border-primary/25"
             onClick={() => setShowMatches(true)}
           >
             <Heart className="mr-2 h-4 w-4" />
@@ -611,7 +556,7 @@ const CompanyTinderGame: React.FC<CompanyTinderGameProps> = ({
       {/* Swipe Actions */}
       <SwipeActions 
         onSwipe={onSwipe}
-        superLikesRemaining={stats.superLikesRemaining}
+        superLikesRemaining={superLikesRemaining}
       />
 
       {/* Navigation */}

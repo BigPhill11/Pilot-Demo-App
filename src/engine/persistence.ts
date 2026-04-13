@@ -41,6 +41,7 @@ export interface PersistedGameState {
   totalBambooEarned: number;
   totalXpEarned: number;
   initialized: boolean;
+  empireProductivity?: number;
 }
 
 // ============================================
@@ -164,6 +165,7 @@ export function extractPersistableState(state: GameState): PersistedGameState {
     totalBambooEarned: state.totalBambooEarned,
     totalXpEarned: state.totalXpEarned,
     initialized: state.initialized,
+    empireProductivity: state.empireProductivity,
   };
 }
 
@@ -434,6 +436,7 @@ export function createFreshState(): PersistedGameState {
     totalBambooEarned: INITIAL_STATE.bamboo,
     totalXpEarned: INITIAL_STATE.xp,
     initialized: true,
+    empireProductivity: 85,
   };
 }
 

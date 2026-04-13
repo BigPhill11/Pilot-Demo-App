@@ -18,16 +18,8 @@ export const useTinderSwipe = (companies: CompanyProfile[]) => {
   const [swipedCompanies, setSwipedCompanies] = useState<Set<string>>(new Set());
   const [matches, setMatches] = useState<string[]>([]);
 
-  const getXPForAction = (action: SwipeAction): number => {
-    const xpMap: Record<SwipeAction, number> = {
-      pass: 5,
-      like: 10,
-      super_like: 25,
-      skip: 0,
-      never: -5,
-    };
-    return xpMap[action];
-  };
+  /** XP is awarded via Bamboo Empire (`usePlatformIntegration`) in CompanyTinderGame — not here. */
+  const getXPForAction = (_action: SwipeAction): number => 0;
 
   const handleSwipe = async (action: SwipeAction): Promise<SwipeResult> => {
     const company = companies[currentIndex];

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { TILE_WIDTH, TILE_HEIGHT, type TerrainType } from '../lib/grid';
 
 interface TileProps {
@@ -15,6 +15,8 @@ interface TileProps {
   onClick: () => void;
   onHover: () => void;
 }
+
+const TAP_MOVE_THRESHOLD_PX = 14;
 
 const terrainColors: Record<TerrainType, { base: string; light: string; dark: string; stroke: string }> = {
   grass: {
@@ -64,6 +66,7 @@ const Tile: React.FC<TileProps> = ({
 }) => {
   const seed = x * 31 + y * 17;
   const colors = terrainColors[terrain];
+  const pointerDown = useRef<{ x: number; y: number } | null>(null);
   
   const points = useMemo(() => {
     const halfWidth = TILE_WIDTH / 2;
@@ -90,9 +93,13 @@ const Tile: React.FC<TileProps> = ({
     return 0.5;
   };
   
-  const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onClick();
+  const tryTap = (clientX: number, clientY: number) => {
+    const start = pointerDown.current;
+    pointerDown.current = null;
+    if (!start) return;
+    if (Math.hypot(clientX - start.x, clientY - start.y) < TAP_MOVE_THRESHOLD_PX) {
+      onClick();
+    }
   };
 
   const renderBambooForest = () => {
@@ -344,9 +351,19 @@ const Tile: React.FC<TileProps> = ({
 
   return (
     <g
-      onClick={handleClick}
+      onPointerDown={(e) => {
+        e.stopPropagation();
+        pointerDown.current = { x: e.clientX, y: e.clientY };
+      }}
+      onPointerUp={(e) => {
+        e.stopPropagation();
+        tryTap(e.clientX, e.clientY);
+      }}
+      onPointerCancel={() => {
+        pointerDown.current = null;
+      }}
       onMouseEnter={onHover}
-      style={{ cursor: isBuildable ? 'pointer' : 'default', pointerEvents: 'all' }}
+      style={{ cursor: isBuildable ? 'pointer' : 'default', pointerEvents: 'all', touchAction: 'none' }}
     >
       <polygon
         points={points}

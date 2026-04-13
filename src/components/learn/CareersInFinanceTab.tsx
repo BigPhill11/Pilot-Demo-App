@@ -20,7 +20,7 @@ import IBDivisionsHub from "./IBDivisionsHub";
 import VCJourney from './VCJourney';
 import { ibDivisions } from "@/data/ib-divisions";
 import AssetManagementJourney from './AssetManagementJourney';
-import WealthManagementJourney from './WealthManagementJourney';
+import WealthManagementJourneyNew from './wealth-management/WealthManagementJourneyNew';
 import CorporateFinanceJourney from './CorporateFinanceJourney';
 import HedgeFundJourney from './HedgeFundJourney';
 import ManagementConsultingJourney from './ManagementConsultingJourney';
@@ -159,8 +159,8 @@ const CareersInFinanceTab = () => {
       return <AssetManagementJourney onBack={onBack} />;
     }
 
-    if (selectedCareer.name === 'Wealth Management') {
-      return <WealthManagementJourney onBack={onBack} />;
+    if (selectedCareer.name === 'Wealth Management' || selectedCareer.id === 'wealth-management') {
+      return <WealthManagementJourneyNew onBack={onBack} />;
     }
 
     if (selectedCareer.id === 'corporate-finance') {

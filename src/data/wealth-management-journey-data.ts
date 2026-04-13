@@ -28,12 +28,19 @@ export interface WealthLevel {
     reflection?: string;
     bonus?: string;
   }>;
+  hasOverview?: boolean;
+  hasComic?: boolean;
+  simulationYear?: number;
+  hasFinalScenarios?: boolean;
+  hasEndings?: boolean;
 }
 
 export const wealthManagementJourneyData: WealthLevel[] = [
   {
     id: 1,
     title: "Introduction to Wealth Management",
+    hasOverview: true,
+    hasComic: true,
     overview: "Wealth management is the business of helping individuals and families grow, protect, and transfer their wealth. Unlike asset management, which focuses mainly on investing money, wealth management is holistic — covering investments, taxes, retirement, estate planning, and even philanthropy. Wealth managers aim to understand a client's life goals and tailor strategies around them. This level introduces the basics of the profession and why it matters.",
     flashcards: [
       {
@@ -136,6 +143,7 @@ export const wealthManagementJourneyData: WealthLevel[] = [
   {
     id: 2,
     title: "Financial Planning Foundations",
+    simulationYear: 1,
     overview: "Financial planning is the foundation of wealth management. It involves creating a structured plan for saving, investing, spending, and protecting wealth. Wealth managers help clients define goals, assess resources, and design a roadmap. Good planning prevents short-term decisions from derailing long-term success.",
     flashcards: [
       {
@@ -239,6 +247,7 @@ export const wealthManagementJourneyData: WealthLevel[] = [
   {
     id: 4,
     title: "Risk Management in Wealth Management",
+    simulationYear: 2,
     overview: "Risk management in wealth management goes beyond choosing safe investments. Clients face risks such as market downturns, unexpected medical bills, job loss, or inflation eroding savings. Wealth managers help clients prepare by using insurance, diversification, and emergency funds. By anticipating potential challenges, they protect clients from financial shocks that could derail long-term plans.",
     flashcards: [
       {
@@ -341,6 +350,7 @@ export const wealthManagementJourneyData: WealthLevel[] = [
   {
     id: 5,
     title: "Client Communication & Relationship Building",
+    simulationYear: 3,
     overview: "Wealth management is deeply personal, so strong client relationships are critical. Wealth managers need to listen carefully, explain strategies clearly, and build trust over time. Transparent reporting, honest answers, and personalized communication keep clients engaged. Relationships often last decades, making communication as important as financial expertise.",
     flashcards: [
       {
@@ -444,6 +454,7 @@ export const wealthManagementJourneyData: WealthLevel[] = [
   {
     id: 6,
     title: "Tax & Estate Planning",
+    simulationYear: 4,
     overview: "Taxes and estate planning are critical parts of wealth management, ensuring clients keep more of their money and pass it on efficiently. Tax planning reduces the amount lost to income and capital gains taxes, while estate planning organizes how wealth is transferred after death. Tools include wills, trusts, charitable giving, and tax-efficient investment strategies. Together, these ensure clients' legacies are preserved.",
     flashcards: [
       {
@@ -546,6 +557,7 @@ export const wealthManagementJourneyData: WealthLevel[] = [
   {
     id: 7,
     title: "Technology & Industry Trends in Wealth Management",
+    simulationYear: 5,
     overview: "Wealth management is evolving with technology and global trends. Robo-advisors, mobile apps, and AI tools make advice more accessible. ESG (Environmental, Social, Governance) investing grows as younger clients want their money to reflect their values. Globalization and new fintech disrupt traditional models. Wealth managers must adapt to stay relevant.",
     flashcards: [
       {
@@ -650,6 +662,8 @@ export const wealthManagementJourneyData: WealthLevel[] = [
   {
     id: 3,
     title: "Investment Basics in Wealth Management",
+    hasFinalScenarios: true,
+    hasEndings: true,
     overview: "Investing is a critical part of wealth management, but it's tied to client goals, not just performance. Wealth managers balance risk and return to ensure clients meet milestones like retirement or education funding. They use diversification and asset allocation to protect against losses.",
     flashcards: [
       {

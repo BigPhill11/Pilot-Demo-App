@@ -82,6 +82,9 @@ export interface GameState {
 
   // Game initialized
   initialized: boolean;
+
+  /** Bamboo isometric empire productivity 1–100 (fatigue + events). */
+  empireProductivity: number;
 }
 
 export interface GameActions {
@@ -120,6 +123,10 @@ export interface GameActions {
   getBurnRatePerHour: () => number;
   getStorageCapacity: () => number;
   getEnergyMultiplier: () => number;
+
+  applyEmpireProductivityDelta: (delta: number) => void;
+  recordEmpireGrindPulse: () => void;
+  tickEmpireProductivityRecovery: () => void;
 }
 
 type GameStore = GameState & GameActions;
@@ -156,6 +163,7 @@ const createInitialState = (): GameState => ({
   totalBambooEarned: INITIAL_STATE.bamboo,
   totalXpEarned: INITIAL_STATE.xp,
   initialized: false,
+  empireProductivity: 85,
 });
 
 // ============================================
@@ -441,9 +449,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
   // ----------------------------------------
 
   loadState: (savedState: Partial<GameState>) => {
-    set({
-      ...savedState,
-      initialized: true,
+    set((state) => {
+      const merged = { ...state, ...savedState, initialized: true as const };
+      const ep = savedState.empireProductivity;
+      merged.empireProductivity =
+        typeof ep === 'number' && Number.isFinite(ep)
+          ? Math.max(1, Math.min(100, Math.round(ep)))
+          : state.empireProductivity;
+      return merged;
     });
   },
 
@@ -458,6 +471,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       initialized: true,
       lastTick: Date.now(),
       lastEventCheck: Date.now(),
+      empireProductivity: 85,
     });
   },
 
@@ -596,6 +610,35 @@ export const useGameStore = create<GameStore>((set, get) => ({
       return ENERGY.multipliers.medium;
     }
     return ENERGY.multipliers.high;
+  },
+
+  applyEmpireProductivityDelta: (delta: number) => {
+    if (!delta || !Number.isFinite(delta)) return;
+    set((state) => ({
+      empireProductivity: Math.max(1, Math.min(100, Math.round(state.empireProductivity + delta))),
+    }));
+  },
+
+  recordEmpireGrindPulse: () => {
+    set((state) => ({
+      empireProductivity: Math.max(1, state.empireProductivity - 0.55),
+    }));
+  },
+
+  tickEmpireProductivityRecovery: () => {
+    const target = 80;
+    set((state) => {
+      const p = state.empireProductivity;
+      if (p < target) {
+        const next = Math.min(target, Math.round((p + 0.45) * 10) / 10);
+        return next === p ? state : { empireProductivity: next };
+      }
+      if (p > 92) {
+        const next = Math.max(target, Math.round((p - 0.15) * 10) / 10);
+        return next === p ? state : { empireProductivity: next };
+      }
+      return state;
+    });
   },
 }));
 

@@ -40,7 +40,7 @@ const SwipeActions: React.FC<SwipeActionsProps> = ({ onSwipe, superLikesRemainin
       icon: Heart,
       label: 'Like',
       color: 'bg-green-500 hover:bg-green-600',
-      xp: '+10 XP',
+      xp: '+10 bamboo',
     },
   ];
 

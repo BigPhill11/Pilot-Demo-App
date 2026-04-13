@@ -10,17 +10,24 @@ interface ProductionManagerProps {
   onOfflineEarnings: (earnings: number, duration: string) => void;
   productionMultiplier?: number;
   storageMultiplier?: number;
+  /** 0–1 factor from empire productivity (1–100). */
+  productivityFactor?: number;
 }
 
 export const useProductionManager = ({
   onOfflineEarnings,
   productionMultiplier = 1,
   storageMultiplier = 1,
+  productivityFactor = 1,
 }: ProductionManagerProps) => {
   const buildings = useBaseLayoutStore((state) => state.buildings);
   const updateBuildingCollection = useBaseLayoutStore((state) => state.updateBuildingCollection);
   const addBamboo = useGameStore((state) => state.addBamboo);
   const bamboo = useGameStore((state) => state.bamboo);
+  const recordEmpireGrindPulse = useGameStore((state) => state.recordEmpireGrindPulse);
+  const tickEmpireProductivityRecovery = useGameStore((state) => state.tickEmpireProductivityRecovery);
+
+  const effectiveProductionMultiplier = productionMultiplier * productivityFactor;
   
   const productionIntervalRef = useRef<NodeJS.Timeout | null>(null);
   
@@ -31,8 +38,8 @@ export const useProductionManager = ({
   
   // Calculate total production per hour
   const calculateProductionRate = useCallback(() => {
-    return getTotalCoinProductionPerHour(buildings, productionMultiplier);
-  }, [buildings, productionMultiplier]);
+    return getTotalCoinProductionPerHour(buildings, effectiveProductionMultiplier);
+  }, [buildings, effectiveProductionMultiplier]);
   
   // Calculate interest from banks
   const calculateInterestRate = useCallback(() => {
@@ -41,31 +48,42 @@ export const useProductionManager = ({
   
   // Process production for all active farms
   const processProduction = useCallback(() => {
+    tickEmpireProductivityRecovery();
+
     const totalStorage = calculateTotalStorage();
     const currentBamboo = bamboo;
-    
+
     if (currentBamboo >= totalStorage) {
-      // Storage is full, no production
       return;
     }
-    
+
     buildings.forEach((building: PlacedBuilding) => {
-      const productionPerMinute = getBuildingProductionPerHour(building, buildings, productionMultiplier) / 60;
+      const productionPerMinute =
+        getBuildingProductionPerHour(building, buildings, effectiveProductionMultiplier) / 60;
 
       if (productionPerMinute > 0) {
         updateBuildingCollection(building.id, productionPerMinute);
       }
     });
-    
-    // Process bank interest
+
     const interestRate = calculateInterestRate();
     if (interestRate > 0) {
-      const interestPerMinute = (currentBamboo * (interestRate / 100)) / 60;
+      const interestPerMinute = (currentBamboo * (interestRate / 100) * productivityFactor) / 60;
       if (currentBamboo + interestPerMinute <= totalStorage) {
         addBamboo(interestPerMinute);
       }
     }
-  }, [buildings, bamboo, calculateTotalStorage, calculateInterestRate, updateBuildingCollection, addBamboo, productionMultiplier]);
+  }, [
+    buildings,
+    bamboo,
+    calculateTotalStorage,
+    calculateInterestRate,
+    updateBuildingCollection,
+    addBamboo,
+    effectiveProductionMultiplier,
+    productivityFactor,
+    tickEmpireProductivityRecovery,
+  ]);
   
   // Collect from a specific building
   const collectFromBuilding = useCallback((buildingId: string) => {
@@ -85,10 +103,11 @@ export const useProductionManager = ({
     if (amountToCollect > 0) {
       addBamboo(amountToCollect);
       updateBuildingCollection(buildingId, -amountToCollect);
+      recordEmpireGrindPulse();
     }
-    
+
     return amountToCollect;
-  }, [buildings, bamboo, calculateTotalStorage, addBamboo, updateBuildingCollection]);
+  }, [buildings, bamboo, calculateTotalStorage, addBamboo, updateBuildingCollection, recordEmpireGrindPulse]);
   
   // Calculate offline earnings
   const calculateOfflineEarnings = useCallback(() => {

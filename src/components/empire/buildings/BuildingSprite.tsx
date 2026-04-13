@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useRef } from 'react';
+
+const TAP_MOVE_THRESHOLD_PX = 14;
 import { BuildingType, BuildingStatus, BUILDING_DEFINITIONS } from './BuildingTypes';
 import { gridToScreen } from '../lib/grid';
 import { isBuildingCollectionReady } from '../systems/economy';
@@ -29,6 +31,17 @@ const BuildingSprite: React.FC<BuildingSpriteProps> = ({
   const def = BUILDING_DEFINITIONS[type];
   if (!def) return null;
   const { screenX: finalX, screenY: finalY } = gridToScreen(gridX, gridY);
+
+  const pointerDown = useRef<{ x: number; y: number } | null>(null);
+
+  const tryTap = (clientX: number, clientY: number) => {
+    const start = pointerDown.current;
+    pointerDown.current = null;
+    if (!start || !onClick) return;
+    if (Math.hypot(clientX - start.x, clientY - start.y) < TAP_MOVE_THRESHOLD_PX) {
+      onClick();
+    }
+  };
   
   const renderBuilding = () => {
     switch (type) {
@@ -47,8 +60,18 @@ const BuildingSprite: React.FC<BuildingSpriteProps> = ({
   return (
     <g
       transform={`translate(${finalX}, ${finalY})`}
-      onClick={onClick}
-      style={{ cursor: 'pointer' }}
+      onPointerDown={(e) => {
+        e.stopPropagation();
+        pointerDown.current = { x: e.clientX, y: e.clientY };
+      }}
+      onPointerUp={(e) => {
+        e.stopPropagation();
+        tryTap(e.clientX, e.clientY);
+      }}
+      onPointerCancel={() => {
+        pointerDown.current = null;
+      }}
+      style={{ cursor: 'pointer', touchAction: 'none' }}
     >
       <ellipse
         cx={0}
