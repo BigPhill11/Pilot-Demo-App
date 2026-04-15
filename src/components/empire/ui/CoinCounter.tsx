@@ -169,6 +169,7 @@ const CoinCounter: React.FC<CoinCounterProps> = ({
 
       <div className="flex items-center gap-1.5 sm:gap-2 ml-auto flex-shrink-0 flex-wrap justify-end max-[380px]:max-w-[calc(100vw-8rem)]">
         <div
+          data-tutorial="productivity-indicator"
           className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white/85 dark:bg-gray-800/90 shadow-md backdrop-blur-sm border border-emerald-200/50 dark:border-emerald-800/40"
           title="Empire productivity — drops if you grind without breaks; events can lower it too."
         >
@@ -180,6 +181,7 @@ const CoinCounter: React.FC<CoinCounterProps> = ({
         {creditEnabled && onOpenCredit && (
           <motion.button
             type="button"
+            data-tutorial="credit-indicator"
             onClick={onOpenCredit}
             className={`
               flex items-center gap-2 px-3 py-2 rounded-xl shadow-lg backdrop-blur-sm cursor-pointer text-left
@@ -232,7 +234,10 @@ const CoinCounter: React.FC<CoinCounterProps> = ({
           </button>
         )}
 
-        <motion.div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/90 dark:bg-gray-800/90 shadow-lg backdrop-blur-sm">
+        <motion.div
+          data-tutorial="xp-indicator"
+          className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/90 dark:bg-gray-800/90 shadow-lg backdrop-blur-sm"
+        >
           <Sparkles className="w-5 h-5 text-purple-500 flex-shrink-0" />
           <span className="font-bold text-sm sm:text-base text-gray-900 dark:text-white whitespace-nowrap">
             {Math.round(xp).toLocaleString()} XP
