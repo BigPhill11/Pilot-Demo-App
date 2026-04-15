@@ -1,9 +1,8 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { Plus, Minus } from 'lucide-react';
+import { Plus, Minus, Hammer } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useTutorialTrigger } from '@/hooks/useTutorial';
 import { useEmpireViewport } from './hooks/useEmpireViewport';
+import BambooEmpireTutorial from './tutorial/BambooEmpireTutorial';
 
 // Canvas components
 import { IsometricGrid, TerrainType } from './canvas';
@@ -44,11 +43,7 @@ const getEmpireViewBox = (): string => {
 const EmpireCanvas: React.FC = () => {
   const navigate = useNavigate();
   const viewBox = useMemo(() => getEmpireViewBox(), []);
-  
-  const { triggerAdvance: triggerBuildMenuOpen } = useTutorialTrigger('build-button-intro');
-  const { triggerAdvance: triggerBambooFarmSelect } = useTutorialTrigger('bamboo-farm-select');
-  const { triggerAdvance: triggerBuildingPlaced } = useTutorialTrigger('place-building');
-  
+
   // State
   const [selectedTile, setSelectedTile] = useState<{ x: number; y: number } | null>(null);
   const [showBuildMenu, setShowBuildMenu] = useState(false);
@@ -137,14 +132,12 @@ const EmpireCanvas: React.FC = () => {
             setSelectedBuildingType(null);
             setGhostPosition(null);
             setPendingCreditPurchase(null);
-            triggerBuildingPlaced();
           }
         } else if (bamboo >= def.cost) {
           spendBamboo(def.cost);
           placeNewBuilding(selectedBuildingType, x, y, def.size);
           setSelectedBuildingType(null);
           setGhostPosition(null);
-          triggerBuildingPlaced();
         }
       }
       return;
@@ -181,10 +174,7 @@ const EmpireCanvas: React.FC = () => {
     } else {
       setPendingCreditPurchase(null);
     }
-    if (type === 'bamboo_farm') {
-      triggerBambooFarmSelect();
-    }
-  }, [triggerBambooFarmSelect]);
+  }, []);
   
   // Handle collection from building
   const handleCollect = useCallback((buildingId: string) => {
@@ -223,6 +213,13 @@ const EmpireCanvas: React.FC = () => {
   const ghostIsValid = selectedBuildingType && ghostPosition
     ? canPlaceAt(ghostPosition.x, ghostPosition.y, undefined, BUILDING_DEFINITIONS[selectedBuildingType].size)
     : false;
+
+  // Memoize sorted buildings so the draw order isn't recalculated on every
+  // mouse-move / tick — this was causing noticeable mobile lag.
+  const sortedBuildings = useMemo(
+    () => [...buildings].sort((left, right) => getBuildingRenderOrder(left) - getBuildingRenderOrder(right)),
+    [buildings],
+  );
 
   return (
     <div className="relative w-full h-full overflow-hidden select-none touch-none">
@@ -278,9 +275,7 @@ const EmpireCanvas: React.FC = () => {
         
         {/* Buildings */}
         <g>
-          {[...buildings].sort((left, right) => {
-            return getBuildingRenderOrder(left) - getBuildingRenderOrder(right);
-          }).map((building: PlacedBuilding) => {
+          {sortedBuildings.map((building: PlacedBuilding) => {
             const constructionProgress = building.status === 'constructing' && building.constructionStartTime && building.constructionEndTime
               ? Math.min(100, ((Date.now() - building.constructionStartTime) / (building.constructionEndTime - building.constructionStartTime)) * 100)
               : 100;
@@ -324,11 +319,14 @@ const EmpireCanvas: React.FC = () => {
         creditOverdue={isOverdue}
       />
 
-      <div className="absolute bottom-20 right-3 z-10 flex flex-col gap-1 sm:bottom-24">
+      <div
+        className="absolute right-3 z-10 flex flex-col gap-1.5 sm:bottom-24"
+        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 6rem)' }}
+      >
         <button
           type="button"
           onClick={viewport.zoomIn}
-          className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/90 text-gray-800 shadow-lg dark:bg-gray-800/90 dark:text-white"
+          className="flex h-11 w-11 items-center justify-center rounded-lg bg-white/90 text-gray-800 shadow-lg dark:bg-gray-800/90 dark:text-white touch-manipulation"
           aria-label="Zoom in"
         >
           <Plus className="h-5 w-5" />
@@ -336,7 +334,7 @@ const EmpireCanvas: React.FC = () => {
         <button
           type="button"
           onClick={viewport.zoomOut}
-          className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/90 text-gray-800 shadow-lg dark:bg-gray-800/90 dark:text-white"
+          className="flex h-11 w-11 items-center justify-center rounded-lg bg-white/90 text-gray-800 shadow-lg dark:bg-gray-800/90 dark:text-white touch-manipulation"
           aria-label="Zoom out"
         >
           <Minus className="h-5 w-5" />
@@ -353,36 +351,31 @@ const EmpireCanvas: React.FC = () => {
         />
       )}
       
-      {/* Build Button (when not in placement mode) */}
+      {/* Build Button (when not in placement mode) — pinned above mobile browser chrome */}
       {!selectedBuildingType && (
-        <motion.button
+        <button
+          type="button"
           data-tutorial="build-button"
-          onClick={() => {
-            setShowBuildMenu(true);
-            triggerBuildMenuOpen();
-          }}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 px-6 py-3 rounded-xl bg-emerald-500 text-white font-bold shadow-lg flex items-center gap-2"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          onClick={() => setShowBuildMenu(true)}
+          className="absolute left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 rounded-2xl bg-emerald-500 active:bg-emerald-600 px-7 py-4 text-base sm:text-lg font-bold text-white shadow-xl ring-2 ring-white/30 touch-manipulation select-none"
+          style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 1.25rem)' }}
+          aria-label="Open build menu"
         >
-          <Plus className="w-5 h-5" />
+          <Hammer className="w-5 h-5" />
           Build
-        </motion.button>
+        </button>
       )}
-      
+
       {/* Cancel Placement Button */}
       {selectedBuildingType && (
-        <motion.button
+        <button
+          type="button"
           onClick={cancelPlacement}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 px-6 py-3 rounded-xl bg-red-500 text-white font-bold shadow-lg"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          className="absolute left-1/2 -translate-x-1/2 z-20 rounded-2xl bg-red-500 active:bg-red-600 px-7 py-4 text-base sm:text-lg font-bold text-white shadow-xl ring-2 ring-white/30 touch-manipulation select-none"
+          style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 1.25rem)' }}
         >
           Cancel Placement
-        </motion.button>
+        </button>
       )}
       
       {/* Building Menu */}
@@ -423,6 +416,9 @@ const EmpireCanvas: React.FC = () => {
       
       {/* Credit Unlock Banner */}
       <CreditUnlockBanner />
+
+      {/* First-visit Bamboo Empire tutorial */}
+      <BambooEmpireTutorial />
     </div>
   );
 };
