@@ -1,6 +1,6 @@
 /**
  * GamesHub - Central hub for all learning games
- * Shows 3 game options: Quizzes, Matching, Panda Jump
+ * Shows 4 game options: Quizzes, Matching, Panda Jump, Company Tinder
  */
 
 import React from 'react';
@@ -12,7 +12,9 @@ import {
   Gamepad2,
   Trophy,
   Flame,
-  Star
+  Star,
+  Heart,
+  Sparkles
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import PandaLogo from '@/components/icons/PandaLogo';
@@ -22,10 +24,11 @@ interface GameStats {
   quizStreak: number;
   matchingBestTime: number;
   pandaJumpAltitude: number;
+  companyTinderSwipes: number;
 }
 
 interface GamesHubProps {
-  onSelectGame: (game: 'quizzes' | 'matching' | 'panda-jump') => void;
+  onSelectGame: (game: 'quizzes' | 'matching' | 'panda-jump' | 'company-tinder') => void;
   stats: GameStats;
 }
 
@@ -68,6 +71,17 @@ const GamesHub: React.FC<GamesHubProps> = ({ onSelectGame, stats }) => {
       ],
       gradient: 'from-green-500/10 to-emerald-500/10',
       borderColor: 'hover:border-green-400'
+    },
+    {
+      id: 'company-tinder' as const,
+      title: 'Company Tinder',
+      description: 'Swipe right on companies you would invest in',
+      icon: <Heart className="h-10 w-10 text-rose-500 fill-rose-500/20" />,
+      stats: [
+        { label: 'Swipes', value: `${stats.companyTinderSwipes}`, icon: <Sparkles className="h-3 w-3 text-rose-400" /> }
+      ],
+      gradient: 'from-pink-500/10 to-rose-500/10',
+      borderColor: 'hover:border-rose-400'
     }
   ];
 
@@ -78,7 +92,7 @@ const GamesHub: React.FC<GamesHubProps> = ({ onSelectGame, stats }) => {
         <p className="text-muted-foreground text-sm">Earn Bamboo Coins and XP while having fun!</p>
       </div>
 
-      <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-3'} gap-4`}>
+      <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2 lg:grid-cols-4'} gap-4`}>
         {games.map((game) => (
           <Card 
             key={game.id}
