@@ -8,7 +8,7 @@ export const economicsUnits: EconomicsUnit[] = [
     id: 'micro-1-supply-demand',
     track: 'microeconomics',
     title: 'Supply & Demand',
-    description: 'Discover how prices are set in markets through the interaction of buyers and sellers. Learn the fundamental forces that drive every economic transaction.',
+    description: 'How buyers and sellers set prices—and why they move.',
     icon: '⚖️',
     order: 1,
     
@@ -52,38 +52,38 @@ export const economicsUnits: EconomicsUnit[] = [
         title: 'What is a Market?',
         estimatedMinutes: 8,
         intro: {
-          hook: 'You participated in a market today. Maybe you bought coffee, scrolled through Amazon, or checked gas prices. Markets are everywhere—and understanding them is your first step to financial power.',
-          philMessage: 'Hey! I\'m Phil, and I\'m obsessed with how the world works. Here\'s a secret: once you understand markets, you\'ll never look at prices the same way. Ready to see the invisible forces shaping every purchase you make?',
+          hook: 'You already used a market today—coffee, apps, gas. A market is just anywhere buyers meet sellers.',
+          philMessage: 'I\'m Phil. See how price links what people want with what sellers bring—that\'s the core idea.',
         },
         coreConcepts: [
           {
             title: 'Markets: Where Money Meets Stuff',
-            explanation: 'A Market is simply where buyers and sellers meet to make a Transaction. It doesn\'t need to be a physical place—your phone is a market when you order food delivery. The magic happens when someone who wants something finds someone who has it.',
-            example: 'StockX is a market for sneakers. Depop is a market for vintage clothes. Even your school cafeteria is a market. Anywhere money changes hands for goods = market.',
+            explanation: 'A market is where buyers and sellers agree on trades. It can be an app, a store, or a cafeteria—not always a physical place.',
+            example: 'StockX matches sneaker buyers and sellers; your lunch line is a market too.',
             keyTerms: ['market', 'transaction'],
-            pfTip: 'You\'re always in a market as a Buyer. Knowing this helps you shop smarter—compare prices, wait for sales, and never pay the first price you see.',
-            careerTip: 'Market Analysts study these patterns professionally. They predict what people will buy and when, earning $55K-$95K/year.',
+            pfTip: 'Compare prices and wait for sales instead of taking the first quote.',
+            careerTip: 'Market analysts study who buys what and when ($55K–$95K).',
           },
           {
             title: 'Demand: What Buyers Want',
-            explanation: 'Demand is how much of something Buyers want at different prices. Here\'s the key insight: when prices drop, people want MORE. When prices rise, people want LESS. This simple rule explains why sales work and why luxury items feel exclusive.',
-            example: 'Netflix at $8/month? 200 million subscribers. Netflix at $25/month? Suddenly people "discover" free alternatives. Price changes behavior.',
+            explanation: 'Demand is how much people want at each price. Lower price → more quantity wanted; higher price → less. That is why sales boost volume.',
+            example: 'Cheap streaming fills seats; a big price hike sends people to alternatives.',
             keyTerms: ['demand', 'buyer'],
-            pfTip: 'Your personal demand affects your budget. Ask yourself: "Would I still want this if it cost 2x more?" If no, you might be buying based on price, not value.',
-            careerTip: 'Demand Forecasters predict what consumers will buy, helping companies avoid overstocking or running out. Salary: $60K-$110K.',
+            pfTip: 'Ask: would I still want this at double the price? If not, you may be chasing the deal, not the item.',
+            careerTip: 'Demand forecasters help firms plan inventory ($60K–$110K).',
           },
           {
             title: 'Supply: What Sellers Offer',
-            explanation: 'Supply is how much Sellers are willing to offer at different prices. The twist: higher prices motivate sellers to produce MORE. Why? Because higher prices mean higher profits, which attracts more people to sell.',
-            example: 'When Uber shows "surge pricing" at 2x, suddenly more drivers log on. The higher price literally creates more supply. Same with housing—high prices = more construction.',
+            explanation: 'Supply is how much sellers will offer at each price. Higher prices attract more production and more sellers.',
+            example: 'Surge pricing pulls more drivers; high home prices eventually bring more building.',
             keyTerms: ['supply', 'seller'],
-            pfTip: 'When supply is low (limited editions, housing shortages), prices spike. Timing your purchases around supply can save you serious money.',
-            careerTip: 'Supply Chain Managers ensure products are available when needed. They\'re the reason your Amazon package arrives on time. Salary: $70K-$120K.',
+            pfTip: 'Scarce supply (limited drops, tight housing) usually means higher prices—time purchases if you can.',
+            careerTip: 'Supply chain managers keep product flowing ($70K–$120K).',
           },
         ],
         personalFinanceConnection: {
-          description: 'Every financial decision you make happens in a market. Understanding supply and demand helps you know WHEN to buy (high supply = lower prices), WHERE to buy (more sellers = more competition = better deals), and WHETHER to buy (is this price fair or inflated?).',
-          realWorldExample: 'Pro move: Buy winter coats in March (low demand = clearance prices). Buy concert tickets the day they drop (before scalper supply dries up). Sell your old phone before the new model launches (your supply becomes less valuable after).',
+          description: 'Markets set your options: when to buy, where competition is higher, and whether a price makes sense.',
+          realWorldExample: 'End-of-season clearance (low demand), buy tickets early (before resale supply tightens), sell gear before a new model lands.',
         },
         flashcards: [
           {
@@ -144,7 +144,7 @@ export const economicsUnits: EconomicsUnit[] = [
         ],
         careerSpotlight: {
           title: 'Market Analyst',
-          description: 'Market Analysts study supply, demand, and pricing patterns to help businesses make smarter decisions. They answer questions like "What should we charge?" and "How many units will we sell?"',
+          description: 'Uses supply-and-demand data to guide pricing, volume, and go-to-market calls.',
           salaryRange: '$55,000 - $95,000',
           skills: ['Data Analysis', 'Excel/Python', 'Market Research', 'Communication'],
         },
@@ -154,34 +154,29 @@ export const economicsUnits: EconomicsUnit[] = [
         title: 'The Law of Demand',
         estimatedMinutes: 15,
         intro: {
-          hook: 'Why do stores have sales? Why do you buy more snacks when they\'re on discount? There\'s a powerful economic law at work every time prices change.',
-          philMessage: 'Get ready for one of the most important ideas in all of economics! The Law of Demand explains so much about how the world works. Once you understand it, you\'ll see it everywhere!',
+          hook: 'Sales work because one rule is almost always true: raise the price and people buy less; cut it and they buy more.',
+          philMessage: 'That rule is the law of demand—let\'s see how it shows up on a curve and in real choices.',
         },
         coreConcepts: [
           {
             title: 'The Law of Demand',
-            explanation: 'The Law of Demand states that, all else being equal, as the price of a good rises, the quantity demanded falls, and as the price falls, the quantity demanded rises. This inverse relationship between price and quantity demanded is one of the most fundamental principles in economics.',
-            example: 'When gas prices spike to $5 per gallon, people drive less, carpool more, and consider buying fuel-efficient cars. When gas drops to $2 per gallon, people take more road trips and worry less about fuel economy.',
+            explanation: 'All else equal, higher price → lower quantity demanded; lower price → higher quantity demanded. Price and quantity move opposite directions.',
+            example: 'Expensive gas cuts miles driven; cheap gas brings road trips back.',
           },
           {
             title: 'The Demand Curve',
-            explanation: 'A demand curve is a graph that shows the relationship between price and quantity demanded. It slopes downward from left to right, reflecting the Law of Demand. Each point on the curve shows how much buyers would purchase at that specific price.',
-            example: 'Imagine graphing how many streaming subscriptions people would buy at different prices. At $5/month, maybe 100 million people subscribe. At $15/month, only 50 million. At $30/month, just 20 million. Connect these points, and you get a downward-sloping demand curve.',
+            explanation: 'The curve plots price against quantity demanded. It slopes down: each point is “at this price, this many units.”',
+            example: 'More people subscribe at $5/month than at $30/month for the same service.',
           },
           {
-            title: 'Why Demand Slopes Downward',
-            explanation: 'Three main reasons explain why people buy less when prices rise: (1) The substitution effect - people switch to cheaper alternatives, (2) The income effect - higher prices mean your money buys less, so you reduce purchases, (3) Diminishing marginal utility - each additional unit provides less satisfaction, so you\'re only willing to pay less for more.',
-            example: 'When beef prices double, you might: (1) substitute chicken or beans for some meals, (2) feel poorer and cut back on meat overall, and (3) decide that third burger of the week isn\'t worth the higher price. All three effects push you to buy less beef.',
-          },
-          {
-            title: 'Movement Along vs. Shift of the Curve',
-            explanation: 'A change in price causes movement along the demand curve - you\'re just sliding to a different point on the same curve. But other factors (income, tastes, prices of related goods) can shift the entire demand curve left or right, meaning people want more or less at EVERY price.',
-            example: 'If the price of iPhones drops from $1000 to $800, that\'s movement along the curve - more people buy at the lower price. But if a celebrity endorses Android phones and they become trendy, the entire demand curve for iPhones shifts left - fewer people want them at ANY price.',
+            title: 'Along the Curve vs. Shifts',
+            explanation: 'A price change moves you along the same curve. Income, tastes, or prices of substitutes shift the whole curve—more or less demanded at every price.',
+            example: 'A phone price cut moves along demand; a viral rival brand shifts demand left for your phone.',
           },
         ],
         personalFinanceConnection: {
-          description: 'The Law of Demand is your friend when shopping. Sales, discounts, and price drops are designed to move you along the demand curve. Understanding this helps you decide when a "deal" is really worth it.',
-          realWorldExample: 'Black Friday sales exploit the Law of Demand. Stores slash prices knowing that lower prices will dramatically increase quantity demanded. But ask yourself: would you want this item at full price? If not, you might be buying just because it\'s cheap, not because you need it.',
+          description: 'Discounts move you along your demand curve—useful only if you would have bought near full price.',
+          realWorldExample: 'Black Friday: if you would not pay full price, you might be buying the discount, not the product.',
         },
         flashcards: [
           {
@@ -253,7 +248,7 @@ export const economicsUnits: EconomicsUnit[] = [
         ],
         careerSpotlight: {
           title: 'Demand Forecaster',
-          description: 'Demand forecasters predict how much of a product consumers will want to buy. They use historical data, economic trends, and statistical models to help companies plan production, inventory, and pricing strategies.',
+          description: 'Builds models of how much customers will buy at different prices and conditions.',
           salaryRange: '$60,000 - $110,000',
           skills: ['Statistical Analysis', 'Data Modeling', 'Market Research', 'Excel/Python'],
         },
@@ -263,34 +258,29 @@ export const economicsUnits: EconomicsUnit[] = [
         title: 'The Law of Supply',
         estimatedMinutes: 14,
         intro: {
-          hook: 'Ever wonder why there are more food trucks when a big event comes to town? Or why farmers grow more corn when corn prices are high? Let\'s explore the seller\'s side of the market!',
-          philMessage: 'Now we flip to the other side of the market - the sellers! Understanding supply is just as important as understanding demand. Together, they\'re like two dancers creating the beautiful choreography of markets!',
+          hook: 'More food trucks show up when an event raises what a meal can earn—same idea: higher prices pull more sellers in.',
+          philMessage: 'Supply answers: “At this price, how much will sellers bring?” Let’s wire that to the law of supply.',
         },
         coreConcepts: [
           {
             title: 'The Law of Supply',
-            explanation: 'The Law of Supply states that, all else being equal, as the price of a good rises, the quantity supplied rises, and as the price falls, the quantity supplied falls. This direct relationship exists because higher prices make production more profitable, encouraging sellers to produce more.',
-            example: 'When avocado prices soared due to high demand, farmers in Mexico and California planted more avocado trees. The high prices made it worth the investment. When prices dropped, some farmers switched to other crops.',
+            explanation: 'All else equal, higher price → higher quantity supplied; lower price → less. Higher prices cover higher costs and attract more sellers.',
+            example: 'High avocado prices lead to more planting; when prices fall, some growers switch crops.',
           },
           {
             title: 'The Supply Curve',
-            explanation: 'A supply curve is a graph showing the relationship between price and quantity supplied. Unlike the demand curve, it slopes upward from left to right. Higher prices lead to higher quantities supplied because sellers are more motivated to produce and sell.',
-            example: 'Consider Uber drivers. At $10 per ride, maybe 1,000 drivers are on the road. At $20 per ride (surge pricing), suddenly 2,500 drivers log on - it\'s worth their time. At $5 per ride, only 300 drivers bother. The supply curve slopes upward.',
+            explanation: 'The supply curve slopes up: higher price calls forth more quantity supplied. Surge rides and oil drilling are classic examples.',
+            example: 'More Uber drivers online at $20 than at $5 per ride.',
           },
           {
-            title: 'Why Supply Slopes Upward',
-            explanation: 'Higher prices encourage more supply for several reasons: (1) Existing producers can afford to increase production, (2) New producers enter the market attracted by profits, (3) Producers can cover higher marginal costs of producing additional units.',
-            example: 'When oil prices hit $100/barrel, oil companies drill in expensive locations like deep ocean or Arctic regions. At $30/barrel, those operations aren\'t profitable, so they shut down. Higher prices justify higher production costs.',
-          },
-          {
-            title: 'Shifts in Supply',
-            explanation: 'The supply curve shifts when non-price factors change. These include: input costs (wages, materials), technology, number of sellers, expectations about future prices, government policies (taxes, subsidies), and natural events. A rightward shift means more supply at every price; leftward means less.',
-            example: 'When a drought hits California, the supply curve for almonds shifts left - farmers produce fewer almonds at every price. When a new harvesting robot is invented, the supply curve shifts right - farmers can produce more at every price.',
+            title: 'Movements vs. Shifts',
+            explanation: 'Price changes move along the curve. Costs, tech, weather, taxes, or rules shift the whole curve—more or less supplied at every price.',
+            example: 'Drought shifts food supply left; better harvest tech shifts it right.',
           },
         ],
         personalFinanceConnection: {
-          description: 'Understanding supply helps you predict when prices might rise or fall. If you know a supply disruption is coming (like a chip shortage), you can make purchases before prices spike. You can also understand why some jobs pay more than others based on labor supply.',
-          realWorldExample: 'During the 2021 chip shortage, car prices spiked because supply dropped. Savvy buyers who understood supply either bought early, waited it out, or looked at used cars. Those who didn\'t understand supply overpaid at the peak.',
+          description: 'Fewer sellers or disrupted supply usually means higher prices—useful for timing big purchases.',
+          realWorldExample: 'Chip shortage: cars got expensive; buyers who waited or chose used avoided the worst of the spike.',
         },
         flashcards: [
           {
@@ -366,34 +356,29 @@ export const economicsUnits: EconomicsUnit[] = [
         title: 'Market Equilibrium',
         estimatedMinutes: 16,
         intro: {
-          hook: 'What happens when an unstoppable force meets an immovable object? In economics, we find out when demand meets supply. The result is one of the most elegant concepts in all of economics: equilibrium.',
-          philMessage: 'This is where the magic happens! When supply and demand come together, they find a special price where everyone\'s happy - well, as happy as they can be. It\'s like finding the perfect temperature in a room where some people want it warmer and others want it cooler!',
+          hook: 'Demand and supply push against each other until price settles where quantity demanded equals quantity supplied—that’s equilibrium.',
+          philMessage: 'Shortages and surpluses are signals; prices move until the market clears.',
         },
         coreConcepts: [
           {
             title: 'What is Market Equilibrium?',
-            explanation: 'Market equilibrium occurs where the supply curve and demand curve intersect. At this point, the quantity that buyers want to purchase exactly equals the quantity that sellers want to sell. The price at this intersection is called the equilibrium price, and the quantity is the equilibrium quantity.',
-            example: 'Imagine the market for used textbooks at your school. If the equilibrium price is $40, then at that price, the number of students wanting to sell their books exactly matches the number wanting to buy. No books go unsold, and no buyers go home empty-handed.',
+            explanation: 'Equilibrium is where the supply and demand curves cross: quantity demanded equals quantity supplied at the market-clearing price.',
+            example: 'At $40 for used textbooks, sellers who want to sell match buyers who want to buy.',
           },
           {
-            title: 'Surplus: When Price is Too High',
-            explanation: 'When the market price is above equilibrium, quantity supplied exceeds quantity demanded, creating a surplus (excess supply). Sellers have unsold inventory piling up. To clear this surplus, sellers must lower prices, which increases quantity demanded and decreases quantity supplied until equilibrium is reached.',
-            example: 'If a clothing store prices winter coats at $300 but the equilibrium price is $200, they\'ll have racks of unsold coats. Eventually, they\'ll have a sale, dropping prices until the coats sell. That\'s the market pushing toward equilibrium.',
+            title: 'Surplus vs. Shortage',
+            explanation: 'Price above equilibrium → surplus (unsold stock); price below → shortage (queues, scalpers). Prices tend to adjust toward equilibrium.',
+            example: 'Coats priced too high sit on racks until clearance; a hot console below market value sells out instantly.',
           },
           {
-            title: 'Shortage: When Price is Too Low',
-            explanation: 'When the market price is below equilibrium, quantity demanded exceeds quantity supplied, creating a shortage (excess demand). Buyers can\'t find enough of the product. This allows sellers to raise prices, which decreases quantity demanded and increases quantity supplied until equilibrium is reached.',
-            example: 'When a hot new gaming console launches at $500 but the equilibrium price is $700, there\'s a shortage. Stores sell out instantly, and scalpers sell on eBay for $1000+. Eventually, either the company raises prices or supply catches up to demand.',
-          },
-          {
-            title: 'How Equilibrium Changes',
-            explanation: 'Equilibrium isn\'t static - it changes whenever supply or demand shifts. If demand increases (shifts right), equilibrium price and quantity both rise. If supply increases (shifts right), equilibrium price falls but quantity rises. Markets constantly adjust to new equilibrium points as conditions change.',
-            example: 'When a pandemic hits, demand for hand sanitizer surges (demand shifts right). The equilibrium price jumps from $3 to $8, and equilibrium quantity rises as producers ramp up. When the pandemic ends, demand shifts back left, and prices return to normal.',
+            title: 'When Equilibrium Moves',
+            explanation: 'Shifts in demand or supply change the crossing point. Demand up → usually higher price and quantity; supply up → lower price, higher quantity.',
+            example: 'A demand spike for sanitizer raises both price and quantity until supply catches up.',
           },
         ],
         personalFinanceConnection: {
-          description: 'Understanding equilibrium helps you time purchases and sales. When you see a shortage (like hot holiday toys), expect prices to rise. When you see a surplus (like last season\'s fashion), expect deals. You can also understand why some things are expensive (high demand, low supply) and others are cheap.',
-          realWorldExample: 'Housing markets clearly show equilibrium at work. In cities with high demand and limited supply (San Francisco), equilibrium prices are sky-high. In areas with low demand or lots of supply, prices are much lower. Understanding this helps you decide where to live and when to buy.',
+          description: 'Shortages hint at upward price pressure; surpluses mean deals. Tight supply plus strong demand explains expensive categories.',
+          realWorldExample: 'Tight housing markets vs. cities with lots of buildable land—same idea, different equilibrium.',
         },
         flashcards: [
           {
@@ -465,7 +450,7 @@ export const economicsUnits: EconomicsUnit[] = [
         ],
         careerSpotlight: {
           title: 'Market Analyst',
-          description: 'Market analysts study supply and demand conditions across industries to help businesses make strategic decisions about pricing, production, and market entry. They track equilibrium changes and predict future market conditions.',
+          description: 'Tracks how supply and demand move prices and volumes in markets.',
           salaryRange: '$55,000 - $95,000',
           skills: ['Data Analysis', 'Market Research', 'Economic Modeling', 'Communication'],
         },
@@ -474,13 +459,13 @@ export const economicsUnits: EconomicsUnit[] = [
     
     gamifiedActivity: {
       id: 'market-maker-sim',
-      title: 'Market Maker Simulation',
-      description: 'Run your own virtual marketplace! Set prices, watch supply and demand curves shift, and try to find the perfect equilibrium.',
+      title: 'Market Price Simulator',
+      description: 'Run a lemonade stand: set prices, react to shifts, and chase equilibrium—same flow as the hands-on unit sim.',
       instructions: [
-        'Start with a product (bamboo snacks)',
-        'Adjust your price and see how quantity demanded changes',
-        'Watch for external events that shift curves',
-        'Find the equilibrium price to maximize trades',
+        'Open the Market Price Simulator from this unit',
+        'Adjust price and watch demand, supply, and profit',
+        'Respond to rushes, weather, and competition',
+        'Find prices that clear the market',
       ],
       rewards: {
         bamboo: 50,
@@ -2361,7 +2346,7 @@ export const economicsUnits: EconomicsUnit[] = [
     id: 'macro-1-gdp-growth',
     track: 'macroeconomics',
     title: 'GDP & Economic Growth',
-    description: 'Measure the health of entire economies. Learn how GDP is calculated and what drives long-term economic prosperity.',
+    description: 'GDP measures total output; growth tells you whether living standards are actually rising.',
     icon: '📈',
     order: 1,
     
@@ -2374,7 +2359,7 @@ export const economicsUnits: EconomicsUnit[] = [
     ],
     
     personalFinanceConnection: {
-      description: 'Economic growth affects job availability, wages, and investment returns. Understanding GDP trends helps you anticipate career opportunities and plan for the future.',
+      description: 'Growth shapes jobs, wages, and long-run returns—GDP is the headline scorecard for the whole economy.',
       relatedPFModules: ['Career Planning', 'Long-term Goals'],
     },
     
@@ -2405,34 +2390,29 @@ export const economicsUnits: EconomicsUnit[] = [
         title: 'What is GDP?',
         estimatedMinutes: 14,
         intro: {
-          hook: 'How do you measure the size of an entire economy? How do we know if a country is getting richer or poorer? The answer is GDP - the single most important number in macroeconomics.',
-          philMessage: 'Welcome to macroeconomics! We\'re zooming out from individual markets to look at entire economies. GDP is like taking the pulse of a nation\'s economy. Let\'s learn what it measures and why it matters!',
+          hook: 'GDP is the usual answer to “how big is the economy?”—the market value of final goods and services produced inside a country in a period.',
+          philMessage: 'We’ll use C + I + G + NX so you can read headlines with confidence.',
         },
         coreConcepts: [
           {
             title: 'Gross Domestic Product Defined',
-            explanation: 'Gross Domestic Product (GDP) is the total market value of all final goods and services produced within a country\'s borders in a given time period (usually a year or quarter). It measures the size of an economy and is the most widely used indicator of economic health.',
-            example: 'US GDP in 2023 was about $27 trillion. This means the total value of all cars made, haircuts given, software written, meals served, and everything else produced in America that year added up to $27 trillion.',
+            explanation: 'GDP sums the market value of final output produced within borders in a quarter or year. It is the standard gauge of total economic activity.',
+            example: 'US GDP in the trillions is all finished goods and services produced domestically in that year.',
           },
           {
             title: 'What Counts in GDP',
-            explanation: 'GDP includes only: (1) Final goods and services (not intermediate goods to avoid double-counting), (2) Currently produced items (not resales of used goods), (3) Market transactions (not unpaid work like housework), (4) Production within the country\'s borders (regardless of who owns the company).',
-            example: 'A new car counts in GDP. The steel used to make it doesn\'t count separately (it\'s in the car\'s price). A used car sale doesn\'t count (it was counted when new). Cooking dinner at home doesn\'t count (no market transaction). A Toyota made in Kentucky counts in US GDP.',
+            explanation: 'Count final goods once, current production, market activity, and domestic production. Exclude used goods (already counted), most home production, and intermediate goods (embedded in final prices).',
+            example: 'New car yes; steel sold to the plant no (in the car); used couch no; Toyota in Kentucky yes for US GDP.',
           },
           {
-            title: 'The Three Approaches to Measuring GDP',
-            explanation: 'GDP can be measured three ways that all give the same answer: (1) Expenditure approach - add up all spending on final goods, (2) Income approach - add up all income earned producing goods, (3) Production approach - add up value added at each stage of production.',
-            example: 'If you buy a $30,000 car: Expenditure approach counts your $30,000 purchase. Income approach counts the wages, profits, and rents earned making the car. Production approach counts value added at the mine, steel mill, parts factory, and assembly plant. All equal $30,000.',
-          },
-          {
-            title: 'GDP Components: C + I + G + NX',
-            explanation: 'Using the expenditure approach, GDP = Consumption (C) + Investment (I) + Government Spending (G) + Net Exports (NX). Consumption is household spending, Investment is business spending on capital, Government is public spending, and Net Exports is exports minus imports.',
-            example: 'In the US: Consumption (about 68% of GDP) includes your groceries and Netflix. Investment (about 18%) includes factory equipment and new homes. Government (about 17%) includes military and schools. Net Exports (about -3%) is negative because we import more than we export.',
+            title: 'C + I + G + NX',
+            explanation: 'Expenditure GDP = Consumption + Investment + Government purchases + Net exports (exports − imports). Imports subtract because they are not produced here.',
+            example: 'In the US, C is the largest share; NX is often negative when imports exceed exports.',
           },
         ],
         personalFinanceConnection: {
-          description: 'GDP growth affects your job prospects, salary potential, and investment returns. When GDP is growing, companies hire more, wages rise, and stocks tend to perform well. Understanding GDP trends helps you anticipate economic conditions that affect your financial life.',
-          realWorldExample: 'During the 2008 recession, US GDP shrank by about 4%. Unemployment doubled, home values crashed, and retirement accounts plummeted. During the 2020 recovery, GDP growth was strong, unemployment fell rapidly, and markets soared. GDP trends matter for your finances!',
+          description: 'Weak or negative GDP growth often means tougher jobs and markets; strong growth usually means the opposite.',
+          realWorldExample: '2008: shrinking GDP coincided with layoffs and wealth hits; recoveries line up with rising GDP and hiring.',
         },
         flashcards: [
           {
@@ -2508,34 +2488,29 @@ export const economicsUnits: EconomicsUnit[] = [
         title: 'Real vs. Nominal GDP',
         estimatedMinutes: 13,
         intro: {
-          hook: 'If GDP goes up 5%, does that mean we produced 5% more stuff? Not necessarily! Prices might have just gone up. To truly measure economic growth, we need to separate real production from price changes.',
-          philMessage: 'Here\'s a tricky concept: if everything costs twice as much, GDP doubles even if we produce the same amount! That\'s why economists distinguish between nominal and real GDP. Let\'s untangle this!',
+          hook: 'Nominal GDP can rise because of prices, output, or both—real GDP strips out price change so you see actual production.',
+          philMessage: 'If everything doubled in price with the same output, nominal GDP doubles but real GDP does not.',
         },
         coreConcepts: [
           {
             title: 'Nominal GDP',
-            explanation: 'Nominal GDP measures production using current prices - the actual prices that existed in the year being measured. It can increase either because more was produced OR because prices went up. This makes it hard to compare across years.',
-            example: 'If nominal GDP was $20 trillion in 2020 and $22 trillion in 2023, we can\'t tell if we produced 10% more stuff or if prices just rose 10% (or some combination). Nominal GDP mixes quantity and price changes.',
+            explanation: 'Uses current prices. Rises when quantities rise, prices rise, or both—so it is not pure “more stuff.”',
+            example: 'Nominal up 10% could be all inflation, all real growth, or a mix.',
           },
           {
             title: 'Real GDP',
-            explanation: 'Real GDP measures production using constant prices from a base year, removing the effect of price changes. It shows how much actual output changed. Real GDP is the better measure for comparing economic performance over time.',
-            example: 'If we use 2020 prices as the base, real GDP in 2023 tells us what 2023\'s production would have been worth at 2020 prices. If real GDP rose 6% from 2020 to 2023, we actually produced 6% more stuff.',
+            explanation: 'Uses constant base-year prices to measure output changes—the right series for comparing years.',
+            example: 'If real GDP rises 2%, the economy produced about 2% more with prices held constant.',
           },
           {
-            title: 'The GDP Deflator',
-            explanation: 'The GDP deflator is a price index that measures the overall price level of all goods in GDP. It equals (Nominal GDP / Real GDP) × 100. The percentage change in the GDP deflator shows the inflation rate for the whole economy.',
-            example: 'If nominal GDP is $22 trillion and real GDP is $20 trillion, the GDP deflator is 110. This means prices are 10% higher than in the base year. The GDP deflator captures inflation across all domestically produced goods.',
-          },
-          {
-            title: 'Why Real GDP Matters',
-            explanation: 'Real GDP is what we care about for measuring economic well-being. Higher real GDP means more goods and services are available for people to consume. Economic growth means real GDP is increasing - we\'re actually producing more, not just charging more.',
-            example: 'China\'s nominal GDP grew about 8% per year from 2000-2020, but real GDP grew about 9% per year. The difference? Prices actually fell slightly in some years (deflation). Real GDP showed the true explosion in Chinese production.',
+            title: 'Deflator and Growth',
+            explanation: 'GDP deflator ≈ nominal/real × 100. Sustainable “growth” in living standards tracks real GDP, not nominal alone.',
+            example: 'Rough shortcut: real growth ≈ nominal growth minus inflation (exact decomposition can differ).',
           },
         ],
         personalFinanceConnection: {
-          description: 'The distinction between real and nominal applies to your personal finances too. A 3% raise sounds good, but if inflation is 4%, your real purchasing power actually fell. Always think in real terms - what can your money actually buy?',
-          realWorldExample: 'If your salary goes from $50,000 to $52,000 (4% raise) but prices rose 5%, your real salary actually decreased. You can buy less than before! When evaluating raises, investments, or savings, always adjust for inflation to see the real picture.',
+          description: 'A raise only improves living standards if it beats inflation—same logic as real vs nominal GDP.',
+          realWorldExample: '4% raise with 5% inflation means real pay fell.',
         },
         flashcards: [
           {
@@ -2611,34 +2586,29 @@ export const economicsUnits: EconomicsUnit[] = [
         title: 'Economic Growth & Living Standards',
         estimatedMinutes: 14,
         intro: {
-          hook: 'Why are people in some countries so much richer than in others? Why did living standards barely change for thousands of years, then explode in the last 200? The answer is economic growth - and understanding it is key to understanding the modern world.',
-          philMessage: 'Economic growth is the closest thing to magic in economics. Small differences in growth rates, compounded over decades, create enormous differences in living standards. Let\'s explore why growth matters so much!',
+          hook: 'Total GDP can mislead—per person matters. Small growth rate gaps compound into huge differences over decades.',
+          philMessage: 'Rule of 70: years to double ≈ 70 ÷ growth rate %.',
         },
         coreConcepts: [
           {
             title: 'GDP Per Capita',
-            explanation: 'GDP per capita is GDP divided by population. It measures average economic output per person and is a rough indicator of living standards. A country can have high total GDP but low GDP per capita if it has a large population.',
-            example: 'India\'s total GDP is larger than the UK\'s, but the UK\'s GDP per capita is about 20 times higher. The average British person has access to far more goods and services than the average Indian person.',
+            explanation: 'GDP ÷ population approximates average output per person—a better living-standard hint than raw GDP alone.',
+            example: 'Large countries can have big GDP but modest GDP per capita.',
           },
           {
-            title: 'The Power of Compound Growth',
-            explanation: 'Small differences in growth rates lead to huge differences over time due to compounding. The "Rule of 70" says that GDP doubles in approximately 70 ÷ growth rate years. At 2% growth, GDP doubles every 35 years. At 7% growth, it doubles every 10 years.',
-            example: 'If Country A grows at 1% and Country B at 3%, after 70 years A\'s GDP doubles once while B\'s doubles three times (8x larger). A 2 percentage point difference seems small but creates an 8x gap over a lifetime!',
+            title: 'Compound Growth',
+            explanation: 'A few points of extra annual growth stacks up: doubling time shrinks sharply as the rate rises.',
+            example: '7% ≈ double in 10 years; 2% ≈ double in 35 years.',
           },
           {
-            title: 'Sources of Economic Growth',
-            explanation: 'Long-run economic growth comes from: (1) Increases in physical capital (machines, buildings), (2) Increases in human capital (education, skills), (3) Technological progress (new ideas, better methods), (4) Institutions (property rights, rule of law). Technology is the most important for sustained growth.',
-            example: 'China\'s rapid growth came from massive investment in factories (physical capital), expanding education (human capital), adopting foreign technology, and reforming economic institutions. All four sources contributed.',
-          },
-          {
-            title: 'Limits of GDP as a Welfare Measure',
-            explanation: 'GDP doesn\'t capture everything about well-being. It misses: leisure time, environmental quality, income distribution, non-market activities, and quality of life factors. A country can have high GDP but poor quality of life, or vice versa.',
-            example: 'The US has higher GDP per capita than many European countries, but Americans work more hours and have less vacation. Bhutan famously tracks "Gross National Happiness" alongside GDP. Money isn\'t everything!',
+            title: 'Drivers and Limits',
+            explanation: 'Long-run growth comes from more and better capital, skills, technology, and solid institutions. GDP still misses leisure, environment, inequality, and home production.',
+            example: 'High GDP per capita with little vacation can feel worse than moderate GDP with balance.',
           },
         ],
         personalFinanceConnection: {
-          description: 'Economic growth affects your lifetime earnings potential. Growing up in a growing economy means more job opportunities, higher wages, and better living standards. Understanding growth helps you appreciate long-term investing and the power of compound returns.',
-          realWorldExample: 'The S&P 500 has returned about 10% annually over the long term, roughly tracking economic growth plus dividends. At 10% returns, money doubles every 7 years. $10,000 invested at age 25 becomes $450,000 by age 65. That\'s the power of compound growth!',
+          description: 'Long-horizon investing piggybacks on real growth and compounding—same math as GDP doubling times.',
+          realWorldExample: 'Stocks have rewarded patience over business cycles; emergency funds smooth the bad years.',
         },
         flashcards: [
           {
@@ -2710,7 +2680,7 @@ export const economicsUnits: EconomicsUnit[] = [
         ],
         careerSpotlight: {
           title: 'Macroeconomist',
-          description: 'Macroeconomists study economy-wide phenomena like GDP growth, inflation, and unemployment. They work for central banks, government agencies, international organizations, and financial institutions, developing forecasts and policy recommendations.',
+          description: 'Models GDP, inflation, and jobs for policy, markets, or research shops.',
           salaryRange: '$80,000 - $150,000',
           skills: ['Econometrics', 'Data Analysis', 'Economic Modeling', 'Policy Analysis'],
         },
@@ -2720,34 +2690,29 @@ export const economicsUnits: EconomicsUnit[] = [
         title: 'The Business Cycle',
         estimatedMinutes: 13,
         intro: {
-          hook: 'Economies don\'t grow smoothly - they boom and bust, expand and contract. These fluctuations affect jobs, incomes, and investments. Understanding the business cycle helps you prepare for economic ups and downs.',
-          philMessage: 'The economy is like a roller coaster - sometimes climbing, sometimes falling. These ups and downs are called the business cycle. Let\'s learn to recognize where we are on the ride and what it means for you!',
+          hook: 'GDP and jobs speed up and slow down in cycles—expansions and contractions—not a straight line.',
+          philMessage: 'Leading indicators move early; unemployment often peaks late.',
         },
         coreConcepts: [
           {
             title: 'What is the Business Cycle?',
-            explanation: 'The business cycle refers to the fluctuations in economic activity over time. Economies alternate between periods of expansion (growth) and contraction (decline). These cycles are irregular in length and intensity but follow a general pattern.',
-            example: 'The US has experienced about 12 recessions since World War II, averaging one every 6-7 years. The 2008-2009 recession was severe (GDP fell 4%), while the 2020 recession was sharp but brief (GDP fell 9% in one quarter, then rebounded).',
+            explanation: 'Recurring ups and downs in activity: expansion, peak, contraction, trough. Recessions are often two consecutive quarters of falling real GDP.',
+            example: '2008: financial stress; 2020: sharp COVID shock then rebound.',
           },
           {
-            title: 'Phases of the Business Cycle',
-            explanation: 'The four phases are: (1) Expansion - GDP growing, unemployment falling, (2) Peak - highest point before decline begins, (3) Contraction/Recession - GDP falling, unemployment rising, (4) Trough - lowest point before recovery begins. A recession is typically defined as two consecutive quarters of declining GDP.',
-            example: 'In 2019, the US was in late expansion (low unemployment, steady growth). February 2020 was the peak. March-April 2020 was a sharp contraction (COVID recession). April 2020 was the trough. May 2020 onward was expansion again.',
+            title: 'Phases in Plain Terms',
+            explanation: 'Expansion: growth and hiring; peak: turning point; contraction: falling output and rising job stress; trough: the low before recovery.',
+            example: 'Late 2019 expansion → 2020 contraction → recovery.',
           },
           {
-            title: 'Causes of Business Cycles',
-            explanation: 'Business cycles can be triggered by: demand shocks (changes in consumer or business spending), supply shocks (oil price spikes, pandemics), financial crises (banking collapses), policy changes (interest rate hikes), or confidence shifts. Often multiple factors combine.',
-            example: 'The 2008 recession was caused by a financial crisis (housing bubble burst, banks failed). The 2020 recession was a supply shock (pandemic shut down businesses). The early 1980s recession was partly caused by the Fed raising interest rates to fight inflation.',
-          },
-          {
-            title: 'Economic Indicators',
-            explanation: 'Economists use indicators to track the business cycle: Leading indicators predict future activity (stock prices, building permits), Coincident indicators move with the economy (GDP, employment), Lagging indicators confirm trends (unemployment rate, corporate profits). Watching these helps anticipate turns.',
-            example: 'Stock prices often fall before recessions (leading indicator). GDP falls during recessions (coincident). Unemployment peaks after recessions end (lagging). By the time unemployment is highest, the economy is often already recovering!',
+            title: 'Indicators',
+            explanation: 'Leading (stocks, permits) turn first; coincident (GDP, payroll) move with the economy; lagging (unemployment rate) confirm late.',
+            example: 'Stocks often fall before GDP; joblessness can peak after GDP turns up.',
           },
         ],
         personalFinanceConnection: {
-          description: 'Business cycles affect your job security, investment returns, and major financial decisions. During expansions, jobs are plentiful and stocks rise. During recessions, layoffs increase and markets fall. Understanding cycles helps you prepare and avoid panic decisions.',
-          realWorldExample: 'Build an emergency fund during good times (expansion) when income is stable. Don\'t panic-sell investments during recessions - historically, markets recover. If you\'re job hunting, know that recessions make it harder but expansions create opportunities. Time major purchases accordingly.',
+          description: 'Save in expansions; avoid selling long-term investments in panic during contractions if your plan still fits.',
+          realWorldExample: 'Emergency fund first; job searches are harder in contractions, easier in expansions.',
         },
         flashcards: [
           {
@@ -2822,13 +2787,13 @@ export const economicsUnits: EconomicsUnit[] = [
     
     gamifiedActivity: {
       id: 'gdp-calculator',
-      title: 'GDP Detective',
-      description: 'Calculate GDP for a virtual country by categorizing different economic activities. Can you track all the components?',
+      title: 'Economy Builder',
+      description: 'Guide Pandania’s GDP with the unit simulator: C + I + G + NX, real vs nominal, and growth tradeoffs.',
       instructions: [
-        'Review economic transactions',
-        'Categorize each as C, I, G, or NX',
-        'Calculate total GDP',
-        'Compare real vs. nominal values',
+        'Open Economy Builder from this unit',
+        'Watch GDP, growth, inflation, and confidence',
+        'Answer policy and measurement decisions',
+        'Aim for strong real outcomes, not just nominal bumps',
       ],
       rewards: {
         bamboo: 50,

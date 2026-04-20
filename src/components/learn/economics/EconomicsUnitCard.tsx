@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Progress } from "@/components/ui/progress";
 import { Check, Clock, ChevronRight, Lock, BookOpen, Sparkles, Trophy, Briefcase } from 'lucide-react';
 import { EconomicsUnit, UnitStatus, UnitProgress } from '@/types/economics-curriculum';
+import { getSimulatorByUnitId } from '@/data/economics-simulators';
 
 interface EconomicsUnitCardProps {
   unit: EconomicsUnit;
@@ -13,6 +14,8 @@ interface EconomicsUnitCardProps {
   progress?: UnitProgress;
   onStartUnit: () => void;
   onSelectLesson: (lessonId: string) => void;
+  /** Opens full unit simulator overlay when configured for this unit */
+  onOpenSimulator?: () => void;
 }
 
 const EconomicsUnitCard: React.FC<EconomicsUnitCardProps> = ({
@@ -21,8 +24,11 @@ const EconomicsUnitCard: React.FC<EconomicsUnitCardProps> = ({
   progress,
   onStartUnit,
   onSelectLesson,
+  onOpenSimulator,
 }) => {
   const [showDialog, setShowDialog] = useState(false);
+
+  const unitSim = getSimulatorByUnitId(unit.id);
 
   const isLocked = status === 'locked';
   const isCompleted = status === 'completed';
@@ -234,6 +240,21 @@ const EconomicsUnitCard: React.FC<EconomicsUnitCardProps> = ({
                 </span>
               </div>
             </div>
+
+            {unitSim && onOpenSimulator && !isLocked && (
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full border-emerald-500 text-emerald-800 hover:bg-emerald-50"
+                onClick={() => {
+                  onOpenSimulator();
+                  setShowDialog(false);
+                }}
+              >
+                <Sparkles className="h-4 w-4 mr-2" />
+                {unitSim.title}
+              </Button>
+            )}
 
             {!isActive && !isCompleted && (
               <Button 

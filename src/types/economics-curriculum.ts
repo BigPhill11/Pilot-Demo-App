@@ -31,6 +31,42 @@ export interface CoreConcept {
   careerTip?: string;
 }
 
+/** Optional hands-on scenario meter (per-lesson mini sim). */
+export interface EconomicsHandsOnMeterDef {
+  id: string;
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  unit?: string;
+  icon?: string;
+  /** Shown under the meter, e.g. "Goal: $250+" */
+  hint?: string;
+}
+
+export interface EconomicsHandsOnChoice {
+  id: string;
+  label: string;
+  outcome: {
+    meterChanges: Record<string, number>;
+    feedback: string;
+  };
+}
+
+export interface EconomicsHandsOnScenario {
+  id: string;
+  title: string;
+  description: string;
+  choices: EconomicsHandsOnChoice[];
+}
+
+export interface EconomicsHandsOnConfig {
+  title: string;
+  description: string;
+  meters: EconomicsHandsOnMeterDef[];
+  scenarios: EconomicsHandsOnScenario[];
+}
+
 export interface EconomicsLesson {
   id: string;
   title: string;
@@ -47,6 +83,8 @@ export interface EconomicsLesson {
   flashcards: EconomicsFlashcard[];
   quiz: EconomicsQuizQuestion[];
   careerSpotlight?: CareerInfo;
+  /** Per-lesson decision sim; also resolved via getEconomicsHandsOnForLesson(lesson.id). */
+  handsOn?: EconomicsHandsOnConfig;
 }
 
 export interface GamifiedActivity {

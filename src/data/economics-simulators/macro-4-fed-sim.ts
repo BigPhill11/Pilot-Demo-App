@@ -79,7 +79,7 @@ export const macro4FedSim: SimulatorConfig = {
               label: 'Raise Rates Slightly',
               description: 'Inflation is above target; unemployment is fine.',
               meterChanges: { fedRate: 0.25, inflation: -0.3, unemployment: 0.2, credibility: 5 },
-              feedback: 'Balanced approach! You're addressing inflation while being mindful of employment.',
+              feedback: "Balanced approach! You're addressing inflation while being mindful of employment.",
               philInsight: 'With unemployment at 4% (near natural rate), you have room to focus on inflation. Gradual rate hikes signal commitment to the 2% target.',
             },
             {

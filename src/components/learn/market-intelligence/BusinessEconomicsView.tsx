@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { EconomicsTrackSection } from '../economics';
 import EconomicsLessonContainer from '../economics/EconomicsLessonContainer';
+import EconomicsSimulator from '../economics-sim/EconomicsSimulator';
 import { useEconomicsProgress } from '@/hooks/useEconomicsProgress';
 import { economicsUnits } from '@/data/economics-curriculum';
+import { getSimulatorIdByUnitId } from '@/data/economics-simulators';
 import { EconomicsTrack, EconomicsLesson, EconomicsUnit } from '@/types/economics-curriculum';
+import { EconomicsSimulatorId } from '@/types/economics-sim';
 
 /**
  * Business Economics View
@@ -20,16 +23,49 @@ const BusinessEconomicsView: React.FC = () => {
     lesson: EconomicsLesson;
     unit: EconomicsUnit;
   } | null>(null);
+
+  const [unitSimulator, setUnitSimulator] = useState<{
+    unitId: string;
+    track: EconomicsTrack;
+    simulatorId: EconomicsSimulatorId;
+  } | null>(null);
   
   const {
     getUnitStatus,
     getUnitProgress,
     startUnit,
     completeLesson,
+    completeGamifiedActivity,
     totalProgress,
     totalXpEarned,
     totalBambooEarned,
   } = useEconomicsProgress();
+
+  const handleOpenSimulator = useCallback((unitId: string, track: EconomicsTrack) => {
+    const simulatorId = getSimulatorIdByUnitId(unitId);
+    if (!simulatorId) return;
+    startUnit(unitId, track);
+    setUnitSimulator({ unitId, track, simulatorId });
+  }, [startUnit]);
+
+  const handleSimulatorComplete = useCallback(
+    (result: { ending: string; bambooEarned: number; xpEarned: number }) => {
+      if (!unitSimulator) return;
+      const unit = economicsUnits.find((u) => u.id === unitSimulator.unitId);
+      const progress = getUnitProgress(unitSimulator.unitId, unitSimulator.track);
+      if (unit && !progress?.gamifiedActivityCompleted) {
+        completeGamifiedActivity(
+          unitSimulator.unitId,
+          unitSimulator.track,
+          result.xpEarned,
+          result.bambooEarned,
+          unit.lessons.length
+        );
+      }
+      setUnitSimulator(null);
+    },
+    [unitSimulator, completeGamifiedActivity, getUnitProgress]
+  );
 
   const microUnits = economicsUnits.filter(u => u.track === 'microeconomics');
   const macroUnits = economicsUnits.filter(u => u.track === 'macroeconomics');
@@ -62,6 +98,16 @@ const BusinessEconomicsView: React.FC = () => {
   const handleExitLesson = () => {
     setSelectedLesson(null);
   };
+
+  if (unitSimulator) {
+    return (
+      <EconomicsSimulator
+        simulatorId={unitSimulator.simulatorId}
+        onBack={() => setUnitSimulator(null)}
+        onComplete={handleSimulatorComplete}
+      />
+    );
+  }
 
   if (selectedLesson) {
     return (
@@ -149,6 +195,7 @@ const BusinessEconomicsView: React.FC = () => {
             getUnitProgress={getUnitProgress}
             onStartUnit={(unitId, track) => startUnit(unitId, track)}
             onSelectLesson={handleSelectLesson}
+            onOpenSimulator={handleOpenSimulator}
           />
         </TabsContent>
 
@@ -160,6 +207,7 @@ const BusinessEconomicsView: React.FC = () => {
             getUnitProgress={getUnitProgress}
             onStartUnit={(unitId, track) => startUnit(unitId, track)}
             onSelectLesson={handleSelectLesson}
+            onOpenSimulator={handleOpenSimulator}
           />
         </TabsContent>
       </Tabs>
