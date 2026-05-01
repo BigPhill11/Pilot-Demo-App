@@ -10,6 +10,8 @@ import NetworkingLikePro from './courses/NetworkingLikePro';
 import BusinessCommunicationExcellence from './courses/BusinessCommunicationExcellence';
 import BlackInBusinessExcellence from './courses/BlackInBusinessExcellence';
 import WorkingWomenExcellence from './courses/WorkingWomenExcellence';
+import DressForSuccess from './courses/DressForSuccess';
+import WorkplaceEtiquette from './courses/WorkplaceEtiquette';
 
 interface Course {
   id: string;
@@ -49,6 +51,16 @@ const CourseDetailView: React.FC<CourseDetailViewProps> = ({ course, onBack }) =
   // Check if this is the Working Women Excellence course
   if (course.category === 'diversity_inclusion' && course.title.toLowerCase().includes('working women excellence')) {
     return <WorkingWomenExcellence onBack={onBack} />;
+  }
+
+  // Check if this is the Dress for Success course
+  if (course.category === 'business_attire') {
+    return <DressForSuccess onBack={onBack} />;
+  }
+
+  // Check if this is the Workplace Etiquette course
+  if (course.category === 'workplace_etiquette') {
+    return <WorkplaceEtiquette onBack={onBack} />;
   }
 
   return (

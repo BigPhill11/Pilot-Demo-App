@@ -11,6 +11,8 @@ interface EconomicsTrackSectionProps {
   getUnitProgress: (unitId: string, track: EconomicsTrack) => UnitProgress | undefined;
   onStartUnit: (unitId: string, track: EconomicsTrack) => void;
   onSelectLesson: (unitId: string, lessonId: string) => void;
+  /** Optional unit-level simulator (e.g. Market Price Simulator) */
+  onOpenSimulator?: (unitId: string, track: EconomicsTrack) => void;
 }
 
 const trackConfig: Record<EconomicsTrack, {
@@ -49,6 +51,7 @@ const EconomicsTrackSection: React.FC<EconomicsTrackSectionProps> = ({
   getUnitProgress,
   onStartUnit,
   onSelectLesson,
+  onOpenSimulator,
 }) => {
   const config = trackConfig[track];
   const trackUnits = units.filter(u => u.track === track).sort((a, b) => a.order - b.order);
@@ -99,6 +102,7 @@ const EconomicsTrackSection: React.FC<EconomicsTrackSectionProps> = ({
               progress={progress}
               onStartUnit={() => onStartUnit(unit.id, track)}
               onSelectLesson={(lessonId) => onSelectLesson(unit.id, lessonId)}
+              onOpenSimulator={onOpenSimulator ? () => onOpenSimulator(unit.id, track) : undefined}
             />
           );
         })}

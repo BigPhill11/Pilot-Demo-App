@@ -34,6 +34,8 @@ interface CoreConcept {
 interface LessonConceptsStepProps {
   lessonTitle: string;
   concepts: CoreConcept[];
+  /** Optional diagram (e.g. /economics/*.svg) shown once above concepts */
+  illustrationSrc?: string;
   onContinue: () => void;
   onBack: () => void;
 }
@@ -88,6 +90,7 @@ const renderTextWithTerms = (text: string, keyTerms?: string[]): React.ReactNode
 const LessonConceptsStep: React.FC<LessonConceptsStepProps> = ({
   lessonTitle,
   concepts,
+  illustrationSrc,
   onContinue,
   onBack,
 }) => {
@@ -134,6 +137,16 @@ const LessonConceptsStep: React.FC<LessonConceptsStepProps> = ({
           <h2 className="text-xl font-bold text-emerald-800 mb-3">
             {lessonTitle}
           </h2>
+
+          {illustrationSrc ? (
+            <div className="mb-4 rounded-xl overflow-hidden border border-emerald-200 bg-white shadow-sm">
+              <img
+                src={illustrationSrc}
+                alt=""
+                className="w-full h-auto max-h-48 object-contain"
+              />
+            </div>
+          ) : null}
           
           <Progress value={progress} className="h-2 bg-emerald-100" />
         </div>

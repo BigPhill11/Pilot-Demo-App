@@ -10,11 +10,14 @@ import {
   Trophy,
   Zap,
   ChevronRight,
-  Info
+  Info,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import CompanyTinderGame from '../company-tinder/CompanyTinderGame';
 import { useCompanies } from '@/hooks/useCompanies';
 import { getDailyMacroScenario, MacroScenario } from '../company-tinder/macroScenarios';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export type TinderGameMode = 'classic' | 'macro-aware' | 'thesis-builder' | 'time-horizon' | 'challenge-run';
 
@@ -73,15 +76,28 @@ const GAME_MODES: GameModeConfig[] = [
   },
 ];
 
+interface CompanyTinderViewProps {
+  /**
+   * When true, hides the large hero banner and collapses the macro backdrop
+   * on mobile. Use in contexts like the Games hub where surrounding chrome
+   * already frames the feature.
+   */
+  compact?: boolean;
+}
+
 /**
  * Company Tinder View
  * 
  * Wrapper around the Company Tinder game with mode selection
  * and macro backdrop integration.
  */
-const CompanyTinderView: React.FC = () => {
+const CompanyTinderView: React.FC<CompanyTinderViewProps> = ({ compact = false }) => {
   const [selectedMode, setSelectedMode] = useState<TinderGameMode | null>(null);
   const [showMacroInfo, setShowMacroInfo] = useState(false);
+  const isMobile = useIsMobile();
+  // On mobile (in compact contexts), collapse the macro card by default so
+  // the game modes are immediately visible above the fold.
+  const [macroCollapsed, setMacroCollapsed] = useState(compact && isMobile);
   const { companies, loading } = useCompanies();
   
   const todaysMacro = getDailyMacroScenario();
@@ -97,10 +113,11 @@ const CompanyTinderView: React.FC = () => {
   // If a mode is selected, show the game
   if (selectedMode) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 min-h-[calc(100dvh-10rem)]">
         {/* Back Button */}
         <Button 
           variant="ghost" 
+          size={isMobile ? 'sm' : 'default'}
           onClick={() => setSelectedMode(null)}
           className="mb-2"
         >
@@ -125,79 +142,101 @@ const CompanyTinderView: React.FC = () => {
   // Mode Selection Screen
   return (
     <div className="space-y-6">
-      {/* Header - Light sage/emerald theme */}
-      <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border border-green-200">
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-4 right-4 w-48 h-48 bg-emerald-200 rounded-full blur-3xl" />
-        </div>
+      {/* Header - Light sage/emerald theme (full size in Market Intel, hidden in compact) */}
+      {!compact && (
+        <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border border-green-200">
+          <div className="absolute inset-0 opacity-30">
+            <div className="absolute top-4 right-4 w-48 h-48 bg-emerald-200 rounded-full blur-3xl" />
+          </div>
 
-        <div className="relative z-10 p-6">
-          <div className="flex items-start gap-4">
-            <div className="p-3 rounded-lg bg-emerald-100 border border-emerald-200">
-              <span className="text-3xl">💘</span>
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-green-800 mb-2">Company Tinder</h2>
-              <p className="text-green-700/80 max-w-2xl">
-                Practice making investment decisions. Swipe right on companies you'd invest in, 
-                left on those you'd pass. Choose a game mode to get started.
-              </p>
+          <div className="relative z-10 p-6">
+            <div className="flex items-start gap-4">
+              <div className="p-3 rounded-lg bg-emerald-100 border border-emerald-200">
+                <span className="text-3xl">💘</span>
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-green-800 mb-2">Company Tinder</h2>
+                <p className="text-green-700/80 max-w-2xl">
+                  Practice making investment decisions. Swipe right on companies you'd invest in, 
+                  left on those you'd pass. Choose a game mode to get started.
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Today's Macro Backdrop */}
+      {/* Today's Macro Backdrop - collapsible on mobile when compact */}
       <Card className="border-green-200 bg-white">
-        <CardHeader className="pb-3">
+        <CardHeader className={compact && isMobile ? 'pb-2 cursor-pointer' : 'pb-3'}
+          onClick={compact && isMobile ? () => setMacroCollapsed(!macroCollapsed) : undefined}>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-emerald-600" />
-              <h3 className="font-semibold text-green-800">Today's Economic Backdrop</h3>
+            <div className="flex items-center gap-2 min-w-0">
+              <TrendingUp className="h-5 w-5 text-emerald-600 shrink-0" />
+              <h3 className="font-semibold text-green-800 truncate">Today's Economic Backdrop</h3>
+              {compact && isMobile && (
+                <span className="text-lg ml-1">{todaysMacro.icon}</span>
+              )}
             </div>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => setShowMacroInfo(!showMacroInfo)}
-              className="text-green-700 hover:bg-green-50"
-            >
-              <Info className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-1">
+              {!(compact && isMobile) && (
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={(e) => { e.stopPropagation(); setShowMacroInfo(!showMacroInfo); }}
+                  className="text-green-700 hover:bg-green-50"
+                >
+                  <Info className="h-4 w-4" />
+                </Button>
+              )}
+              {compact && isMobile && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  aria-label={macroCollapsed ? 'Show macro backdrop' : 'Hide macro backdrop'}
+                  className="text-green-700 hover:bg-green-50"
+                >
+                  {macroCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+                </Button>
+              )}
+            </div>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">{todaysMacro.icon}</span>
-            <div>
-              <p className="font-medium text-green-800">{todaysMacro.name}</p>
-              <p className="text-sm text-green-600/80">{todaysMacro.shortDescription}</p>
+        {!(compact && isMobile && macroCollapsed) && (
+          <CardContent>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">{todaysMacro.icon}</span>
+              <div>
+                <p className="font-medium text-green-800">{todaysMacro.name}</p>
+                <p className="text-sm text-green-600/80">{todaysMacro.shortDescription}</p>
+              </div>
             </div>
-          </div>
 
-          {showMacroInfo && (
-            <div className="mt-4 p-3 rounded-lg bg-green-50 border border-green-200">
-              <p className="text-sm text-green-700 mb-3">{todaysMacro.narrative}</p>
-              <div className="grid grid-cols-3 gap-3 mb-3">
-                {todaysMacro.indicators.map((indicator, i) => (
-                  <div key={i} className="text-center p-2 rounded bg-white border border-green-100">
-                    <p className="text-xs text-green-600">{indicator.name}</p>
-                    <p className="font-mono text-sm text-green-800">{indicator.value}</p>
+            {showMacroInfo && (
+              <div className="mt-4 p-3 rounded-lg bg-green-50 border border-green-200">
+                <p className="text-sm text-green-700 mb-3">{todaysMacro.narrative}</p>
+                <div className="grid grid-cols-3 gap-3 mb-3">
+                  {todaysMacro.indicators.map((indicator, i) => (
+                    <div key={i} className="text-center p-2 rounded bg-white border border-green-100">
+                      <p className="text-xs text-green-600">{indicator.name}</p>
+                      <p className="font-mono text-sm text-green-800">{indicator.value}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="p-2 rounded bg-emerald-50 border border-emerald-200">
+                    <p className="text-emerald-700 font-medium mb-1">Tends to Win</p>
+                    <p className="text-emerald-600/80">{todaysMacro.tendsToWin}</p>
                   </div>
-                ))}
-              </div>
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="p-2 rounded bg-emerald-50 border border-emerald-200">
-                  <p className="text-emerald-700 font-medium mb-1">Tends to Win</p>
-                  <p className="text-emerald-600/80">{todaysMacro.tendsToWin}</p>
-                </div>
-                <div className="p-2 rounded bg-red-50 border border-red-200">
-                  <p className="text-red-700 font-medium mb-1">Tends to Lose</p>
-                  <p className="text-red-600/80">{todaysMacro.tendsToLose}</p>
+                  <div className="p-2 rounded bg-red-50 border border-red-200">
+                    <p className="text-red-700 font-medium mb-1">Tends to Lose</p>
+                    <p className="text-red-600/80">{todaysMacro.tendsToLose}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-        </CardContent>
+            )}
+          </CardContent>
+        )}
       </Card>
 
       {/* Game Mode Selection */}
@@ -205,16 +244,16 @@ const CompanyTinderView: React.FC = () => {
         {GAME_MODES.map((mode) => (
           <Card 
             key={mode.id}
-            className="cursor-pointer hover:border-green-400 transition-all hover:scale-[1.02] border-green-200 bg-white"
+            className="cursor-pointer hover:border-green-400 transition-all hover:scale-[1.02] active:scale-[0.98] border-green-200 bg-white"
             onClick={() => setSelectedMode(mode.id)}
           >
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
-                <div className={`p-2 rounded-lg bg-gradient-to-br ${mode.color} text-white`}>
+                <div className={`p-2 rounded-lg bg-gradient-to-br ${mode.color} text-white shrink-0`}>
                   {mode.icon}
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <h3 className="font-semibold text-green-800">{mode.name}</h3>
                     <Badge 
                       variant="outline" 
@@ -235,7 +274,7 @@ const CompanyTinderView: React.FC = () => {
                     </div>
                   )}
                 </div>
-                <ChevronRight className="h-5 w-5 text-green-400" />
+                <ChevronRight className="h-5 w-5 text-green-400 shrink-0" />
               </div>
             </CardContent>
           </Card>

@@ -118,7 +118,7 @@ export const macro5FiscalSim: SimulatorConfig = {
               label: 'Gradually Reduce the Deficit',
               description: 'Slowly cut spending and raise taxes as the economy strengthens.',
               meterChanges: { gdpGrowth: -0.3, deficit: -1.5, debtRatio: -2, publicTrust: 5 },
-              feedback: 'Balanced approach! You're reducing the deficit without killing the recovery.',
+                feedback: "Balanced approach! You're reducing the deficit without killing the recovery.",
               philInsight: 'Counter-cyclical policy means running deficits in bad times and surpluses (or smaller deficits) in good times. You\'re doing it right!',
             },
             {
