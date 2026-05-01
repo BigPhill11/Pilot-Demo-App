@@ -32,6 +32,7 @@ import GamesHub from './games/GamesHub';
 import QuizzesSection from './QuizzesSection';
 import MatchingGameSection from './MatchingGameSection';
 import PandaJumpSection from './PandaJumpSection';
+import CompanyTinderView from '@/components/learn/market-intelligence/CompanyTinderView';
 
 // Hooks
 import { useFlashcardGamification } from '@/hooks/useFlashcardGamification';
@@ -39,7 +40,7 @@ import { getAllUnifiedFlashcards, UnifiedFlashcard } from '@/data/unified-flashc
 
 type CategorizedFlashcard = UnifiedFlashcard;
 type StudyMode = 'browse' | 'speed' | 'daily' | 'smart' | 'deck';
-type GameMode = 'hub' | 'quizzes' | 'matching' | 'panda-jump';
+type GameMode = 'hub' | 'quizzes' | 'matching' | 'panda-jump' | 'company-tinder';
 type MainSection = 'study' | 'games';
 
 const AdaptiveFlashcards: React.FC = () => {
@@ -61,7 +62,8 @@ const AdaptiveFlashcards: React.FC = () => {
     quizHighScore: 0,
     quizStreak: 0,
     matchingBestTime: 0,
-    pandaJumpAltitude: 0
+    pandaJumpAltitude: 0,
+    companyTinderSwipes: 0
   });
 
   const {
@@ -79,12 +81,21 @@ const AdaptiveFlashcards: React.FC = () => {
     const quizStreak = localStorage.getItem('quiz_overall_streak');
     const matchingStats = localStorage.getItem('matching_game_stats');
     const pandaStats = localStorage.getItem('panda_jump_stats');
-    
+    const tinderStats = localStorage.getItem('tinderGameStats');
+
+    let tinderSwipes = 0;
+    try {
+      tinderSwipes = tinderStats ? (JSON.parse(tinderStats).swipeCount || 0) : 0;
+    } catch {
+      tinderSwipes = 0;
+    }
+
     setGameStats({
       quizHighScore: quizMastery ? 80 : 0,
       quizStreak: quizStreak ? parseInt(quizStreak, 10) : 0,
       matchingBestTime: matchingStats ? JSON.parse(matchingStats).bestTimes?.['beginner_60'] || 0 : 0,
-      pandaJumpAltitude: pandaStats ? JSON.parse(pandaStats).maxAltitude || 0 : 0
+      pandaJumpAltitude: pandaStats ? JSON.parse(pandaStats).maxAltitude || 0 : 0,
+      companyTinderSwipes: tinderSwipes
     });
   }, [gameMode]);
 
@@ -199,6 +210,18 @@ const AdaptiveFlashcards: React.FC = () => {
         return <MatchingGameSection onBack={() => setGameMode('hub')} />;
       case 'panda-jump':
         return <PandaJumpSection onBack={() => setGameMode('hub')} />;
+      case 'company-tinder':
+        return (
+          <div className="space-y-4">
+            <div className="sticky top-0 z-20 -mx-2 px-2 py-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+              <Button variant="ghost" size="sm" onClick={() => setGameMode('hub')}>
+                <ChevronLeft className="h-4 w-4 mr-1" />
+                Back to Games
+              </Button>
+            </div>
+            <CompanyTinderView compact />
+          </div>
+        );
       default:
         return null;
     }

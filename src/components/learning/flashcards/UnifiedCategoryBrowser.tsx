@@ -27,7 +27,8 @@ import {
   Play,
   ChevronRight,
   Sparkles,
-  Lock
+  Lock,
+  Star
 } from 'lucide-react';
 
 interface UnifiedCategoryBrowserProps {
@@ -169,6 +170,23 @@ const UnifiedCategoryBrowser: React.FC<UnifiedCategoryBrowserProps> = ({ onSelec
     }
   };
 
+  // Featured deck: pull the Investing cards (compound interest lives here and
+  // this deck has the broadest wow-factor) from the unified personal-finance
+  // pool. If Investing isn't available for any reason, fall back to the first
+  // available category so the spotlight card never renders empty.
+  const featuredDeck = useMemo(() => {
+    const investing = availableCards.filter(c => c.category === 'Investing');
+    if (investing.length > 0) {
+      return { title: 'Investing', icon: '📈', cards: investing };
+    }
+    if (availableCards.length > 0) {
+      const fallbackTitle = availableCards[0].category;
+      const fallback = availableCards.filter(c => c.category === fallbackTitle);
+      return { title: fallbackTitle, icon: fallback[0]?.icon || '🌟', cards: fallback };
+    }
+    return null;
+  }, [availableCards]);
+
   // Main category view
   if (!selectedSource) {
     return (
@@ -177,6 +195,45 @@ const UnifiedCategoryBrowser: React.FC<UnifiedCategoryBrowserProps> = ({ onSelec
           <h2 className="text-2xl font-bold text-foreground mb-2">Choose a Topic</h2>
           <p className="text-muted-foreground">Select a category to start studying flashcards</p>
         </div>
+
+        {/* Featured Deck Spotlight */}
+        {featuredDeck && (
+          <Card
+            className="cursor-pointer border-2 border-amber-400/50 bg-gradient-to-br from-amber-50 via-yellow-50 to-emerald-50 dark:from-amber-950/30 dark:via-yellow-950/20 dark:to-emerald-950/30 shadow-md hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 overflow-hidden"
+            onClick={() => onSelectCards(featuredDeck.cards, featuredDeck.title)}
+          >
+            <CardContent className="p-5 md:p-6">
+              <div className="flex items-center gap-4">
+                <div className="relative shrink-0">
+                  <div className="text-5xl md:text-6xl">{featuredDeck.icon}</div>
+                  <Star className="h-5 w-5 absolute -top-1 -right-1 text-amber-500 fill-amber-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <Badge className="bg-amber-500 hover:bg-amber-600 text-white text-[10px] uppercase tracking-wide">
+                      <Sparkles className="h-3 w-3 mr-1" />
+                      Featured Deck
+                    </Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      {featuredDeck.cards.length} cards
+                    </Badge>
+                  </div>
+                  <h3 className="text-lg md:text-xl font-bold text-foreground mb-1">
+                    {featuredDeck.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    Compound interest, asset allocation, and the long-term concepts that quietly do the heaviest lifting.
+                  </p>
+                </div>
+                <Button size="sm" className="shrink-0 hidden sm:inline-flex">
+                  <Play className="h-4 w-4 mr-1" />
+                  Start
+                </Button>
+                <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0 sm:hidden" />
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <div className="space-y-4">
           {MAIN_CATEGORIES.map((category) => {

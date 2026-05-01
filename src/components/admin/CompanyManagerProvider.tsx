@@ -77,16 +77,12 @@ export const CompanyManagerProvider: React.FC<CompanyManagerProviderProps> = ({ 
 
   const fetchCompanies = async () => {
     try {
-      // TODO: Replace 'companies' with actual table name once created
-      // const { data, error } = await supabase
-      //   .from('companies')
-      //   .select('*')
-      //   .order('created_at', { ascending: false });
+      const { data, error } = await supabase
+        .from('companies')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-      // if (error) throw error;
-      
-      // Temporarily return empty array until companies table is created
-      const data: any[] = [];
+      if (error) throw error;
       
       const convertedData: Company[] = (data || []).map(company => ({
         id: company.id,
@@ -138,9 +134,34 @@ export const CompanyManagerProvider: React.FC<CompanyManagerProviderProps> = ({ 
 
   const handleCompanySubmit = async (companyData: Partial<Company>) => {
     try {
-      // TODO: Replace with actual table once created
-      toast.error('Companies table not yet created');
-      return;
+      if (editingCompany) {
+        const { error } = await supabase
+          .from('companies')
+          .update({
+            ...companyData,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', editingCompany.id);
+
+        if (error) throw error;
+        toast.success('Company updated successfully');
+      } else {
+        const { error } = await supabase
+          .from('companies')
+          .insert({
+            ...companyData,
+            created_by: user?.id,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          } as any);
+
+        if (error) throw error;
+        toast.success('Company created successfully');
+      }
+
+      setEditingCompany(null);
+      setShowForm(false);
+      fetchCompanies();
     } catch (error) {
       console.error('Error saving company:', error);
       toast.error('Failed to save company');
@@ -151,18 +172,14 @@ export const CompanyManagerProvider: React.FC<CompanyManagerProviderProps> = ({ 
     if (!confirm('Are you sure you want to delete this company?')) return;
 
     try {
-      // TODO: Replace with actual table once created
-      toast.error('Companies table not yet created');
-      return;
-      
-      // const { error } = await supabase
-      //   .from('companies')
-      //   .delete()
-      //   .eq('id', id);
+      const { error } = await supabase
+        .from('companies')
+        .delete()
+        .eq('id', id);
 
-      // if (error) throw error;
-      // toast.success('Company deleted successfully');
-      // fetchCompanies();
+      if (error) throw error;
+      toast.success('Company deleted successfully');
+      fetchCompanies();
     } catch (error) {
       console.error('Error deleting company:', error);
       toast.error('Failed to delete company');
@@ -176,9 +193,32 @@ export const CompanyManagerProvider: React.FC<CompanyManagerProviderProps> = ({ 
 
   const handleCSVUpload = async (csvData: any[]) => {
     try {
-      // TODO: Replace with actual table once created
-      toast.error('Companies table not yet created');
-      return;
+      const rows = csvData.map(row => ({
+        name: row.name,
+        ticker: row.ticker,
+        industry: row.industry,
+        headquarters: row.headquarters || null,
+        market_cap: row.market_cap || null,
+        revenue_ttm: row.revenue_ttm || null,
+        pe_ratio: row.pe_ratio || null,
+        overview: row.overview || null,
+        kpis: row.kpis || null,
+        financials: row.financials || null,
+        market_sentiment: row.market_sentiment || null,
+        analyst_sentiment: row.analyst_sentiment || null,
+        historical_performance: row.historical_performance || null,
+        sector: row.sector || null,
+        sub_sector: row.sub_sector || null,
+        created_by: user?.id,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }));
+
+      const { error } = await supabase.from('companies').insert(rows as any);
+      if (error) throw error;
+
+      toast.success(`Successfully uploaded ${rows.length} companies`);
+      fetchCompanies();
     } catch (error) {
       console.error('Error uploading CSV:', error);
       toast.error('Failed to upload companies from CSV');

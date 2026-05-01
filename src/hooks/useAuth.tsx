@@ -128,18 +128,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Use setTimeout to prevent potential deadlock
+          // Use setTimeout to prevent potential deadlock.
+          // Keep loading=true until profile is fetched so ProtectedRoute
+          // never sees user+null-profile and mistakenly renders the guest tour.
           setTimeout(async () => {
             if (mounted) {
               await fetchProfile(session.user.id, session.user.email);
               await handleDailyLogin(session.user.id);
+              if (mounted) setLoading(false);
             }
           }, 0);
         } else {
           setProfile(null);
+          setLoading(false);
         }
-        
-        setLoading(false);
       }
     );
 
@@ -155,11 +157,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           if (mounted) {
             await fetchProfile(session.user.id, session.user.email);
             await handleDailyLogin(session.user.id);
+            if (mounted) setLoading(false);
           }
         }, 0);
+      } else {
+        setLoading(false);
       }
-      
-      setLoading(false);
     });
 
     return () => {

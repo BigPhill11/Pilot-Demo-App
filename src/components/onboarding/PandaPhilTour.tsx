@@ -153,7 +153,7 @@ const PandaPhilTour: React.FC<PandaPhilTourProps> = ({ onComplete, placementTrac
               
               {/* Progress Bar */}
               <div className="mb-6">
-                <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                <div className="flex justify-between items-center text-xs text-muted-foreground mb-1 pr-10">
                   <span>Step {currentStep + 1} of {tourSteps.length}</span>
                   <span>{Math.round(progress)}%</span>
                 </div>
