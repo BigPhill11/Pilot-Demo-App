@@ -101,6 +101,9 @@ export const useOnboarding = () => {
   const resetOnboarding = async () => {
     if (!user) return;
 
+    // Clear localStorage so the orchestrator allows the flow to restart
+    localStorage.removeItem('phils_onboarding_done');
+
     try {
       const { error } = await supabase
         .from('profiles')
