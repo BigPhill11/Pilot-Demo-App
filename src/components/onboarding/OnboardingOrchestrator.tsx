@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import OnboardingInterestSurvey from './OnboardingInterestSurvey';
@@ -14,34 +14,54 @@ interface SurveyData {
 type Phase = 'loading' | 'survey' | 'tour' | 'complete';
 
 const OnboardingOrchestrator: React.FC = () => {
-  const { user, profile, refreshProfile } = useAuth();
-  // Phase only ever advances forward — never resets on profile refresh
+  const { user, profile } = useAuth();
   const [phase, setPhase] = useState<Phase>('loading');
 
+  /*
+   * Tracks whether the tour was completed during this browser session.
+   * Guards against a race condition where the second useEffect fires with a
+   * stale profile (app_tour_completed still false) right after the Supabase
+   * write is queued, incorrectly resetting phase back to 'tour'.
+   */
+  const completedThisSession = useRef(false);
+
+  // Initialize phase once — only when profile first loads
   useEffect(() => {
-    // Only set the phase once, when profile first loads
     if (!profile || phase !== 'loading') return;
     if (!profile.survey_completed) setPhase('survey');
     else if (!profile.app_tour_completed) setPhase('tour');
     else setPhase('complete');
   }, [profile, phase]);
 
-  // React to profile flag resets (e.g. "Restart Onboarding" from ProfileSettings).
-  // Only restart the flow when the user is already past it ('complete'); never
-  // reverse forward progress during the live survey -> tour transition, because
-  // refreshProfile() can briefly surface a stale profile where survey_completed
-  // is still false, which would yank the user back to the survey.
+  /*
+   * Re-check only when phase is 'complete' AND the user explicitly resets
+   * onboarding from ProfileSettings (both flags cleared = full restart).
+   *
+   * We deliberately skip this check when completedThisSession is true so
+   * that a stale in-memory profile can't yank the user back to the tour
+   * immediately after they finish it.
+   */
   useEffect(() => {
     if (!profile || phase !== 'complete') return;
-    if (!profile.survey_completed) setPhase('survey');
-    else if (!profile.app_tour_completed) setPhase('tour');
+
+    // Full reset: both flags cleared — deliberate restart from ProfileSettings
+    if (!profile.survey_completed && !profile.app_tour_completed) {
+      completedThisSession.current = false;
+      setPhase('survey');
+      return;
+    }
+
+    // Partial reset (survey done, tour reset) — only act if NOT just completed here
+    if (!completedThisSession.current && profile.survey_completed && !profile.app_tour_completed) {
+      setPhase('tour');
+    }
   }, [profile, phase]);
 
   if (!user || phase === 'loading' || phase === 'complete') return null;
 
   if (phase === 'survey') {
     const handleSurveyComplete = (data: SurveyData) => {
-      setPhase('tour'); // advance immediately — no waiting for DB
+      setPhase('tour'); // advance immediately — don't wait for DB
       supabase
         .from('profiles')
         .update({
@@ -54,14 +74,17 @@ const OnboardingOrchestrator: React.FC = () => {
         .eq('id', user.id)
         .then(({ error }) => {
           if (error) console.error('Error saving survey:', error);
-          refreshProfile().catch(() => {});
+          // No refreshProfile() — a stale profile response could reset phase
         });
     };
     return <OnboardingInterestSurvey onComplete={handleSurveyComplete} />;
   }
 
   const handleTourComplete = () => {
-    setPhase('complete'); // advance immediately
+    // Mark as completed THIS session BEFORE updating phase, so the guard
+    // in the second useEffect is already set when it fires.
+    completedThisSession.current = true;
+    setPhase('complete');
     supabase
       .from('profiles')
       .update({
@@ -72,7 +95,7 @@ const OnboardingOrchestrator: React.FC = () => {
       .eq('id', user.id)
       .then(({ error }) => {
         if (error) console.error('Error saving tour completion:', error);
-        refreshProfile().catch(() => {});
+        // No refreshProfile() — prevents stale data from resetting phase
       });
   };
 
