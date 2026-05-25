@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import QuizGame from './quizzes/QuizGame';
+import type { UnifiedFlashcard } from '@/data/unified-flashcards';
 
 // Personal Finance modules for topic selection
 const QUIZ_TOPICS = [
@@ -37,6 +38,8 @@ type Difficulty = 'easy' | 'medium' | 'hard';
 
 interface QuizzesSectionProps {
   onBack: () => void;
+  /** Optional filtered card pool passed down from section selector */
+  cards?: UnifiedFlashcard[];
 }
 
 interface TopicMastery {
@@ -47,7 +50,7 @@ interface TopicMastery {
   };
 }
 
-const QuizzesSection: React.FC<QuizzesSectionProps> = ({ onBack }) => {
+const QuizzesSection: React.FC<QuizzesSectionProps> = ({ onBack, cards }) => {
   const isMobile = useIsMobile();
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('medium');
@@ -116,6 +119,7 @@ const QuizzesSection: React.FC<QuizzesSectionProps> = ({ onBack }) => {
         difficulty={selectedDifficulty}
         onComplete={handleQuizComplete}
         onBack={() => setIsPlaying(false)}
+        cards={cards}
       />
     );
   }

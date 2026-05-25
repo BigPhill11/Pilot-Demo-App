@@ -26,6 +26,8 @@ export interface SimulatorMeter {
   unit?: string;
   color: 'green' | 'blue' | 'amber' | 'red' | 'purple';
   icon?: string;
+  /** PESTEL category hint (Political, Economic, Social, etc.) */
+  pestelCategory?: string;
 }
 
 export interface SimulatorDecisionOption {

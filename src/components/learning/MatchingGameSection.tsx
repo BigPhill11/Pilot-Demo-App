@@ -16,15 +16,17 @@ import {
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MatchingGame from './matching/MatchingGame';
+import type { UnifiedFlashcard } from '@/data/unified-flashcards';
 
 type TimeBet = 30 | 60 | 90 | 120;
 type Difficulty = 'beginner' | 'intermediate' | 'pro';
 
 interface MatchingGameSectionProps {
   onBack: () => void;
+  cards?: UnifiedFlashcard[];
 }
 
-const MatchingGameSection: React.FC<MatchingGameSectionProps> = ({ onBack }) => {
+const MatchingGameSection: React.FC<MatchingGameSectionProps> = ({ onBack, cards }) => {
   const isMobile = useIsMobile();
   const [selectedTime, setSelectedTime] = useState<TimeBet>(60);
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('beginner');
@@ -85,6 +87,7 @@ const MatchingGameSection: React.FC<MatchingGameSectionProps> = ({ onBack }) => 
         multiplier={timeConfig[selectedTime].multiplier}
         onComplete={handleGameComplete}
         onBack={() => setIsPlaying(false)}
+        cards={cards}
       />
     );
   }

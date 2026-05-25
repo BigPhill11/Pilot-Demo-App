@@ -24,6 +24,20 @@ const colorClasses: Record<string, { bg: string; fill: string; text: string }> =
   emerald: { bg: 'bg-emerald-100', fill: 'bg-emerald-500', text: 'text-emerald-700' },
 };
 
+const MeterLabel: React.FC<{ meter: SimulatorMeter; className?: string }> = ({
+  meter,
+  className = 'text-xs font-medium text-gray-600',
+}) => (
+  <span className={className} title={meter.pestelCategory}>
+    {meter.icon} {meter.label}
+    {meter.pestelCategory && (
+      <span className="block text-[10px] font-normal opacity-70 mt-0.5">
+        {meter.pestelCategory}
+      </span>
+    )}
+  </span>
+);
+
 const EconomicsSimMeters: React.FC<EconomicsSimMetersProps> = ({ meters, compact = false }) => {
   const getPercentage = (meter: SimulatorMeter): number => {
     const range = meter.max - meter.min;
@@ -57,9 +71,7 @@ const EconomicsSimMeters: React.FC<EconomicsSimMetersProps> = ({ meters, compact
               className={`p-2 rounded-lg ${colors.bg}`}
             >
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-medium text-gray-600">
-                  {meter.icon} {meter.label}
-                </span>
+                <MeterLabel meter={meter} />
                 <span className={`text-xs font-bold ${colors.text}`}>
                   {formatValue(meter)}
                 </span>
@@ -89,9 +101,7 @@ const EconomicsSimMeters: React.FC<EconomicsSimMetersProps> = ({ meters, compact
             return (
               <div key={meter.id}>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium text-gray-600">
-                    {meter.icon} {meter.label}
-                  </span>
+                  <MeterLabel meter={meter} className="text-sm font-medium text-gray-600" />
                   <span className={`text-sm font-bold ${colors.text}`}>
                     {formatValue(meter)}
                   </span>

@@ -42,6 +42,24 @@ const trackConfig: Record<EconomicsTrack, {
     textColor: 'text-teal-800',
     badgeColor: 'bg-teal-100 text-teal-700 border-teal-200',
   },
+  'businesses-competition': {
+    title: 'Businesses & Competition',
+    description: 'How companies create value, compete, and build sustainable advantages',
+    icon: '🏢',
+    gradient: 'from-amber-50 via-yellow-50 to-emerald-50',
+    borderColor: 'border-amber-200',
+    textColor: 'text-amber-900',
+    badgeColor: 'bg-amber-100 text-amber-800 border-amber-200',
+  },
+  'business-foundations': {
+    title: 'Business Foundations',
+    description: 'Marketing and management strategy for real-world business decisions',
+    icon: '🧭',
+    gradient: 'from-violet-50 via-purple-50 to-emerald-50',
+    borderColor: 'border-violet-200',
+    textColor: 'text-violet-900',
+    badgeColor: 'bg-violet-100 text-violet-800 border-violet-200',
+  },
 };
 
 const EconomicsTrackSection: React.FC<EconomicsTrackSectionProps> = ({
@@ -56,8 +74,8 @@ const EconomicsTrackSection: React.FC<EconomicsTrackSectionProps> = ({
   const config = trackConfig[track];
   const trackUnits = units.filter(u => u.track === track).sort((a, b) => a.order - b.order);
   
-  const completedUnits = trackUnits.filter(unit => 
-    getUnitStatus(unit.id, track, unit.unlockRequirements.previousUnitId) === 'completed'
+  const completedUnits = trackUnits.filter(unit =>
+    getUnitStatus(unit.id, track, unit.unlockRequirements?.previousUnitId) === 'completed'
   ).length;
   
   const progressPercent = trackUnits.length > 0 
@@ -91,7 +109,7 @@ const EconomicsTrackSection: React.FC<EconomicsTrackSectionProps> = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {trackUnits.map((unit) => {
-          const status = getUnitStatus(unit.id, track, unit.unlockRequirements.previousUnitId);
+          const status = getUnitStatus(unit.id, track, unit.unlockRequirements?.previousUnitId);
           const progress = getUnitProgress(unit.id, track);
           
           return (

@@ -9,14 +9,20 @@ import { simulate } from './simulate';
 import { calculateCatchUpEvents, generateEvent, calculateEventEffect, applyEventEffect } from './events';
 import { INITIAL_STATE, TIMING, getEconomicEventIntervalMs } from '@/config/gameConfig';
 import { supabase } from '@/integrations/supabase/client';
+import {
+  migrateLegacyStorageKey,
+  scopedStorageKey,
+  setActiveStorageUserId,
+} from '@/lib/userScopedStorage';
 
 // ============================================
 // CONSTANTS
 // ============================================
 
-const STORAGE_KEY = 'bamboo-empire-state';
-const MODULE_ID = 'bamboo_empire';
-const MODULE_TYPE = 'bamboo_empire';
+const STORAGE_KEY_BASE = 'bamboo-empire-state';
+
+let saveDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+let pendingSave: { state: PersistedGameState; userId?: string } | null = null;
 
 // ============================================
 // TYPE FOR SERIALIZABLE STATE
@@ -49,76 +55,44 @@ export interface PersistedGameState {
 // ============================================
 
 /**
- * Load game state from cloud (module_progress table)
+ * Load game state from cloud (bamboo_empire_state table)
  */
 async function loadFromCloud(userId: string): Promise<PersistedGameState | null> {
   try {
     const { data, error } = await supabase
-      .from('module_progress')
-      .select('detailed_progress')
+      .from('bamboo_empire_state' as any)
+      .select('game_state')
       .eq('user_id', userId)
-      .eq('module_id', MODULE_ID)
       .maybeSingle();
-    
-    if (error) {
-      console.error('Failed to load from cloud:', error);
-      return null;
+
+    if (error) return null;
+
+    if ((data as any)?.game_state && isValidGameState((data as any).game_state)) {
+      return (data as any).game_state as PersistedGameState;
     }
-    
-    if (data?.detailed_progress && isValidGameState(data.detailed_progress)) {
-      return data.detailed_progress as PersistedGameState;
-    }
-    
+
     return null;
-  } catch (error) {
-    console.error('Failed to load from cloud:', error);
+  } catch {
     return null;
   }
 }
 
 /**
- * Save game state to cloud (module_progress table)
+ * Save game state to cloud (bamboo_empire_state table)
  */
 async function saveToCloud(userId: string, state: PersistedGameState): Promise<void> {
   try {
-    const progressPercent = Math.min(100, Math.floor(state.xp / 100));
     const stateJson = JSON.parse(JSON.stringify(state));
-    
-    // Check if record exists
-    const { data: existing } = await supabase
-      .from('module_progress')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('module_id', MODULE_ID)
-      .maybeSingle();
-    
-    if (existing) {
-      // Update existing record
-      await supabase
-        .from('module_progress')
-        .update({
-          detailed_progress: stateJson,
-          progress_percentage: progressPercent,
-          last_accessed: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-        .eq('user_id', userId)
-        .eq('module_id', MODULE_ID);
-    } else {
-      // Insert new record
-      await supabase
-        .from('module_progress')
-        .insert([{
-          user_id: userId,
-          module_id: MODULE_ID,
-          module_type: MODULE_TYPE,
-          detailed_progress: stateJson,
-          progress_percentage: progressPercent,
-          last_accessed: new Date().toISOString(),
-        }]);
-    }
-  } catch (error) {
-    console.error('Failed to save to cloud:', error);
+
+    await supabase
+      .from('bamboo_empire_state' as any)
+      .upsert({
+        user_id: userId,
+        game_state: stateJson,
+        last_saved: new Date().toISOString(),
+      }, { onConflict: 'user_id' });
+  } catch {
+    // Non-critical — local state is still intact
   }
 }
 
@@ -126,20 +100,80 @@ async function saveToCloud(userId: string, state: PersistedGameState): Promise<v
 // SAVE FUNCTIONS
 // ============================================
 
+function getStorageKey(userId?: string | null): string {
+  return scopedStorageKey(STORAGE_KEY_BASE, userId);
+}
+
+function writeLocalState(state: PersistedGameState, userId?: string | null): void {
+  const serialized = JSON.stringify(state);
+  localStorage.setItem(getStorageKey(userId), serialized);
+}
+
 /**
- * Save game state to LocalStorage and optionally to cloud
+ * Save game state to user-scoped LocalStorage and optionally to cloud.
+ * Debounces cloud writes when `debounceMs` is provided.
  */
-export function saveGameState(state: PersistedGameState, userId?: string): void {
+export function saveGameState(
+  state: PersistedGameState,
+  userId?: string | null,
+  options?: { debounceMs?: number; immediate?: boolean }
+): void {
   try {
-    const serialized = JSON.stringify(state);
-    localStorage.setItem(STORAGE_KEY, serialized);
-    
-    // Also save to cloud if userId provided
-    if (userId) {
-      saveToCloud(userId, state);
+    writeLocalState(state, userId);
+
+    if (!userId) return;
+
+    const debounceMs = options?.debounceMs ?? 0;
+    const immediate = options?.immediate ?? debounceMs === 0;
+
+    if (immediate) {
+      void saveToCloud(userId, state);
+      return;
     }
+
+    pendingSave = { state, userId };
+    if (saveDebounceTimer) clearTimeout(saveDebounceTimer);
+    saveDebounceTimer = setTimeout(() => {
+      if (pendingSave?.userId) {
+        void saveToCloud(pendingSave.userId, pendingSave.state);
+      }
+      pendingSave = null;
+      saveDebounceTimer = null;
+    }, debounceMs);
   } catch (error) {
     console.error('Failed to save game state:', error);
+  }
+}
+
+/** Flush any pending debounced cloud save immediately. */
+export function flushGameStateSave(userId?: string | null): void {
+  const state = pendingSave?.state;
+  const uid = pendingSave?.userId ?? userId;
+
+  if (saveDebounceTimer) {
+    clearTimeout(saveDebounceTimer);
+    saveDebounceTimer = null;
+  }
+
+  if (state && uid) {
+    writeLocalState(state, uid);
+    void saveToCloud(uid, state);
+    pendingSave = null;
+    return;
+  }
+
+  if (uid) {
+    try {
+      const raw = localStorage.getItem(getStorageKey(uid));
+      if (raw) {
+        const parsed = JSON.parse(raw) as PersistedGameState;
+        if (isValidGameState(parsed)) {
+          void saveToCloud(uid, parsed);
+        }
+      }
+    } catch {
+      /* ignore */
+    }
   }
 }
 
@@ -177,48 +211,47 @@ export function extractPersistableState(state: GameState): PersistedGameState {
  * Load game state - tries cloud first if userId provided, then localStorage
  * Returns null if no saved state exists
  */
-export async function loadGameState(userId?: string): Promise<PersistedGameState | null> {
+export async function loadGameState(userId?: string | null): Promise<PersistedGameState | null> {
   try {
+    setActiveStorageUserId(userId ?? null);
+    migrateLegacyStorageKey(STORAGE_KEY_BASE, userId ?? null);
+
     // If user is logged in, try cloud first
     if (userId) {
       const cloudState = await loadFromCloud(userId);
       if (cloudState) {
-        // Also update localStorage with cloud state
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(cloudState));
+        writeLocalState(cloudState, userId);
         return cloudState;
       }
-      
-      // No cloud state - check localStorage and migrate if exists
-      const localState = loadFromLocalStorage();
+
+      const localState = loadFromLocalStorage(userId);
       if (localState) {
-        // Migrate localStorage to cloud
         await saveToCloud(userId, localState);
         return localState;
       }
-      
+
       return null;
     }
-    
-    // No userId - use localStorage only
-    return loadFromLocalStorage();
+
+    return loadFromLocalStorage(null);
   } catch (error) {
     console.error('Failed to load game state:', error);
-    return loadFromLocalStorage();
+    return loadFromLocalStorage(userId ?? null);
   }
 }
 
 /**
  * Load from localStorage only (sync helper)
  */
-function loadFromLocalStorage(): PersistedGameState | null {
+function loadFromLocalStorage(userId?: string | null): PersistedGameState | null {
   try {
-    const serialized = localStorage.getItem(STORAGE_KEY);
+    const serialized = localStorage.getItem(getStorageKey(userId));
     if (!serialized) {
       return null;
     }
 
     const parsed = JSON.parse(serialized);
-    
+
     if (!isValidGameState(parsed)) {
       console.warn('Invalid game state in localStorage, returning null');
       return null;
@@ -405,9 +438,10 @@ export function calculateOfflineProgress(
 /**
  * Clear saved game state from LocalStorage
  */
-export function clearGameState(): void {
+export function clearGameState(userId?: string | null): void {
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(getStorageKey(userId));
+    localStorage.removeItem(STORAGE_KEY_BASE);
   } catch (error) {
     console.error('Failed to clear game state:', error);
   }
@@ -450,14 +484,24 @@ export function createFreshState(): PersistedGameState {
  */
 export function setupAutoSave(
   getState: () => PersistedGameState,
+  userId?: string | null,
   intervalMs: number = TIMING.autoSaveIntervalMs
 ): () => void {
   const intervalId = setInterval(() => {
     const state = getState();
-    saveGameState(state);
+    saveGameState(state, userId, { immediate: true });
   }, intervalMs);
 
   return () => clearInterval(intervalId);
+}
+
+/** Interval + visibility flush autosave for empire game state. */
+export function setupGameStateAutosave(
+  getState: () => PersistedGameState,
+  userId?: string | null,
+  intervalMs: number = TIMING.autoSaveIntervalMs
+): () => void {
+  return setupAutoSave(getState, userId, intervalMs);
 }
 
 // ============================================
@@ -467,19 +511,20 @@ export function setupAutoSave(
 /**
  * Get storage usage info
  */
-export function getStorageInfo(): { used: number; key: string } {
-  const data = localStorage.getItem(STORAGE_KEY) || '';
+export function getStorageInfo(userId?: string | null): { used: number; key: string } {
+  const key = getStorageKey(userId);
+  const data = localStorage.getItem(key) || '';
   return {
     used: new Blob([data]).size,
-    key: STORAGE_KEY,
+    key,
   };
 }
 
 /**
  * Export game state as JSON string (for backup)
  */
-export function exportGameState(): string | null {
-  const state = loadGameState();
+export function exportGameState(userId?: string | null): string | null {
+  const state = loadFromLocalStorage(userId);
   if (!state) {
     return null;
   }
@@ -489,13 +534,13 @@ export function exportGameState(): string | null {
 /**
  * Import game state from JSON string
  */
-export function importGameState(json: string): boolean {
+export function importGameState(json: string, userId?: string | null): boolean {
   try {
     const state = JSON.parse(json);
     if (!isValidGameState(state)) {
       return false;
     }
-    saveGameState(state);
+    saveGameState(state, userId, { immediate: true });
     return true;
   } catch {
     return false;

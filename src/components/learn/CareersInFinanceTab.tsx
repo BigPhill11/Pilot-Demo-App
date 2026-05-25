@@ -1,12 +1,10 @@
 /**
  * Careers in Finance Tab
- * 
- * Redesigned with jungle pathway navigation:
+ *
+ * Jungle pathway navigation:
  * 1. CareerJungleMap (landing) -> 4 jungle categories
  * 2. JungleCategoryView -> careers within a category
- * 3. [Career]Journey -> individual career lessons
- * 
- * Uses Phil's Financials sage/emerald color palette.
+ * 3. PlaceholderCareerJourney -> module placeholders per career
  */
 
 import React, { useState, useEffect } from 'react';
@@ -14,17 +12,7 @@ import { FinanceCareerData, financeCareerData } from '@/data/finance-careers';
 import { JungleCategory } from '@/data/career-jungle-categories';
 import CareerJungleMap from './careers/CareerJungleMap';
 import JungleCategoryView from './careers/JungleCategoryView';
-import FinanceCareerJourney from './FinanceCareerJourney';
-import PrivateEquityJourney from './PrivateEquityJourney';
-import IBDivisionsHub from "./IBDivisionsHub";
-import VCJourney from './VCJourney';
-import { ibDivisions } from "@/data/ib-divisions";
-import AssetManagementJourney from './AssetManagementJourney';
-import WealthManagementJourneyNew from './wealth-management/WealthManagementJourneyNew';
-import CorporateFinanceJourney from './CorporateFinanceJourney';
-import HedgeFundJourney from './HedgeFundJourney';
-import ManagementConsultingJourney from './ManagementConsultingJourney';
-import InvestmentBankingJourney from './InvestmentBankingJourney';
+import PlaceholderCareerJourney from './careers/PlaceholderCareerJourney';
 import CareerPreferenceSurvey from './CareerPreferenceSurvey';
 import CareerRecommendations from './CareerRecommendations';
 import { recordPathTouched } from '@/hooks/useDashboardProgress';
@@ -32,7 +20,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-type ViewState = 'map' | 'jungle' | 'career' | 'survey' | 'recommendations' | 'ib-divisions';
+type ViewState = 'map' | 'jungle' | 'career' | 'survey' | 'recommendations';
 
 const CareersInFinanceTab = () => {
   const [viewState, setViewState] = useState<ViewState>('map');
@@ -80,11 +68,10 @@ const CareersInFinanceTab = () => {
     setViewState('map');
   };
 
-  // Survey view
   if (viewState === 'survey') {
     return (
       <div className="space-y-6">
-        <CareerPreferenceSurvey 
+        <CareerPreferenceSurvey
           onComplete={handleSurveyComplete}
           onSkip={handleBackToMap}
         />
@@ -92,7 +79,6 @@ const CareersInFinanceTab = () => {
     );
   }
 
-  // Recommendations view
   if (viewState === 'recommendations' && surveyResults) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
@@ -114,7 +100,7 @@ const CareersInFinanceTab = () => {
           </p>
         </div>
 
-        <CareerRecommendations 
+        <CareerRecommendations
           recommendations={surveyResults}
           careers={financeCareerData}
           onSelectCareer={handleSelectCareer}
@@ -131,63 +117,13 @@ const CareersInFinanceTab = () => {
     );
   }
 
-  // IB Divisions Hub
-  if (viewState === 'ib-divisions') {
+  if (viewState === 'career' && selectedCareer) {
+    const onBack = selectedJungle ? handleBackToJungle : handleBackToMap;
     return (
-      <IBDivisionsHub 
-        divisions={ibDivisions} 
-        onBack={() => {
-          setViewState('career');
-        }} 
-      />
+      <PlaceholderCareerJourney careerId={selectedCareer.id} onBack={onBack} />
     );
   }
 
-  // Career Journey views
-  if (viewState === 'career' && selectedCareer) {
-    const onBack = selectedJungle ? handleBackToJungle : handleBackToMap;
-
-    if (selectedCareer.id === 'management-consulting') {
-      return <ManagementConsultingJourney onBack={onBack} />;
-    }
-    
-    if (selectedCareer.id === 'venture-capital') {
-      return <VCJourney onBack={onBack} />;
-    }
-
-    if (selectedCareer.id === 'asset-management') {
-      return <AssetManagementJourney onBack={onBack} />;
-    }
-
-    if (selectedCareer.name === 'Wealth Management' || selectedCareer.id === 'wealth-management') {
-      return <WealthManagementJourneyNew onBack={onBack} />;
-    }
-
-    if (selectedCareer.id === 'corporate-finance') {
-      return <CorporateFinanceJourney onBack={onBack} />;
-    }
-
-    if (selectedCareer.id === 'hedge-funds') {
-      return <HedgeFundJourney onBack={onBack} />;
-    }
-    
-    if (selectedCareer.id === 'investment-banking') {
-      return (
-        <InvestmentBankingJourney 
-          onBack={onBack} 
-          onOpenDivisions={() => setViewState('ib-divisions')} 
-        />
-      );
-    }
-    
-    if (selectedCareer.id === 'private-equity') {
-      return <PrivateEquityJourney onBack={onBack} />;
-    }
-
-    return <FinanceCareerJourney career={selectedCareer} onBack={onBack} />;
-  }
-
-  // Jungle category view
   if (viewState === 'jungle' && selectedJungle) {
     return (
       <JungleCategoryView
@@ -198,7 +134,6 @@ const CareersInFinanceTab = () => {
     );
   }
 
-  // Default: Jungle Map landing page
   return (
     <CareerJungleMap
       onSelectJungle={handleSelectJungle}

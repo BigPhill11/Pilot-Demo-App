@@ -9,7 +9,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useUnifiedStreak } from '@/hooks/useUnifiedStreak';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useGameStore } from '@/store/useGameStore';
-import { LogOut, User, Flame, Moon, Sun, Menu, RotateCcw, Leaf, Sparkles } from 'lucide-react';
+import { LogOut, User, Flame, Moon, Sun, Menu, RotateCcw, Leaf, Sparkles, Shield } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -28,13 +28,17 @@ const Navbar = () => {
   const xp = useGameStore(state => state.xp);
   const initialized = useGameStore(state => state.initialized);
 
+  const ADMIN_EMAIL = 'phillipghead@gmail.com';
+  const isAdmin = user?.email === ADMIN_EMAIL;
+
   const navItems = [
     { label: 'Home', path: '/' },
     { label: 'About', path: '/about' },
     { label: 'Learn', path: '/learn' },
-    { label: 'Soft Skills', path: '/soft-skills' },
-    { label: 'Phil\'s Friends', path: '/phils-friends' },
+    { label: 'Career', path: '/career' },
+    { label: "Phil's Friends", path: '/phils-friends' },
     { label: 'Ask Phil', path: '/ask-phil' },
+    ...(isAdmin ? [{ label: 'Admin', path: '/admin' }] : []),
   ];
 
   const handleRestartTour = async () => {

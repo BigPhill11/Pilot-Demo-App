@@ -6,7 +6,7 @@
  */
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import {
   BUILDING_DEFINITIONS,
   type BuildingSize,
@@ -15,7 +15,13 @@ import {
   type GridPosition,
   type PlacedBuilding,
 } from '@/components/empire/buildings/BuildingTypes';
+import {
+  getBuildDurationMs,
+  getUpgradeDurationMs,
+  isTimedWorkComplete,
+} from '@/components/empire/buildings/buildingTiming';
 import { canPlaceBuildingAt, findNearestValidPlacement } from '@/components/empire/lib/grid';
+import { createUserScopedPersistStorage } from '@/lib/userScopedStorage';
 
 export type { PlacedBuilding } from '@/components/empire/buildings/BuildingTypes';
 
@@ -57,7 +63,13 @@ interface BaseLayoutActions {
   // Placement mode
   startPlacement: (item: PlacementItem) => void;
   cancelPlacement: () => void;
-  placeNewBuilding: (type: BuildingType, gridX: number, gridY: number, size?: BuildingSize) => void;
+  placeNewBuilding: (
+    type: BuildingType,
+    gridX: number,
+    gridY: number,
+    size?: BuildingSize,
+    playerXp?: number,
+  ) => void;
   placeNewDefense: (type: DefenseType, gridX: number, gridY: number) => void;
   
   // Edit mode
@@ -74,10 +86,13 @@ interface BaseLayoutActions {
   removeDefense: (id: string) => void;
   
   // Building management
-  upgradeBuilding: (id: string) => void;
+  upgradeBuilding: (id: string, playerXp: number) => boolean;
   updateBuildingStatus: (id: string, status: BuildingStatus) => void;
   updateBuildingCollection: (id: string, amount: number) => void;
   completeConstruction: (id: string) => void;
+  completeUpgrade: (id: string) => void;
+  completeTimedWork: (id: string) => void;
+  catchUpTimedWork: (now?: number) => void;
   
   // Drag state
   setDragging: (isDragging: boolean) => void;
@@ -120,8 +135,63 @@ const normalizeBuildingType = (rawType: unknown): BuildingType | null => {
   }
 };
 
+const finalizeTimedBuilding = (
+  building: PlacedBuilding,
+  now: number,
+): PlacedBuilding => {
+  if (
+    (building.status === 'constructing' || building.status === 'upgrading') &&
+    isTimedWorkComplete(building.constructionEndTime, now)
+  ) {
+    if (building.status === 'upgrading') {
+      return {
+        ...building,
+        level: building.level + 1,
+        status: 'active',
+        constructionStartTime: undefined,
+        constructionEndTime: undefined,
+        lastCollectionTime: building.lastCollectionTime ?? now,
+      };
+    }
+
+    return {
+      ...building,
+      status: 'active',
+      constructionStartTime: undefined,
+      constructionEndTime: undefined,
+      lastCollectionTime: now,
+    };
+  }
+
+  if (
+    (building.status === 'constructing' || building.status === 'upgrading') &&
+    (!building.constructionStartTime || !building.constructionEndTime)
+  ) {
+    if (building.status === 'upgrading') {
+      return {
+        ...building,
+        level: building.level + 1,
+        status: 'active',
+        constructionStartTime: undefined,
+        constructionEndTime: undefined,
+      };
+    }
+
+    return {
+      ...building,
+      status: 'active',
+      constructionStartTime: undefined,
+      constructionEndTime: undefined,
+      lastCollectionTime: building.lastCollectionTime ?? now,
+    };
+  }
+
+  return building;
+};
+
 const normalizePersistedBuildings = (rawBuildings: unknown): PlacedBuilding[] => {
   if (!Array.isArray(rawBuildings)) return [];
+  const now = Date.now();
 
   return rawBuildings
     .reduce<PlacedBuilding[]>((normalizedBuildings, item, index) => {
@@ -158,19 +228,24 @@ const normalizePersistedBuildings = (rawBuildings: unknown): PlacedBuilding[] =>
         ? Math.floor(record.level)
         : 1;
 
-      normalizedBuildings.push({
-        id: typeof record.id === 'string' ? record.id : `migrated_building_${normalizedType}_${Date.now()}_${index}`,
-        type: normalizedType,
-        level,
-        position: normalizedPosition,
-        size: definition.size,
-        status: normalizedStatus,
-        constructionStartTime: typeof record.constructionStartTime === 'number' ? record.constructionStartTime : undefined,
-        constructionEndTime: typeof record.constructionEndTime === 'number' ? record.constructionEndTime : undefined,
-        lastCollectionTime: typeof record.lastCollectionTime === 'number' ? record.lastCollectionTime : undefined,
-        pendingCollection: typeof record.pendingCollection === 'number' ? record.pendingCollection : 0,
-        placedAt: typeof record.placedAt === 'number' ? record.placedAt : Date.now(),
-      });
+      const normalizedBuilding = finalizeTimedBuilding(
+        {
+          id: typeof record.id === 'string' ? record.id : `migrated_building_${normalizedType}_${Date.now()}_${index}`,
+          type: normalizedType,
+          level,
+          position: normalizedPosition,
+          size: definition.size,
+          status: normalizedStatus,
+          constructionStartTime: typeof record.constructionStartTime === 'number' ? record.constructionStartTime : undefined,
+          constructionEndTime: typeof record.constructionEndTime === 'number' ? record.constructionEndTime : undefined,
+          lastCollectionTime: typeof record.lastCollectionTime === 'number' ? record.lastCollectionTime : undefined,
+          pendingCollection: typeof record.pendingCollection === 'number' ? record.pendingCollection : 0,
+          placedAt: typeof record.placedAt === 'number' ? record.placedAt : Date.now(),
+        },
+        now,
+      );
+
+      normalizedBuildings.push(normalizedBuilding);
 
       return normalizedBuildings;
     }, []);
@@ -213,12 +288,12 @@ export const useBaseLayoutStore = create<BaseLayoutStore>()(
         });
       },
 
-      placeNewBuilding: (type, gridX, gridY, size = BUILDING_DEFINITIONS[type].size) => {
+      placeNewBuilding: (type, gridX, gridY, size = BUILDING_DEFINITIONS[type].size, playerXp = 0) => {
         const state = get();
         if (!state.canPlaceAt(gridX, gridY, undefined, size)) return;
 
         const now = Date.now();
-        const constructionTime = BUILDING_DEFINITIONS[type].constructionTime * 1000;
+        const constructionTime = getBuildDurationMs(type, 1, playerXp);
 
         const newBuilding: PlacedBuilding = {
           id: `building_${type}_${Date.now()}`,
@@ -333,12 +408,32 @@ export const useBaseLayoutStore = create<BaseLayoutStore>()(
       },
 
       // Building management
-      upgradeBuilding: (id) => {
-        set((state) => ({
+      upgradeBuilding: (id, playerXp) => {
+        const state = get();
+        const building = state.buildings.find((b) => b.id === id);
+        if (!building) return false;
+        if (building.status !== 'active') return false;
+
+        const def = BUILDING_DEFINITIONS[building.type];
+        if (building.level >= def.maxLevel) return false;
+
+        const now = Date.now();
+        const upgradeDuration = getUpgradeDurationMs(building.type, building.level, playerXp);
+
+        set({
           buildings: state.buildings.map((b) =>
-            b.id === id ? { ...b, level: b.level + 1 } : b
+            b.id === id
+              ? {
+                  ...b,
+                  status: 'upgrading' as BuildingStatus,
+                  constructionStartTime: now,
+                  constructionEndTime: now + upgradeDuration,
+                }
+              : b,
           ),
-        }));
+        });
+
+        return true;
       },
 
       updateBuildingStatus: (id, status) => {
@@ -363,9 +458,49 @@ export const useBaseLayoutStore = create<BaseLayoutStore>()(
         set((state) => ({
           buildings: state.buildings.map((b) =>
             b.id === id
-              ? { ...b, status: 'active' as BuildingStatus, lastCollectionTime: Date.now() }
-              : b
+              ? {
+                  ...b,
+                  status: 'active' as BuildingStatus,
+                  constructionStartTime: undefined,
+                  constructionEndTime: undefined,
+                  lastCollectionTime: Date.now(),
+                }
+              : b,
           ),
+        }));
+      },
+
+      completeUpgrade: (id) => {
+        set((state) => ({
+          buildings: state.buildings.map((b) =>
+            b.id === id
+              ? {
+                  ...b,
+                  level: b.level + 1,
+                  status: 'active' as BuildingStatus,
+                  constructionStartTime: undefined,
+                  constructionEndTime: undefined,
+                }
+              : b,
+          ),
+        }));
+      },
+
+      completeTimedWork: (id) => {
+        const building = get().buildings.find((b) => b.id === id);
+        if (!building) return;
+        if (building.status === 'upgrading') {
+          get().completeUpgrade(id);
+          return;
+        }
+        if (building.status === 'constructing') {
+          get().completeConstruction(id);
+        }
+      },
+
+      catchUpTimedWork: (now = Date.now()) => {
+        set((state) => ({
+          buildings: state.buildings.map((building) => finalizeTimedBuilding(building, now)),
         }));
       },
 
@@ -424,7 +559,8 @@ export const useBaseLayoutStore = create<BaseLayoutStore>()(
     }),
     {
       name: 'bamboo-empire-layout',
-      version: 3,
+      version: 4,
+      storage: createJSONStorage(() => createUserScopedPersistStorage()),
       migrate: (persistedState) => {
         const stateRecord = (persistedState || {}) as Record<string, unknown>;
         return {

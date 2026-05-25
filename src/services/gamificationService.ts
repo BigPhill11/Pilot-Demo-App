@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { XpSource } from '@/lib/coin-conversion';
 import { useGameStore } from '@/store/useGameStore';
 import { awardPlatformResources, PlatformActivitySource } from '@/hooks/usePlatformIntegration';
+import { ACHIEVEMENTS } from '@/lib/achievements-catalog';
 
 export enum GamificationSource {
   MODULE_COMPLETION = 'module_completion',
@@ -189,11 +190,100 @@ export class GamificationService {
   }
 
   /**
-   * Check and unlock new achievements
+   * Check user progress against every achievement and unlock any newly met ones.
    */
   private async checkAchievements(): Promise<string[]> {
-    // TODO: Implement achievement checking logic here
-    return [];
+    if (!this.userId) return [];
+
+    try {
+      // Fetch data needed for all achievement checks in parallel
+      const [
+        { data: alreadyUnlocked },
+        { data: profile },
+        { data: coins },
+        { data: purchases },
+        { data: transactions },
+      ] = await Promise.all([
+        supabase.from('user_achievements' as any).select('achievement_id').eq('user_id', this.userId),
+        supabase.from('profiles').select('total_points, current_streak').eq('id', this.userId).maybeSingle(),
+        supabase.from('user_bamboo_coins' as any).select('lifetime_earned, total_spent').eq('user_id', this.userId).maybeSingle(),
+        supabase.from('shop_purchases' as any).select('id').eq('user_id', this.userId),
+        supabase.from('xp_transactions' as any).select('source').eq('user_id', this.userId),
+      ]);
+
+      const unlockedIds = new Set<string>(((alreadyUnlocked as any) ?? []).map((r: any) => r.achievement_id));
+      const totalXp = (profile as any)?.total_points ?? 0;
+      const streak = (profile as any)?.current_streak ?? 0;
+      const lifetimeCoins = (coins as any)?.lifetime_earned ?? 0;
+      const totalSpent = (coins as any)?.total_spent ?? 0;
+      const purchaseCount = (purchases as any)?.length ?? 0;
+      const txList: any[] = (transactions as any) ?? [];
+      const quizCount = txList.filter((t) => t.source === 'quiz' || t.source === 'quiz_correct').length;
+      const moduleCount = txList.filter((t) => t.source === 'module' || t.source === 'module_completion').length;
+      const storyCount = txList.filter((t) => t.source === 'story' || t.source === 'story_completion').length;
+      const alreadyUnlockedCount = unlockedIds.size;
+
+      const getProgress = (id: string): number => {
+        switch (id) {
+          case 'first_steps':
+          case 'knowledge_seeker':
+          case 'wisdom_warrior':
+          case 'enlightened_master':
+          case 'legend_ascended':
+            return totalXp;
+          case 'daily_dedication':
+          case 'week_warrior':
+          case 'unstoppable':
+          case 'eternal_flame':
+            return streak;
+          case 'coin_collector':
+          case 'treasure_hunter':
+            return lifetimeCoins;
+          case 'big_spender':
+            return totalSpent;
+          case 'first_purchase':
+          case 'shop_collector':
+            return purchaseCount;
+          case 'quiz_novice':
+          case 'quiz_expert':
+            return quizCount;
+          case 'module_complete':
+            return moduleCount;
+          case 'story_reader':
+            return storyCount;
+          case 'achievement_hunter':
+          case 'completionist':
+          case 'legend':
+            return alreadyUnlockedCount;
+          default:
+            return 0;
+        }
+      };
+
+      const newlyUnlocked: string[] = [];
+
+      for (const achievement of ACHIEVEMENTS) {
+        if (unlockedIds.has(achievement.id)) continue;
+        if (getProgress(achievement.id) >= achievement.requirement) {
+          const { error } = await supabase.from('user_achievements' as any).insert({
+            user_id: this.userId,
+            achievement_id: achievement.id,
+            unlocked_at: new Date().toISOString(),
+            claimed: false,
+          });
+          if (!error) {
+            newlyUnlocked.push(achievement.id);
+            toast.success(`🎉 Achievement Unlocked: ${achievement.name}`, {
+              description: `${achievement.icon} Claim ${achievement.rewardCoins} coins in your profile!`,
+            });
+          }
+        }
+      }
+
+      return newlyUnlocked;
+    } catch (error) {
+      return [];
+    }
   }
 
   /**

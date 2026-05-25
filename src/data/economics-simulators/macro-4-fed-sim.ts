@@ -24,10 +24,10 @@ export const macro4FedSim: SimulatorConfig = {
   philIntro: "The Fed is like the economy's thermostat! Too hot (inflation)? Raise rates to cool it down. Too cold (recession)? Lower rates to warm it up. But there's a lag - your actions today affect the economy 6-18 months from now. No pressure!",
   
   initialMeters: [
-    { id: 'fedRate', label: 'Fed Funds Rate', value: 2.5, min: 0, max: 10, unit: '%', color: 'green', icon: '📊' },
-    { id: 'inflation', label: 'Inflation Rate', value: 2.5, min: 0, max: 10, unit: '%', color: 'red', icon: '📈' },
-    { id: 'unemployment', label: 'Unemployment Rate', value: 4.5, min: 2, max: 12, unit: '%', color: 'blue', icon: '👷' },
-    { id: 'credibility', label: 'Fed Credibility', value: 70, min: 0, max: 100, unit: '%', color: 'purple', icon: '🎯' },
+    { id: 'fedRate', label: 'Fed Funds Rate', value: 2.5, min: 0, max: 10, unit: '%', color: 'green', icon: '📊', pestelCategory: 'Economic (E)' },
+    { id: 'inflation', label: 'Inflation Rate', value: 2.5, min: 0, max: 10, unit: '%', color: 'red', icon: '📈', pestelCategory: 'Economic (E)' },
+    { id: 'unemployment', label: 'Unemployment Rate', value: 4.5, min: 2, max: 12, unit: '%', color: 'blue', icon: '👷', pestelCategory: 'Social (S)' },
+    { id: 'credibility', label: 'Fed Credibility', value: 70, min: 0, max: 100, unit: '%', color: 'purple', icon: '🎯', pestelCategory: 'Political (P)' },
   ],
   
   rounds: [

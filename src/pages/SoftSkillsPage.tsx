@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -16,8 +17,9 @@ import { useSoftSkillsProgress } from '@/hooks/useSoftSkillsProgress';
 
 const SoftSkillsPage = () => {
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
-  
+
   // Use the new progress tracking hook
   const { getCourseProgress, refreshProgress } = useSoftSkillsProgress();
 
@@ -50,6 +52,14 @@ const SoftSkillsPage = () => {
     },
     enabled: !!user
   });
+
+  // Deep-link: auto-open a course by category when navigated from Ask Phil
+  useEffect(() => {
+    const categoryParam = searchParams.get('category');
+    if (!categoryParam || !courses || courses.length === 0 || selectedCourse) return;
+    const match = courses.find((c: any) => c.category === categoryParam);
+    if (match) setSelectedCourse(match);
+  }, [courses, searchParams, selectedCourse]);
 
   // If a course is selected, show the detail view
   if (selectedCourse) {

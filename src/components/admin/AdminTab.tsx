@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Shield, BookOpen, CheckCircle, RotateCcw, Settings, Users, Target } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { moduleRegistry, getAllModules } from '@/data/ModuleRegistry';
+import ClipProductionBoard from '@/components/phils-friends/ClipProductionBoard';
 
 interface LessonCompletion {
   id: string;
@@ -223,6 +224,8 @@ const AdminTab = () => {
           </div>
         </CardContent>
       </Card>
+
+      <ClipProductionBoard />
 
       {/* All Learning Modules Overview */}
       <Card>

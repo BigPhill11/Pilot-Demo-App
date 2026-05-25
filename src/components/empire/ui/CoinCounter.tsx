@@ -10,6 +10,7 @@ import {
   CreditCard,
   History,
   ChevronLeft,
+  GraduationCap,
 } from 'lucide-react';
 import { useGameStore } from '@/store/useGameStore';
 import { useCreditStore } from '@/store/useCreditStore';
@@ -19,6 +20,7 @@ export interface CoinCounterProps {
   onOpenCredit?: () => void;
   onOpenEventHistory?: () => void;
   onGoHome?: () => void;
+  onStartTutorial?: () => void;
   eventHistoryCount?: number;
   creditOverdue?: boolean;
 }
@@ -28,6 +30,7 @@ const CoinCounter: React.FC<CoinCounterProps> = ({
   onOpenCredit,
   onOpenEventHistory,
   onGoHome,
+  onStartTutorial,
   eventHistoryCount = 0,
   creditOverdue = false,
 }) => {
@@ -168,6 +171,18 @@ const CoinCounter: React.FC<CoinCounterProps> = ({
       </AnimatePresence>
 
       <div className="flex items-center gap-1.5 sm:gap-2 ml-auto flex-shrink-0 flex-wrap justify-end max-[380px]:max-w-[calc(100vw-8rem)]">
+        {onStartTutorial && (
+          <button
+            type="button"
+            data-tutorial="tutorial-replay-button"
+            onClick={onStartTutorial}
+            className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-white/90 text-emerald-700 shadow-lg backdrop-blur-sm dark:bg-gray-800/90 dark:text-emerald-300 hover:bg-white dark:hover:bg-gray-700 transition-colors touch-manipulation"
+            aria-label="Tutorial"
+            title="Tutorial"
+          >
+            <GraduationCap className="h-4 w-4 sm:h-5 sm:w-5" />
+          </button>
+        )}
         <div
           data-tutorial="productivity-indicator"
           className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white/85 dark:bg-gray-800/90 shadow-md backdrop-blur-sm border border-emerald-200/50 dark:border-emerald-800/40"

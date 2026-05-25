@@ -24,10 +24,10 @@ export const macro3InflationSim: SimulatorConfig = {
   philIntro: "Inflation is like a slow leak in your wallet! Every year, the same dollars buy a little less. A 3% inflation rate means your $100 only buys $97 worth of stuff next year. Let's understand why this happens and what to do about it!",
   
   initialMeters: [
-    { id: 'inflation', label: 'Inflation Rate', value: 3, min: -2, max: 15, unit: '%', color: 'red', icon: '📈' },
-    { id: 'purchasing', label: 'Purchasing Power', value: 100, min: 50, max: 150, unit: 'idx', color: 'green', icon: '🛒' },
-    { id: 'expectations', label: 'Inflation Expectations', value: 3, min: 0, max: 10, unit: '%', color: 'amber', icon: '🔮' },
-    { id: 'stability', label: 'Economic Stability', value: 70, min: 0, max: 100, unit: '%', color: 'blue', icon: '⚖️' },
+    { id: 'inflation', label: 'Inflation Rate', value: 3, min: -2, max: 15, unit: '%', color: 'red', icon: '📈', pestelCategory: 'Economic (E)' },
+    { id: 'purchasing', label: 'Purchasing Power', value: 100, min: 50, max: 150, unit: 'idx', color: 'green', icon: '🛒', pestelCategory: 'Economic (E)' },
+    { id: 'expectations', label: 'Inflation Expectations', value: 3, min: 0, max: 10, unit: '%', color: 'amber', icon: '🔮', pestelCategory: 'Social (S)' },
+    { id: 'stability', label: 'Economic Stability', value: 70, min: 0, max: 100, unit: '%', color: 'blue', icon: '⚖️', pestelCategory: 'Political (P)' },
   ],
   
   rounds: [

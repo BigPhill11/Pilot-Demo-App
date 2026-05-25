@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { usePlatformIntegration } from '@/hooks/usePlatformIntegration';
-import { getAllUnifiedFlashcards } from '@/data/unified-flashcards';
+import { getAllUnifiedFlashcards, type UnifiedFlashcard } from '@/data/unified-flashcards';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 
@@ -26,6 +26,8 @@ interface MatchingGameProps {
   multiplier: number;
   onComplete: (won: boolean, timeRemaining: number, comboBonus: number) => void;
   onBack: () => void;
+  /** Optional filtered card pool — defaults to all unlocked cards */
+  cards?: UnifiedFlashcard[];
 }
 
 interface MatchCard {
@@ -37,12 +39,13 @@ interface MatchCard {
   isMatched: boolean;
 }
 
-const MatchingGame: React.FC<MatchingGameProps> = ({ 
-  timeLimit, 
-  pairCount, 
+const MatchingGame: React.FC<MatchingGameProps> = ({
+  timeLimit,
+  pairCount,
   multiplier,
-  onComplete, 
-  onBack 
+  onComplete,
+  onBack,
+  cards: externalCards,
 }) => {
   const isMobile = useIsMobile();
   const { awardResources } = usePlatformIntegration();
@@ -59,7 +62,10 @@ const MatchingGame: React.FC<MatchingGameProps> = ({
 
   // Initialize cards
   useEffect(() => {
-    const flashcards = getAllUnifiedFlashcards()
+    const pool = (externalCards && externalCards.length >= pairCount)
+      ? externalCards
+      : getAllUnifiedFlashcards().filter((c) => c.sourceModule === 'personal-finance');
+    const flashcards = [...pool]
       .sort(() => Math.random() - 0.5)
       .slice(0, pairCount);
     

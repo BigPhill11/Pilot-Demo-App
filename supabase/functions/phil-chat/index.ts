@@ -1,6 +1,6 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -8,15 +8,36 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Verify caller is an authenticated user
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader) {
+    return new Response(
+      JSON.stringify({ error: 'Missing Authorization header' }),
+      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+  const supabaseUser = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: authHeader } },
+  });
+
+  const { data: { user }, error: userError } = await supabaseUser.auth.getUser();
+  if (userError || !user) {
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized' }),
+      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
   try {
     const { message } = await req.json();
-    
-    // Input validation
+
     if (!message || typeof message !== 'string') {
       return new Response(
         JSON.stringify({ error: 'Message is required and must be a string' }),
@@ -34,15 +55,13 @@ serve(async (req) => {
     const sanitizedMessage = message.trim().slice(0, 1000);
 
     const perplexityApiKey = Deno.env.get('PERPLEXITY_API_KEY');
-    
+
     if (!perplexityApiKey) {
       return new Response(
         JSON.stringify({ error: 'Perplexity API key not configured' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    console.log('Calling Perplexity API for message:', message);
 
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
@@ -55,7 +74,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: "You are Phil, a friendly financial expert panda. Your goal is to provide a concise, 2-sentence answer to the user's question. After the answer, if it's relevant, add a link to either the 'Learn' or 'Paper Trading' page within the app. For example, you can say 'You can learn more in our <a href=\"/learn\" class=\"text-primary underline\">Learn section</a>.' or 'Try this out in our <a href=\"/paper-trading\" class=\"text-primary underline\">Paper Trading simulation</a>.'. Do not answer in more than two sentences."
+            content: "You are Phil, a friendly financial expert panda. Your goal is to provide a concise, 2-sentence answer to the user's question. After the answer, if it's relevant, add a link to either the 'Learn' page within the app. For example, you can say 'You can learn more in our <a href=\"/learn\" class=\"text-primary underline\">Learn section</a>.'. Do not answer in more than two sentences."
           },
           {
             role: 'user',
@@ -69,7 +88,6 @@ serve(async (req) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('Perplexity API error:', errorData);
       return new Response(
         JSON.stringify({ error: errorData.error?.message || 'Failed to get response from Perplexity' }),
         { status: response.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -78,8 +96,6 @@ serve(async (req) => {
 
     const data = await response.json();
     const philResponse = data.choices[0].message.content;
-
-    console.log('Phil response:', philResponse);
 
     return new Response(
       JSON.stringify({ response: philResponse }),

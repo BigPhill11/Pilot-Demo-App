@@ -35,6 +35,8 @@ interface PandaJumpGameProps {
   onComplete: (altitude: number, earnedPowerUps: PowerUpInventory) => void;
   onBack: () => void;
   initialPowerUps: PowerUpInventory;
+  /** Optional filtered card pool — defaults to personal-finance cards */
+  cards?: UnifiedFlashcard[];
 }
 
 interface GameQuestion {
@@ -85,11 +87,12 @@ const TRUE_FALSE = [
   { statement: "Roth IRA contributions are made with after-tax dollars", answer: true }
 ];
 
-const PandaJumpGame: React.FC<PandaJumpGameProps> = ({ 
-  questionType, 
-  onComplete, 
+const PandaJumpGame: React.FC<PandaJumpGameProps> = ({
+  questionType,
+  onComplete,
   onBack,
-  initialPowerUps 
+  initialPowerUps,
+  cards: externalCards,
 }) => {
   const isMobile = useIsMobile();
   const { awardResources } = usePlatformIntegration();
@@ -109,9 +112,13 @@ const PandaJumpGame: React.FC<PandaJumpGameProps> = ({
 
   // Load flashcards
   useEffect(() => {
-    const cards = getAllUnifiedFlashcards().sort(() => Math.random() - 0.5);
+    const pool = (externalCards && externalCards.length > 0)
+      ? externalCards
+      : getAllUnifiedFlashcards().filter((c) => c.sourceModule === 'personal-finance');
+    const cards = [...pool].sort(() => Math.random() - 0.5);
     setFlashcards(cards);
     generateQuestion(cards);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const generateQuestion = useCallback((cards: UnifiedFlashcard[]) => {

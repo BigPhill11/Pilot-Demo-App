@@ -175,3 +175,25 @@
 .rotate-y-180 {
   transform: rotateY(180deg);
 }
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes reel-ken-burns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.06);
+  }
+}
+
+.animate-reel-ken-burns {
+  animation: reel-ken-burns 8s ease-out forwards;
+}

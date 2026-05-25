@@ -9,6 +9,8 @@ import { usePlatformIntegration } from '@/hooks/usePlatformIntegration';
 import { getModuleById } from '@/data/personal-finance/modules';
 import { getBossGameForModule } from '@/data/personal-finance/boss-games';
 import { recordPathTouched } from '@/hooks/useDashboardProgress';
+import { consumeDashboardDeepLink } from '@/lib/dashboardDeepLink';
+import { emitDailyGoalEvent } from '@/lib/dailyGoalEvents';
 import { Loader2 } from 'lucide-react';
 type ViewState = 'tree' | 'module' | 'lesson' | 'boss-game';
 const PersonalFinanceTab: React.FC = () => {
@@ -30,6 +32,20 @@ const PersonalFinanceTab: React.FC = () => {
   useEffect(() => {
     recordPathTouched('personalFinance');
   }, []);
+
+  // Deep-link from dashboard daily goals
+  useEffect(() => {
+    if (loading) return;
+    const intent = consumeDashboardDeepLink();
+    if (!intent?.moduleId || intent.targetTab !== 'personal-finance') return;
+    setActiveModuleId(intent.moduleId);
+    if (intent.lessonIndex !== undefined) {
+      setActiveLessonIndex(intent.lessonIndex);
+      setViewState('lesson');
+    } else {
+      setViewState('module');
+    }
+  }, [loading]);
   const handleModuleClick = (moduleId: string) => {
     setActiveModuleId(moduleId);
     setViewState('module');
@@ -57,6 +73,13 @@ const PersonalFinanceTab: React.FC = () => {
       const lesson = module?.lessons[activeLessonIndex];
       if (lesson) {
         completeLesson(activeModuleId, lesson.id, xpEarned, coinsEarned);
+        emitDailyGoalEvent({
+          type: 'lesson',
+          pathId: 'personal-finance',
+          moduleId: activeModuleId,
+          lessonId: lesson.id,
+        });
+        emitDailyGoalEvent({ type: 'any_activity' });
 
         // Award to Bamboo Empire game
         // XP is converted at 1:5 ratio (game XP is smaller scale)

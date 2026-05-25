@@ -56,7 +56,9 @@ function getRewardForActivity(source: PlatformActivitySource): PlatformReward {
       return { bamboo: 20, xp: 4 };
     
     case 'flashcard_mastery':
-      return { bamboo: 15, xp: 3 };
+      // Per-card mastery is intentionally small; milestone bonuses are awarded
+      // separately via custom rewards in SwipeableStudyDeck.
+      return { bamboo: PLATFORM_REWARDS.cardMastered, xp: PLATFORM_REWARDS.cardMasteredXp };
     
     case 'daily_login':
       return { bamboo: 50, xp: 5 };
@@ -248,11 +250,81 @@ export function usePlatformIntegration() {
     return awardActivityCompletion('achievement', customReward);
   }, [awardActivityCompletion]);
 
+  /**
+   * Check whether the user has already hit the daily flashcard reward cap.
+   * Returns how much bamboo / XP they've already earned today.
+   */
+  const getFlashcardDailyUsage = useCallback((): { bamboo: number; xp: number } => {
+    try {
+      const key = `flashcard_daily_${new Date().toISOString().slice(0, 10)}`;
+      const raw = localStorage.getItem(key);
+      if (raw) return JSON.parse(raw) as { bamboo: number; xp: number };
+    } catch {
+      /* ignore */
+    }
+    return { bamboo: 0, xp: 0 };
+  }, []);
+
+  /**
+   * Award flashcard mastery rewards subject to the daily cap.
+   * Returns the actually-awarded amounts (may be lower than requested due to cap).
+   * Shows a "cap reached" toast when the cap fires for the first time today.
+   */
+  const awardFlashcardMastery = useCallback(
+    (customBamboo?: number, customXp?: number): { bamboo: number; xp: number } => {
+      const cap = PLATFORM_REWARDS.flashcardDailyCap ?? 40;
+      const capXp = PLATFORM_REWARDS.flashcardDailyCapXp ?? 8;
+      const key = `flashcard_daily_${new Date().toISOString().slice(0, 10)}`;
+      const usage = getFlashcardDailyUsage();
+
+      const wantBamboo = customBamboo ?? PLATFORM_REWARDS.cardMastered;
+      const wantXp = customXp ?? PLATFORM_REWARDS.cardMasteredXp;
+
+      const allowBamboo = Math.max(0, Math.min(wantBamboo, cap - usage.bamboo));
+      const allowXp = Math.max(0, Math.min(wantXp, capXp - usage.xp));
+
+      const hitCap = allowBamboo === 0 && allowXp === 0 && (wantBamboo > 0 || wantXp > 0);
+      const wasUnderCap = usage.bamboo < cap || usage.xp < capXp;
+
+      if (hitCap && wasUnderCap) {
+        toast.info('Daily study cap reached — rewards resume tomorrow 🎋', {
+          duration: 4000,
+        });
+      }
+
+      if (allowBamboo === 0 && allowXp === 0) {
+        return { bamboo: 0, xp: 0 };
+      }
+
+      const result = awardActivityCompletion(
+        'flashcard_mastery',
+        { bamboo: allowBamboo, xp: allowXp },
+        false
+      );
+
+      // Update daily usage
+      try {
+        localStorage.setItem(
+          key,
+          JSON.stringify({
+            bamboo: usage.bamboo + allowBamboo,
+            xp: usage.xp + allowXp,
+          })
+        );
+      } catch {
+        /* ignore */
+      }
+
+      return result as { bamboo: number; xp: number };
+    },
+    [awardActivityCompletion, getFlashcardDailyUsage]
+  );
+
   return {
     // Core methods
     awardActivityCompletion,
     awardResources,
-    
+
     // Convenience methods
     completeLesson,
     completeQuiz,
@@ -260,10 +332,12 @@ export function usePlatformIntegration() {
     completeGame,
     awardDailyLogin,
     awardAchievement,
-    
+    awardFlashcardMastery,
+    getFlashcardDailyUsage,
+
     // State
     isInitialized: initialized,
-    
+
     // Streak info
     currentStreak,
     streakMultiplier,

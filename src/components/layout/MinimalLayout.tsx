@@ -15,6 +15,7 @@ import { useAskPhilUi } from '@/contexts/AskPhilUiContext';
 import { usePersonalDashboard } from '@/contexts/PersonalDashboardContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useUnifiedStreak } from '@/hooks/useUnifiedStreak';
+import { useDailyTimeGoal } from '@/hooks/useDailyTimeGoal';
 import { LogOut, User, Flame, Moon, Sun, MessageCircle, BarChart2 } from 'lucide-react';
 interface MinimalLayoutProps {
   children: React.ReactNode;
@@ -40,9 +41,14 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
   const { isOpen: isDashboardOpen, openDashboard, closeDashboard } = usePersonalDashboard();
   const navigate = useNavigate();
   const isGuest = !user;
+  useDailyTimeGoal({ trackActivity: true });
 
   const handleDashboardNavigate = (tab: string) => {
     closeDashboard();
+    if (tab.startsWith('/')) {
+      navigate(tab);
+      return;
+    }
     navigate(`/learn?tab=${tab}`);
   };
   const getLevelBadgeColor = (level: string) => {
@@ -81,6 +87,7 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
                 onClick={openDashboard}
                 className="gap-1.5"
                 aria-label="My Progress"
+                data-tutorial="app-header-my-progress"
               >
                 <BarChart2 className="h-4 w-4" />
                 <span className="hidden sm:inline text-sm">My Progress</span>
@@ -93,6 +100,7 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
                 onClick={openAskPhil}
                 className="gap-1.5"
                 aria-label="Ask Phil"
+                data-tutorial="app-header-ask-phil"
               >
                 <MessageCircle className="h-4 w-4" />
                 <span className="hidden sm:inline text-sm">Ask Phil</span>
@@ -109,7 +117,7 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
               {/* Authenticated User */}
               {user && profile && <>
                   {/* Streak Display */}
-                  <div className="flex items-center space-x-1 text-sm">
+                  <div data-tutorial="app-header-streak" className="flex items-center space-x-1 text-sm">
                     <Flame className="h-4 w-4 text-orange-500" />
                     <span className="font-medium">{currentStreak}</span>
                     {streakMultiplier > 1 && <span className="text-xs text-orange-600">({streakMultiplier.toFixed(1)}x)</span>}

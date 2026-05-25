@@ -1,14 +1,19 @@
 /**
  * Unified Flashcard Data Source
- * 
- * Aggregates flashcards from all learning modules:
- * - Personal Finance (from lesson flashcards)
- * - Careers in Finance
- * - Company Knowledge (Market Intelligence)
+ *
+ * Thin aggregator over lesson sources — no hardcoded card lists.
+ *  - Personal Finance  → lesson.flashcards[] in every PF module
+ *  - Market Intelligence → MI lesson flashcards via miLessonToUnifiedFlashcards()
+ *  - Careers & Finance   → extractCareersFlashcards()
  */
 
 import { incomeModule, financialPlanningModule, savingModule, investingModule, insuranceModule, taxesModule, creditDebtModule, careerIncomeModule, wealthFundamentalsModule } from './personal-finance/modules';
-import { PersonalFinanceFlashcard } from '@/types/personal-finance';
+import type { PersonalFinanceFlashcard } from '@/types/personal-finance';
+import { languageOfFinanceLessons } from './market-intelligence/language-of-finance-lessons';
+import { ownershipLessons } from './market-intelligence/ownership-lessons';
+import { allHeadlinesLessons } from './market-intelligence/headlines-lessons';
+import { miLessonToUnifiedFlashcards } from './market-intelligence/mi-flashcard-unlocks';
+import { extractCareersFlashcards } from './flashcards/extractCareersFlashcards';
 
 export interface UnifiedFlashcard {
   id: string;
@@ -84,240 +89,19 @@ const extractPersonalFinanceFlashcards = (): UnifiedFlashcard[] => {
   return flashcards;
 };
 
-// Careers in Finance flashcards
-const careersFlashcards: UnifiedFlashcard[] = [
-  // Investment Banking
-  {
-    id: 'careers-ib-1',
-    term: 'Investment Bank',
-    definition: 'A financial institution that helps companies raise money and provides advice on deals like mergers and IPOs.',
-    philExample: 'Like a real estate agent who helps people buy and sell houses, but for entire companies!',
-    realWorldExample: 'Goldman Sachs helped Facebook go public in 2012.',
-    sourceModule: 'careers',
-    category: 'Investment Banking',
-    difficulty: 'beginner',
-    tags: ['Finance Careers', 'Investment Banking', 'Wall Street'],
-    icon: '🏦',
-  },
-  {
-    id: 'careers-ib-2',
-    term: 'IPO (Initial Public Offering)',
-    definition: 'When a private company sells shares to the public for the first time, becoming publicly traded on a stock exchange.',
-    philExample: 'Like a lemonade stand going from neighborhood-only to stores everywhere!',
-    realWorldExample: 'Airbnb had its IPO in December 2020, raising $3.5 billion.',
-    sourceModule: 'careers',
-    category: 'Investment Banking',
-    difficulty: 'beginner',
-    tags: ['Finance Careers', 'Investment Banking', 'IPO'],
-    icon: '🏦',
-  },
-  {
-    id: 'careers-ib-3',
-    term: 'M&A (Mergers & Acquisitions)',
-    definition: 'The process of combining two companies (merger) or one company buying another (acquisition).',
-    philExample: 'Like when two restaurants combine to share a bigger kitchen!',
-    realWorldExample: 'Microsoft acquired LinkedIn for $26.2 billion in 2016.',
-    sourceModule: 'careers',
-    category: 'Investment Banking',
-    difficulty: 'intermediate',
-    tags: ['Finance Careers', 'Investment Banking', 'M&A'],
-    icon: '🏦',
-  },
-  {
-    id: 'careers-ib-4',
-    term: 'Pitch Book',
-    definition: 'A presentation investment bankers create to pitch their services and analysis to potential clients.',
-    philExample: 'Like a portfolio showing your best work when applying for a job!',
-    realWorldExample: 'Analysts spend hours creating pitch books with financial models and market analysis.',
-    sourceModule: 'careers',
-    category: 'Investment Banking',
-    difficulty: 'intermediate',
-    tags: ['Finance Careers', 'Investment Banking'],
-    icon: '🏦',
-  },
-  {
-    id: 'careers-ib-5',
-    term: 'Bulge Bracket',
-    definition: 'The largest and most prestigious investment banks in the world.',
-    philExample: 'Like the top-tier teams in professional sports - everyone wants to play for them!',
-    realWorldExample: 'Goldman Sachs, JPMorgan, Morgan Stanley, and Bank of America are bulge bracket banks.',
-    sourceModule: 'careers',
-    category: 'Investment Banking',
-    difficulty: 'advanced',
-    tags: ['Finance Careers', 'Investment Banking', 'Wall Street'],
-    icon: '🏦',
-  },
-  
-  // Asset Management
-  {
-    id: 'careers-am-1',
-    term: 'Asset Manager',
-    definition: 'A professional or firm that invests money on behalf of clients to grow their wealth.',
-    philExample: 'Like hiring someone to pick the best toys for your collection!',
-    realWorldExample: 'BlackRock is the world\'s largest asset manager, managing over $9 trillion.',
-    sourceModule: 'careers',
-    category: 'Asset Management',
-    difficulty: 'beginner',
-    tags: ['Finance Careers', 'Asset Management', 'Investing'],
-    icon: '📊',
-  },
-  {
-    id: 'careers-am-2',
-    term: 'Portfolio Manager',
-    definition: 'The person responsible for making investment decisions for a fund or portfolio.',
-    philExample: 'Like the captain of a team who decides which players to use!',
-    realWorldExample: 'Portfolio managers at Fidelity decide which stocks and bonds to buy for their funds.',
-    sourceModule: 'careers',
-    category: 'Asset Management',
-    difficulty: 'intermediate',
-    tags: ['Finance Careers', 'Asset Management'],
-    icon: '📊',
-  },
-  {
-    id: 'careers-am-3',
-    term: 'AUM (Assets Under Management)',
-    definition: 'The total market value of investments that a firm manages on behalf of clients.',
-    philExample: 'Like the total value of all the toys you\'re helping friends manage!',
-    realWorldExample: 'Vanguard has over $7 trillion in AUM across its various funds.',
-    sourceModule: 'careers',
-    category: 'Asset Management',
-    difficulty: 'intermediate',
-    tags: ['Finance Careers', 'Asset Management'],
-    icon: '📊',
-  },
-  
-  // Private Equity
-  {
-    id: 'careers-pe-1',
-    term: 'Private Equity',
-    definition: 'Investment firms that buy private companies, improve them, and sell them for a profit.',
-    philExample: 'Like buying and fixing up a house to sell for more money later!',
-    realWorldExample: 'KKR and Blackstone are major private equity firms that transform companies.',
-    sourceModule: 'careers',
-    category: 'Private Equity',
-    difficulty: 'intermediate',
-    tags: ['Finance Careers', 'Private Equity'],
-    icon: '🔐',
-  },
-  {
-    id: 'careers-pe-2',
-    term: 'LBO (Leveraged Buyout)',
-    definition: 'Acquiring a company using significant borrowed money (debt) to fund the purchase.',
-    philExample: 'Like buying a rental property with a big mortgage and using rent to pay it off!',
-    realWorldExample: 'The $31 billion buyout of RJR Nabisco in 1989 was a famous LBO.',
-    sourceModule: 'careers',
-    category: 'Private Equity',
-    difficulty: 'advanced',
-    tags: ['Finance Careers', 'Private Equity', 'M&A'],
-    icon: '🔐',
-  },
-  
-  // Venture Capital
-  {
-    id: 'careers-vc-1',
-    term: 'Venture Capital',
-    definition: 'Investment in early-stage startups with high growth potential in exchange for equity ownership.',
-    philExample: 'Like giving someone money to start their lemonade stand in exchange for part ownership!',
-    realWorldExample: 'Sequoia Capital invested in Google, Apple, and Airbnb when they were startups.',
-    sourceModule: 'careers',
-    category: 'Venture Capital',
-    difficulty: 'intermediate',
-    tags: ['Finance Careers', 'Venture Capital', 'Startups'],
-    icon: '🚀',
-  },
-  {
-    id: 'careers-vc-2',
-    term: 'Series A, B, C Funding',
-    definition: 'Progressive rounds of startup funding as companies grow, with each round typically at higher valuations.',
-    philExample: 'Like leveling up in a game - each level gets harder but the rewards are bigger!',
-    realWorldExample: 'Uber raised from Series A through Series H before going public.',
-    sourceModule: 'careers',
-    category: 'Venture Capital',
-    difficulty: 'intermediate',
-    tags: ['Finance Careers', 'Venture Capital', 'Startups'],
-    icon: '🚀',
-  },
-  {
-    id: 'careers-vc-3',
-    term: 'Unicorn',
-    definition: 'A private startup company valued at over $1 billion.',
-    philExample: 'Like finding a super rare Pokemon - very valuable and hard to find!',
-    realWorldExample: 'Stripe, SpaceX, and OpenAI are unicorn companies worth billions.',
-    sourceModule: 'careers',
-    category: 'Venture Capital',
-    difficulty: 'beginner',
-    tags: ['Finance Careers', 'Venture Capital', 'Startups'],
-    icon: '🚀',
-  },
-  
-  // Hedge Funds
-  {
-    id: 'careers-hf-1',
-    term: 'Hedge Fund',
-    definition: 'An investment fund that uses diverse strategies to generate returns for wealthy investors.',
-    philExample: 'Like a master chess player using all kinds of moves to win!',
-    realWorldExample: 'Bridgewater Associates is the world\'s largest hedge fund managing over $100 billion.',
-    sourceModule: 'careers',
-    category: 'Hedge Funds',
-    difficulty: 'intermediate',
-    tags: ['Finance Careers', 'Hedge Funds'],
-    icon: '📈',
-  },
-  {
-    id: 'careers-hf-2',
-    term: 'Long/Short Strategy',
-    definition: 'Buying stocks expected to rise (long) while selling borrowed stocks expected to fall (short).',
-    philExample: 'Like betting some teams will win and others will lose at the same time!',
-    realWorldExample: 'Hedge funds go long on undervalued stocks and short overvalued ones to profit either way.',
-    sourceModule: 'careers',
-    category: 'Hedge Funds',
-    difficulty: 'advanced',
-    tags: ['Finance Careers', 'Hedge Funds', 'Trading'],
-    icon: '📈',
-  },
-  {
-    id: 'careers-hf-3',
-    term: 'Alpha',
-    definition: 'Investment returns that exceed the market benchmark, attributed to skill rather than luck.',
-    philExample: 'Like scoring more points than everyone expected you to!',
-    realWorldExample: 'A hedge fund generating 15% returns when the market returned 10% has 5% alpha.',
-    sourceModule: 'careers',
-    category: 'Hedge Funds',
-    difficulty: 'advanced',
-    tags: ['Finance Careers', 'Hedge Funds', 'Performance'],
-    icon: '📈',
-  },
-  
-  // Consulting
-  {
-    id: 'careers-mc-1',
-    term: 'Management Consulting',
-    definition: 'Providing expert advice to companies to improve their business performance and strategy.',
-    philExample: 'Like a coach who helps teams get better at their sport!',
-    realWorldExample: 'McKinsey, BCG, and Bain help Fortune 500 companies solve complex problems.',
-    sourceModule: 'careers',
-    category: 'Consulting',
-    difficulty: 'beginner',
-    tags: ['Finance Careers', 'Consulting'],
-    icon: '💡',
-  },
-  {
-    id: 'careers-mc-2',
-    term: 'MBB',
-    definition: 'McKinsey, BCG (Boston Consulting Group), and Bain - the three most prestigious consulting firms.',
-    philExample: 'Like the championship teams everyone wants to join!',
-    realWorldExample: 'Getting a job at MBB is extremely competitive with accept rates under 1%.',
-    sourceModule: 'careers',
-    category: 'Consulting',
-    difficulty: 'intermediate',
-    tags: ['Finance Careers', 'Consulting'],
-    icon: '💡',
-  },
-];
+// ── Market Intelligence ──────────────────────────────────────────────────────
+// All MI cards are derived from lesson sources; no hardcoded lists.
 
-// Market Intelligence / Company Knowledge flashcards
 const marketIntelligenceFlashcards: UnifiedFlashcard[] = [
-  // Tech Companies
+  ...languageOfFinanceLessons,
+  ...ownershipLessons,
+  ...allHeadlinesLessons,
+].flatMap((lesson) => miLessonToUnifiedFlashcards(lesson));
+
+// ── DEAD CODE BELOW — kept only so the file compiles until the block is removed ──
+// (will be swept in cleanup task)
+const _obsolete: UnifiedFlashcard[] = [
+  // Tech Companies (hardcoded — no longer used)
   {
     id: 'mi-tech-1',
     term: 'FAANG/MAANG',
@@ -483,20 +267,20 @@ const marketIntelligenceFlashcards: UnifiedFlashcard[] = [
     icon: '⚡',
   },
 ];
+void _obsolete; // suppress unused-variable warning — remove with cleanup task
 
-// Combine all flashcards
+// ── Aggregator ───────────────────────────────────────────────────────────────
 let cachedFlashcards: UnifiedFlashcard[] | null = null;
 
 export const getAllUnifiedFlashcards = (): UnifiedFlashcard[] => {
   if (cachedFlashcards) return cachedFlashcards;
-  
-  const personalFinance = extractPersonalFinanceFlashcards();
+
   cachedFlashcards = [
-    ...personalFinance,
-    ...careersFlashcards,
+    ...extractPersonalFinanceFlashcards(),
     ...marketIntelligenceFlashcards,
+    ...extractCareersFlashcards(),
   ];
-  
+
   return cachedFlashcards;
 };
 

@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import PersonalFinanceTab from "@/components/learn/PersonalFinanceTab";
 import LearningDashboard from "@/components/learning/LearningDashboard";
@@ -6,6 +7,7 @@ import AdaptiveFlashcards from "@/components/learning/AdaptiveFlashcards";
 import MarketIntelligenceTab from "@/components/learn/MarketIntelligenceTab";
 import CareersInFinanceTab from "@/components/learn/CareersInFinanceTab";
 import SoftSkillsTab from "@/components/learn/SoftSkillsTab";
+import { useDailyLogin } from "@/hooks/useDailyLogin";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import {
@@ -20,27 +22,34 @@ import {
 } from 'lucide-react';
 
 const TABS = [
-  { value: 'interactive-hub',      label: 'Dashboard',    icon: LayoutDashboard },
-  { value: 'adaptive-flashcards',  label: 'Flashcards',   icon: Layers },
-  { value: 'soft-skills',          label: 'Soft Skills',  icon: Star },
-  { value: 'personal-finance',     label: 'Finance',      icon: Wallet },
-  { value: 'companies',            label: 'Markets',      icon: TrendingUp },
-  { value: 'careers',              label: 'Careers',      icon: Briefcase },
+  { value: 'interactive-hub',     label: 'Dashboard',   icon: LayoutDashboard },
+  { value: 'adaptive-flashcards', label: 'Flashcards',  icon: Layers },
+  { value: 'soft-skills',         label: 'Soft Skills', icon: Star },
+  { value: 'personal-finance',    label: 'Finance',     icon: Wallet },
+  { value: 'companies',           label: 'Markets',     icon: TrendingUp },
+  { value: 'careers',             label: 'Careers',     icon: Briefcase },
 ];
 
 const VISIBLE_COUNT = 3;
 
 const LearnPage = () => {
   const isMobile = useIsMobile();
-  const [activeTab, setActiveTab] = useState('interactive-hub');
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(() => searchParams.get('tab') || 'interactive-hub');
   const [offset, setOffset] = useState(0);
   const tabBarRef = useRef<HTMLDivElement>(null);
+
+  useDailyLogin();
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab) setActiveTab(tab);
+  }, [searchParams]);
 
   const maxOffset = TABS.length - VISIBLE_COUNT;
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    // Ensure the newly active tab is in the visible window
     const idx = TABS.findIndex(t => t.value === value);
     if (idx < offset) setOffset(idx);
     else if (idx >= offset + VISIBLE_COUNT) setOffset(idx - VISIBLE_COUNT + 1);
@@ -55,29 +64,27 @@ const LearnPage = () => {
 
   const TabNav = () => (
     <div className="flex items-center gap-1 w-full mb-4 sm:mb-6">
-      {/* Left arrow */}
       {isMobile && (
         <button
           onClick={shiftLeft}
           disabled={!canGoLeft}
           aria-label="Previous tabs"
           className={cn(
-            "flex-shrink-0 h-9 w-9 flex items-center justify-center rounded-lg transition-all",
+            'flex-shrink-0 h-9 w-9 flex items-center justify-center rounded-lg transition-all',
             canGoLeft
-              ? "bg-muted hover:bg-muted/80 text-foreground"
-              : "text-muted-foreground/30 cursor-not-allowed"
+              ? 'bg-muted hover:bg-muted/80 text-foreground'
+              : 'text-muted-foreground/30 cursor-not-allowed'
           )}
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
       )}
 
-      {/* Tab buttons */}
       <div
         ref={tabBarRef}
         className={cn(
-          "flex flex-1 gap-1 overflow-hidden",
-          !isMobile && "bg-muted rounded-xl p-1"
+          'flex flex-1 gap-1 overflow-hidden',
+          !isMobile && 'bg-muted rounded-xl p-1'
         )}
       >
         {visibleTabs.map((tab) => {
@@ -88,30 +95,29 @@ const LearnPage = () => {
               key={tab.value}
               onClick={() => handleTabChange(tab.value)}
               className={cn(
-                "flex-1 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 rounded-lg px-2 py-2 sm:py-1.5 text-xs sm:text-sm font-medium transition-all duration-200 min-h-[52px] sm:min-h-[36px]",
+                'flex-1 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 rounded-lg px-2 py-2 sm:py-1.5 text-xs sm:text-sm font-medium transition-all duration-200 min-h-[52px] sm:min-h-[36px]',
                 isActive
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-background/60'
               )}
             >
-              <Icon className={cn("flex-shrink-0", isMobile ? "h-4 w-4" : "h-4 w-4")} />
-              <span className={cn("truncate leading-tight", isMobile && "text-[10px]")}>{tab.label}</span>
+              <Icon className="flex-shrink-0 h-4 w-4" />
+              <span className={cn('truncate leading-tight', isMobile && 'text-[10px]')}>{tab.label}</span>
             </button>
           );
         })}
       </div>
 
-      {/* Right arrow */}
       {isMobile && (
         <button
           onClick={shiftRight}
           disabled={!canGoRight}
           aria-label="Next tabs"
           className={cn(
-            "flex-shrink-0 h-9 w-9 flex items-center justify-center rounded-lg transition-all",
+            'flex-shrink-0 h-9 w-9 flex items-center justify-center rounded-lg transition-all',
             canGoRight
-              ? "bg-muted hover:bg-muted/80 text-foreground"
-              : "text-muted-foreground/30 cursor-not-allowed"
+              ? 'bg-muted hover:bg-muted/80 text-foreground'
+              : 'text-muted-foreground/30 cursor-not-allowed'
           )}
         >
           <ChevronRight className="h-4 w-4" />
@@ -120,7 +126,6 @@ const LearnPage = () => {
     </div>
   );
 
-  // Dot indicators for mobile (shows position in tab list)
   const DotIndicators = () => {
     if (!isMobile) return null;
     return (
@@ -129,10 +134,10 @@ const LearnPage = () => {
           <div
             key={i}
             className={cn(
-              "rounded-full transition-all duration-200",
+              'rounded-full transition-all duration-200',
               i >= offset && i < offset + VISIBLE_COUNT
-                ? "w-4 h-1.5 bg-primary"
-                : "w-1.5 h-1.5 bg-muted-foreground/30"
+                ? 'w-4 h-1.5 bg-primary'
+                : 'w-1.5 h-1.5 bg-muted-foreground/30'
             )}
           />
         ))}

@@ -2,9 +2,23 @@ import { useEffect, useCallback, useRef } from 'react';
 import { useGameStore } from '@/store/useGameStore';
 import { useBaseLayoutStore, PlacedBuilding } from '@/store/useBaseLayoutStore';
 import { getEmpireStorageCapacity, getInterestRatePerHour, getTotalCoinProductionPerHour, getBuildingProductionPerHour, getCollectibleAmount, isBuildingCollectionReady } from './economy';
+import { migrateLegacyStorageKey, scopedStorageKey } from '@/lib/userScopedStorage';
 
 const PRODUCTION_INTERVAL = 60000; // 1 minute in milliseconds
-const LAST_VISIT_KEY = 'bamboo_empire_last_visit';
+const LAST_VISIT_KEY_BASE = 'bamboo_empire_last_visit';
+
+function getLastVisitKey(): string {
+  return scopedStorageKey(LAST_VISIT_KEY_BASE);
+}
+
+function readLastVisit(): string | null {
+  migrateLegacyStorageKey(LAST_VISIT_KEY_BASE);
+  return localStorage.getItem(getLastVisitKey());
+}
+
+function writeLastVisit(timestamp: number): void {
+  localStorage.setItem(getLastVisitKey(), timestamp.toString());
+}
 
 interface ProductionManagerProps {
   onOfflineEarnings: (earnings: number, duration: string) => void;
@@ -111,9 +125,9 @@ export const useProductionManager = ({
   
   // Calculate offline earnings
   const calculateOfflineEarnings = useCallback(() => {
-    const lastVisit = localStorage.getItem(LAST_VISIT_KEY);
+    const lastVisit = readLastVisit();
     if (!lastVisit) {
-      localStorage.setItem(LAST_VISIT_KEY, Date.now().toString());
+      writeLastVisit(Date.now());
       return;
     }
     
@@ -124,7 +138,7 @@ export const useProductionManager = ({
     
     // Only calculate if away for more than 1 minute
     if (elapsedMinutes < 1) {
-      localStorage.setItem(LAST_VISIT_KEY, now.toString());
+      writeLastVisit(now);
       return;
     }
     
@@ -158,7 +172,7 @@ export const useProductionManager = ({
       onOfflineEarnings(earnings, durationStr);
     }
     
-    localStorage.setItem(LAST_VISIT_KEY, now.toString());
+    writeLastVisit(now);
   }, [bamboo, calculateProductionRate, calculateTotalStorage, onOfflineEarnings]);
   
   // Start production loop
@@ -173,15 +187,14 @@ export const useProductionManager = ({
       if (productionIntervalRef.current) {
         clearInterval(productionIntervalRef.current);
       }
-      // Save last visit time on unmount
-      localStorage.setItem(LAST_VISIT_KEY, Date.now().toString());
+      writeLastVisit(Date.now());
     };
   }, [processProduction, calculateOfflineEarnings]);
   
   // Update last visit time periodically
   useEffect(() => {
     const saveInterval = setInterval(() => {
-      localStorage.setItem(LAST_VISIT_KEY, Date.now().toString());
+      writeLastVisit(Date.now());
     }, 30000); // Every 30 seconds
     
     return () => clearInterval(saveInterval);

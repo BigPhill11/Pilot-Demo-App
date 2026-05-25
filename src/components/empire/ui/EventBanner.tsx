@@ -54,6 +54,7 @@ const EventBanner: React.FC<EventBannerProps> = ({
         className="fixed top-4 left-4 right-4 z-50"
       >
         <div
+          data-tutorial="event-banner"
           className={`rounded-2xl shadow-2xl overflow-hidden ${
             event.isNegative
               ? 'bg-gradient-to-r from-red-500 to-rose-600'

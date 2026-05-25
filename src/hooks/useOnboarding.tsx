@@ -6,6 +6,7 @@ interface OnboardingState {
   placementTrack: string | null;
   placementScore: number | null;
   appTourCompleted: boolean;
+  surveyCompleted: boolean;
   loading: boolean;
 }
 
@@ -15,6 +16,7 @@ export const useOnboarding = () => {
     placementTrack: null,
     placementScore: null,
     appTourCompleted: false,
+    surveyCompleted: false,
     loading: true,
   });
 
@@ -24,6 +26,7 @@ export const useOnboarding = () => {
         placementTrack: (profile as any).placement_track || null,
         placementScore: (profile as any).placement_score || null,
         appTourCompleted: (profile as any).app_tour_completed || false,
+        surveyCompleted: (profile as any).survey_completed || false,
         loading: false,
       });
     }
@@ -38,7 +41,6 @@ export const useOnboarding = () => {
         .update({
           placement_track: track,
           placement_score: score,
-          app_version: track, // Also set app_version for compatibility
           updated_at: new Date().toISOString()
         })
         .eq('id', user.id);
@@ -96,10 +98,33 @@ export const useOnboarding = () => {
     }
   };
 
+  const resetOnboarding = async () => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          survey_completed: false,
+          app_tour_completed: false,
+          onboarding_completed: false,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      setState(prev => ({ ...prev, surveyCompleted: false, appTourCompleted: false }));
+    } catch (error) {
+      console.error('Error resetting onboarding:', error);
+    }
+  };
+
   return {
     ...state,
     markPlacementComplete,
     markTourComplete,
     resetTour,
+    resetOnboarding,
   };
 };

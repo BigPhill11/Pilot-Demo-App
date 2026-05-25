@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Crown, MessageCircle, Home, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Crown, MessageCircle, Home, BookOpen, ChevronLeft, ChevronRight, Briefcase, Users } from 'lucide-react';
 import { useAskPhilUi } from '@/contexts/AskPhilUiContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 
 const NAV_TABS = [
-  { value: 'home',      label: 'Home',      icon: Home,          action: 'navigate', path: '/' },
-  { value: 'empire',   label: 'Empire',    icon: Crown,         action: 'navigate', path: '/empire' },
-  { value: 'learn',    label: 'Learn',     icon: BookOpen,      action: 'navigate', path: '/learn' },
-  { value: 'ask-phil', label: 'Ask Phil',  icon: MessageCircle, action: 'ask-phil', path: null },
+  { value: 'home',          label: 'Home',     icon: Home,          action: 'navigate', path: '/',              tutorialId: 'app-nav-home' },
+  { value: 'empire',        label: 'Empire',   icon: Crown,         action: 'navigate', path: '/empire',        tutorialId: 'app-nav-empire' },
+  { value: 'learn',         label: 'Learn',    icon: BookOpen,      action: 'navigate', path: '/learn',         tutorialId: 'app-nav-learn' },
+  { value: 'career',        label: 'Career',   icon: Briefcase,     action: 'navigate', path: '/career',        tutorialId: 'app-nav-career' },
+  { value: 'phils-friends', label: 'Friends',  icon: Users,         action: 'navigate', path: '/phils-friends', tutorialId: 'app-nav-phils-friends' },
+  { value: 'ask-phil',      label: 'Ask Phil', icon: MessageCircle, action: 'ask-phil', path: null,             tutorialId: 'app-nav-ask-phil' },
 ];
 
 const VISIBLE_COUNT = 3;
@@ -23,6 +25,8 @@ const PageNavigationTabs: React.FC = () => {
 
   const getCurrentTab = () => {
     if (location.pathname === '/learn') return 'learn';
+    if (location.pathname === '/career' || location.pathname.startsWith('/career/')) return 'career';
+    if (location.pathname === '/phils-friends') return 'phils-friends';
     if (location.pathname === '/empire') return 'empire';
     if (location.pathname === '/') return 'home';
     return 'home';
@@ -47,27 +51,25 @@ const PageNavigationTabs: React.FC = () => {
   const visibleTabs = isMobile ? NAV_TABS.slice(offset, offset + VISIBLE_COUNT) : NAV_TABS;
 
   return (
-    <div className="border-b bg-background">
+    <div className="border-b bg-background" data-tutorial="app-nav-tabs">
       <div className="container mx-auto px-4">
         <div className="flex items-center h-12 gap-1">
-          {/* Left arrow on mobile */}
           {isMobile && (
             <button
               onClick={shiftLeft}
               disabled={!canGoLeft}
               aria-label="Previous"
               className={cn(
-                "flex-shrink-0 h-8 w-8 flex items-center justify-center rounded transition-all",
+                'flex-shrink-0 h-8 w-8 flex items-center justify-center rounded transition-all',
                 canGoLeft
-                  ? "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  : "text-muted-foreground/20 cursor-not-allowed"
+                  ? 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  : 'text-muted-foreground/20 cursor-not-allowed'
               )}
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
           )}
 
-          {/* Tab list */}
           <div className="flex flex-1 h-full overflow-hidden">
             {visibleTabs.map((tab) => {
               const Icon = tab.icon;
@@ -76,11 +78,12 @@ const PageNavigationTabs: React.FC = () => {
                 <button
                   key={tab.value}
                   onClick={() => handleTabClick(tab)}
+                  data-tutorial={tab.tutorialId}
                   className={cn(
-                    "flex-1 flex items-center justify-center gap-1.5 px-4 h-full text-sm font-medium border-b-2 transition-all duration-150",
+                    'flex-1 flex items-center justify-center gap-1.5 px-4 h-full text-sm font-medium border-b-2 transition-all duration-150',
                     isActive
-                      ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30"
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30'
                   )}
                 >
                   <Icon className="h-4 w-4 flex-shrink-0" />
@@ -90,17 +93,16 @@ const PageNavigationTabs: React.FC = () => {
             })}
           </div>
 
-          {/* Right arrow on mobile */}
           {isMobile && (
             <button
               onClick={shiftRight}
               disabled={!canGoRight}
               aria-label="Next"
               className={cn(
-                "flex-shrink-0 h-8 w-8 flex items-center justify-center rounded transition-all",
+                'flex-shrink-0 h-8 w-8 flex items-center justify-center rounded transition-all',
                 canGoRight
-                  ? "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  : "text-muted-foreground/20 cursor-not-allowed"
+                  ? 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  : 'text-muted-foreground/20 cursor-not-allowed'
               )}
             >
               <ChevronRight className="h-4 w-4" />

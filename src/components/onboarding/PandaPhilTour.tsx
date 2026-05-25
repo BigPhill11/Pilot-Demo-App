@@ -17,43 +17,43 @@ interface TourStep {
 const tourSteps: TourStep[] = [
   {
     id: 1,
-    title: "Welcome to Phil's Financials! 🐼",
+    title: "Welcome to Phil's Financials!",
     message: "I'm Phil, your financial learning buddy! Let me show you around and help you get started on your journey to financial literacy.",
     position: 'center'
   },
   {
     id: 2,
-    title: "Your Home Base 🏠",
+    title: 'Your Home Base',
     message: "This is your dashboard! Here you can see your progress, daily streaks, and quick actions to continue learning.",
     position: 'center'
   },
   {
     id: 3,
-    title: "The Learn Tab 📚",
+    title: 'The Learn Tab',
     message: "The Learn section is where all the magic happens! You'll find lessons, quizzes, flashcards, and interactive content to boost your financial knowledge.",
     position: 'center'
   },
   {
     id: 4,
-    title: "Your Bamboo Empire 🎋",
+    title: 'Your Bamboo Empire',
     message: "As you learn, you'll earn XP and coins! Use them to build your very own Bamboo Empire. The more you learn, the more your empire grows!",
     position: 'center'
   },
   {
     id: 5,
-    title: "Your Learning Track 🎯",
+    title: 'Your Learning Track',
     message: "Based on your quiz results, I've placed you in the perfect starting point. Don't worry - you can explore all tracks as you progress!",
     position: 'center'
   },
   {
     id: 6,
-    title: "Streaks & XP 🔥",
+    title: 'Streaks & XP',
     message: "Keep your streak alive by learning something new every day! Longer streaks mean bonus XP multipliers. Consistency is key!",
     position: 'center'
   },
   {
     id: 7,
-    title: "You're All Set! 🎉",
+    title: "You're All Set!",
     message: "That's everything you need to know to get started. Remember, I'm always here in the app if you need help. Let's build that financial future together!",
     position: 'center'
   }
@@ -222,7 +222,7 @@ const PandaPhilTour: React.FC<PandaPhilTourProps> = ({ onComplete, placementTrac
                   className="flex-1"
                 >
                   {isLastStep ? (
-                    "Let's Go! 🚀"
+                    "Let's Go!"
                   ) : (
                     <>
                       Next

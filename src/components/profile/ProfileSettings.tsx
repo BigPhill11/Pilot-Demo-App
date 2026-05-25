@@ -8,9 +8,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Settings, User, RotateCcw, UserPlus, Sparkles } from 'lucide-react';
+import { Settings, User, RotateCcw, LogIn } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useOnboarding } from '@/hooks/useOnboarding';
+import { useGuestMode } from '@/hooks/useGuestMode';
 import { toast } from 'sonner';
 import AuthModal from '@/components/auth/AuthModal';
 
@@ -19,92 +20,70 @@ interface ProfileSettingsProps {
 }
 
 const ProfileSettings: React.FC<ProfileSettingsProps> = ({ isGuest = false }) => {
-  const { profile } = useAuth();
-  const { resetTour } = useOnboarding();
+  const { profile, refreshProfile } = useAuth();
+  const { resetTour, resetOnboarding } = useOnboarding();
+  const { updateGuestData } = useGuestMode();
   const [isOpen, setIsOpen] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
 
   const handleRestartTour = async () => {
-    await resetTour();
-    toast.success('Tour reset! Refresh the page to restart.');
+    if (isGuest) {
+      updateGuestData({ tourCompleted: false, surveyCompleted: false });
+    } else {
+      await resetOnboarding();
+      await refreshProfile();
+    }
+    toast.success('Onboarding restarted!');
     setIsOpen(false);
   };
 
-  // Guest mode - show create profile prompt
   if (isGuest) {
     return (
       <>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <Button variant="ghost" size="sm" className="relative flex items-center space-x-1">
+            <Button variant="ghost" size="sm" className="flex items-center space-x-1">
               <Settings className="h-4 w-4" />
-              {/* Notification dot */}
-              <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 bg-primary rounded-full animate-pulse" />
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center space-x-2">
-                <Sparkles className="h-5 w-5 text-primary" />
-                <span>Save Your Progress!</span>
+                <User className="h-5 w-5" />
+                <span>Guest mode</span>
               </DialogTitle>
               <DialogDescription>
-                Create a profile to save your XP, coins, and learning progress.
+                You&apos;re exploring Phil&apos;s Financials without an account. Progress is saved on
+                this device.
               </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-4 py-4">
-              {/* Create Profile CTA */}
-              <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
-                <div className="flex items-start space-x-3">
-                  <div className="p-2 rounded-full bg-primary/20">
-                    <UserPlus className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-sm">Create Your Profile</h3>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Keep your progress, compete on leaderboards, and unlock achievements!
-                    </p>
-                  </div>
-                </div>
-                <Button 
-                  className="w-full mt-3" 
-                  onClick={() => {
-                    setIsOpen(false);
-                    setShowAuthModal(true);
-                  }}
-                >
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Create Profile
-                </Button>
-              </div>
+            <div className="space-y-3 py-2">
+              <Button
+                className="w-full flex items-center justify-center space-x-2"
+                onClick={() => { setIsOpen(false); setAuthOpen(true); }}
+              >
+                <LogIn className="h-4 w-4" />
+                <span>Sign In / Create Account</span>
+              </Button>
 
-              <div className="text-center text-xs text-muted-foreground">
-                Already have an account?{' '}
-                <button 
-                  className="text-primary hover:underline"
-                  onClick={() => {
-                    setIsOpen(false);
-                    setShowAuthModal(true);
-                  }}
-                >
-                  Sign in
-                </button>
-              </div>
+              <Button
+                variant="outline"
+                onClick={handleRestartTour}
+                className="w-full flex items-center justify-center space-x-2"
+              >
+                <RotateCcw className="h-4 w-4" />
+                <span>Restart App Tour</span>
+              </Button>
             </div>
           </DialogContent>
         </Dialog>
 
-        <AuthModal 
-          open={showAuthModal} 
-          onOpenChange={setShowAuthModal}
-          onSuccess={() => window.location.reload()}
-        />
+        <AuthModal open={authOpen} onOpenChange={setAuthOpen} />
       </>
     );
   }
 
-  // Authenticated user - show profile settings
   if (!profile) return null;
 
   return (
@@ -126,7 +105,6 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ isGuest = false }) =>
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* User Info */}
           <div className="space-y-3">
             <h3 className="text-sm font-semibold">Account</h3>
             <div className="p-3 rounded-lg bg-muted/50 space-y-2">
@@ -141,7 +119,6 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ isGuest = false }) =>
             </div>
           </div>
 
-          {/* Actions */}
           <div className="space-y-3">
             <h3 className="text-sm font-semibold">Actions</h3>
             <Button
@@ -151,6 +128,18 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ isGuest = false }) =>
             >
               <RotateCcw className="h-4 w-4" />
               <span>Restart App Tour</span>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={async () => {
+                await resetOnboarding();
+                toast.success('Onboarding reset! Reload the page to restart.');
+                setIsOpen(false);
+              }}
+              className="w-full flex items-center justify-center space-x-2 text-muted-foreground"
+            >
+              <RotateCcw className="h-4 w-4" />
+              <span>Restart Full Onboarding</span>
             </Button>
           </div>
         </div>

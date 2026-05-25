@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="Green panda teacher pointing to GDP formula C plus I plus G plus NX on a board">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ecfdf5"/>
+      <stop offset="100%" style="stop-color:#d1fae5"/>
+    </linearGradient>
+    <linearGradient id="fur" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4ade80"/>
+      <stop offset="100%" style="stop-color:#166534"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#065f46" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <rect width="320" height="220" fill="url(#bg)"/>
+  <path d="M0 132 C43 58 111 24 180 41 C242 56 278 101 320 83 L320 220 L0 220 Z" fill="#bbf7d0" opacity="0.38"/>
+  <ellipse cx="160" cy="207" rx="126" ry="11" fill="#065f46" opacity="0.12"/>
+
+  <g filter="url(#shadow)">
+    <rect x="110" y="28" width="188" height="152" rx="16" fill="#2f8f3f"/>
+    <rect x="120" y="39" width="168" height="130" rx="10" fill="#fffbeb"/>
+    <text x="204" y="65" text-anchor="middle" font-family="system-ui,sans-serif" font-size="20" font-weight="800" fill="#065f46">GDP</text>
+    <text x="204" y="90" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" font-weight="800" fill="#065f46">C + I + G + NX</text>
+    <rect x="137" y="108" width="34" height="34" rx="8" fill="#4ade80"/>
+    <rect x="181" y="108" width="34" height="34" rx="8" fill="#22c55e"/>
+    <rect x="225" y="108" width="34" height="34" rx="8" fill="#16a34a"/>
+    <text x="154" y="130" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" font-weight="800" fill="#fff">C</text>
+    <text x="198" y="130" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" font-weight="800" fill="#fff">I</text>
+    <text x="242" y="130" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" font-weight="800" fill="#fff">G</text>
+    <text x="176" y="129" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" font-weight="800" fill="#047857">+</text>
+    <text x="220" y="129" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" font-weight="800" fill="#047857">+</text>
+    <text x="204" y="156" text-anchor="middle" font-family="system-ui,sans-serif" font-size="11" fill="#64748b">spending buckets</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <ellipse cx="70" cy="157" rx="35" ry="45" fill="url(#fur)"/>
+    <circle cx="70" cy="87" r="42" fill="#f8fff3"/>
+    <circle cx="43" cy="58" r="18" fill="#166534"/>
+    <circle cx="97" cy="58" r="18" fill="#166534"/>
+    <ellipse cx="55" cy="87" rx="11" ry="16" fill="#065f46" transform="rotate(12 55 87)"/>
+    <ellipse cx="85" cy="87" rx="11" ry="16" fill="#065f46" transform="rotate(-12 85 87)"/>
+    <circle cx="55" cy="85" r="5" fill="#f0fdf4"/>
+    <circle cx="85" cy="85" r="5" fill="#f0fdf4"/>
+    <ellipse cx="70" cy="105" rx="11" ry="7" fill="#065f46"/>
+    <path d="M59 117 Q70 126 82 117" stroke="#065f46" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M104 130 L137 105" stroke="#166534" stroke-width="14" stroke-linecap="round"/>
+    <path d="M127 110 L170 88" stroke="#92400e" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg>

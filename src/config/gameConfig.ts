@@ -487,13 +487,21 @@ export const PLATFORM_REWARDS = {
   smartReviewXp: 3,
 
 
-  /** Flashcard mastered */
-  cardMastered: 5,
-  cardMasteredXp: 1,
+  /**
+   * Per-card mastery reward — intentionally small so players need sustained
+   * volume (many sessions) to earn meaningful empire gains.
+   * Milestone bonuses in SwipeableStudyDeck layer on top.
+   */
+  cardMastered: 1,
+  cardMasteredXp: 0,
 
-  /** Flashcard reviewed */
-  cardReviewed: 2,
+  /** Swipe-left (review): no reward — learning signal only */
+  cardReviewed: 0,
   cardReviewedXp: 0,
+
+  /** Daily cap for flashcard study rewards (bamboo / XP) */
+  flashcardDailyCap: 40,
+  flashcardDailyCapXp: 8,
 
   // ============================================
   // MARKET INTELLIGENCE REWARDS

@@ -2,7 +2,7 @@
  * AdaptiveFlashcards - Unified flashcard and games learning hub
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -36,7 +36,8 @@ import CompanyTinderView from '@/components/learn/market-intelligence/CompanyTin
 
 // Hooks
 import { useFlashcardGamification } from '@/hooks/useFlashcardGamification';
-import { getAllUnifiedFlashcards, UnifiedFlashcard } from '@/data/unified-flashcards';
+import { getAllUnifiedFlashcards, type UnifiedFlashcard } from '@/data/unified-flashcards';
+import { getAvailableFlashcards } from '@/data/flashcards/flashcardUnlockStore';
 
 type CategorizedFlashcard = UnifiedFlashcard;
 type StudyMode = 'browse' | 'speed' | 'daily' | 'smart' | 'deck';
@@ -52,6 +53,8 @@ const AdaptiveFlashcards: React.FC = () => {
   const [mainSection, setMainSection] = useState<MainSection>('study');
   const [studyMode, setStudyMode] = useState<StudyMode>('browse');
   const [gameMode, setGameMode] = useState<GameMode>('hub');
+  // Section filter for games: defaults to personal-finance (always available)
+  const [gameSection, setGameSection] = useState<'personal-finance' | 'market-intelligence' | 'careers'>('personal-finance');
   
   const [selectedCards, setSelectedCards] = useState<CategorizedFlashcard[]>([]);
   const [selectedDeckTitle, setSelectedDeckTitle] = useState<string>('');
@@ -200,16 +203,51 @@ const AdaptiveFlashcards: React.FC = () => {
     }
   };
 
+  const gameSectionCards = useMemo(() => {
+    const all = getAllUnifiedFlashcards();
+    return getAvailableFlashcards(gameSection, all);
+  }, [gameSection]);
+
   const renderGamesContent = () => {
+    const sectionLabel: Record<typeof gameSection, string> = {
+      'personal-finance': 'Personal Finance',
+      'market-intelligence': 'Markets',
+      'careers': 'Careers',
+    };
+    const sectionPicker = gameMode === 'hub' ? (
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
+        <span className="text-sm text-muted-foreground font-medium">Section:</span>
+        {(['personal-finance', 'market-intelligence', 'careers'] as const).map((s) => (
+          <Badge
+            key={s}
+            variant={gameSection === s ? 'default' : 'outline'}
+            className={`cursor-pointer transition-all ${
+              gameSection === s
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                : 'hover:bg-muted border-emerald-300 text-emerald-700'
+            }`}
+            onClick={() => setGameSection(s)}
+          >
+            {sectionLabel[s]}
+          </Badge>
+        ))}
+      </div>
+    ) : null;
+
     switch (gameMode) {
       case 'hub':
-        return <GamesHub onSelectGame={(game) => setGameMode(game)} stats={gameStats} />;
+        return (
+          <>
+            {sectionPicker}
+            <GamesHub onSelectGame={(game) => setGameMode(game)} stats={gameStats} />
+          </>
+        );
       case 'quizzes':
-        return <QuizzesSection onBack={() => setGameMode('hub')} />;
+        return <QuizzesSection onBack={() => setGameMode('hub')} cards={gameSectionCards} />;
       case 'matching':
-        return <MatchingGameSection onBack={() => setGameMode('hub')} />;
+        return <MatchingGameSection onBack={() => setGameMode('hub')} cards={gameSectionCards} />;
       case 'panda-jump':
-        return <PandaJumpSection onBack={() => setGameMode('hub')} />;
+        return <PandaJumpSection onBack={() => setGameMode('hub')} cards={gameSectionCards} />;
       case 'company-tinder':
         return (
           <div className="space-y-4">

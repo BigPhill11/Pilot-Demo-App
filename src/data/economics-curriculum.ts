@@ -1,6 +1,13 @@
 import type { EconomicsUnit } from '../types/economics-curriculum';
+import { enrichMicroeconomicsUnits, enrichMacroeconomicsUnits } from './economics-units';
+import { micro6ProductionCosts } from './market-intelligence/microeconomics/micro-6-production-costs';
+import { micro7LaborMarkets } from './market-intelligence/microeconomics/micro-7-labor-markets';
+import { micro8GameTheory } from './market-intelligence/microeconomics/micro-8-game-theory';
+import { macro6BusinessCycles } from './market-intelligence/macroeconomics/macro-6-business-cycles';
+import { macro7TradeFX } from './market-intelligence/macroeconomics/macro-7-trade-fx';
+import { macro8MoneyBanking } from './market-intelligence/macroeconomics/macro-8-money-banking';
 
-export const economicsUnits: EconomicsUnit[] = [
+const rawEconomicsUnits: EconomicsUnit[] = [
   // ==========================================
   // MICROECONOMICS TRACK (Units 1-5)
   // ==========================================
@@ -4760,6 +4767,18 @@ export const economicsUnits: EconomicsUnit[] = [
     },
   },
 ];
+
+const allRawUnits = [
+  ...rawEconomicsUnits,
+  micro6ProductionCosts,
+  micro7LaborMarkets,
+  micro8GameTheory,
+  macro6BusinessCycles,
+  macro7TradeFX,
+  macro8MoneyBanking,
+];
+
+export const economicsUnits = enrichMacroeconomicsUnits(enrichMicroeconomicsUnits(allRawUnits));
 
 export const getMicroeconomicsUnits = (): EconomicsUnit[] => 
   economicsUnits.filter(unit => unit.track === 'microeconomics');

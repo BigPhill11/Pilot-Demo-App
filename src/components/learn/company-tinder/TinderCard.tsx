@@ -4,6 +4,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { CompanyProfile } from '@/components/learn/CompanySwipeCard';
 import {
+  inferProductLifecycleStage,
+  lifecycleBadgeClass,
+} from '@/utils/productLifecycle';
+import {
   Building2,
   TrendingUp,
   DollarSign,
@@ -22,6 +26,8 @@ interface TinderCardProps {
 }
 
 const TinderCard: React.FC<TinderCardProps> = ({ company, onSwipeComplete }) => {
+  const lifecycleStage =
+    company.productLifecycleStage ?? inferProductLifecycleStage(company.id);
   const [dragStart, setDragStart] = useState(0);
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
   const [touchEnd, setTouchEnd] = useState<{ x: number; y: number } | null>(null);
@@ -101,6 +107,12 @@ const TinderCard: React.FC<TinderCardProps> = ({ company, onSwipeComplete }) => 
                 <div className="flex flex-wrap items-center gap-2 mt-1.5">
                   <Badge className="bg-primary/15 text-primary border-primary/25 hover:bg-primary/20">
                     {company.ticker}
+                  </Badge>
+                  <Badge
+                    variant="outline"
+                    className={`text-[10px] sm:text-xs ${lifecycleBadgeClass(lifecycleStage)}`}
+                  >
+                    {lifecycleStage}
                   </Badge>
                   <span className="text-sm text-muted-foreground">{company.industry}</span>
                 </div>

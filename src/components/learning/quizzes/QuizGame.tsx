@@ -29,6 +29,8 @@ interface QuizGameProps {
   difficulty: Difficulty;
   onComplete: (score: number, totalQuestions: number, streak: number) => void;
   onBack: () => void;
+  /** Optional filtered card pool — overrides topicId lookup */
+  cards?: UnifiedFlashcard[];
 }
 
 interface QuizQuestion {
@@ -41,7 +43,7 @@ interface QuizQuestion {
 const QUESTIONS_PER_QUIZ = 10;
 const HARD_MODE_TIME = 15; // seconds
 
-const QuizGame: React.FC<QuizGameProps> = ({ topicId, difficulty, onComplete, onBack }) => {
+const QuizGame: React.FC<QuizGameProps> = ({ topicId, difficulty, onComplete, onBack, cards: externalCards }) => {
   const isMobile = useIsMobile();
   const { awardResources } = usePlatformIntegration();
   
@@ -59,17 +61,20 @@ const QuizGame: React.FC<QuizGameProps> = ({ topicId, difficulty, onComplete, on
 
   // Generate questions from flashcards
   useEffect(() => {
-    const flashcards = topicId === 'all' 
+    if (externalCards && externalCards.length > 0) {
+      generateQuestions(externalCards);
+      return;
+    }
+    const flashcards = topicId === 'all'
       ? getAllUnifiedFlashcards()
       : getFlashcardsByCategory(topicId);
-    
+
     if (flashcards.length === 0) {
-      // Fallback to all cards if category is empty
-      const allCards = getAllUnifiedFlashcards();
-      generateQuestions(allCards);
+      generateQuestions(getAllUnifiedFlashcards());
     } else {
       generateQuestions(flashcards);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [topicId]);
 
   const generateQuestions = (flashcards: UnifiedFlashcard[]) => {

@@ -1,6 +1,13 @@
 // Economics Curriculum Types for Business Economics
 
-export type EconomicsTrack = 'microeconomics' | 'macroeconomics';
+import type { LessonVisual, MILessonConnect, MILessonTryActivity } from '@/types/mi-lesson';
+import type { EconomicsChartConfig } from '@/types/economics-charts';
+
+export type EconomicsTrack =
+  | 'microeconomics'
+  | 'macroeconomics'
+  | 'businesses-competition'
+  | 'business-foundations';
 
 export interface EconomicsFlashcard {
   term: string;
@@ -29,6 +36,10 @@ export interface CoreConcept {
   keyTerms?: string[];
   pfTip?: string;
   careerTip?: string;
+  /** Static diagram (PNG) — one per concept when not using chart */
+  visual?: LessonVisual;
+  /** Interactive SVG chart — unique stateId per slot */
+  chart?: EconomicsChartConfig;
 }
 
 /** Optional hands-on scenario meter (per-lesson mini sim). */
@@ -74,17 +85,29 @@ export interface EconomicsLesson {
   intro: {
     hook: string;
     philMessage: string;
+    heroImage?: LessonVisual;
   };
   coreConcepts: CoreConcept[];
+  /** Legacy PF block — used when connect is absent */
   personalFinanceConnection: {
     description: string;
     realWorldExample: string;
   };
+  /** MI-style Try step */
+  tryActivity?: MILessonTryActivity;
+  /** MI-style Connect step (PF + career tabs) */
+  connect?: MILessonConnect;
   flashcards: EconomicsFlashcard[];
   quiz: EconomicsQuizQuestion[];
   careerSpotlight?: CareerInfo;
   /** Per-lesson decision sim; also resolved via getEconomicsHandsOnForLesson(lesson.id). */
   handsOn?: EconomicsHandsOnConfig;
+  rewards?: { bamboo: number; xp: number };
+}
+
+/** True when lesson uses full MI flow (Try + Connect + hero) */
+export function isEnrichedMicroLesson(lesson: EconomicsLesson): boolean {
+  return !!(lesson.tryActivity && lesson.connect && lesson.intro.heroImage);
 }
 
 export interface GamifiedActivity {
@@ -144,6 +167,7 @@ export interface UnitProgress {
 export interface EconomicsProgress {
   microeconomics: UnitProgress[];
   macroeconomics: UnitProgress[];
+  businessesCompetition: UnitProgress[];
   totalXpEarned: number;
   totalBambooEarned: number;
   lastActivityAt: string;
@@ -152,6 +176,7 @@ export interface EconomicsProgress {
 export const INITIAL_ECONOMICS_PROGRESS: EconomicsProgress = {
   microeconomics: [],
   macroeconomics: [],
+  businessesCompetition: [],
   totalXpEarned: 0,
   totalBambooEarned: 0,
   lastActivityAt: new Date().toISOString(),

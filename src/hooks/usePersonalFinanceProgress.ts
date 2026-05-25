@@ -3,8 +3,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { ModuleProgress, ModuleStatus } from '@/types/personal-finance';
 import type { Json } from '@/integrations/supabase/types';
+import { getModuleById } from '@/data/personal-finance/modules';
+import {
+  migrateLegacyStorageKey,
+  notifyProgressUpdated,
+  scopedStorageKey,
+} from '@/lib/userScopedStorage';
 
-const STORAGE_KEY = 'personal-finance-progress';
+const STORAGE_KEY_BASE = 'personal-finance-progress';
 
 export const usePersonalFinanceProgress = () => {
   const { user } = useAuth();
@@ -40,7 +46,8 @@ export const usePersonalFinanceProgress = () => {
       }
 
       // Fallback to localStorage
-      const stored = localStorage.getItem(STORAGE_KEY);
+      migrateLegacyStorageKey(STORAGE_KEY_BASE, user?.id ?? null);
+      const stored = localStorage.getItem(scopedStorageKey(STORAGE_KEY_BASE, user?.id ?? null));
       if (stored) {
         setModuleProgress(JSON.parse(stored));
       } else {
@@ -65,7 +72,11 @@ export const usePersonalFinanceProgress = () => {
 
   const saveProgress = useCallback(async (newProgress: Record<string, ModuleProgress>) => {
     setModuleProgress(newProgress);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newProgress));
+    localStorage.setItem(
+      scopedStorageKey(STORAGE_KEY_BASE, user?.id ?? null),
+      JSON.stringify(newProgress)
+    );
+    notifyProgressUpdated();
 
     if (user) {
       try {
@@ -132,7 +143,9 @@ export const usePersonalFinanceProgress = () => {
     };
 
     const completedLessons = [...new Set([...current.completedLessons, lessonId])];
-    const isModuleComplete = completedLessons.length >= 5;
+    const moduleData = getModuleById(moduleId);
+    const lessonCount = moduleData?.lessons.length ?? 5;
+    const isModuleComplete = completedLessons.length >= lessonCount;
 
     const newProgress = {
       ...moduleProgress,

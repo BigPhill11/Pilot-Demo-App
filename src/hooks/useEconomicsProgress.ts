@@ -17,6 +17,13 @@ import {
 
 const STORAGE_KEY = 'economics_curriculum_progress';
 
+function trackKey(track: EconomicsTrack): keyof Pick<EconomicsProgress, 'microeconomics' | 'macroeconomics' | 'businessesCompetition'> {
+  if (track === 'businesses-competition') return 'businessesCompetition';
+  if (track === 'microeconomics') return 'microeconomics';
+  if (track === 'macroeconomics') return 'macroeconomics';
+  return 'microeconomics';
+}
+
 function loadProgress(): EconomicsProgress {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -25,6 +32,7 @@ function loadProgress(): EconomicsProgress {
       return {
         ...INITIAL_ECONOMICS_PROGRESS,
         ...parsed,
+        businessesCompetition: parsed.businessesCompetition ?? [],
       };
     }
   } catch (e) {
@@ -55,8 +63,8 @@ export function useEconomicsProgress() {
    * Get progress for a specific unit
    */
   const getUnitProgress = useCallback((unitId: string, track: EconomicsTrack): UnitProgress | undefined => {
-    const trackProgress = progress[track];
-    return trackProgress.find(p => p.unitId === unitId);
+    const trackProgress = progress[trackKey(track)];
+    return (trackProgress ?? []).find(p => p.unitId === unitId);
   }, [progress]);
 
   /**
@@ -103,10 +111,11 @@ export function useEconomicsProgress() {
    */
   const startUnit = useCallback((unitId: string, track: EconomicsTrack) => {
     setProgress(prev => {
-      const trackProgress = [...prev[track]];
+      const key = trackKey(track);
+      const trackProgress = [...(prev[key] ?? [])];
       const existingIndex = trackProgress.findIndex(p => p.unitId === unitId);
-      
-      const unitProgress: UnitProgress = existingIndex >= 0 
+
+      const unitProgress: UnitProgress = existingIndex >= 0
         ? { ...trackProgress[existingIndex], status: 'active' }
         : {
             unitId,
@@ -125,7 +134,7 @@ export function useEconomicsProgress() {
 
       return {
         ...prev,
-        [track]: trackProgress,
+        [key]: trackProgress,
       };
     });
   }, []);
@@ -142,7 +151,8 @@ export function useEconomicsProgress() {
     totalLessonsInUnit: number
   ) => {
     setProgress(prev => {
-      const trackProgress = [...prev[track]];
+      const key = trackKey(track);
+      const trackProgress = [...(prev[key] ?? [])];
       const existingIndex = trackProgress.findIndex(p => p.unitId === unitId);
       
       const current = existingIndex >= 0 
@@ -170,7 +180,7 @@ export function useEconomicsProgress() {
 
       return {
         ...prev,
-        [track]: trackProgress,
+        [key]: trackProgress,
         totalXpEarned: prev.totalXpEarned + xp,
         totalBambooEarned: prev.totalBambooEarned + bamboo,
       };
@@ -188,7 +198,8 @@ export function useEconomicsProgress() {
     totalLessonsInUnit: number
   ) => {
     setProgress(prev => {
-      const trackProgress = [...prev[track]];
+      const key = trackKey(track);
+      const trackProgress = [...(prev[key] ?? [])];
       const existingIndex = trackProgress.findIndex(p => p.unitId === unitId);
       
       const current = existingIndex >= 0 
@@ -215,7 +226,7 @@ export function useEconomicsProgress() {
 
       return {
         ...prev,
-        [track]: trackProgress,
+        [key]: trackProgress,
         totalXpEarned: prev.totalXpEarned + xp,
         totalBambooEarned: prev.totalBambooEarned + bamboo,
       };
@@ -226,7 +237,7 @@ export function useEconomicsProgress() {
    * Get overall progress for a track
    */
   const getTrackProgress = useCallback((track: EconomicsTrack, totalUnits: number) => {
-    const trackProgress = progress[track];
+    const trackProgress = progress[trackKey(track)] ?? [];
     const completedUnits = trackProgress.filter(p => p.status === 'completed').length;
     const percentage = totalUnits > 0 ? Math.round((completedUnits / totalUnits) * 100) : 0;
     
@@ -286,10 +297,14 @@ export function useEconomicsProgress() {
   const totalProgress = useMemo(() => {
     const microCompleted = progress.microeconomics.filter(p => p.status === 'completed').length;
     const macroCompleted = progress.macroeconomics.filter(p => p.status === 'completed').length;
+    const bizCompCompleted = (progress.businessesCompetition ?? []).filter(
+      (p) => p.status === 'completed'
+    ).length;
     return {
       microeconomics: microCompleted,
       macroeconomics: macroCompleted,
-      total: microCompleted + macroCompleted,
+      businessesCompetition: bizCompCompleted,
+      total: microCompleted + macroCompleted + bizCompCompleted,
     };
   }, [progress]);
 

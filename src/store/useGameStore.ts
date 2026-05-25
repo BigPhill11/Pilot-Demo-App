@@ -22,6 +22,21 @@ import {
 } from '@/config/gameConfig';
 import { useBaseLayoutStore } from '@/store/useBaseLayoutStore';
 import { getEmpireStorageCapacity } from '@/components/empire/systems/economy';
+import { scopedStorageKey } from '@/lib/userScopedStorage';
+
+const IMPROVEMENTS_KEY_BASE = 'bamboo-empire-improvements';
+
+function readImprovements(): Record<string, number> | null {
+  try {
+    const improvementsData = localStorage.getItem(scopedStorageKey(IMPROVEMENTS_KEY_BASE));
+    if (improvementsData) {
+      return JSON.parse(improvementsData);
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
 
 // ============================================
 // TYPES
@@ -506,9 +521,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // Apply improvements production bonus (from useImprovementsStore)
     // Note: This is read from localStorage to avoid circular dependency
     try {
-      const improvementsData = localStorage.getItem('bamboo-empire-improvements');
-      if (improvementsData) {
-        const improvements = JSON.parse(improvementsData);
+      const improvements = readImprovements();
+      if (improvements) {
         // Greenhouse Dome bonus
         if (improvements.greenhouseDome > 0) {
           const bonusPercent = improvements.greenhouseDome === 1 ? 15 : 
@@ -543,9 +557,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     
     // Apply compost yard recovery (from improvements)
     try {
-      const improvementsData = localStorage.getItem('bamboo-empire-improvements');
-      if (improvementsData) {
-        const improvements = JSON.parse(improvementsData);
+      const improvements = readImprovements();
+      if (improvements) {
         if (improvements.compostYard > 0) {
           const recoveryPercent = improvements.compostYard === 1 ? 10 : 
                                   improvements.compostYard === 2 ? 20 : 30;
@@ -571,9 +584,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     
     // Apply supply chain buffer bonus
     try {
-      const improvementsData = localStorage.getItem('bamboo-empire-improvements');
-      if (improvementsData) {
-        const improvements = JSON.parse(improvementsData);
+      const improvements = readImprovements();
+      if (improvements) {
         if (improvements.supplyChainBuffer > 0) {
           const bonusPercent = improvements.supplyChainBuffer === 1 ? 15 : 30;
           capacity *= (1 + bonusPercent / 100);
@@ -592,9 +604,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // Check for labor training improvement that lowers threshold
     let mediumThreshold = ENERGY.thresholds.medium;
     try {
-      const improvementsData = localStorage.getItem('bamboo-empire-improvements');
-      if (improvementsData) {
-        const improvements = JSON.parse(improvementsData);
+      const improvements = readImprovements();
+      if (improvements) {
         if (improvements.laborTraining > 0) {
           mediumThreshold = improvements.laborTraining === 1 ? 50 : 40;
         }

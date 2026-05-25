@@ -17,13 +17,23 @@ import {
   getCreditRating,
   formatTimeUntilDue,
   CREDIT_CONFIG,
+  applyAprIncrease,
 } from '@/engine/credit';
+import { chargeEmpireExpense } from '@/engine/empireSpend';
+import {
+  migrateLegacyStorageKey,
+  scopedStorageKey,
+} from '@/lib/userScopedStorage';
 
 // ============================================
 // STORAGE KEY
 // ============================================
 
-const CREDIT_STORAGE_KEY = 'bamboo-empire-credit';
+const CREDIT_STORAGE_KEY_BASE = 'bamboo-empire-credit';
+
+function getCreditStorageKey(userId?: string | null): string {
+  return scopedStorageKey(CREDIT_STORAGE_KEY_BASE, userId);
+}
 
 // ============================================
 // TYPES
@@ -32,6 +42,8 @@ const CREDIT_STORAGE_KEY = 'bamboo-empire-credit';
 interface CreditActions {
   // Core actions
   purchaseWithCredit: (amount: number) => { success: boolean; message: string };
+  chargeEmpireExpense: (amount: number) => { success: boolean; message: string };
+  increaseApr: (increase: number) => void;
   payBalance: (amount: number) => { success: boolean; message: string; scoreChange: number };
   payMinimum: () => { success: boolean; message: string; scoreChange: number };
   
@@ -58,9 +70,10 @@ type CreditStore = CreditState & CreditActions;
 // PERSISTENCE HELPERS
 // ============================================
 
-function loadCreditFromStorage(): CreditState | null {
+function loadCreditFromStorage(userId?: string | null): CreditState | null {
   try {
-    const saved = localStorage.getItem(CREDIT_STORAGE_KEY);
+    migrateLegacyStorageKey(CREDIT_STORAGE_KEY_BASE, userId ?? null);
+    const saved = localStorage.getItem(getCreditStorageKey(userId));
     if (!saved) return null;
     return JSON.parse(saved) as CreditState;
   } catch {
@@ -68,12 +81,18 @@ function loadCreditFromStorage(): CreditState | null {
   }
 }
 
-function saveCreditToStorage(state: CreditState): void {
+function saveCreditToStorage(state: CreditState, userId?: string | null): void {
   try {
-    localStorage.setItem(CREDIT_STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(getCreditStorageKey(userId), JSON.stringify(state));
   } catch (error) {
     console.error('Failed to save credit state:', error);
   }
+}
+
+let activeCreditUserId: string | null = null;
+
+export function setCreditStorageUserId(userId: string | null | undefined): void {
+  activeCreditUserId = userId ?? null;
 }
 
 // ============================================
@@ -94,10 +113,31 @@ export const useCreditStore = create<CreditStore>((set, get) => ({
     
     if (result.success) {
       set(result.newState);
-      saveCreditToStorage(result.newState);
+      saveCreditToStorage(result.newState, activeCreditUserId);
     }
     
     return { success: result.success, message: result.message };
+  },
+
+  chargeEmpireExpense: (amount: number) => {
+    const state = get();
+    const result = chargeEmpireExpense(state, amount, { autoEnable: true, now: Date.now() });
+
+    if (result.success) {
+      set(result.newState);
+      saveCreditToStorage(result.newState, activeCreditUserId);
+    }
+
+    return { success: result.success, message: result.message };
+  },
+
+  increaseApr: (increase: number) => {
+    const state = get();
+    const newState = applyAprIncrease(state, increase);
+    if (newState.apr !== state.apr) {
+      set(newState);
+      saveCreditToStorage(newState, activeCreditUserId);
+    }
   },
 
   payBalance: (amount: number) => {
@@ -107,7 +147,7 @@ export const useCreditStore = create<CreditStore>((set, get) => ({
     
     if (result.success) {
       set(result.newState);
-      saveCreditToStorage(result.newState);
+      saveCreditToStorage(result.newState, activeCreditUserId);
     }
     
     return { 
@@ -131,7 +171,7 @@ export const useCreditStore = create<CreditStore>((set, get) => ({
     const now = Date.now();
     const newState = enableCredit(state, now);
     set(newState);
-    saveCreditToStorage(newState);
+    saveCreditToStorage(newState, activeCreditUserId);
   },
 
   checkDueDate: () => {
@@ -141,7 +181,7 @@ export const useCreditStore = create<CreditStore>((set, get) => ({
     
     if (result.wasMissed) {
       set(result.newState);
-      saveCreditToStorage(result.newState);
+      saveCreditToStorage(result.newState, activeCreditUserId);
     }
     
     return {
@@ -157,7 +197,7 @@ export const useCreditStore = create<CreditStore>((set, get) => ({
     
     if (result.interestAmount > 0) {
       set(result.newState);
-      saveCreditToStorage(result.newState);
+      saveCreditToStorage(result.newState, activeCreditUserId);
     }
     
     return result.interestAmount;
@@ -176,13 +216,13 @@ export const useCreditStore = create<CreditStore>((set, get) => ({
 
   saveState: () => {
     const state = get();
-    saveCreditToStorage(state);
+    saveCreditToStorage(state, activeCreditUserId);
   },
 
   resetCredit: () => {
     const initialState = createInitialCreditState();
     set(initialState);
-    saveCreditToStorage(initialState);
+    saveCreditToStorage(initialState, activeCreditUserId);
   },
 
   // ----------------------------------------
@@ -212,10 +252,13 @@ export const useCreditStore = create<CreditStore>((set, get) => ({
 // INITIALIZATION HOOK
 // ============================================
 
-export function initializeCreditStore(): void {
-  const savedState = loadCreditFromStorage();
+export function initializeCreditStore(userId?: string | null): void {
+  setCreditStorageUserId(userId);
+  const savedState = loadCreditFromStorage(userId);
   if (savedState) {
     useCreditStore.getState().loadState(savedState);
+  } else {
+    useCreditStore.getState().resetCredit();
   }
 }
 

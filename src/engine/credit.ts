@@ -42,8 +42,8 @@ export const CREDIT_CONFIG = {
   /** Utilization threshold (percentage of limit) that triggers penalty */
   highUtilizationThreshold: 0.7, // 70%
   
-  /** XP threshold to unlock credit purchases */
-  xpUnlockThreshold: 50,
+  /** XP threshold to unlock credit purchases (0 = available from empire start) */
+  xpUnlockThreshold: 0,
   
   /** Credit limit increases based on score */
   limitTiers: [
@@ -355,5 +355,20 @@ export function enableCredit(state: CreditState, now: number): CreditState {
  */
 export function canUseCredit(xp: number): boolean {
   return xp >= CREDIT_CONFIG.xpUnlockThreshold;
+}
+
+/**
+ * Temporarily increase APR (e.g. interest spike event).
+ */
+export function applyAprIncrease(
+  state: CreditState,
+  increase: number,
+  maxApr: number = 0.6,
+): CreditState {
+  if (increase <= 0) return state;
+  return {
+    ...state,
+    apr: Math.min(maxApr, state.apr + increase),
+  };
 }
 

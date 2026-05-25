@@ -1,22 +1,52 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Wand2, BookOpen } from 'lucide-react';
+import { Loader2, Wand2, BookOpen, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAskPhilUi } from '@/contexts/AskPhilUiContext';
+import { setDashboardDeepLink } from '@/lib/dashboardDeepLink';
 import DOMPurify from 'dompurify';
+
+interface RelatedModule {
+    id: string;
+    title: string;
+    path: string;
+    reason: string;
+}
 
 interface PhilResponse {
     answer: string;
     needs_web: boolean;
     study_next: string[];
     sources: string[];
+    related_modules?: RelatedModule[];
 }
 
 const AskPhil = () => {
+    const navigate = useNavigate();
+    const { closeAskPhil } = useAskPhilUi();
     const [question, setQuestion] = useState('');
+
+    const handleModuleNavigate = (mod: RelatedModule) => {
+        closeAskPhil();
+        if (mod.path.includes('tab=personal-finance')) {
+            setDashboardDeepLink({ targetTab: 'personal-finance', moduleId: mod.id });
+            navigate('/learn?tab=personal-finance');
+        } else if (mod.path.includes('tab=companies')) {
+            setDashboardDeepLink({ targetTab: 'companies', sectionId: mod.id });
+            navigate('/learn?tab=companies');
+        } else if (mod.id === 'interviewing' && mod.path.includes('/career')) {
+            navigate('/career/interviewing');
+        } else if (mod.path.includes('/soft-skills')) {
+            navigate('/soft-skills?category=' + encodeURIComponent(mod.id));
+        } else {
+            navigate(mod.path);
+        }
+    };
     const [response, setResponse] = useState<PhilResponse | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -102,9 +132,9 @@ const AskPhil = () => {
                                      </div>
                                      <div className="flex flex-wrap gap-2">
                                          {response.study_next.map((item, index) => (
-                                             <Badge 
-                                                 key={index} 
-                                                 variant="secondary" 
+                                             <Badge
+                                                 key={index}
+                                                 variant="secondary"
                                                  className="cursor-pointer hover:bg-primary/20"
                                                  onClick={() => handleStudyClick(item)}
                                              >
@@ -112,6 +142,32 @@ const AskPhil = () => {
                                              </Badge>
                                          ))}
                                      </div>
+                                 </div>
+                             )}
+
+                             {/* Related Modules — green callout bubbles */}
+                             {response.related_modules && response.related_modules.length > 0 && (
+                                 <div className="pt-3 border-t space-y-2">
+                                     <div className="flex items-center gap-1 text-sm font-semibold text-emerald-600 mb-2">
+                                         <BookOpen className="h-4 w-4" />
+                                         Continue Learning in the App
+                                     </div>
+                                     {response.related_modules.map((mod, index) => (
+                                         <button
+                                             key={index}
+                                             onClick={() => handleModuleNavigate(mod)}
+                                             className="w-full flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 active:bg-emerald-200 transition-colors text-left"
+                                         >
+                                             <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                                 <BookOpen className="h-4 w-4 text-emerald-600" />
+                                             </div>
+                                             <div className="flex-1 min-w-0">
+                                                 <p className="text-sm font-semibold text-emerald-800">{mod.title}</p>
+                                                 <p className="text-xs text-emerald-600 truncate">{mod.reason}</p>
+                                             </div>
+                                             <ChevronRight className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                                         </button>
+                                     ))}
                                  </div>
                              )}
 

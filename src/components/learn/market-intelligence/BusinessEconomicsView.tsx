@@ -4,9 +4,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { EconomicsTrackSection } from '../economics';
 import EconomicsLessonContainer from '../economics/EconomicsLessonContainer';
+import EconomicWeatherReport from './boss/EconomicWeatherReport';
 import EconomicsSimulator from '../economics-sim/EconomicsSimulator';
 import { useEconomicsProgress } from '@/hooks/useEconomicsProgress';
 import { economicsUnits } from '@/data/economics-curriculum';
+import { businessCompetitionUnits } from '@/data/market-intelligence/ap-business-curriculum';
+
+const allEconomicsUnits = [...economicsUnits, ...businessCompetitionUnits];
 import { getSimulatorIdByUnitId } from '@/data/economics-simulators';
 import { EconomicsTrack, EconomicsLesson, EconomicsUnit } from '@/types/economics-curriculum';
 import { EconomicsSimulatorId } from '@/types/economics-sim';
@@ -19,6 +23,7 @@ import { EconomicsSimulatorId } from '@/types/economics-sim';
  */
 const BusinessEconomicsView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<EconomicsTrack>('microeconomics');
+  const [bossActive, setBossActive] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState<{
     lesson: EconomicsLesson;
     unit: EconomicsUnit;
@@ -51,7 +56,7 @@ const BusinessEconomicsView: React.FC = () => {
   const handleSimulatorComplete = useCallback(
     (result: { ending: string; bambooEarned: number; xpEarned: number }) => {
       if (!unitSimulator) return;
-      const unit = economicsUnits.find((u) => u.id === unitSimulator.unitId);
+      const unit = allEconomicsUnits.find((u) => u.id === unitSimulator.unitId);
       const progress = getUnitProgress(unitSimulator.unitId, unitSimulator.track);
       if (unit && !progress?.gamifiedActivityCompleted) {
         completeGamifiedActivity(
@@ -67,11 +72,12 @@ const BusinessEconomicsView: React.FC = () => {
     [unitSimulator, completeGamifiedActivity, getUnitProgress]
   );
 
-  const microUnits = economicsUnits.filter(u => u.track === 'microeconomics');
-  const macroUnits = economicsUnits.filter(u => u.track === 'macroeconomics');
+  const microUnits = allEconomicsUnits.filter(u => u.track === 'microeconomics');
+  const macroUnits = allEconomicsUnits.filter(u => u.track === 'macroeconomics');
+  const bizCompUnits = allEconomicsUnits.filter(u => u.track === 'businesses-competition');
 
   const handleSelectLesson = (unitId: string, lessonId: string) => {
-    const unit = economicsUnits.find(u => u.id === unitId);
+    const unit = allEconomicsUnits.find(u => u.id === unitId);
     if (!unit) return;
     
     const lesson = unit.lessons.find(l => l.id === lessonId);
@@ -98,6 +104,15 @@ const BusinessEconomicsView: React.FC = () => {
   const handleExitLesson = () => {
     setSelectedLesson(null);
   };
+
+  if (bossActive) {
+    return (
+      <EconomicWeatherReport
+        onComplete={() => setBossActive(false)}
+        onExit={() => setBossActive(false)}
+      />
+    );
+  }
 
   if (unitSimulator) {
     return (
@@ -156,6 +171,9 @@ const BusinessEconomicsView: React.FC = () => {
                 <Badge variant="outline" className="bg-teal-50 text-teal-700 border-teal-300">
                   🌍 Macro: {totalProgress.macroeconomics}/{macroUnits.length} units
                 </Badge>
+                <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-300">
+                  🏢 Biz & Comp: {totalProgress.businessesCompetition}/{bizCompUnits.length} units
+                </Badge>
                 <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-300">
                   ⭐ {totalXpEarned} XP earned
                 </Badge>
@@ -170,27 +188,37 @@ const BusinessEconomicsView: React.FC = () => {
 
       {/* Track Tabs */}
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EconomicsTrack)} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 bg-green-50 border border-green-200">
+        <TabsList className="grid w-full grid-cols-3 bg-green-50 border border-green-200 h-auto">
           <TabsTrigger 
             value="microeconomics" 
-            className="data-[state=active]:bg-white data-[state=active]:text-green-800 data-[state=active]:shadow-sm"
+            className="data-[state=active]:bg-white data-[state=active]:text-green-800 data-[state=active]:shadow-sm text-xs sm:text-sm py-2"
           >
-            <span className="mr-2">🔬</span>
-            Microeconomics
+            <span className="mr-1 sm:mr-2">🔬</span>
+            <span className="hidden sm:inline">Microeconomics</span>
+            <span className="sm:hidden">Micro</span>
           </TabsTrigger>
           <TabsTrigger 
             value="macroeconomics"
-            className="data-[state=active]:bg-white data-[state=active]:text-teal-800 data-[state=active]:shadow-sm"
+            className="data-[state=active]:bg-white data-[state=active]:text-teal-800 data-[state=active]:shadow-sm text-xs sm:text-sm py-2"
           >
-            <span className="mr-2">🌍</span>
-            Macroeconomics
+            <span className="mr-1 sm:mr-2">🌍</span>
+            <span className="hidden sm:inline">Macroeconomics</span>
+            <span className="sm:hidden">Macro</span>
+          </TabsTrigger>
+          <TabsTrigger 
+            value="businesses-competition"
+            className="data-[state=active]:bg-white data-[state=active]:text-amber-900 data-[state=active]:shadow-sm text-xs sm:text-sm py-2"
+          >
+            <span className="mr-1 sm:mr-2">🏢</span>
+            <span className="hidden sm:inline">Businesses & Competition</span>
+            <span className="sm:hidden">Biz & Comp</span>
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="microeconomics" className="mt-4">
           <EconomicsTrackSection
             track="microeconomics"
-            units={economicsUnits}
+            units={allEconomicsUnits}
             getUnitStatus={getUnitStatus}
             getUnitProgress={getUnitProgress}
             onStartUnit={(unitId, track) => startUnit(unitId, track)}
@@ -202,7 +230,7 @@ const BusinessEconomicsView: React.FC = () => {
         <TabsContent value="macroeconomics" className="mt-4">
           <EconomicsTrackSection
             track="macroeconomics"
-            units={economicsUnits}
+            units={allEconomicsUnits}
             getUnitStatus={getUnitStatus}
             getUnitProgress={getUnitProgress}
             onStartUnit={(unitId, track) => startUnit(unitId, track)}
@@ -210,23 +238,39 @@ const BusinessEconomicsView: React.FC = () => {
             onOpenSimulator={handleOpenSimulator}
           />
         </TabsContent>
+
+        <TabsContent value="businesses-competition" className="mt-4">
+          <EconomicsTrackSection
+            track="businesses-competition"
+            units={allEconomicsUnits}
+            getUnitStatus={getUnitStatus}
+            getUnitProgress={getUnitProgress}
+            onStartUnit={(unitId, track) => startUnit(unitId, track)}
+            onSelectLesson={handleSelectLesson}
+          />
+        </TabsContent>
       </Tabs>
 
-      {/* Boss Game Preview */}
+      {/* Boss Game */}
       <Card className="border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-3">
             <span className="text-2xl">🌤️</span>
-            <div>
+            <div className="flex-1">
               <h3 className="text-lg font-bold text-green-800">Boss Game: Phil's Economic Weather Report</h3>
-              <p className="text-sm text-green-600/80">React to economic news and predict their market impact</p>
+              <p className="text-sm text-green-600/80">React to economic news — pick the forecast and the winning sector.</p>
             </div>
           </div>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-green-600/70">Complete all units to unlock</span>
-            <span className="text-xs px-2 py-1 rounded bg-green-100 text-green-700 border border-green-200">Planned</span>
+            <span className="text-sm text-green-700 font-medium">+100 🎋 +25 XP on first clear</span>
+            <button
+              className="text-xs px-3 py-1.5 rounded bg-green-600 hover:bg-green-700 text-white font-medium transition-colors"
+              onClick={() => setBossActive(true)}
+            >
+              ▶ Play
+            </button>
           </div>
         </CardContent>
       </Card>

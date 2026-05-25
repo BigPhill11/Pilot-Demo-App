@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { emitDailyGoalEvent } from '@/lib/dailyGoalEvents';
 
 export interface DailyChallenge {
   id: string;
@@ -142,6 +143,11 @@ export const useDailyChallenges = () => {
       // Always save to localStorage
       const updated = { ...challenge, progress: newProgress, completed };
       localStorage.setItem('dailyChallenge', JSON.stringify(updated));
+
+      if (completed) {
+        emitDailyGoalEvent({ type: 'tinder_challenge', challengeId: challenge.id });
+        emitDailyGoalEvent({ type: 'any_activity' });
+      }
 
       return { completed, xpReward: completed ? challenge.xpReward : 0 };
     }

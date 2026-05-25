@@ -16,6 +16,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { 
+  BookOpen,
+  CheckCircle2,
+  Coins,
   Flame, 
   Clock, 
   Zap, 
@@ -26,9 +29,9 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { usePersonalStats, Suggestion } from '@/hooks/usePersonalStats';
+import { DAILY_TIME_GOAL_REWARD_BAMBOO, useDailyTimeGoal } from '@/hooks/useDailyTimeGoal';
 import { usePersonalDashboard } from '@/contexts/PersonalDashboardContext';
 import { useAuth } from '@/hooks/useAuth';
-import { useIsMobile } from '@/hooks/use-mobile';
 import PandaLogo from '@/components/icons/PandaLogo';
 
 interface PersonalStatsDashboardProps {
@@ -39,7 +42,8 @@ const PersonalStatsDashboard: React.FC<PersonalStatsDashboardProps> = ({ onNavig
   const stats = usePersonalStats();
   const { closeDashboard } = usePersonalDashboard();
   const { profile } = useAuth();
-  const isMobile = useIsMobile();
+  const dailyTimeGoal = useDailyTimeGoal();
+  const [savingTimeGoal, setSavingTimeGoal] = React.useState<string | null>(null);
 
   const handleSuggestionClick = (suggestion: Suggestion) => {
     closeDashboard();
@@ -55,6 +59,20 @@ const PersonalStatsDashboard: React.FC<PersonalStatsDashboardProps> = ({ onNavig
     return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
   };
 
+  const formatSeconds = (seconds: number): string => {
+    const minutes = Math.ceil(seconds / 60);
+    return minutes <= 1 ? '1m' : `${minutes}m`;
+  };
+
+  const handleTimeGoalChange = async (commitment: typeof dailyTimeGoal.options[number]['id']) => {
+    setSavingTimeGoal(commitment);
+    try {
+      await dailyTimeGoal.updateTimeCommitment(commitment);
+    } finally {
+      setSavingTimeGoal(null);
+    }
+  };
+
   if (stats.loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -68,15 +86,12 @@ const PersonalStatsDashboard: React.FC<PersonalStatsDashboardProps> = ({ onNavig
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-green-50 via-emerald-50/50 to-teal-50/30 -z-10" />
       
-      {/* Decorative bamboo elements */}
+        {/* Decorative bamboo elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-5">
         <div className="absolute top-0 left-2 w-1.5 h-40 bg-gradient-to-b from-green-300/20 to-green-500/10 rounded-full" />
         <div className="absolute top-10 left-5 w-1 h-32 bg-gradient-to-b from-green-200/15 to-green-400/10 rounded-full" />
         <div className="absolute top-0 right-2 w-1.5 h-36 bg-gradient-to-b from-green-300/20 to-green-500/10 rounded-full" />
         <div className="absolute top-16 right-6 w-1 h-28 bg-gradient-to-b from-green-200/15 to-green-400/10 rounded-full" />
-        {/* Panda footprints along edge */}
-        <div className="absolute bottom-20 left-4 text-green-200/30 text-lg">🐾</div>
-        <div className="absolute bottom-40 right-4 text-green-200/30 text-lg transform rotate-45">🐾</div>
       </div>
 
       <div className="relative z-10 p-4 space-y-5">
@@ -97,7 +112,7 @@ const PersonalStatsDashboard: React.FC<PersonalStatsDashboardProps> = ({ onNavig
         <div className="grid grid-cols-2 gap-3">
           {/* Bamboo Collected */}
           <StatCard
-            icon="🎋"
+            icon={<Coins className="h-5 w-5 text-green-600" />}
             label="Bamboo"
             value={stats.totalBamboo.toLocaleString()}
             subValue={`${stats.totalBambooEarned.toLocaleString()} earned`}
@@ -159,6 +174,63 @@ const PersonalStatsDashboard: React.FC<PersonalStatsDashboardProps> = ({ onNavig
           </CardContent>
         </Card>
 
+        {/* Daily Time Goal */}
+        <Card className="border-green-200 bg-white/80 backdrop-blur-sm">
+          <CardContent className="p-4">
+            <div className="mb-3 flex items-start justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-5 w-5 text-green-600" />
+                  <span className="font-semibold text-green-800">Daily Time Goal</span>
+                </div>
+                <p className="mt-1 text-xs text-green-600/80">
+                  Complete your daily minutes to earn +{DAILY_TIME_GOAL_REWARD_BAMBOO} bamboo.
+                </p>
+              </div>
+              {dailyTimeGoal.rewardedToday && (
+                <div className="flex items-center gap-1 rounded-full border border-green-200 bg-green-50 px-2 py-1 text-xs font-medium text-green-700">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Earned
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm text-green-800">
+                <span>{dailyTimeGoal.progressMinutes}m today</span>
+                <span>{dailyTimeGoal.targetMinutes}m goal</span>
+              </div>
+              <Progress value={dailyTimeGoal.progressPercent} className="h-3 bg-green-100" />
+              <p className="text-xs text-green-600/80">
+                {dailyTimeGoal.rewardedToday
+                  ? 'Goal complete for today.'
+                  : `${formatSeconds(dailyTimeGoal.secondsRemaining)} left to earn today's bamboo bonus.`}
+              </p>
+            </div>
+
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {dailyTimeGoal.options.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  disabled={savingTimeGoal !== null}
+                  onClick={() => handleTimeGoalChange(option.id)}
+                  className={`rounded-lg border px-2.5 py-2 text-left text-xs transition-colors ${
+                    dailyTimeGoal.selectedOption.id === option.id
+                      ? 'border-green-400 bg-green-100 text-green-900'
+                      : 'border-green-100 bg-white/80 text-green-700 hover:border-green-300'
+                  }`}
+                >
+                  <span className="block font-semibold">
+                    {savingTimeGoal === option.id ? 'Saving...' : option.label}
+                  </span>
+                  <span className="text-green-600/70">{option.description}</span>
+                </button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Learning Paths Mini Cards */}
         <div>
           <h3 className="text-sm font-semibold text-green-800 mb-2 flex items-center gap-2">
@@ -213,7 +285,7 @@ const PersonalStatsDashboard: React.FC<PersonalStatsDashboardProps> = ({ onNavig
                   `}
                   onClick={() => handleSuggestionClick(suggestion)}
                 >
-                  <span className="text-xl">{suggestion.icon}</span>
+                  <SuggestionIcon id={suggestion.id} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-green-800">{suggestion.title}</p>
                     <p className="text-xs text-green-600/80 truncate">{suggestion.description}</p>
@@ -231,7 +303,7 @@ const PersonalStatsDashboard: React.FC<PersonalStatsDashboardProps> = ({ onNavig
         {/* Phil's Encouragement */}
         <div className="mt-4 p-3 rounded-xl bg-gradient-to-r from-green-100/80 to-emerald-100/80 border border-green-200">
           <div className="flex items-start gap-2">
-            <span className="text-lg">🐼</span>
+            <PandaLogo className="h-6 w-6 shrink-0" />
             <div>
               <p className="text-xs font-medium text-green-800">Phil says:</p>
               <p className="text-xs text-green-600/90 italic">
@@ -259,7 +331,7 @@ const StatCard: React.FC<StatCardProps> = ({ icon, label, value, subValue, gradi
     <Card className={`${borderColor} bg-gradient-to-br ${gradient} overflow-hidden`}>
       <CardContent className="p-3">
         <div className="flex items-center gap-2 mb-1">
-          {typeof icon === 'string' ? <span className="text-xl">{icon}</span> : icon}
+          {icon}
           <span className="text-xs text-green-700/70">{label}</span>
         </div>
         <p className="text-lg font-bold text-green-800">{value}</p>
@@ -269,6 +341,14 @@ const StatCard: React.FC<StatCardProps> = ({ icon, label, value, subValue, gradi
       </CardContent>
     </Card>
   );
+};
+
+const SuggestionIcon: React.FC<{ id: string }> = ({ id }) => {
+  if (id === 'daily-goal') return <Target className="h-5 w-5 text-green-600" />;
+  if (id === 'continue-recent') return <BookOpen className="h-5 w-5 text-green-600" />;
+  if (id === 'boost-progress') return <TrendingUp className="h-5 w-5 text-green-600" />;
+  if (id === 'maintain-streak') return <Flame className="h-5 w-5 text-orange-500" />;
+  return <Sparkles className="h-5 w-5 text-green-600" />;
 };
 
 function getPhilMessage(stats: ReturnType<typeof usePersonalStats>): string {

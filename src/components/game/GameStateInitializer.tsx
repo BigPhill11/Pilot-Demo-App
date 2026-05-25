@@ -1,46 +1,61 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useGameStore } from '@/store/useGameStore';
-import { initializeCreditStore } from '@/store/useCreditStore';
 import { loadGameState, createFreshState } from '@/engine/persistence';
+import { useGamePersistence } from '@/hooks/useGamePersistence';
+import {
+  migrateAllLegacyStorageKeys,
+  setActiveStorageUserId,
+} from '@/lib/userScopedStorage';
 
 /**
  * Global component that initializes the Bamboo Empire game state on app load.
- * This ensures the game store is ready before any game component tries to award resources.
+ * Reloads per-user state on account switch and wires autosave.
  */
 const GameStateInitializer = () => {
   const { user } = useAuth();
-  const isInitialized = useGameStore((state) => state.initialized);
+  const userId = user?.id ?? null;
+  const loadedForUserRef = useRef<string | null | undefined>(undefined);
+
+  useGamePersistence(userId);
 
   useEffect(() => {
+    let cancelled = false;
+
     const initializeGameState = async () => {
-      if (isInitialized) return;
+      if (loadedForUserRef.current === userId) return;
+
+      setActiveStorageUserId(userId);
+      migrateAllLegacyStorageKeys(userId);
 
       try {
-        const savedState = await loadGameState(user?.id);
+        const savedState = await loadGameState(userId ?? undefined);
+        if (cancelled) return;
+
         if (savedState) {
           useGameStore.getState().loadState(savedState);
         } else {
-          // Initialize with fresh state if no saved state exists
           const freshState = createFreshState();
           useGameStore.getState().loadState(freshState);
         }
-        
-        // Initialize credit store from localStorage
-        initializeCreditStore();
+
+        loadedForUserRef.current = userId;
       } catch (error) {
         console.error('Failed to initialize game state:', error);
-        // Still initialize with fresh state to prevent blocking
+        if (cancelled) return;
         const freshState = createFreshState();
         useGameStore.getState().loadState(freshState);
-        initializeCreditStore();
+        loadedForUserRef.current = userId;
       }
     };
 
-    initializeGameState();
-  }, [user?.id, isInitialized]);
+    void initializeGameState();
 
-  // This component doesn't render anything
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+
   return null;
 };
 

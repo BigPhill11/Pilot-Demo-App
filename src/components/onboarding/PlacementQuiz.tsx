@@ -169,19 +169,19 @@ const questions: Question[] = [
 ];
 
 const encouragements = [
-  "Great start! Keep going! 🐼",
-  "You're doing amazing! 🌟",
+  "Great start! Keep going!",
+  "You're doing amazing!",
   "Nice work! Almost halfway there!",
-  "Excellent! You're on fire! 🔥",
+  "Excellent! You're on fire!",
   "Fantastic! Keep it up!",
-  "You're crushing it! 💪",
-  "Awesome answer! 🎯",
-  "Great thinking! 🧠",
+  "You're crushing it!",
+  "Awesome answer!",
+  "Great thinking!",
   "You're doing great!",
   "Almost there! Keep going!",
-  "Impressive! 🌟",
+  "Impressive!",
   "You've got this!",
-  "Nearly done! 🎉",
+  "Nearly done!",
   "Last stretch! You can do it!",
   "Final question! Make it count!"
 ];
@@ -263,7 +263,7 @@ const PlacementQuiz: React.FC<PlacementQuizProps> = ({ onComplete, onSkip }) => 
               <div className="flex justify-center mb-4">
                 <PandaLogo className="h-20 w-20" />
               </div>
-              <CardTitle className="text-2xl">Quiz Complete! 🎉</CardTitle>
+              <CardTitle className="text-2xl">Quiz Complete!</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
@@ -278,7 +278,7 @@ const PlacementQuiz: React.FC<PlacementQuizProps> = ({ onComplete, onSkip }) => 
               </div>
               
               <Button onClick={handleComplete} size="lg" className="w-full">
-                Start My Journey! 🚀
+                Start My Journey!
               </Button>
             </CardContent>
           </Card>

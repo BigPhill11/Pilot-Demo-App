@@ -25,6 +25,8 @@ interface IsometricGridProps {
   selectedTile: { x: number; y: number } | null;
   onTileClick: (x: number, y: number, terrain: TerrainType) => void;
   onTileHover: (x: number, y: number) => void;
+  tutorialHighlightTile?: { x: number; y: number } | null;
+  highlightBuildableTiles?: boolean;
   ghostBuilding?: {
     type: string;
     size: { width: number; height: number };
@@ -37,6 +39,8 @@ const IsometricGrid: React.FC<IsometricGridProps> = ({
   selectedTile,
   onTileClick,
   onTileHover,
+  tutorialHighlightTile = null,
+  highlightBuildableTiles = false,
   ghostBuilding,
 }) => {
   const buildings = useBaseLayoutStore((state) => state.buildings);
@@ -92,6 +96,9 @@ const IsometricGrid: React.FC<IsometricGridProps> = ({
         const { screenX, screenY } = gridToScreen(x, y);
         const isSelected = selectedTile?.x === x && selectedTile?.y === y;
         const isGhost = isGhostTile(x, y);
+        const isTutorialHighlight =
+          (tutorialHighlightTile?.x === x && tutorialHighlightTile?.y === y) ||
+          (highlightBuildableTiles && isBuildable);
 
         return (
           <Tile
@@ -101,7 +108,7 @@ const IsometricGrid: React.FC<IsometricGridProps> = ({
             screenX={screenX}
             screenY={screenY}
             terrain={terrain}
-            isSelected={isSelected}
+            isSelected={isSelected || isTutorialHighlight}
             isOccupied={isOccupied}
             isBuildable={isBuildable}
             isGhostValid={isGhost && ghostBuilding?.isValid}

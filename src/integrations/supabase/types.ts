@@ -388,6 +388,78 @@ export type Database = {
           },
         ]
       }
+      clip_quiz_attempts: {
+        Row: {
+          answered_at: string | null
+          clip_id: string
+          id: string
+          is_correct: boolean
+          question_id: string
+          selected_index: number
+          user_id: string
+          watch_percent: number | null
+        }
+        Insert: {
+          answered_at?: string | null
+          clip_id: string
+          id?: string
+          is_correct: boolean
+          question_id: string
+          selected_index: number
+          user_id: string
+          watch_percent?: number | null
+        }
+        Update: {
+          answered_at?: string | null
+          clip_id?: string
+          id?: string
+          is_correct?: boolean
+          question_id?: string
+          selected_index?: number
+          user_id?: string
+          watch_percent?: number | null
+        }
+        Relationships: []
+      }
+      clip_quiz_questions: {
+        Row: {
+          clip_id: string
+          correct_index: number
+          created_at: string | null
+          difficulty: string | null
+          explanation: string | null
+          id: string
+          options: Json
+          published: boolean | null
+          question: string
+          updated_at: string | null
+        }
+        Insert: {
+          clip_id: string
+          correct_index?: number
+          created_at?: string | null
+          difficulty?: string | null
+          explanation?: string | null
+          id?: string
+          options?: Json
+          published?: boolean | null
+          question: string
+          updated_at?: string | null
+        }
+        Update: {
+          clip_id?: string
+          correct_index?: number
+          created_at?: string | null
+          difficulty?: string | null
+          explanation?: string | null
+          id?: string
+          options?: Json
+          published?: boolean | null
+          question?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       phils_friends_videos: {
         Row: {
           category: string | null
@@ -402,6 +474,7 @@ export type Database = {
           level: string | null
           name: string | null
           processing_status: string | null
+          production_status: string | null
           published: boolean | null
           role_tier: string | null
           soft_skills_section: string | null
@@ -430,6 +503,7 @@ export type Database = {
           level?: string | null
           name?: string | null
           processing_status?: string | null
+          production_status?: string | null
           published?: boolean | null
           role_tier?: string | null
           soft_skills_section?: string | null
@@ -458,6 +532,7 @@ export type Database = {
           level?: string | null
           name?: string | null
           processing_status?: string | null
+          production_status?: string | null
           published?: boolean | null
           role_tier?: string | null
           soft_skills_section?: string | null
@@ -975,8 +1050,12 @@ export type Database = {
           created_at: string | null
           end_sec: number
           excerpt: string | null
+          feed_category: string | null
           id: string
+          learn_more_path: string | null
+          production_status: string | null
           published: boolean | null
+          speaker_display_name: string | null
           start_sec: number
           thumbnail_url: string | null
           title: string
@@ -988,8 +1067,12 @@ export type Database = {
           created_at?: string | null
           end_sec: number
           excerpt?: string | null
+          feed_category?: string | null
           id?: string
+          learn_more_path?: string | null
+          production_status?: string | null
           published?: boolean | null
+          speaker_display_name?: string | null
           start_sec: number
           thumbnail_url?: string | null
           title: string
@@ -1001,8 +1084,12 @@ export type Database = {
           created_at?: string | null
           end_sec?: number
           excerpt?: string | null
+          feed_category?: string | null
           id?: string
+          learn_more_path?: string | null
+          production_status?: string | null
           published?: boolean | null
+          speaker_display_name?: string | null
           start_sec?: number
           thumbnail_url?: string | null
           title?: string

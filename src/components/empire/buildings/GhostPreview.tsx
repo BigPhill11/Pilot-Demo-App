@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { BuildingType, BUILDING_DEFINITIONS } from './BuildingTypes';
+import { empireBuildingImageSrc, getBuildingSpriteLayout } from './empire-building-assets';
 import { gridToScreen } from '../lib/grid';
 
 interface GhostPreviewProps {
@@ -20,23 +21,12 @@ const GhostPreview: React.FC<GhostPreviewProps> = ({
   const { screenX: finalX, screenY: finalY } = gridToScreen(gridX, gridY);
   
   const color = isValid ? 'rgba(74, 222, 128, 0.6)' : 'rgba(248, 113, 113, 0.6)';
-  const strokeColor = isValid ? '#22c55e' : '#ef4444';
-  
-  const getBasePoints = () => {
-    const w = def.size.width;
-    const h = def.size.height;
-    const baseW = w === 1 ? 25 : 40 + (w - 2) * 10;
-    const baseH = h === 1 ? 8 : 15 + (h - 2) * 5;
-    return `-${baseW},${baseH} 0,-${baseH / 2} ${baseW},${baseH} 0,${baseH * 1.5}`;
-  };
   
   const renderGhostBuilding = () => {
-    const basePoints = getBasePoints();
-    const boxWidth = def.size.width === 1 ? 40 : 60 + (def.size.width - 2) * 15;
-    const boxHeight = def.size.height === 1 ? 40 : 60 + (def.size.height - 2) * 15;
-    
+    const { width, height, offsetY } = getBuildingSpriteLayout(type);
+
     return (
-      <g opacity={0.7}>
+      <g opacity={0.65}>
         <ellipse
           cx={0}
           cy={0}
@@ -45,25 +35,16 @@ const GhostPreview: React.FC<GhostPreviewProps> = ({
           fill={color}
           opacity={0.25}
         />
-        <polygon
-          points={basePoints}
-          fill={color}
-          stroke={strokeColor}
-          strokeWidth={2}
+        <image
+          href={empireBuildingImageSrc(type, true)}
+          x={-width / 2}
+          y={offsetY}
+          width={width}
+          height={height}
+          opacity={isValid ? 0.85 : 0.55}
+          preserveAspectRatio="xMidYMax meet"
+          style={{ imageRendering: 'auto', filter: isValid ? undefined : 'saturate(0.4)' }}
         />
-        <rect 
-          x={-boxWidth / 2} 
-          y={-boxHeight} 
-          width={boxWidth} 
-          height={boxHeight} 
-          fill={color} 
-          stroke={strokeColor} 
-          strokeWidth={2} 
-          strokeDasharray="5,5" 
-        />
-        <text x={0} y={-boxHeight / 2 + 8} textAnchor="middle" fontSize={24}>
-          {def.emoji}
-        </text>
       </g>
     );
   };

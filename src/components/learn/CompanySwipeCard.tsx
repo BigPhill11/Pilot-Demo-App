@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { ThumbsUp, ThumbsDown, Building2, Briefcase, DollarSign, BarChart2, MapPin, User } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import type { ProductLifecycleStage } from '@/utils/productLifecycle';
+
 export interface CompanyProfile {
   id: string;
   name: string;
@@ -12,6 +14,8 @@ export interface CompanyProfile {
   logoUrl?: string;
   industry: string;
   sector?: string;
+  /** Product life cycle stage for marketing / strategy lessons */
+  productLifecycleStage?: ProductLifecycleStage;
   professional: {
     overview: string;
     kpis: { title: string; value: string }[];

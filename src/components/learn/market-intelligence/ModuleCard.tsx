@@ -5,7 +5,17 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Check, Clock, ChevronRight, Lock, Sparkles } from 'lucide-react';
 import { usePlatformIntegration } from '@/hooks/usePlatformIntegration';
-import { ModuleCardData } from '@/data/market-intelligence/catalog';
+import { ModuleCardData, HeadlineType } from '@/data/market-intelligence/catalog';
+
+const HEADLINE_TYPE_LABELS: Record<
+  HeadlineType,
+  { label: string; className: string }
+> = {
+  product_launch: { label: 'Product Launch', className: 'bg-blue-100 text-blue-800 border-blue-200' },
+  pr_reputation: { label: 'PR / Reputation', className: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
+  earnings: { label: 'Earnings', className: 'bg-amber-100 text-amber-900 border-amber-200' },
+  regulation: { label: 'Regulation', className: 'bg-red-100 text-red-800 border-red-200' },
+};
 
 interface ModuleCardProps {
   module: ModuleCardData;
@@ -113,7 +123,15 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
               </p>
               
               {/* Footer */}
-              <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center gap-2 mt-2 flex-wrap">
+                {module.headlineType && (
+                  <Badge
+                    variant="outline"
+                    className={`text-[10px] ${HEADLINE_TYPE_LABELS[module.headlineType].className}`}
+                  >
+                    {HEADLINE_TYPE_LABELS[module.headlineType].label}
+                  </Badge>
+                )}
                 <Badge variant="outline" className={`text-xs ${styles.badge}`}>
                   <Clock className="h-3 w-3 mr-1" />
                   {module.estimatedMinutes} min

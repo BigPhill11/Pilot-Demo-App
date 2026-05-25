@@ -5,11 +5,13 @@
  * Combines bamboo, XP, streaks, time spent, and generates study suggestions.
  */
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useGameStore } from '@/store/useGameStore';
 import { useUnifiedStreak } from '@/hooks/useUnifiedStreak';
 import { useDashboardProgress, DashboardPath } from '@/hooks/useDashboardProgress';
 import { useDailyGoals, DailyGoal } from '@/hooks/useDailyGoals';
+import { calculateTotalTimeSpentMinutes } from '@/lib/dashboardProgressCalculations';
+import { PROGRESS_UPDATED_EVENT } from '@/lib/userScopedStorage';
 
 export interface Suggestion {
   id: string;
@@ -36,50 +38,6 @@ export interface PersonalStats {
   paths: DashboardPath[];
   suggestions: Suggestion[];
   loading: boolean;
-}
-
-/**
- * Calculate total time spent from localStorage progress keys
- */
-function calculateTotalTimeSpent(): number {
-  let totalMinutes = 0;
-  
-  try {
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith('progress_')) {
-        const stored = localStorage.getItem(key);
-        if (stored) {
-          const data = JSON.parse(stored);
-          if (data.timeSpentMinutes) {
-            totalMinutes += data.timeSpentMinutes;
-          }
-        }
-      }
-    }
-    
-    // Also check soft skills progress
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith('soft_skills_modules_')) {
-        const stored = localStorage.getItem(key);
-        if (stored) {
-          const modules = JSON.parse(stored);
-          if (Array.isArray(modules)) {
-            for (const mod of modules) {
-              if (mod.timeSpentMinutes) {
-                totalMinutes += mod.timeSpentMinutes;
-              }
-            }
-          }
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Error calculating time spent:', error);
-  }
-  
-  return totalMinutes;
 }
 
 /**
@@ -188,9 +146,23 @@ export function usePersonalStats(): PersonalStats {
     completedCount, 
     loading: goalsLoading 
   } = useDailyGoals();
+
+  const [timeRevision, setTimeRevision] = useState(0);
+
+  useEffect(() => {
+    const bump = () => setTimeRevision((n) => n + 1);
+    window.addEventListener(PROGRESS_UPDATED_EVENT, bump);
+    window.addEventListener('storage', bump);
+    return () => {
+      window.removeEventListener(PROGRESS_UPDATED_EVENT, bump);
+      window.removeEventListener('storage', bump);
+    };
+  }, []);
   
-  // Calculate time spent (memoized since it reads localStorage)
-  const timeSpentMinutes = useMemo(() => calculateTotalTimeSpent(), []);
+  const timeSpentMinutes = useMemo(
+    () => calculateTotalTimeSpentMinutes(),
+    [overallProgress, totalLessonsCompleted, timeRevision]
+  );
   
   // Generate suggestions
   const suggestions = useMemo(

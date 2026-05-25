@@ -18,11 +18,13 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import PandaLogo from '@/components/icons/PandaLogo';
 import PandaJumpGame from './games/PandaJumpGame';
+import type { UnifiedFlashcard } from '@/data/unified-flashcards';
 
 type QuestionType = 'definitions' | 'scenarios' | 'truefalse' | 'mixed';
 
 interface PandaJumpSectionProps {
   onBack: () => void;
+  cards?: UnifiedFlashcard[];
 }
 
 interface PowerUpInventory {
@@ -31,7 +33,7 @@ interface PowerUpInventory {
   bambooBoost: number;
 }
 
-const PandaJumpSection: React.FC<PandaJumpSectionProps> = ({ onBack }) => {
+const PandaJumpSection: React.FC<PandaJumpSectionProps> = ({ onBack, cards }) => {
   const isMobile = useIsMobile();
   const [selectedType, setSelectedType] = useState<QuestionType>('mixed');
   const [isPlaying, setIsPlaying] = useState(false);
@@ -82,6 +84,7 @@ const PandaJumpSection: React.FC<PandaJumpSectionProps> = ({ onBack }) => {
         onComplete={handleGameComplete}
         onBack={() => setIsPlaying(false)}
         initialPowerUps={powerUps}
+        cards={cards}
       />
     );
   }

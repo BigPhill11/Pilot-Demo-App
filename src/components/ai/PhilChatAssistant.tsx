@@ -1,18 +1,28 @@
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Send, Bot, User, Loader2, BookOpen, LogIn, AlertCircle } from 'lucide-react';
+import { Send, Bot, User, Loader2, BookOpen, AlertCircle, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useAskPhilUi } from '@/contexts/AskPhilUiContext';
+import { setDashboardDeepLink } from '@/lib/dashboardDeepLink';
 import DOMPurify from 'dompurify';
+
+interface RelatedModule {
+  id: string;
+  title: string;
+  path: string;
+  reason: string;
+}
 
 interface PhilResponse {
   answer: string;
   needs_web: boolean;
   study_next: string[];
   sources: string[];
+  related_modules?: RelatedModule[];
   quota?: {
     used: number;
     limit: number;
@@ -28,12 +38,9 @@ interface Message {
   suggestions?: string[];
   studyNext?: string[];
   sources?: string[];
+  relatedModules?: RelatedModule[];
 }
 
-const MOCK_SESSION = {
-  sessionId: 'mock-session-abc123',
-  completedModules: ['Budgeting 101', 'Intro to Credit', 'Emergency Funds'],
-};
 
 export interface PhilChatAssistantHandle {
   sendMessage: (text: string) => void;
@@ -43,11 +50,44 @@ interface PhilChatAssistantProps {
   variant?: 'default' | 'embedded';
 }
 
+type ExplainLevel = 'basic' | 'normal' | 'advanced';
+
+const LEVEL_LABELS: Record<ExplainLevel, { label: string; description: string }> = {
+  basic:    { label: 'Basic',    description: 'Simple definitions & one analogy' },
+  normal:   { label: 'Normal',   description: 'Clear explanations with context' },
+  advanced: { label: 'Advanced', description: 'College-level depth' },
+};
+
+const formatPhilText = (text: string): string =>
+  text
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    .replace(/^[\-\*] /gm, '• ')
+    .replace(/\n/g, '<br />');
+
 const PhilChatAssistant = forwardRef<PhilChatAssistantHandle, PhilChatAssistantProps>(
   ({ variant = 'default' }, ref) => {
-    const { user, profile } = useAuth();
-    const userLevel = (profile?.app_version as string) || 'intermediate';
-    const isGuest = !user;
+    const { user } = useAuth();
+    const navigate = useNavigate();
+    const { closeAskPhil } = useAskPhilUi();
+    const [explainLevel, setExplainLevel] = useState<ExplainLevel>('normal');
+
+    const handleModuleNavigate = (mod: RelatedModule) => {
+      closeAskPhil();
+      if (mod.path.includes('tab=personal-finance')) {
+        setDashboardDeepLink({ targetTab: 'personal-finance', moduleId: mod.id });
+        navigate('/learn?tab=personal-finance');
+      } else if (mod.path.includes('tab=companies')) {
+        setDashboardDeepLink({ targetTab: 'companies', sectionId: mod.id });
+        navigate('/learn?tab=companies');
+      } else if (mod.id === 'interviewing' && mod.path.includes('/career')) {
+        navigate('/career/interviewing');
+      } else if (mod.path.includes('/soft-skills')) {
+        navigate('/soft-skills?category=' + encodeURIComponent(mod.id));
+      } else {
+        navigate(mod.path);
+      }
+    };
 
     const [messages, setMessages] = useState<Message[]>([
       {
@@ -68,6 +108,9 @@ const PhilChatAssistant = forwardRef<PhilChatAssistantHandle, PhilChatAssistantP
     const [isTyping, setIsTyping] = useState(false);
     const [quota, setQuota] = useState<{ used: number; limit: number; remaining: number } | null>(null);
     const [quotaExceeded, setQuotaExceeded] = useState(false);
+    const [sessionCount, setSessionCount] = useState(0);
+    const SESSION_LIMIT = 5;
+    const sessionLimitReached = sessionCount >= SESSION_LIMIT;
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -79,7 +122,7 @@ const PhilChatAssistant = forwardRef<PhilChatAssistantHandle, PhilChatAssistantP
     }, [messages]);
 
     const handleSendMessageDirect = async (text: string) => {
-      if (!text.trim() || quotaExceeded) return;
+      if (!text.trim() || quotaExceeded || sessionLimitReached) return;
 
       const userMessage: Message = {
         id: Date.now().toString(),
@@ -93,92 +136,61 @@ const PhilChatAssistant = forwardRef<PhilChatAssistantHandle, PhilChatAssistantP
       setIsTyping(true);
 
       try {
-        const moduleContext = `User has completed the following modules: ${MOCK_SESSION.completedModules.join(', ')}.`;
-
         const payload = {
           message: text,
-          userLevel,
-          sessionId: MOCK_SESSION.sessionId,
-          context: moduleContext,
+          userLevel: explainLevel,
+          sessionId: user?.id ?? 'guest',
         };
 
         let philResponse: Message;
 
-        try {
-          const { data, error } = await supabase.functions.invoke('AskPhil', {
-            body: payload,
-          });
+        const { data: { session } } = await supabase.auth.getSession();
+        const { data, error } = await supabase.functions.invoke('AskPhil', {
+          body: payload,
+          headers: session?.access_token
+            ? { Authorization: `Bearer ${session.access_token}` }
+            : undefined,
+        });
 
-          if (error) {
-            if (error.message?.includes('429') || (data as any)?.error?.includes('limit')) {
-              setQuotaExceeded(true);
-              setQuota({ used: 5, limit: 5, remaining: 0 });
-              throw new Error('Daily limit reached');
-            }
-            throw new Error(error.message || 'Failed to get response from Phil');
-          }
-          if (data?.error) {
-            if (data.error.includes('limit') || data.error.includes('429')) {
-              setQuotaExceeded(true);
-              setQuota(data.quota || { used: 5, limit: 5, remaining: 0 });
-              throw new Error('Daily limit reached');
-            }
-            throw new Error(data.error);
-          }
-
-          const response = data as PhilResponse;
-
-          if (response.quota) {
-            setQuota(response.quota);
-            if (response.quota.remaining <= 0) {
-              setQuotaExceeded(true);
-            }
-          }
-
-          philResponse = {
-            id: (Date.now() + 1).toString(),
-            text: response.answer || 'I apologize, but I could not generate a response.',
-            sender: 'phil',
-            timestamp: new Date(),
-            studyNext: response.study_next || [],
-            sources: response.sources || [],
-            suggestions: response.study_next?.slice(0, 3) || [
-              'Tell me more about this',
-              'What should I do next?',
-              'Give me an example',
-            ],
-          };
-        } catch (invokeError: any) {
-          if (invokeError.message === 'Daily limit reached') {
-            philResponse = {
-              id: (Date.now() + 1).toString(),
-              text: "You've reached your daily limit of 5 questions. Come back tomorrow for more! 🐼",
-              sender: 'phil',
-              timestamp: new Date(),
-            };
-          } else if (import.meta.env.DEV) {
-            console.warn('Backend unavailable — using mock response:', invokeError?.message);
-            const lastModule = MOCK_SESSION.completedModules[MOCK_SESSION.completedModules.length - 1];
-            philResponse = {
-              id: (Date.now() + 1).toString(),
-              text: `[DEV MOCK] I see you have completed ${lastModule}! Based on your ${userLevel} level, here is your answer...`,
-              sender: 'phil',
-              timestamp: new Date(),
-            };
-          } else {
-            throw invokeError;
-          }
+        if (error) {
+          console.error('AskPhil invoke error:', error, 'data:', data);
+          const detail = (data as any)?.error || error.message || 'Failed to reach Phil';
+          throw new Error(detail);
         }
+
+        if (data?.error) {
+          console.error('AskPhil response error:', data.error);
+          throw new Error(data.error);
+        }
+
+        const response = data as PhilResponse;
+        setSessionCount((prev) => prev + 1);
+
+        philResponse = {
+          id: (Date.now() + 1).toString(),
+          text: response.answer || 'I apologize, but I could not generate a response.',
+          sender: 'phil',
+          timestamp: new Date(),
+          studyNext: response.study_next || [],
+          sources: response.sources || [],
+          relatedModules: response.related_modules || [],
+          suggestions: response.study_next?.slice(0, 3) || [
+            'Tell me more about this',
+            'What should I do next?',
+            'Give me an example',
+          ],
+        };
 
         setMessages((prev) => [...prev, philResponse]);
       } catch (error: any) {
         console.error('Unexpected error in handleSendMessage:', error);
+        const errMsg = error?.message || 'Unknown error';
 
         setMessages((prev) => [
           ...prev,
           {
             id: (Date.now() + 1).toString(),
-            text: "Sorry, I'm having trouble responding right now. Please try again in a moment! 🐼",
+            text: `Sorry, I hit an error: ${errMsg} 🐼`,
             sender: 'phil',
             timestamp: new Date(),
           },
@@ -213,28 +225,6 @@ const PhilChatAssistant = forwardRef<PhilChatAssistantHandle, PhilChatAssistantP
 
     const isEmbedded = variant === 'embedded';
 
-    if (isGuest) {
-      return (
-        <div className={isEmbedded ? 'flex flex-col items-center justify-center h-full p-6' : 'max-w-4xl mx-auto p-6'}>
-          <div className="text-center space-y-4">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-              <Bot className="h-8 w-8 text-primary" />
-            </div>
-            <h3 className="text-lg font-semibold">Sign in to chat with Phil</h3>
-            <p className="text-muted-foreground text-sm max-w-sm">
-              Create a free account to ask Phil questions about budgeting, investing, and personal finance.
-            </p>
-            <Button asChild>
-              <Link to="/" className="inline-flex items-center gap-2">
-                <LogIn className="h-4 w-4" />
-                Sign in to continue
-              </Link>
-            </Button>
-          </div>
-        </div>
-      );
-    }
-
     const messagesContent = (
       <div className="flex-1 overflow-y-auto space-y-4 mb-4 px-1">
         {messages.map((message, idx) => (
@@ -253,7 +243,7 @@ const PhilChatAssistant = forwardRef<PhilChatAssistantHandle, PhilChatAssistantP
                   dangerouslySetInnerHTML={{
                     __html:
                       message.sender === 'phil'
-                        ? DOMPurify.sanitize(message.text.replace(/\n/g, '<br />'))
+                        ? DOMPurify.sanitize(formatPhilText(message.text))
                         : DOMPurify.sanitize(message.text),
                   }}
                 />
@@ -267,18 +257,39 @@ const PhilChatAssistant = forwardRef<PhilChatAssistantHandle, PhilChatAssistantP
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {message.studyNext.map((item, index) => (
-                      <Button
+                      <span
                         key={index}
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleSuggestionClick(item)}
-                        className="text-xs"
-                        disabled={quotaExceeded}
+                        className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary font-medium"
                       >
                         {item}
-                      </Button>
+                      </span>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {message.relatedModules && message.relatedModules.length > 0 && (
+                <div className="mt-3 space-y-1.5">
+                  <div className="flex items-center gap-1 text-xs font-semibold text-emerald-600 mb-1">
+                    <BookOpen className="h-3 w-3" />
+                    <span>Continue Learning in the App</span>
+                  </div>
+                  {message.relatedModules.map((mod, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleModuleNavigate(mod)}
+                      className="w-full flex items-center gap-2 p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 active:bg-emerald-200 transition-colors text-left"
+                    >
+                      <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                        <BookOpen className="h-3.5 w-3.5 text-emerald-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-emerald-800 leading-tight">{mod.title}</p>
+                        <p className="text-xs text-emerald-600 truncate leading-tight">{mod.reason}</p>
+                      </div>
+                      <ChevronRight className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
+                    </button>
+                  ))}
                 </div>
               )}
 
@@ -336,15 +347,30 @@ const PhilChatAssistant = forwardRef<PhilChatAssistantHandle, PhilChatAssistantP
 
     const inputArea = (
       <div className="flex-shrink-0 space-y-2">
-        {quota && (
+        <div className="flex gap-1">
+          {(Object.keys(LEVEL_LABELS) as ExplainLevel[]).map((level) => (
+            <button
+              key={level}
+              onClick={() => setExplainLevel(level)}
+              className={`flex-1 px-2 py-1 rounded text-xs font-medium transition-colors ${
+                explainLevel === level
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              }`}
+            >
+              {LEVEL_LABELS[level].label}
+            </button>
+          ))}
+        </div>
+        {sessionCount > 0 && (
           <div
             className={`flex items-center gap-2 text-xs px-2 py-1 rounded ${
-              quotaExceeded ? 'bg-destructive/10 text-destructive' : 'bg-muted text-muted-foreground'
+              sessionLimitReached ? 'bg-destructive/10 text-destructive' : 'bg-muted text-muted-foreground'
             }`}
           >
-            {quotaExceeded ? <AlertCircle className="h-3 w-3" /> : null}
+            {sessionLimitReached ? <AlertCircle className="h-3 w-3" /> : null}
             <span>
-              {quota.remaining} of {quota.limit} questions left today
+              {SESSION_LIMIT - sessionCount} of {SESSION_LIMIT} questions left this session
             </span>
           </div>
         )}
@@ -353,12 +379,12 @@ const PhilChatAssistant = forwardRef<PhilChatAssistantHandle, PhilChatAssistantP
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={quotaExceeded ? 'Daily limit reached — come back tomorrow!' : 'Ask Phil anything about finance...'}
+            placeholder={sessionLimitReached ? 'Session limit reached — restart the app for more!' : 'Ask Phil anything about finance...'}
             className="flex-1 resize-none border rounded-lg px-3 py-2 min-h-[44px] max-h-32 text-sm"
             rows={1}
-            disabled={isTyping || quotaExceeded}
+            disabled={isTyping || quotaExceeded || sessionLimitReached}
           />
-          <Button onClick={handleSendMessage} disabled={!inputMessage.trim() || isTyping || quotaExceeded} size="icon">
+          <Button onClick={handleSendMessage} disabled={!inputMessage.trim() || isTyping || quotaExceeded || sessionLimitReached} size="icon">
             <Send className="h-4 w-4" />
           </Button>
         </div>

@@ -9,6 +9,7 @@ interface AuthContextType {
   loading: boolean;
   profile: any | null;
   signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -57,8 +58,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           email: userEmail || null,
           username: userEmail ? userEmail.split('@')[0] : null,
           onboarding_completed: false,
+          survey_completed: false,
           app_tour_completed: false,
-          placement_track: null,
+          placement_track: 'personal-finance',
           placement_score: null,
         };
         
@@ -116,51 +118,40 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const refreshProfile = async () => {
+    const currentUser = user;
+    if (currentUser) await fetchProfile(currentUser.id, currentUser.email ?? undefined);
+  };
+
   useEffect(() => {
     let mounted = true;
 
-    // Set up auth state listener
+    // onAuthStateChange fires INITIAL_SESSION immediately with the current session,
+    // so no separate getSession() call is needed — that caused double fetchProfile.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (!mounted) return;
-        
+
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         if (session?.user) {
-          // Use setTimeout to prevent potential deadlock
+          // setTimeout prevents Supabase client deadlock on auth state updates
           setTimeout(async () => {
-            if (mounted) {
-              await fetchProfile(session.user.id, session.user.email);
+            if (!mounted) return;
+            await fetchProfile(session.user.id, session.user.email);
+            // Only record daily login on actual sign-in events, not every session restore
+            if (event === 'SIGNED_IN') {
               await handleDailyLogin(session.user.id);
             }
           }, 0);
         } else {
           setProfile(null);
         }
-        
+
         setLoading(false);
       }
     );
-
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!mounted) return;
-      
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        setTimeout(async () => {
-          if (mounted) {
-            await fetchProfile(session.user.id, session.user.email);
-            await handleDailyLogin(session.user.id);
-          }
-        }, 0);
-      }
-      
-      setLoading(false);
-    });
 
     return () => {
       mounted = false;
@@ -174,6 +165,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loading,
     profile,
     signOut,
+    refreshProfile,
   };
 
   return (

@@ -21,21 +21,17 @@ import {
   Briefcase
 } from 'lucide-react';
 import TermHighlight, { ECONOMICS_TERMS } from './TermHighlight';
-
-interface CoreConcept {
-  title: string;
-  explanation: string;
-  example: string;
-  keyTerms?: string[];
-  pfTip?: string;
-  careerTip?: string;
-}
+import LessonVisualImage from '@/components/learn/market-intelligence/lesson/LessonVisualImage';
+import { EconomicsConceptChart } from './charts';
+import type { CoreConcept } from '@/types/economics-curriculum';
 
 interface LessonConceptsStepProps {
   lessonTitle: string;
   concepts: CoreConcept[];
   /** Optional diagram (e.g. /economics/*.svg) shown once above concepts */
   illustrationSrc?: string;
+  /** When true, each concept uses its own visual instead of a shared illustration */
+  perConceptVisuals?: boolean;
   onContinue: () => void;
   onBack: () => void;
 }
@@ -91,6 +87,7 @@ const LessonConceptsStep: React.FC<LessonConceptsStepProps> = ({
   lessonTitle,
   concepts,
   illustrationSrc,
+  perConceptVisuals = false,
   onContinue,
   onBack,
 }) => {
@@ -138,7 +135,7 @@ const LessonConceptsStep: React.FC<LessonConceptsStepProps> = ({
             {lessonTitle}
           </h2>
 
-          {illustrationSrc ? (
+          {!perConceptVisuals && illustrationSrc ? (
             <div className="mb-4 rounded-xl overflow-hidden border border-emerald-200 bg-white shadow-sm">
               <img
                 src={illustrationSrc}
@@ -176,6 +173,16 @@ const LessonConceptsStep: React.FC<LessonConceptsStepProps> = ({
 
         <Card className="border-emerald-200 bg-white mb-6">
           <CardContent className="p-6">
+            {perConceptVisuals && currentConcept.chart && (
+              <EconomicsConceptChart config={currentConcept.chart} className="mb-4" />
+            )}
+            {perConceptVisuals && currentConcept.visual && !currentConcept.chart && (
+              <LessonVisualImage
+                visual={currentConcept.visual}
+                className="mb-4"
+                fallbackSeed={currentConcept.visual.src}
+              />
+            )}
             <div className="mb-6">
               <h3 className="text-xl font-bold text-emerald-800 mb-4 flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-sm">

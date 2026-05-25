@@ -27,6 +27,9 @@ interface LessonCompleteStepProps {
   bambooEarned: number;
   onContinue: () => void;
   onReplay: () => void;
+  /** Show note that terms were added to Flashcards hub */
+  flashcardsSynced?: boolean;
+  passThresholdPercent?: number;
 }
 
 const LessonCompleteStep: React.FC<LessonCompleteStepProps> = ({
@@ -37,10 +40,12 @@ const LessonCompleteStep: React.FC<LessonCompleteStepProps> = ({
   bambooEarned,
   onContinue,
   onReplay,
+  flashcardsSynced = false,
+  passThresholdPercent = 60,
 }) => {
   const percentage = Math.round((quizScore / quizTotal) * 100);
   const isPerfect = quizScore === quizTotal;
-  const passed = percentage >= 60;
+  const passed = percentage >= passThresholdPercent;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-green-50/50 to-teal-50/30">
@@ -100,6 +105,11 @@ const LessonCompleteStep: React.FC<LessonCompleteStepProps> = ({
                 <span className="text-sm text-emerald-600">Bamboo Earned</span>
               </div>
             </div>
+            {flashcardsSynced && (
+              <p className="text-sm text-emerald-700 mt-4 text-center">
+                Terms from this lesson are in Flashcards &amp; Games under Language of Finance.
+              </p>
+            )}
           </CardContent>
         </Card>
 

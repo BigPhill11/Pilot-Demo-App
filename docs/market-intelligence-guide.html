@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Market Intelligence — Structure & Content Guide</title>
+  <style>
+    :root {
+      --green-800: #166534;
+      --green-700: #15803d;
+      --green-100: #dcfce7;
+      --emerald-50: #ecfdf5;
+      --amber-600: #d97706;
+      --violet-800: #5b21b6;
+      --bg: #f8faf9;
+      --card: #ffffff;
+      --muted: #64748b;
+      --border: #bbf7d0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      color: #1e293b;
+      background: var(--bg);
+      margin: 0;
+      padding: 2rem 1.5rem 4rem;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    header {
+      background: linear-gradient(135deg, var(--emerald-50), #d1fae5);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem 2rem;
+      margin-bottom: 2rem;
+    }
+    h1 {
+      margin: 0 0 0.5rem;
+      font-size: 1.75rem;
+      color: var(--green-800);
+    }
+    .subtitle { color: var(--green-700); margin: 0; font-size: 1rem; }
+    h2 {
+      font-size: 1.25rem;
+      color: var(--green-800);
+      margin: 2rem 0 1rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 2px solid var(--border);
+    }
+    h3 { font-size: 1.05rem; color: #334155; margin: 1.25rem 0 0.5rem; }
+    .card {
+      background: var(--card);
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .tabs-flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      margin: 1rem 0;
+    }
+    .tab-pill {
+      background: var(--green-100);
+      color: var(--green-800);
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+    }
+    .arrow { color: var(--muted); font-weight: bold; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin: 0.75rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    th { background: var(--emerald-50); color: var(--green-800); font-weight: 600; }
+    code, .path {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 0.82rem;
+      background: #f1f5f9;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+    }
+    .path { display: block; margin-top: 0.35rem; word-break: break-all; }
+    ul { margin: 0.5rem 0; padding-left: 1.25rem; }
+    li { margin: 0.35rem 0; }
+    .note {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-size: 0.92rem;
+      margin: 1rem 0;
+    }
+    .note strong { color: var(--amber-600); }
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      margin-right: 0.35rem;
+    }
+    .badge-stub { background: #fef3c7; color: #92400e; }
+    .badge-live { background: #d1fae5; color: #065f46; }
+    .badge-tier { background: #e0e7ff; color: #3730a3; }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e2e8f0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    a { color: var(--green-700); }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Market Intelligence — Structure & Content Guide</h1>
+  <p class="subtitle">Phil's Financials · Local reference (open in Chrome via file://)</p>
+</header>
+
+<section class="card">
+  <h2 style="margin-top:0;border:none;padding:0">How to open this file</h2>
+  <p>Double-click this file, or drag it into Chrome:</p>
+  <p class="path">file:///Users/garrett/Downloads/Pilot%20Demo%20App/docs/market-intelligence-guide.html</p>
+  <p>To use the live app: run <code>npm run dev</code> in the project folder, then open Learn → <strong>Markets</strong> (Market Intelligence).</p>
+</section>
+
+<section>
+  <h2>Tab order (6 sections)</h2>
+  <div class="tabs-flow">
+    <span class="tab-pill">1. Business Economics</span>
+    <span class="arrow">→</span>
+    <span class="tab-pill">2. Ownership</span>
+    <span class="arrow">→</span>
+    <span class="tab-pill">3. Language of Finance</span>
+    <span class="arrow">→</span>
+    <span class="tab-pill">4. Markets & Headlines</span>
+    <span class="arrow">→</span>
+    <span class="tab-pill">5. Business Foundations</span>
+    <span class="arrow">→</span>
+    <span class="tab-pill">6. Company Tinder</span>
+  </div>
+  <p class="note"><strong>Note:</strong> No "AP" labels appear in the app UI. Content is organized by natural module names only.</p>
+</section>
+
+<section>
+  <h2>1. Business Economics</h2>
+  <div class="card">
+    <p><strong>Three track tabs:</strong> Microeconomics · Macroeconomics · <strong>Businesses & Competition</strong> (new)</p>
+    <table>
+      <thead>
+        <tr><th>Track</th><th>Content</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Microeconomics</td>
+          <td>10 units, 4 lessons each, unit simulators</td>
+          <td><span class="badge badge-live">Full curriculum</span></td>
+        </tr>
+        <tr>
+          <td>Macroeconomics</td>
+          <td>10 units, 4 lessons each, unit simulators (PESTEL hints on macro sim meters)</td>
+          <td><span class="badge badge-live">Full curriculum</span></td>
+        </tr>
+        <tr>
+          <td>Businesses & Competition</td>
+          <td>1 unit, 4 lessons: Value Creation, Markets & Advantage, PESTEL, MVP/Ethics/Org</td>
+          <td><span class="badge badge-stub">Placeholder lessons</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <span class="path">Data: src/data/economics-curriculum.ts</span>
+    <span class="path">Biz & Competition: src/data/market-intelligence/ap-business-curriculum.ts</span>
+    <span class="path">UI: src/components/learn/market-intelligence/BusinessEconomicsView.tsx</span>
+  </div>
+</section>
+
+<section>
+  <h2>2. Ownership</h2>
+  <div class="card">
+    <p>Four module cards (placeholder — mark complete in dialog). Unchanged in this release.</p>
+    <ul>
+      <li>Own a Piece</li>
+      <li>Time is Your Ally</li>
+      <li>The Patience Game</li>
+      <li>Mistakes That Matter</li>
+    </ul>
+    <span class="path">src/components/learn/market-intelligence/OwnershipView.tsx</span>
+  </div>
+</section>
+
+<section>
+  <h2>3. Language of Finance</h2>
+  <div class="card">
+    <h3>Career vocabulary (existing)</h3>
+    <ul>
+      <li>Who's at the Table?</li>
+      <li>The Network Effect</li>
+      <li>Speaking the Language</li>
+      <li>From Learner to Insider</li>
+    </ul>
+    <h3>Accounting & Finance (new section below)</h3>
+    <ul>
+      <li>Income Statement Decoded</li>
+      <li>Balance Sheet Basics</li>
+      <li>Cash Flow Statement</li>
+      <li>Ethics in Accounting</li>
+    </ul>
+    <span class="path">Catalog: src/data/market-intelligence/catalog.ts</span>
+    <span class="path">UI: src/components/learn/market-intelligence/LanguageOfFinanceView.tsx</span>
+  </div>
+</section>
+
+<section>
+  <h2>4. Markets & Headlines</h2>
+  <div class="card">
+    <p>Four module cards with headline-type badges (Product Launch, PR/Reputation, Earnings, Regulation).</p>
+    <span class="path">src/components/learn/market-intelligence/MarketsHeadlinesView.tsx</span>
+  </div>
+</section>
+
+<section>
+  <h2>5. Business Foundations</h2>
+  <div class="card">
+    <p>Marketing and Management & Strategy — 2 units, 8 lessons total. Full lesson flow (intro → concepts → flashcards → quiz).</p>
+    <table>
+      <thead>
+        <tr><th>Unit</th><th>Lessons</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Marketing</td>
+          <td>Customer Profiles · Market Research · Product & Pricing · Channels & CAC</td>
+        </tr>
+        <tr>
+          <td>Management & Strategy</td>
+          <td>Leadership · KPIs · Decision Making · SWOT & Porter's</td>
+        </tr>
+      </tbody>
+    </table>
+    <span class="path">Data: src/data/market-intelligence/ap-business-foundations.ts</span>
+    <span class="path">UI: src/components/learn/market-intelligence/BusinessFoundationsView.tsx</span>
+    <span class="path">Progress: localStorage key <code>business_foundations_progress</code></span>
+  </div>
+</section>
+
+<section>
+  <h2>6. Company Tinder</h2>
+  <div class="card">
+    <p>Swipe game with 5 modes. Each company card shows a <strong>product lifecycle</strong> badge (Introduction / Growth / Maturity / Decline).</p>
+    <span class="path">src/components/learn/market-intelligence/CompanyTinderView.tsx</span>
+    <span class="path">src/components/learn/company-tinder/TinderCard.tsx</span>
+  </div>
+</section>
+
+<section>
+  <h2>Where you add real lesson copy</h2>
+  <div class="card">
+    <p>Stub lessons use placeholder text. Replace content in:</p>
+    <ul>
+      <li><code>src/data/market-intelligence/ap-business-curriculum.ts</code> — Businesses & Competition</li>
+      <li><code>src/data/market-intelligence/ap-business-foundations.ts</code> — Marketing & Management</li>
+      <li>Helper used to build stubs: <code>src/data/market-intelligence/lesson-stub-helpers.ts</code></li>
+    </ul>
+    <p>Each lesson needs: <code>intro</code>, <code>coreConcepts</code>, <code>flashcards</code>, <code>quiz</code> (same shape as economics lessons).</p>
+  </div>
+</section>
+
+<section>
+  <h2>Quick wins already wired</h2>
+  <div class="card">
+    <table>
+      <thead>
+        <tr><th>Feature</th><th>Where</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Product lifecycle badge on Tinder cards</td><td>TinderCard + productLifecycle.ts</td></tr>
+        <tr><td>PESTEL labels on macro sim meters</td><td>EconomicsSimMeters + macro sim configs</td></tr>
+        <tr><td>Headline type pills on Markets modules</td><td>ModuleCard + catalog.ts</td></tr>
+        <tr><td>529 Plan flashcard + quiz</td><td>lesson-4-tax-advantaged-accounts.ts (Personal Finance)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Related: Flashcards & Games (Learn tab)</h2>
+  <div class="card">
+    <ul>
+      <li><strong>Flashcards & Games</strong> — Personal Finance flashcards only; Market Intel & Careers locked as Coming Soon</li>
+      <li><strong>Company Tinder</strong> also appears as a game tile in Flashcards & Games hub</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  Generated for Pilot Demo App · Market Intelligence restructure · May 2026
+</footer>
+
+</body>
+</html>

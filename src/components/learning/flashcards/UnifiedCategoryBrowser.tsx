@@ -1,447 +1,509 @@
 /**
- * UnifiedCategoryBrowser - Large category navigation for flashcards
- * 
- * Features:
- * - Three main categories: Personal Finance, Market Intel, Careers
- * - Large, prominent navigation cards
- * - Drill down into subcategories
- * - Back navigation
- * - Beta lock for Market Intel and Careers
+ * UnifiedCategoryBrowser — Section/lesson picker for the Flashcards hub.
+ *
+ * Sections: Personal Finance (always open) | Markets | Careers & Finance
+ *  - Markets + Careers show per-subcategory unlock status; locked decks show
+ *    a "Complete [Lesson] to unlock" overlay instead of a "Coming Soon" wall.
  */
 
 import React, { useState, useMemo } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  getAllUnifiedFlashcards, 
-  UnifiedFlashcard 
+import {
+  getAllUnifiedFlashcards,
+  type UnifiedFlashcard,
 } from '@/data/unified-flashcards';
+import {
+  getSubcategoryUnlockStatus,
+  getAvailableFlashcards,
+} from '@/data/flashcards/flashcardUnlockStore';
 import { useIsMobile } from '@/hooks/use-mobile';
-import ComingSoonDialog from '@/components/ui/ComingSoonDialog';
-import { 
-  BookOpen, 
-  Briefcase, 
-  TrendingUp, 
-  ChevronLeft, 
+import {
+  BookOpen,
+  Briefcase,
+  TrendingUp,
+  ChevronLeft,
   Play,
   ChevronRight,
-  Sparkles,
   Lock,
-  Star
+  Star,
+  Sparkles,
 } from 'lucide-react';
 
 interface UnifiedCategoryBrowserProps {
   onSelectCards: (cards: UnifiedFlashcard[], title: string) => void;
 }
 
-type SourceType = 'personal-finance' | 'careers' | 'market-intelligence';
+type SourceType = 'personal-finance' | 'market-intelligence' | 'careers';
 type DifficultyFilter = 'all' | 'beginner' | 'intermediate' | 'advanced';
 
-interface MainCategory {
-  id: SourceType;
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  gradient: string;
-  borderColor: string;
-  locked?: boolean;
-}
-
-const MAIN_CATEGORIES: MainCategory[] = [
+// ── Bamboo-leaf colour palette ────────────────────────────────────────────────
+const SECTION_STYLES: Record<
+  SourceType,
   {
-    id: 'personal-finance',
+    gradient: string;
+    border: string;
+    badge: string;
+    icon: React.ReactNode;
+    title: string;
+    description: string;
+  }
+> = {
+  'personal-finance': {
+    gradient: 'from-emerald-500/20 to-teal-400/10',
+    border: 'border-emerald-400/50 hover:border-emerald-500',
+    badge: 'bg-emerald-600 text-white',
+    icon: <BookOpen className="h-8 w-8 text-emerald-700" />,
     title: 'Personal Finance',
-    description: 'Build your financial foundation with budgeting, saving, and investing concepts',
-    icon: <BookOpen className="h-8 w-8" />,
-    gradient: 'from-emerald-500/20 to-teal-500/10',
-    borderColor: 'border-emerald-500/30 hover:border-emerald-500/60',
-    locked: false,
+    description: 'Budgeting, saving, investing and credit fundamentals',
   },
-  {
-    id: 'market-intelligence',
-    title: 'Market Intelligence',
-    description: 'Master market analysis, trading concepts, and investment strategies',
-    icon: <TrendingUp className="h-8 w-8" />,
-    gradient: 'from-gray-500/20 to-gray-500/10',
-    borderColor: 'border-gray-400/30 hover:border-gray-400/60',
-    locked: true,
+  'market-intelligence': {
+    gradient: 'from-teal-500/20 to-cyan-400/10',
+    border: 'border-teal-400/50 hover:border-teal-500',
+    badge: 'bg-teal-600 text-white',
+    icon: <TrendingUp className="h-8 w-8 text-teal-700" />,
+    title: 'Markets',
+    description: 'Stocks, earnings, financial statements and market moves',
   },
-  {
-    id: 'careers',
-    title: 'Careers in Finance',
-    description: 'Explore finance career paths and industry knowledge',
-    icon: <Briefcase className="h-8 w-8" />,
-    gradient: 'from-gray-500/20 to-gray-500/10',
-    borderColor: 'border-gray-400/30 hover:border-gray-400/60',
-    locked: true,
+  careers: {
+    gradient: 'from-amber-400/20 to-yellow-300/10',
+    border: 'border-amber-400/50 hover:border-amber-500',
+    badge: 'bg-amber-600 text-white',
+    icon: <Briefcase className="h-8 w-8 text-amber-700" />,
+    title: 'Careers & Finance',
+    description: 'Investment banking, PE, consulting and interview prep',
   },
+};
+
+const DIFFICULTY_COLOR: Record<string, string> = {
+  beginner: 'bg-emerald-500 text-white',
+  intermediate: 'bg-yellow-500 text-white',
+  advanced: 'bg-red-500 text-white',
+};
+
+const SECTION_ORDER: SourceType[] = [
+  'personal-finance',
+  'market-intelligence',
+  'careers',
 ];
 
-const UnifiedCategoryBrowser: React.FC<UnifiedCategoryBrowserProps> = ({ onSelectCards }) => {
+// ── Component ─────────────────────────────────────────────────────────────────
+const UnifiedCategoryBrowser: React.FC<UnifiedCategoryBrowserProps> = ({
+  onSelectCards,
+}) => {
   const isMobile = useIsMobile();
   const [selectedSource, setSelectedSource] = useState<SourceType | null>(null);
-  const [difficultyFilter, setDifficultyFilter] = useState<DifficultyFilter>('all');
-  const [showComingSoon, setShowComingSoon] = useState(false);
-  const [comingSoonFeature, setComingSoonFeature] = useState('');
+  const [difficultyFilter, setDifficultyFilter] =
+    useState<DifficultyFilter>('all');
 
-  // Get all cards - only personal finance for now
   const allCards = useMemo(() => getAllUnifiedFlashcards(), []);
-  const availableCards = useMemo(() => 
-    allCards.filter(c => c.sourceModule === 'personal-finance'), 
-    [allCards]
-  );
 
-  // Get cards for each main category
-  const categoryStats = useMemo(() => {
-    const stats: Record<SourceType, { count: number; difficulties: Record<string, number> }> = {
-      'personal-finance': { count: 0, difficulties: {} },
-      'market-intelligence': { count: 0, difficulties: {} },
-      'careers': { count: 0, difficulties: {} },
+  // Per-section summary stats (total + unlocked counts)
+  const sectionStats = useMemo(() => {
+    const out: Record<
+      SourceType,
+      { total: number; unlocked: number; difficulties: Record<string, number> }
+    > = {
+      'personal-finance': { total: 0, unlocked: 0, difficulties: {} },
+      'market-intelligence': { total: 0, unlocked: 0, difficulties: {} },
+      careers: { total: 0, unlocked: 0, difficulties: {} },
     };
 
-    allCards.forEach(card => {
-      const source = card.sourceModule as SourceType;
-      if (stats[source]) {
-        stats[source].count++;
-        stats[source].difficulties[card.difficulty] = (stats[source].difficulties[card.difficulty] || 0) + 1;
-      }
+    SECTION_ORDER.forEach((src) => {
+      const all = allCards.filter((c) => c.sourceModule === src);
+      const available =
+        src === 'personal-finance'
+          ? all
+          : getAvailableFlashcards(src, allCards);
+      out[src].total = all.length;
+      out[src].unlocked = available.length;
+      available.forEach((c) => {
+        out[src].difficulties[c.difficulty] =
+          (out[src].difficulties[c.difficulty] ?? 0) + 1;
+      });
     });
 
-    return stats;
+    return out;
   }, [allCards]);
 
-  // Get subcategories for selected source
-  const subcategories = useMemo(() => {
+  // Featured deck: Investing sub-category in PF
+  const featuredDeck = useMemo(() => {
+    const cards = allCards.filter(
+      (c) =>
+        c.sourceModule === 'personal-finance' && c.category === 'Investing'
+    );
+    if (cards.length > 0)
+      return { title: 'Investing', icon: '📈', cards };
+    const pf = allCards.filter((c) => c.sourceModule === 'personal-finance');
+    if (pf.length > 0) {
+      const cat = pf[0].category;
+      return { title: cat, icon: pf[0].icon, cards: pf.filter((c) => c.category === cat) };
+    }
+    return null;
+  }, [allCards]);
+
+  // Subcategory list for the selected section
+  const subcategoryStatuses = useMemo(() => {
     if (!selectedSource) return [];
 
-    let cards = allCards.filter(c => c.sourceModule === selectedSource);
-    
-    if (difficultyFilter !== 'all') {
-      cards = cards.filter(c => c.difficulty === difficultyFilter);
+    if (selectedSource === 'personal-finance') {
+      const map = new Map<string, UnifiedFlashcard[]>();
+      let cards = allCards.filter((c) => c.sourceModule === 'personal-finance');
+      if (difficultyFilter !== 'all')
+        cards = cards.filter((c) => c.difficulty === difficultyFilter);
+      cards.forEach((c) => {
+        const key = c.subcategory ?? c.category;
+        map.set(key, [...(map.get(key) ?? []), c]);
+      });
+      return [...map.entries()].map(([sub, cards]) => ({
+        subcategory: sub,
+        cards,
+        unlocked: true,
+        unlockCta: '',
+      }));
     }
 
-    const categoryMap = new Map<string, { cards: UnifiedFlashcard[], icon: string }>();
-    cards.forEach(card => {
-      const existing = categoryMap.get(card.category);
-      if (existing) {
-        existing.cards.push(card);
-      } else {
-        categoryMap.set(card.category, { cards: [card], icon: card.icon });
-      }
-    });
-
-    return Array.from(categoryMap.entries()).map(([title, { cards, icon }]) => ({
-      title,
-      icon,
-      cards,
-      cardCount: cards.length,
+    // Markets or Careers: use unlock store
+    const unlockStatuses = getSubcategoryUnlockStatus(selectedSource, allCards);
+    if (difficultyFilter === 'all') return unlockStatuses;
+    return unlockStatuses.map((s) => ({
+      ...s,
+      cards: s.cards.filter((c) => c.difficulty === difficultyFilter),
     }));
   }, [selectedSource, allCards, difficultyFilter]);
 
-  const handleCategoryClick = (category: MainCategory) => {
-    if (category.locked) {
-      setComingSoonFeature(category.title);
-      setShowComingSoon(true);
-      return;
-    }
-    setSelectedSource(category.id);
-  };
-
-  const handleSelectCategory = (category: typeof subcategories[0]) => {
-    onSelectCards(category.cards, category.title);
-  };
-
-  const handleStudyAll = (source: SourceType) => {
-    let cards = allCards.filter(c => c.sourceModule === source);
-    if (difficultyFilter !== 'all') {
-      cards = cards.filter(c => c.difficulty === difficultyFilter);
-    }
-    const category = MAIN_CATEGORIES.find(c => c.id === source);
-    onSelectCards(cards, category?.title || 'All Cards');
-  };
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'beginner': return 'bg-green-500 text-white';
-      case 'intermediate': return 'bg-yellow-500 text-white';
-      case 'advanced': return 'bg-red-500 text-white';
-      default: return 'bg-muted';
-    }
-  };
-
-  // Featured deck: pull the Investing cards (compound interest lives here and
-  // this deck has the broadest wow-factor) from the unified personal-finance
-  // pool. If Investing isn't available for any reason, fall back to the first
-  // available category so the spotlight card never renders empty.
-  const featuredDeck = useMemo(() => {
-    const investing = availableCards.filter(c => c.category === 'Investing');
-    if (investing.length > 0) {
-      return { title: 'Investing', icon: '📈', cards: investing };
-    }
-    if (availableCards.length > 0) {
-      const fallbackTitle = availableCards[0].category;
-      const fallback = availableCards.filter(c => c.category === fallbackTitle);
-      return { title: fallbackTitle, icon: fallback[0]?.icon || '🌟', cards: fallback };
-    }
-    return null;
-  }, [availableCards]);
-
-  // Main category view
+  // ── Main section picker ──────────────────────────────────────────────────
   if (!selectedSource) {
     return (
       <div className="space-y-6">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-foreground mb-2">Choose a Topic</h2>
-          <p className="text-muted-foreground">Select a category to start studying flashcards</p>
+        {/* Header */}
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-foreground mb-1">Flashcards</h2>
+          <p className="text-muted-foreground text-sm">
+            Choose a section — swipe right to master, swipe left to review later
+          </p>
         </div>
 
         {/* Featured Deck Spotlight */}
         {featuredDeck && (
-          <Card
-            className="cursor-pointer border-2 border-amber-400/50 bg-gradient-to-br from-amber-50 via-yellow-50 to-emerald-50 dark:from-amber-950/30 dark:via-yellow-950/20 dark:to-emerald-950/30 shadow-md hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 overflow-hidden"
+          <div
+            className="rounded-2xl border-2 border-amber-400/50 bg-gradient-to-br from-amber-50 via-yellow-50 to-emerald-50 dark:from-amber-950/30 dark:to-emerald-950/30 shadow-md hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 cursor-pointer p-5"
             onClick={() => onSelectCards(featuredDeck.cards, featuredDeck.title)}
           >
-            <CardContent className="p-5 md:p-6">
-              <div className="flex items-center gap-4">
-                <div className="relative shrink-0">
-                  <div className="text-5xl md:text-6xl">{featuredDeck.icon}</div>
-                  <Star className="h-5 w-5 absolute -top-1 -right-1 text-amber-500 fill-amber-400" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <Badge className="bg-amber-500 hover:bg-amber-600 text-white text-[10px] uppercase tracking-wide">
-                      <Sparkles className="h-3 w-3 mr-1" />
-                      Featured Deck
-                    </Badge>
-                    <Badge variant="secondary" className="text-xs">
-                      {featuredDeck.cards.length} cards
-                    </Badge>
-                  </div>
-                  <h3 className="text-lg md:text-xl font-bold text-foreground mb-1">
-                    {featuredDeck.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    Compound interest, asset allocation, and the long-term concepts that quietly do the heaviest lifting.
-                  </p>
-                </div>
-                <Button size="sm" className="shrink-0 hidden sm:inline-flex">
-                  <Play className="h-4 w-4 mr-1" />
-                  Start
-                </Button>
-                <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0 sm:hidden" />
+            <div className="flex items-center gap-4">
+              <div className="relative shrink-0">
+                <div className="text-5xl">{featuredDeck.icon}</div>
+                <Star className="h-5 w-5 absolute -top-1 -right-1 text-amber-500 fill-amber-400" />
               </div>
-            </CardContent>
-          </Card>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <Badge className="bg-amber-500 hover:bg-amber-600 text-white text-[10px] uppercase tracking-wide">
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    Featured Deck
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    {featuredDeck.cards.length} cards
+                  </Badge>
+                </div>
+                <h3 className="text-lg font-bold text-foreground mb-1">
+                  {featuredDeck.title}
+                </h3>
+                <p className="text-sm text-muted-foreground line-clamp-2">
+                  Compound interest, asset allocation, and the concepts that
+                  quietly do the heaviest lifting.
+                </p>
+              </div>
+              <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
+            </div>
+          </div>
         )}
 
+        {/* Section tiles */}
         <div className="space-y-4">
-          {MAIN_CATEGORIES.map((category) => {
-            const stats = categoryStats[category.id];
+          {SECTION_ORDER.map((src) => {
+            const style = SECTION_STYLES[src];
+            const stats = sectionStats[src];
+            const isPF = src === 'personal-finance';
+            const hasAny = stats.total > 0;
+
             return (
-              <Card
-                key={category.id}
-                className={`cursor-pointer transition-all duration-300 border-2 ${category.borderColor} bg-gradient-to-r ${category.gradient} hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] ${category.locked ? 'opacity-70' : ''}`}
-                onClick={() => handleCategoryClick(category)}
+              <div
+                key={src}
+                role="button"
+                tabIndex={0}
+                className={`rounded-2xl border-2 ${style.border} bg-gradient-to-r ${style.gradient} p-5 cursor-pointer hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all duration-200`}
+                onClick={() => setSelectedSource(src)}
+                onKeyDown={(e) => e.key === 'Enter' && setSelectedSource(src)}
               >
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 rounded-xl bg-background/50 backdrop-blur relative">
-                      {category.icon}
-                      {category.locked && (
-                        <Lock className="h-4 w-4 absolute -top-1 -right-1 text-muted-foreground" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-                          {category.title}
-                          {category.locked && (
-                            <Badge variant="outline" className="text-xs text-muted-foreground">
-                              Coming Soon
+                <div className="flex items-start gap-4">
+                  <div className="p-3 rounded-xl bg-background/50 backdrop-blur shrink-0">
+                    {style.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-xl font-bold text-foreground mb-1">
+                      {style.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                      {style.description}
+                    </p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {isPF ? (
+                        <Badge className={style.badge}>
+                          {stats.total} cards
+                        </Badge>
+                      ) : (
+                        <>
+                          {stats.unlocked > 0 ? (
+                            <Badge className={style.badge}>
+                              {stats.unlocked} unlocked
+                            </Badge>
+                          ) : (
+                            <Badge
+                              variant="outline"
+                              className="text-muted-foreground"
+                            >
+                              <Lock className="h-3 w-3 mr-1" />
+                              Complete lessons to unlock
                             </Badge>
                           )}
-                        </h3>
-                        {category.locked ? (
-                          <Lock className="h-5 w-5 text-muted-foreground" />
-                        ) : (
-                          <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                        {category.description}
-                      </p>
-                      <div className="flex items-center gap-3">
-                        <Badge variant="secondary" className="font-semibold">
-                          {category.locked ? '🔒' : `${stats.count} cards`}
-                        </Badge>
-                        {!category.locked && (
-                          <div className="flex gap-1">
-                            {['beginner', 'intermediate', 'advanced'].map(diff => {
-                              const count = stats.difficulties[diff] || 0;
-                              if (count === 0) return null;
-                              return (
-                                <Badge 
-                                  key={diff} 
-                                  className={`text-[10px] ${getDifficultyColor(diff)}`}
-                                >
-                                  {count}
-                                </Badge>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
+                          {hasAny && (
+                            <Badge variant="secondary" className="text-xs">
+                              {stats.total} total
+                            </Badge>
+                          )}
+                        </>
+                      )}
+                      {Object.entries(stats.difficulties).map(([diff, count]) =>
+                        count > 0 ? (
+                          <Badge
+                            key={diff}
+                            className={`text-[10px] ${DIFFICULTY_COLOR[diff] ?? 'bg-muted'}`}
+                          >
+                            {count}
+                          </Badge>
+                        ) : null
+                      )}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                  <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0 mt-1" />
+                </div>
+              </div>
             );
           })}
         </div>
 
-        {/* Study All Option - Only Personal Finance cards */}
-        <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20 mt-8">
-          <CardContent className="p-6 flex items-center justify-between">
+        {/* Study All PF shortcut */}
+        {sectionStats['personal-finance'].total > 0 && (
+          <div className="rounded-2xl bg-gradient-to-r from-emerald-500/10 to-teal-400/5 border-2 border-emerald-400/30 p-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Sparkles className="h-6 w-6 text-primary" />
+              <Sparkles className="h-6 w-6 text-emerald-600" />
               <div>
-                <h3 className="font-bold text-lg">Study Personal Finance</h3>
+                <h3 className="font-bold">Study All Personal Finance</h3>
                 <p className="text-sm text-muted-foreground">
-                  {availableCards.length} cards available
+                  {sectionStats['personal-finance'].total} cards
                 </p>
               </div>
             </div>
-            <Button 
+            <Button
               size="lg"
-              onClick={() => onSelectCards(availableCards, 'Personal Finance Flashcards')}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white"
+              onClick={() =>
+                onSelectCards(
+                  allCards.filter((c) => c.sourceModule === 'personal-finance'),
+                  'Personal Finance'
+                )
+              }
             >
               <Play className="h-4 w-4 mr-2" />
               Start
             </Button>
-          </CardContent>
-        </Card>
-
-        {/* Coming Soon Dialog */}
-        <ComingSoonDialog
-          isOpen={showComingSoon}
-          onClose={() => setShowComingSoon(false)}
-          featureName={comingSoonFeature}
-        />
+          </div>
+        )}
       </div>
     );
   }
 
-  // Subcategory view
-  const currentMainCategory = MAIN_CATEGORIES.find(c => c.id === selectedSource);
-  const totalFilteredCards = subcategories.reduce((sum, cat) => sum + cat.cardCount, 0);
+  // ── Subcategory / lesson deck view ────────────────────────────────────────
+  const style = SECTION_STYLES[selectedSource];
+  const isPF = selectedSource === 'personal-finance';
+  const unlockedSubcats = subcategoryStatuses.filter((s) => s.unlocked);
+  const totalUnlocked = unlockedSubcats.reduce(
+    (sum, s) => sum + s.cards.length,
+    0
+  );
 
   return (
     <div className="space-y-6">
-      {/* Header with back button */}
+      {/* Header */}
       <div className="flex items-center gap-3">
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => setSelectedSource(null)}
           className="shrink-0"
         >
           <ChevronLeft className="h-4 w-4 mr-1" />
           Back
         </Button>
-        <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          {style.icon}
           <h2 className="text-xl font-bold text-foreground truncate">
-            {currentMainCategory?.title}
+            {style.title}
           </h2>
         </div>
       </div>
 
       {/* Difficulty Filter */}
       <div className="flex flex-wrap gap-2">
-        <span className="text-sm text-muted-foreground self-center">Difficulty:</span>
-        {(['all', 'beginner', 'intermediate', 'advanced'] as const).map((diff) => (
-          <Badge
-            key={diff}
-            variant={difficultyFilter === diff ? 'default' : 'outline'}
-            className={`cursor-pointer transition-all ${
-              difficultyFilter === diff 
-                ? diff === 'beginner' ? 'bg-green-500 hover:bg-green-600' 
-                  : diff === 'intermediate' ? 'bg-yellow-500 hover:bg-yellow-600' 
-                  : diff === 'advanced' ? 'bg-red-500 hover:bg-red-600' 
-                  : '' 
-                : 'hover:bg-muted'
-            }`}
-            onClick={() => setDifficultyFilter(diff)}
-          >
-            {diff === 'all' ? 'All Levels' : diff.charAt(0).toUpperCase() + diff.slice(1)}
-          </Badge>
-        ))}
+        <span className="text-sm text-muted-foreground self-center">Level:</span>
+        {(['all', 'beginner', 'intermediate', 'advanced'] as const).map(
+          (diff) => (
+            <Badge
+              key={diff}
+              variant={difficultyFilter === diff ? 'default' : 'outline'}
+              className={`cursor-pointer transition-all ${
+                difficultyFilter === diff
+                  ? diff === 'beginner'
+                    ? 'bg-emerald-500 hover:bg-emerald-600'
+                    : diff === 'intermediate'
+                      ? 'bg-yellow-500 hover:bg-yellow-600'
+                      : diff === 'advanced'
+                        ? 'bg-red-500 hover:bg-red-600'
+                        : 'bg-emerald-600 hover:bg-emerald-700'
+                  : 'hover:bg-muted'
+              }`}
+              onClick={() => setDifficultyFilter(diff)}
+            >
+              {diff === 'all'
+                ? 'All Levels'
+                : diff.charAt(0).toUpperCase() + diff.slice(1)}
+            </Badge>
+          )
+        )}
       </div>
 
-      {/* Study All in Category */}
-      <Card className={`bg-gradient-to-r ${currentMainCategory?.gradient} border-2 ${currentMainCategory?.borderColor?.replace('hover:', '')}`}>
-        <CardContent className="p-4 flex items-center justify-between">
+      {/* Study All unlocked */}
+      {totalUnlocked > 0 && (
+        <div
+          className={`rounded-2xl border-2 bg-gradient-to-r ${style.gradient} ${style.border.replace('hover:', '')} p-4 flex items-center justify-between`}
+        >
           <div>
-            <h3 className="font-semibold">Study All ({totalFilteredCards} cards)</h3>
-            <p className="text-sm text-muted-foreground">
-              Review all {currentMainCategory?.title} cards
-            </p>
+            <h3 className="font-semibold">
+              Study All Unlocked ({totalUnlocked} cards)
+            </h3>
+            <p className="text-sm text-muted-foreground">{style.title}</p>
           </div>
-          <Button 
-            onClick={() => handleStudyAll(selectedSource)}
-            disabled={totalFilteredCards === 0}
+          <Button
+            onClick={() =>
+              onSelectCards(
+                unlockedSubcats.flatMap((s) => s.cards),
+                style.title
+              )
+            }
+            className="bg-emerald-600 hover:bg-emerald-700 text-white"
           >
             <Play className="h-4 w-4 mr-2" />
             Start
           </Button>
-        </CardContent>
-      </Card>
+        </div>
+      )}
 
-      {/* Subcategory Grid */}
+      {/* Deck tiles */}
       <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2'} gap-4`}>
-        {subcategories.map((category) => (
-          <Card 
-            key={category.title}
-            className="cursor-pointer hover:shadow-md hover:border-primary/30 transition-all group"
-            onClick={() => handleSelectCategory(category)}
-          >
-            <CardContent className="p-4">
-              <div className="flex items-start justify-between mb-3">
-                <div className="text-3xl group-hover:scale-110 transition-transform">
-                  {category.icon}
+        {subcategoryStatuses.map((status) => {
+          const isLocked = !status.unlocked;
+
+          return (
+            <div
+              key={status.subcategory}
+              role={isLocked ? 'listitem' : 'button'}
+              tabIndex={isLocked ? -1 : 0}
+              onClick={() => {
+                if (!isLocked && status.cards.length > 0) {
+                  onSelectCards(status.cards, status.subcategory);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (
+                  e.key === 'Enter' &&
+                  !isLocked &&
+                  status.cards.length > 0
+                ) {
+                  onSelectCards(status.cards, status.subcategory);
+                }
+              }}
+              className={`relative rounded-2xl border-2 p-4 transition-all duration-200 ${
+                isLocked
+                  ? 'border-border bg-muted/30 opacity-60 cursor-default'
+                  : 'border-emerald-300/50 bg-white dark:bg-card hover:border-emerald-400 hover:shadow-md cursor-pointer hover:scale-[1.01] active:scale-[0.99]'
+              }`}
+            >
+              {isLocked && (
+                <div className="absolute inset-0 rounded-2xl flex flex-col items-center justify-center bg-background/60 backdrop-blur-[2px] z-10 p-3 text-center">
+                  <Lock className="h-6 w-6 text-muted-foreground mb-2" />
+                  <p className="text-xs font-medium text-muted-foreground line-clamp-2">
+                    {status.unlockCta}
+                  </p>
+                </div>
+              )}
+
+              {/* Tile content */}
+              <div className="flex items-start justify-between mb-2">
+                <div className="text-2xl">
+                  {status.cards[0]?.icon ?? '📚'}
                 </div>
                 <Badge variant="secondary" className="text-xs">
-                  {category.cardCount} cards
+                  {isLocked ? `${status.cards.length} cards` : `${status.cards.length} cards`}
                 </Badge>
               </div>
-              <h3 className="font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
-                {category.title}
+              <h3 className="font-semibold text-foreground mb-1 line-clamp-2">
+                {status.subcategory}
               </h3>
-              <div className="flex flex-wrap gap-1 mt-2">
-                {['beginner', 'intermediate', 'advanced'].map(diff => {
-                  const count = category.cards.filter(c => c.difficulty === diff).length;
-                  if (count === 0) return null;
-                  return (
-                    <Badge 
-                      key={diff} 
-                      className={`text-[10px] ${getDifficultyColor(diff)}`}
-                    >
-                      {count} {diff.charAt(0).toUpperCase()}
-                    </Badge>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              {!isPF && !isLocked && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {(['beginner', 'intermediate', 'advanced'] as const).map(
+                    (diff) => {
+                      const count = status.cards.filter(
+                        (c) => c.difficulty === diff
+                      ).length;
+                      if (count === 0) return null;
+                      return (
+                        <Badge
+                          key={diff}
+                          className={`text-[10px] ${DIFFICULTY_COLOR[diff]}`}
+                        >
+                          {count} {diff.charAt(0).toUpperCase()}
+                        </Badge>
+                      );
+                    }
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
-      {subcategories.length === 0 && (
+      {subcategoryStatuses.length === 0 && (
         <div className="text-center py-12 text-muted-foreground">
-          <p>No flashcards match your current filter.</p>
-          <Button variant="link" onClick={() => setDifficultyFilter('all')}>
-            Clear filter
-          </Button>
+          {isPF ? (
+            <>
+              <p>No cards match your filter.</p>
+              <Button variant="link" onClick={() => setDifficultyFilter('all')}>
+                Clear filter
+              </Button>
+            </>
+          ) : (
+            <div className="rounded-2xl border-2 border-dashed border-emerald-300/40 p-8">
+              <Lock className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+              <p className="font-semibold text-foreground mb-2">
+                No decks unlocked yet
+              </p>
+              <p className="text-sm">
+                Complete {style.title} lessons to unlock flashcard decks.
+              </p>
+            </div>
+          )}
         </div>
       )}
     </div>

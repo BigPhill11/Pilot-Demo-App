@@ -48,7 +48,7 @@ const VideoClipManagement: React.FC<VideoClipManagementProps> = ({ videoId, vide
         .from('video_clips')
         .select('*')
         .eq('video_id', videoId)
-        .order('start_time', { ascending: true });
+        .order('start_sec', { ascending: true });
 
       if (error) throw error;
       setClips(data || []);

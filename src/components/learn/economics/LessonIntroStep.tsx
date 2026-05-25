@@ -11,12 +11,15 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ChevronRight, Clock, Sparkles } from 'lucide-react';
 import PandaLogo from '@/components/icons/PandaLogo';
+import type { LessonVisual } from '@/types/mi-lesson';
+import LessonVisualImage from '@/components/learn/market-intelligence/lesson/LessonVisualImage';
 
 interface LessonIntroStepProps {
   lessonTitle: string;
   estimatedMinutes: number;
   hook: string;
   philMessage: string;
+  heroImage?: LessonVisual;
   onContinue: () => void;
 }
 
@@ -25,11 +28,15 @@ const LessonIntroStep: React.FC<LessonIntroStepProps> = ({
   estimatedMinutes,
   hook,
   philMessage,
+  heroImage,
   onContinue,
 }) => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-green-50/50 to-teal-50/30">
       <div className="container mx-auto px-4 py-8 max-w-2xl">
+        {heroImage && (
+          <LessonVisualImage visual={heroImage} className="mb-6" fallbackSeed={heroImage.src} />
+        )}
         <div className="mb-8 text-center">
           <Badge className="mb-4 bg-emerald-100 text-emerald-700 border-emerald-200">
             <Clock className="h-3 w-3 mr-1" />

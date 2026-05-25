@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { getAllModules, ModuleCardData } from '@/data/market-intelligence/catalog';
+import { emitDailyGoalEvent } from '@/lib/dailyGoalEvents';
 
 const STORAGE_KEY = 'market_intelligence_progress';
 
@@ -90,6 +91,7 @@ export function useMarketIntelligenceProgress() {
         },
       },
     }));
+    emitDailyGoalEvent({ type: 'module', pathId: 'company-discovery', moduleId });
   }, []);
 
   /**
@@ -129,9 +131,10 @@ export function useMarketIntelligenceProgress() {
     const sortedModules = [...allModules].sort((a, b) => {
       const sectionOrder: Record<string, number> = {
         'business-economics': 1,
-        'markets-headlines': 2,
-        'ownership': 3,
-        'language-finance': 4,
+        'ownership': 2,
+        'language-finance': 3,
+        'markets-headlines': 4,
+        'business-foundations': 5,
       };
       const sectionDiff = (sectionOrder[a.sectionId] ?? 99) - (sectionOrder[b.sectionId] ?? 99);
       if (sectionDiff !== 0) return sectionDiff;

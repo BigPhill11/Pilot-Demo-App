@@ -4,6 +4,11 @@ import { useGameStore } from '@/store/useGameStore';
 import { useCreditStore } from '@/store/useCreditStore';
 import { getBuildingStats } from '../buildings/BuildingTypes';
 import { CREDIT_CONFIG } from '@/engine/credit';
+import {
+  getEventIntensityMultiplier,
+  getXpTierEventIntervalBoundsMs,
+  scaleEventMagnitude,
+} from './eventIntensity';
 
 export type EventType =
   | 'bamboo_blight'
@@ -205,6 +210,32 @@ export const EVENT_DEFINITIONS: Record<EventType, Omit<EconomicEvent, 'id'>> = {
   },
 };
 
+export const LAST_EVENT_AT_KEY = 'bamboo_empire_last_event_at';
+const MAX_CATCHUP_EVENTS = 3;
+
+function getRandomEventDelayMs(playerXp: number): number {
+  const { minMs, maxMs } = getXpTierEventIntervalBoundsMs(playerXp);
+  return minMs + Math.random() * (maxMs - minMs);
+}
+
+function readLastEventAt(): number {
+  try {
+    const raw = localStorage.getItem(LAST_EVENT_AT_KEY);
+    if (raw) return parseInt(raw, 10);
+  } catch {
+    /* ignore */
+  }
+  return Date.now();
+}
+
+function writeLastEventAt(timestamp: number): void {
+  try {
+    localStorage.setItem(LAST_EVENT_AT_KEY, timestamp.toString());
+  } catch {
+    /* ignore */
+  }
+}
+
 const NEGATIVE_EVENTS: EventType[] = [
   'bamboo_blight',
   'market_crash',
@@ -221,6 +252,12 @@ const POSITIVE_EVENTS: EventType[] = ['bamboo_boom', 'lucky_visitor', 'festival_
 interface UseEventManagerOptions {
   onEventStart?: (event: ActiveEvent) => void;
   onEventEnd?: (event: ActiveEvent) => void;
+  onOfflineCatchUp?: (entries: EventHistoryEntry[]) => void;
+  pauseScheduling?: boolean;
+}
+
+interface TriggerOptions {
+  catchUp?: boolean;
 }
 
 export const useEventManager = (options: UseEventManagerOptions = {}) => {
@@ -238,6 +275,7 @@ export const useEventManager = (options: UseEventManagerOptions = {}) => {
 
   const buildings = useBaseLayoutStore((state) => state.buildings);
   const bamboo = useGameStore((state) => state.bamboo);
+  const playerXp = useGameStore((state) => state.xp);
   const spendBamboo = useGameStore((state) => state.spendBamboo);
   const addBamboo = useGameStore((state) => state.addBamboo);
 
@@ -245,6 +283,8 @@ export const useEventManager = (options: UseEventManagerOptions = {}) => {
   const creditBalance = useCreditStore((state) => state.balance);
   const creditLimit = useCreditStore((state) => state.limit);
   const payBalance = useCreditStore((state) => state.payBalance);
+  const chargeEmpireExpense = useCreditStore((state) => state.chargeEmpireExpense);
+  const increaseApr = useCreditStore((state) => state.increaseApr);
 
   const getInsuranceProtection = useCallback(() => {
     const insuranceBuildings = buildings.filter((b) => b.type === 'insurance_hut' && b.status === 'active');
@@ -262,8 +302,9 @@ export const useEventManager = (options: UseEventManagerOptions = {}) => {
   }, [buildings]);
 
   const triggerEvent = useCallback(
-    (eventType?: EventType) => {
-      if (activeEvent) return;
+    (eventType?: EventType, triggerOpts: TriggerOptions = {}) => {
+      const { catchUp = false } = triggerOpts;
+      if (!catchUp && activeEvent) return undefined;
 
       let selectedType: EventType;
       if (eventType) {
@@ -302,34 +343,56 @@ export const useEventManager = (options: UseEventManagerOptions = {}) => {
       const protection = event.isNegative ? getInsuranceProtection() : 0;
       const mitigated = protection > 0;
       const mitigationFactor = 1 - protection / 100;
+      const intensity = getEventIntensityMultiplier(playerXp);
+
+      const chargeEventExpense = (amount: number) => {
+        if (amount <= 0) return;
+        const chargeResult = chargeEmpireExpense(amount);
+        if (!chargeResult.success) {
+          spendBamboo(amount);
+        }
+      };
 
       const applyProductivity = () => {
         if (event.effect.productivityDelta === undefined) return;
-        const raw = event.effect.productivityDelta;
-        const d = event.isNegative ? Math.round(raw * mitigationFactor) : raw;
+        const scaled = scaleEventMagnitude(
+          event.effect.productivityDelta,
+          intensity,
+          event.isNegative,
+        );
+        const d = event.isNegative ? Math.round(scaled * mitigationFactor) : scaled;
         if (d !== 0) {
           useGameStore.getState().applyEmpireProductivityDelta(d);
         }
       };
 
       if (event.effect.instantCoinLoss) {
-        const baseLoss = Math.floor(bamboo * event.effect.instantCoinLoss);
+        const baseLoss = Math.floor(bamboo * event.effect.instantCoinLoss * intensity);
         const actualLoss = Math.floor(baseLoss * mitigationFactor);
         if (actualLoss > 0) {
-          spendBamboo(actualLoss);
+          chargeEventExpense(actualLoss);
         }
       }
 
       if (event.effect.instantCoinLossFlat) {
-        const baseFlat = event.effect.instantCoinLossFlat;
+        const baseFlat = scaleEventMagnitude(
+          event.effect.instantCoinLossFlat,
+          intensity,
+          true,
+        );
         const actualFlat = Math.floor(baseFlat * mitigationFactor);
         if (actualFlat > 0) {
-          spendBamboo(actualFlat);
+          chargeEventExpense(actualFlat);
         }
       }
 
       if (event.effect.instantCoinGain) {
-        addBamboo(event.effect.instantCoinGain, 'event');
+        const gain = scaleEventMagnitude(
+          event.effect.instantCoinGain,
+          intensity,
+          false,
+        );
+        addBamboo(gain, 'event');
       }
 
       applyProductivity();
@@ -337,9 +400,15 @@ export const useEventManager = (options: UseEventManagerOptions = {}) => {
       if (event.effect.creditScoreChange && creditEnabled) {
         const isHighUtilization =
           creditLimit > 0 && creditBalance / creditLimit >= CREDIT_CONFIG.highUtilizationThreshold;
+        const scaledScoreChange = scaleEventMagnitude(
+          event.effect.creditScoreChange,
+          intensity,
+          event.isNegative,
+        );
+
         if (event.type === 'credit_check') {
           if (isHighUtilization) {
-            const scoreChange = Math.floor(event.effect.creditScoreChange * mitigationFactor);
+            const scoreChange = Math.floor(scaledScoreChange * mitigationFactor);
             useCreditStore.setState((state) => ({
               score: Math.max(CREDIT_CONFIG.minScore, state.score + scoreChange),
             }));
@@ -347,16 +416,37 @@ export const useEventManager = (options: UseEventManagerOptions = {}) => {
         }
       }
 
+      if (event.effect.aprIncrease && creditEnabled) {
+        increaseApr(event.effect.aprIncrease * intensity);
+      }
+
       if (event.effect.forcePaymentPercent && creditEnabled && creditBalance > 0) {
-        const requiredPayment = Math.ceil(creditBalance * event.effect.forcePaymentPercent);
+        const requiredPayment = Math.ceil(
+          creditBalance * event.effect.forcePaymentPercent * intensity,
+        );
         if (bamboo >= requiredPayment) {
           spendBamboo(requiredPayment);
           payBalance(requiredPayment);
-        } else if (event.effect.creditScoreChange) {
-          const scoreChange = Math.floor(event.effect.creditScoreChange * mitigationFactor);
-          useCreditStore.setState((state) => ({
-            score: Math.max(CREDIT_CONFIG.minScore, state.score + scoreChange),
-          }));
+        } else {
+          const unpaid = requiredPayment - bamboo;
+          if (bamboo > 0) {
+            spendBamboo(bamboo);
+            payBalance(bamboo);
+          }
+          if (unpaid > 0) {
+            chargeEmpireExpense(unpaid);
+          }
+          if (event.effect.creditScoreChange) {
+            const scaledScoreChange = scaleEventMagnitude(
+              event.effect.creditScoreChange,
+              intensity,
+              true,
+            );
+            const scoreChange = Math.floor(scaledScoreChange * mitigationFactor);
+            useCreditStore.setState((state) => ({
+              score: Math.max(CREDIT_CONFIG.minScore, state.score + scoreChange),
+            }));
+          }
         }
       }
 
@@ -368,57 +458,75 @@ export const useEventManager = (options: UseEventManagerOptions = {}) => {
         mitigated,
       };
 
-      if (event.duration > 0) {
-        if (event.effect.productionMultiplier !== undefined) {
-          const adjustedMultiplier = event.isNegative
-            ? 1 - (1 - event.effect.productionMultiplier) * mitigationFactor
-            : event.effect.productionMultiplier;
-          setProductionMultiplier(adjustedMultiplier);
+      if (!catchUp) {
+        if (event.duration > 0) {
+          if (event.effect.productionMultiplier !== undefined) {
+            const baseMultiplier = event.effect.productionMultiplier;
+            const scaledMultiplier = event.isNegative
+              ? 1 - (1 - baseMultiplier) * intensity
+              : 1 + (baseMultiplier - 1) * intensity;
+            const adjustedMultiplier = event.isNegative
+              ? 1 - (1 - scaledMultiplier) * mitigationFactor
+              : scaledMultiplier;
+            setProductionMultiplier(adjustedMultiplier);
+          }
+
+          if (event.effect.collectionBlocked) {
+            setIsCollectionBlocked(!mitigated || mitigationFactor > 0.5);
+          }
+
+          if (event.effect.xpMultiplier) {
+            setXpMultiplier(1 + (event.effect.xpMultiplier - 1) * intensity);
+          }
+
+          setActiveEvent(newActiveEvent);
+          optionsRef.current.onEventStart?.(newActiveEvent);
+
+          eventTimerRef.current = setTimeout(() => {
+            setActiveEvent(null);
+            setProductionMultiplier(1);
+            setIsCollectionBlocked(false);
+            setXpMultiplier(1);
+            optionsRef.current.onEventEnd?.(newActiveEvent);
+          }, event.duration);
+        } else {
+          setActiveEvent(newActiveEvent);
+          optionsRef.current.onEventStart?.(newActiveEvent);
+          setTimeout(() => {
+            setActiveEvent(null);
+            optionsRef.current.onEventEnd?.(newActiveEvent);
+          }, 3000);
         }
-
-        if (event.effect.collectionBlocked) {
-          setIsCollectionBlocked(!mitigated || mitigationFactor > 0.5);
-        }
-
-        if (event.effect.xpMultiplier) {
-          setXpMultiplier(event.effect.xpMultiplier);
-        }
-
-        setActiveEvent(newActiveEvent);
-        optionsRef.current.onEventStart?.(newActiveEvent);
-
-        eventTimerRef.current = setTimeout(() => {
-          setActiveEvent(null);
-          setProductionMultiplier(1);
-          setIsCollectionBlocked(false);
-          setXpMultiplier(1);
-          optionsRef.current.onEventEnd?.(newActiveEvent);
-        }, event.duration);
-      } else {
-        setActiveEvent(newActiveEvent);
-        optionsRef.current.onEventStart?.(newActiveEvent);
-        setTimeout(() => {
-          setActiveEvent(null);
-          optionsRef.current.onEventEnd?.(newActiveEvent);
-        }, 3000);
       }
 
-      setEventHistory((prev) => [
-        {
-          event,
-          timestamp: now,
-          mitigated,
-        },
-        ...prev.slice(0, 19),
-      ]);
+      const historyEntry: EventHistoryEntry = {
+        event,
+        timestamp: now,
+        mitigated,
+      };
+
+      setEventHistory((prev) => [historyEntry, ...prev.slice(0, 19)]);
+
+      if (!catchUp) {
+        writeLastEventAt(now);
+      }
+
+      return historyEntry;
     },
-    [activeEvent, bamboo, spendBamboo, addBamboo, getInsuranceProtection, creditEnabled, creditBalance, creditLimit, payBalance],
+    [activeEvent, bamboo, playerXp, spendBamboo, addBamboo, getInsuranceProtection, creditEnabled, creditBalance, creditLimit, payBalance, chargeEmpireExpense, increaseApr],
   );
 
   const triggerEventRef = useRef(triggerEvent);
   triggerEventRef.current = triggerEvent;
 
+  const pauseScheduling = options.pauseScheduling ?? false;
+  const catchUpRanRef = useRef(false);
+  const playerXpRef = useRef(playerXp);
+  playerXpRef.current = playerXp;
+
   useEffect(() => {
+    if (pauseScheduling) return;
+
     let cancelled = false;
 
     const clearNextTimer = () => {
@@ -430,9 +538,7 @@ export const useEventManager = (options: UseEventManagerOptions = {}) => {
 
     const scheduleNextEvent = () => {
       clearNextTimer();
-      const minDelay = 120000;
-      const maxDelay = 240000;
-      const delay = minDelay + Math.random() * (maxDelay - minDelay);
+      const delay = getRandomEventDelayMs(playerXpRef.current);
       nextEventTimerRef.current = setTimeout(() => {
         if (cancelled) return;
         triggerEventRef.current();
@@ -440,7 +546,35 @@ export const useEventManager = (options: UseEventManagerOptions = {}) => {
       }, delay);
     };
 
-    const initialDelay = 45000 + Math.random() * 45000;
+    const now = Date.now();
+    const { minMs } = getXpTierEventIntervalBoundsMs(playerXpRef.current);
+
+    if (!catchUpRanRef.current) {
+      catchUpRanRef.current = true;
+      const lastAt = readLastEventAt();
+      const elapsed = now - lastAt;
+      const catchUpCount = Math.min(
+        MAX_CATCHUP_EVENTS,
+        Math.floor(elapsed / minMs),
+      );
+
+      const catchUpEntries: EventHistoryEntry[] = [];
+      for (let i = 0; i < catchUpCount; i++) {
+        const entry = triggerEventRef.current(undefined, { catchUp: true });
+        if (entry) catchUpEntries.push(entry);
+      }
+
+      if (catchUpEntries.length > 0) {
+        writeLastEventAt(now);
+        optionsRef.current.onOfflineCatchUp?.(catchUpEntries);
+      } else if (!localStorage.getItem(LAST_EVENT_AT_KEY)) {
+        writeLastEventAt(now);
+      }
+    }
+
+    const timeSinceLast = now - readLastEventAt();
+    const initialDelay = Math.max(0, getRandomEventDelayMs(playerXpRef.current) - timeSinceLast);
+
     const initialTimer = setTimeout(() => {
       if (cancelled) return;
       triggerEventRef.current();
@@ -456,7 +590,7 @@ export const useEventManager = (options: UseEventManagerOptions = {}) => {
         eventTimerRef.current = null;
       }
     };
-  }, []);
+  }, [pauseScheduling]);
 
   const getRemainingTime = useCallback(() => {
     if (!activeEvent || activeEvent.event.duration === 0) return 0;

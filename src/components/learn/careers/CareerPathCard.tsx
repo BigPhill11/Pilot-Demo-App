@@ -8,30 +8,17 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ChevronRight, Gamepad2 } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { FinanceCareerData } from '@/data/finance-careers';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface CareerPathCardProps {
   career: FinanceCareerData;
   onClick: () => void;
-  isInteractive?: boolean;
 }
 
-const INTERACTIVE_CAREERS = [
-  'investment-banking',
-  'management-consulting',
-  'private-equity',
-  'venture-capital',
-  'asset-management',
-  'corporate-finance',
-  'hedge-funds',
-  'wealth-management',
-];
-
-const CareerPathCard: React.FC<CareerPathCardProps> = ({ career, onClick, isInteractive }) => {
+const CareerPathCard: React.FC<CareerPathCardProps> = ({ career, onClick }) => {
   const isMobile = useIsMobile();
-  const hasInteractiveContent = isInteractive ?? (INTERACTIVE_CAREERS.includes(career.id) || career.name === 'Wealth Management');
 
   return (
     <Card
@@ -42,15 +29,6 @@ const CareerPathCard: React.FC<CareerPathCardProps> = ({ career, onClick, isInte
       `}
       onClick={onClick}
     >
-      {/* Interactive badge */}
-      {hasInteractiveContent && (
-        <div className="absolute top-2 right-2 z-10">
-          <Badge className="bg-gradient-to-r from-emerald-500 to-green-600 text-white text-xs">
-            <Gamepad2 className="h-3 w-3 mr-1" />
-            Interactive
-          </Badge>
-        </div>
-      )}
 
       {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 to-transparent" />
@@ -80,13 +58,8 @@ const CareerPathCard: React.FC<CareerPathCardProps> = ({ career, onClick, isInte
             {/* Career type badge */}
             <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="outline" className="text-xs border-green-200 text-green-700 bg-green-50">
-                {career.levels.length} lessons
+                {career.levels.length} modules
               </Badge>
-              {career.id === 'investment-banking' && (
-                <Badge variant="outline" className="text-xs border-emerald-200 text-emerald-700 bg-emerald-50">
-                  6 IB Divisions
-                </Badge>
-              )}
             </div>
           </div>
 

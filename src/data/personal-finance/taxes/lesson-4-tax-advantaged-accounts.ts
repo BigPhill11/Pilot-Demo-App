@@ -19,7 +19,8 @@ Understanding accounts and timing turns taxes from a surprise into a planning to
     { term: 'Tax Deferral', definition: 'Tax deferral means delaying taxes until a later time. Delaying taxes allows money to grow before being taxed.', philsAnalogy: 'Paying taxes when withdrawing money instead of when earning it.' },
     { term: 'Tax Free Growth', definition: 'Tax free growth means investment gains are not taxed if rules are followed. This allows faster long-term growth.', philsAnalogy: 'Investments growing without yearly tax bills reducing returns.' },
     { term: 'Contribution', definition: 'A contribution is money added to a specific account. Contributions often have limits and rules.', philsAnalogy: 'Adding money regularly to a long-term savings account.' },
-    { term: 'Withdrawal', definition: 'A withdrawal is money taken out of an account. Withdrawals can trigger taxes if taken at the wrong time.', philsAnalogy: 'Taking money out early and owing taxes or penalties.' }
+    { term: 'Withdrawal', definition: 'A withdrawal is money taken out of an account. Withdrawals can trigger taxes if taken at the wrong time.', philsAnalogy: 'Taking money out early and owing taxes or penalties.' },
+    { term: '529 Education Savings Plan', definition: 'A tax-advantaged account for qualified education expenses. Growth is often tax-free when used for approved school costs.', philsAnalogy: 'A labeled jar for college money that the tax rules reward when you use it for school.' }
   ],
   simulatorGame: {
     title: 'Where and When',
@@ -45,7 +46,18 @@ Understanding accounts and timing turns taxes from a surprise into a planning to
     { question: 'Tax free growth works when:', options: ['Rules are followed', 'Money is hidden', 'Income is low', 'Timing is random'], correctIndex: 0, explanation: 'Tax-free accounts require following specific rules to get the benefit.' },
     { question: 'Contributions matter because:', options: ['They remove limits', 'They eliminate taxes', 'They prevent withdrawals', 'They create growth base'], correctIndex: 3, explanation: 'What you contribute becomes the base for future growth.' },
     { question: 'Withdrawals affect taxes because:', options: ['Money moves', 'Rates change', 'Income stops', 'Accounts close'], correctIndex: 0, explanation: 'Taxes often apply when money moves out of accounts.' },
-    { question: 'Account choice impacts:', options: ['Emotions only', 'Spending habits', 'Long-term results', 'Short-term income'], correctIndex: 2, explanation: 'The right account choice significantly affects long-term wealth.' }
+    { question: 'Account choice impacts:', options: ['Emotions only', 'Spending habits', 'Long-term results', 'Short-term income'], correctIndex: 2, explanation: 'The right account choice significantly affects long-term wealth.' },
+    {
+      question: 'For education savings, a 529 plan is usually better than a Roth IRA when:',
+      options: [
+        'You want tax-free growth for qualified education expenses',
+        'You need penalty-free access for any purchase',
+        'You want no contribution limits ever',
+        'You prefer paying taxes every year on gains',
+      ],
+      correctIndex: 0,
+      explanation: '529 plans are designed for education with tax benefits on qualified withdrawals; Roth IRAs have different rules and limits.',
+    },
   ],
   powerMove: 'Research one tax advantaged account you could use in the future and note its main benefit.',
   realLifeAction: 'Ask an adult which account helped them reduce taxes over time.'

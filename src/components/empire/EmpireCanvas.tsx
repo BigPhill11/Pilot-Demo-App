@@ -1,26 +1,49 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Plus, Minus, Hammer } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useEmpireViewport } from './hooks/useEmpireViewport';
 import BambooEmpireTutorial from './tutorial/BambooEmpireTutorial';
+import {
+  EmpireTutorialProvider,
+  useEmpireTutorial,
+  type TutorialSpotlightHandler,
+} from './tutorial/EmpireTutorialContext';
+import {
+  isTutorialComplete,
+  TUTORIAL_DEMO_EVENT,
+  TUTORIAL_GRANT_COINS,
+  type EmpireTutorialStep,
+  type TutorialAction,
+} from './tutorial/empireTutorialSteps';
+import { EMPIRE_BOTTOM_UI, EMPIRE_BOTTOM_UI_TUTORIAL } from './constants/layout';
 
-// Canvas components
 import { IsometricGrid, TerrainType } from './canvas';
-
-// Building components
 import { BuildingSprite, GhostPreview, BuildingType, BUILDING_DEFINITIONS } from './buildings';
-
-// UI components
-import { BuildingMenu, BuildingInfoPanel, CoinCounter, OfflineProgress, EventBanner, EventHistory, CreditCardPanel, CreditUnlockBanner } from './ui';
-
-// Systems
+import {
+  BuildingMenu,
+  BuildingInfoPanel,
+  CoinCounter,
+  OfflineProgress,
+  OfflineAwaySummary,
+  EventBanner,
+  EventHistory,
+  CreditCardPanel,
+  CreditUnlockBanner,
+} from './ui';
 import { useProductionManager, useEventManager, useCreditManager } from './systems';
-
-// Stores
+import type { EventHistoryEntry } from './systems/EventManager';
 import { useBaseLayoutStore, PlacedBuilding } from '@/store/useBaseLayoutStore';
 import { useGameStore } from '@/store/useGameStore';
 import { useCreditStore } from '@/store/useCreditStore';
-import { getBuildingAtTile, getBuildingRenderOrder, gridToScreen, GRID_SIZE, PLAYABLE_BORDER, TILE_HEIGHT, TILE_WIDTH } from './lib/grid';
+import {
+  getBuildingAtTile,
+  getBuildingRenderOrder,
+  gridToScreen,
+  GRID_SIZE,
+  PLAYABLE_BORDER,
+  TILE_HEIGHT,
+  TILE_WIDTH,
+} from './lib/grid';
 
 const getEmpireViewBox = (): string => {
   const minTile = PLAYABLE_BORDER;
@@ -40,11 +63,31 @@ const getEmpireViewBox = (): string => {
   return `${minX} ${minY} ${maxX - minX} ${maxY - minY}`;
 };
 
-const EmpireCanvas: React.FC = () => {
+const HOVER_THROTTLE_MS = 32;
+
+const EmpireCanvasInner: React.FC = () => {
   const navigate = useNavigate();
   const viewBox = useMemo(() => getEmpireViewBox(), []);
+  const tutorial = useEmpireTutorial();
+  const {
+    startTutorial,
+    restartTutorial,
+    sessionId,
+    setTutorialBuildingId,
+    setSpotlightHandler,
+    reportAction,
+    isActive: isTutorialActive,
+    step: tutorialStep,
+    tutorialBuildingId,
+    runType: tutorialRunType,
+  } = tutorial;
+  const grantCoinsAppliedRef = useRef(false);
+  const isFirstTimeTutorial = tutorialRunType === 'first_time';
+  const isTutorialPlaceStep =
+    tutorial.isActive &&
+    tutorial.step.id === 'place_farm' &&
+    tutorialRunType === 'first_time';
 
-  // State
   const [selectedTile, setSelectedTile] = useState<{ x: number; y: number } | null>(null);
   const [showBuildMenu, setShowBuildMenu] = useState(false);
   const [selectedBuildingType, setSelectedBuildingType] = useState<BuildingType | null>(null);
@@ -52,38 +95,58 @@ const EmpireCanvas: React.FC = () => {
   const [selectedBuilding, setSelectedBuilding] = useState<PlacedBuilding | null>(null);
   const [showOfflineProgress, setShowOfflineProgress] = useState(false);
   const [offlineEarnings, setOfflineEarnings] = useState({ amount: 0, duration: '' });
+  const [showAwaySummary, setShowAwaySummary] = useState(false);
+  const [awayEvents, setAwayEvents] = useState<EventHistoryEntry[]>([]);
   const [showEventHistory, setShowEventHistory] = useState(false);
   const [dismissedEvent, setDismissedEvent] = useState<string | null>(null);
   const [showCreditPanel, setShowCreditPanel] = useState(false);
   const [pendingCreditPurchase, setPendingCreditPurchase] = useState<BuildingType | null>(null);
-  
-  // Store state
+  const [constructionProgressMap, setConstructionProgressMap] = useState<Record<string, number>>({});
+  const [hiRes, setHiRes] = useState(false);
+  const lastHoverRef = useRef(0);
+  const timedWorkBootstrappedRef = useRef(false);
+
   const buildings = useBaseLayoutStore((state) => state.buildings);
   const placeNewBuilding = useBaseLayoutStore((state) => state.placeNewBuilding);
   const canPlaceAt = useBaseLayoutStore((state) => state.canPlaceAt);
+  const completeTimedWork = useBaseLayoutStore((state) => state.completeTimedWork);
+  const catchUpTimedWork = useBaseLayoutStore((state) => state.catchUpTimedWork);
   const completeConstruction = useBaseLayoutStore((state) => state.completeConstruction);
   const bamboo = useGameStore((state) => state.bamboo);
-  const spendBamboo = useGameStore((state) => state.spendBamboo);
+  const xp = useGameStore((state) => state.xp);
   const addBamboo = useGameStore((state) => state.addBamboo);
   const empireProductivity = useGameStore((state) => state.empireProductivity);
   const productivityFactor = Math.max(0.05, Math.min(1, empireProductivity / 100));
-  
-  // Credit store
-  const { purchaseWithCredit, enabled: creditEnabled } = useCreditStore();
-  
-  // Credit manager
+
+  const { chargeEmpireExpense, enabled: creditEnabled, enableCreditCard } = useCreditStore();
+
+  useEffect(() => {
+    if (!creditEnabled) {
+      enableCreditCard();
+    }
+  }, [creditEnabled, enableCreditCard]);
+
+  useEffect(() => {
+    if (timedWorkBootstrappedRef.current) return;
+    timedWorkBootstrappedRef.current = true;
+    catchUpTimedWork();
+  }, [catchUpTimedWork]);
+
   const { isOverdue } = useCreditManager({
-    onLateFee: (fee, scoreChange) => {
-      console.log(`Late fee applied: ${fee}, score change: ${scoreChange}`);
-    },
+    onLateFee: () => {},
   });
-  
-  // Event callbacks - memoized to prevent unnecessary re-renders
+
   const handleEventStart = useCallback(() => {
     setDismissedEvent(null);
   }, []);
-  
-  // Event manager
+
+  const handleOfflineCatchUp = useCallback((entries: EventHistoryEntry[]) => {
+    if (entries.length > 0) {
+      setAwayEvents(entries);
+      setShowAwaySummary(true);
+    }
+  }, []);
+
   const {
     activeEvent,
     eventHistory,
@@ -91,22 +154,27 @@ const EmpireCanvas: React.FC = () => {
     getRemainingTime,
     insuranceProtection,
     productionMultiplier,
+    triggerEvent,
   } = useEventManager({
     onEventStart: handleEventStart,
+    pauseScheduling: tutorial.isActive,
+    onOfflineCatchUp: handleOfflineCatchUp,
   });
-  
+
   const showEventBanner = activeEvent && dismissedEvent !== activeEvent.event.id;
 
   const handleEventBannerDismiss = useCallback(() => {
     if (activeEvent) setDismissedEvent(activeEvent.event.id);
-  }, [activeEvent]);
+    if (tutorial.isActive && isFirstTimeTutorial && tutorial.step.action === 'dismiss_event') {
+      tutorial.reportAction('dismiss_event');
+    }
+  }, [activeEvent, tutorial, isFirstTimeTutorial]);
 
-  // Production manager
   const handleOfflineEarnings = useCallback((earnings: number, duration: string) => {
     setOfflineEarnings({ amount: earnings, duration });
     setShowOfflineProgress(true);
   }, []);
-  
+
   const { totalStorage, collectFromBuilding } = useProductionManager({
     onOfflineEarnings: handleOfflineEarnings,
     productionMultiplier,
@@ -115,109 +183,295 @@ const EmpireCanvas: React.FC = () => {
   });
 
   const viewport = useEmpireViewport();
-  
-  // Handle tile click
-  const handleTileClick = useCallback((x: number, y: number, terrain: TerrainType) => {
-    // If in placement mode
-    if (selectedBuildingType) {
-      const def = BUILDING_DEFINITIONS[selectedBuildingType];
-      const isValid = canPlaceAt(x, y, undefined, def.size) && terrain === 'grass';
-      
-      if (isValid) {
-        // Check if using credit purchase
-        if (pendingCreditPurchase === selectedBuildingType) {
-          const result = purchaseWithCredit(def.cost);
-          if (result.success) {
-            placeNewBuilding(selectedBuildingType, x, y, def.size);
-            setSelectedBuildingType(null);
-            setGhostPosition(null);
-            setPendingCreditPurchase(null);
+
+  useEffect(() => {
+    const el = viewport.transformRef.current;
+    if (!el) return;
+    const observer = new MutationObserver(() => {
+      const match = el.style.transform.match(/scale\(([^)]+)\)/);
+      const zoom = match ? parseFloat(match[1]) : 1;
+      setHiRes((prev) => {
+        const next = zoom >= 1.2;
+        return prev !== next ? next : prev;
+      });
+    });
+    observer.observe(el, { attributes: true, attributeFilter: ['style'] });
+    return () => observer.disconnect();
+  }, [viewport.transformRef]);
+
+  const handleStepEnter = useCallback(
+    (step: EmpireTutorialStep) => {
+      switch (step.onEnter) {
+        case 'grant_coins':
+          if (tutorialRunType === 'first_time' && !grantCoinsAppliedRef.current) {
+            grantCoinsAppliedRef.current = true;
+            addBamboo(TUTORIAL_GRANT_COINS, 'tutorial');
           }
-        } else if (bamboo >= def.cost) {
-          spendBamboo(def.cost);
-          placeNewBuilding(selectedBuildingType, x, y, def.size);
-          setSelectedBuildingType(null);
-          setGhostPosition(null);
+          break;
+        case 'open_build_menu':
+          if (tutorialRunType === 'first_time') {
+            setShowBuildMenu(true);
+          }
+          break;
+        case 'instant_complete_building': {
+          if (tutorialRunType !== 'first_time') break;
+          const id = tutorial.tutorialBuildingId;
+          if (id) completeConstruction(id);
+          break;
         }
+        case 'trigger_demo_event':
+          if (tutorialRunType === 'first_time') {
+            triggerEvent(TUTORIAL_DEMO_EVENT);
+          }
+          break;
+        default:
+          break;
       }
-      return;
+    },
+    [addBamboo, completeConstruction, triggerEvent, tutorial.tutorialBuildingId, tutorialRunType],
+  );
+
+  useEffect(() => {
+    tutorial.setStepEnterHandler(handleStepEnter);
+    return () => tutorial.setStepEnterHandler(null);
+  }, [handleStepEnter, tutorial]);
+
+  useEffect(() => {
+    if (!isTutorialComplete()) {
+      const timer = window.setTimeout(() => startTutorial(), 400);
+      return () => window.clearTimeout(timer);
     }
-    
-    // Check if clicking on a building
-    const clickedBuilding = getBuildingAtTile(buildings, x, y);
-    
-    if (clickedBuilding) {
-      setSelectedBuilding(clickedBuilding);
-      return;
-    }
-    
-    // If clicking on buildable grass tile, show build menu
-    if (terrain === 'grass') {
-      setSelectedTile({ x, y });
-      setShowBuildMenu(true);
-    }
-  }, [selectedBuildingType, buildings, bamboo, canPlaceAt, spendBamboo, placeNewBuilding, pendingCreditPurchase, purchaseWithCredit]);
-  
-  // Handle tile hover for ghost preview
-  const handleTileHover = useCallback((x: number, y: number) => {
-    if (selectedBuildingType) {
-      setGhostPosition({ x, y });
-    }
-  }, [selectedBuildingType]);
-  
-  // Handle building selection from menu
-  const handleSelectBuilding = useCallback((type: BuildingType, useCredit: boolean = false) => {
-    setSelectedBuildingType(type);
+  }, [startTutorial]);
+
+  useEffect(() => {
+    if (sessionId === 0) return;
+    grantCoinsAppliedRef.current = false;
     setShowBuildMenu(false);
-    if (useCredit) {
-      setPendingCreditPurchase(type);
-    } else {
-      setPendingCreditPurchase(null);
-    }
-  }, []);
-  
-  // Handle collection from building
-  const handleCollect = useCallback((buildingId: string) => {
-    if (isCollectionBlocked) return;
-    collectFromBuilding(buildingId);
+    setSelectedBuildingType(null);
     setSelectedBuilding(null);
-  }, [collectFromBuilding, isCollectionBlocked]);
-  
-  // Handle offline earnings collection
+    setGhostPosition(null);
+    setTutorialBuildingId(null);
+  }, [sessionId, setTutorialBuildingId]);
+
+  const finishTutorialPlacement = useCallback(
+    (buildingId: string) => {
+      tutorial.setTutorialBuildingId(buildingId);
+      completeConstruction(buildingId);
+    },
+    [completeConstruction, tutorial],
+  );
+
+  const handleTileClick = useCallback(
+    (x: number, y: number, terrain: TerrainType) => {
+      if (selectedBuildingType) {
+        const def = BUILDING_DEFINITIONS[selectedBuildingType];
+        const isValid = canPlaceAt(x, y, undefined, def.size) && terrain === 'grass';
+
+        if (isValid) {
+          if (tutorial.isActive && !isFirstTimeTutorial) {
+            return;
+          }
+
+          if (pendingCreditPurchase === selectedBuildingType || !pendingCreditPurchase) {
+            const result = chargeEmpireExpense(def.cost);
+            if (result.success) {
+              const before = useBaseLayoutStore.getState().buildings.length;
+              placeNewBuilding(selectedBuildingType, x, y, def.size, xp);
+              const placed = useBaseLayoutStore.getState().buildings[before];
+              if (placed && tutorial.isActive && isFirstTimeTutorial) {
+                finishTutorialPlacement(placed.id);
+                tutorial.reportAction('place_building');
+              }
+              setSelectedBuildingType(null);
+              setGhostPosition(null);
+              setPendingCreditPurchase(null);
+            }
+          }
+        }
+        return;
+      }
+
+      const clickedBuilding = getBuildingAtTile(buildings, x, y);
+
+      if (clickedBuilding) {
+        if (
+          tutorial.isActive &&
+          isFirstTimeTutorial &&
+          tutorial.step.action === 'select_placed_building' &&
+          clickedBuilding.id === tutorial.tutorialBuildingId
+        ) {
+          setSelectedBuilding(clickedBuilding);
+          tutorial.reportAction('select_placed_building');
+        } else if (!tutorial.isActive) {
+          setSelectedBuilding(clickedBuilding);
+        }
+        return;
+      }
+
+      if (terrain === 'grass' && !tutorial.isActive) {
+        setSelectedTile({ x, y });
+        setShowBuildMenu(true);
+      }
+    },
+    [
+      selectedBuildingType,
+      buildings,
+      xp,
+      canPlaceAt,
+      placeNewBuilding,
+      pendingCreditPurchase,
+      chargeEmpireExpense,
+      isFirstTimeTutorial,
+      tutorial,
+      finishTutorialPlacement,
+    ],
+  );
+
+  const handleTileHover = useCallback(
+    (x: number, y: number) => {
+      if (!selectedBuildingType) return;
+      const now = Date.now();
+      if (now - lastHoverRef.current < HOVER_THROTTLE_MS) return;
+      lastHoverRef.current = now;
+      setGhostPosition({ x, y });
+    },
+    [selectedBuildingType],
+  );
+
+  const handleSelectBuilding = useCallback(
+    (type: BuildingType) => {
+      setSelectedBuildingType(type);
+      setShowBuildMenu(false);
+      setPendingCreditPurchase(type);
+      if (isTutorialActive && isFirstTimeTutorial && type === 'bamboo_farm') {
+        reportAction('select_farm');
+      }
+    },
+    [isTutorialActive, isFirstTimeTutorial, reportAction],
+  );
+
+  useEffect(() => {
+    if (!isFirstTimeTutorial) {
+      setSpotlightHandler(null);
+      return;
+    }
+
+    const handler: TutorialSpotlightHandler = (action: TutorialAction) => {
+      switch (action) {
+        case 'tap_build':
+          setShowBuildMenu(true);
+          reportAction('tap_build');
+          break;
+        case 'select_farm':
+          handleSelectBuilding('bamboo_farm');
+          break;
+        case 'place_building':
+          break;
+        case 'select_placed_building': {
+          const building = buildings.find((b) => b.id === tutorialBuildingId);
+          if (building) {
+            setSelectedBuilding(building);
+            reportAction('select_placed_building');
+          }
+          break;
+        }
+        case 'upgrade_building':
+          document
+            .querySelector<HTMLElement>('[data-tutorial="building-info-upgrade"]')
+            ?.click();
+          break;
+        case 'dismiss_event':
+          handleEventBannerDismiss();
+          break;
+        default:
+          break;
+      }
+    };
+
+    setSpotlightHandler(handler);
+    return () => setSpotlightHandler(null);
+  }, [
+    isFirstTimeTutorial,
+    setSpotlightHandler,
+    reportAction,
+    handleSelectBuilding,
+    handleTileClick,
+    handleEventBannerDismiss,
+    buildings,
+    tutorialBuildingId,
+  ]);
+
+  const handleCollect = useCallback(
+    (buildingId: string) => {
+      if (isCollectionBlocked) return;
+      collectFromBuilding(buildingId);
+      setSelectedBuilding(null);
+    },
+    [collectFromBuilding, isCollectionBlocked],
+  );
+
   const handleCollectOffline = useCallback(() => {
     addBamboo(offlineEarnings.amount, 'offline');
     setShowOfflineProgress(false);
   }, [offlineEarnings.amount, addBamboo]);
-  
-  // Cancel placement mode
+
   const cancelPlacement = useCallback(() => {
+    if (tutorial.isActive) return;
     setSelectedBuildingType(null);
     setGhostPosition(null);
-  }, []);
-  
-  // Check construction completion
+  }, [tutorial.isActive]);
+
   useEffect(() => {
-    const interval = setInterval(() => {
+    const tickTimedWork = () => {
       const now = Date.now();
+      const next: Record<string, number> = {};
+      let hasTimedWork = false;
+
       buildings.forEach((building: PlacedBuilding) => {
-        if (building.status === 'constructing' && building.constructionEndTime && now >= building.constructionEndTime) {
-          completeConstruction(building.id);
+        const isTimed =
+          (building.status === 'constructing' || building.status === 'upgrading') &&
+          building.constructionStartTime &&
+          building.constructionEndTime;
+
+        if (!isTimed) return;
+
+        hasTimedWork = true;
+        next[building.id] = Math.min(
+          100,
+          ((now - building.constructionStartTime!) /
+            (building.constructionEndTime! - building.constructionStartTime!)) *
+            100,
+        );
+
+        if (now >= building.constructionEndTime!) {
+          completeTimedWork(building.id);
+          delete next[building.id];
         }
       });
-    }, 1000);
-    
-    return () => clearInterval(interval);
-  }, [buildings, completeConstruction]);
-  
-  // Calculate ghost validity
-  const ghostIsValid = selectedBuildingType && ghostPosition
-    ? canPlaceAt(ghostPosition.x, ghostPosition.y, undefined, BUILDING_DEFINITIONS[selectedBuildingType].size)
-    : false;
 
-  // Memoize sorted buildings so the draw order isn't recalculated on every
-  // mouse-move / tick — this was causing noticeable mobile lag.
+      setConstructionProgressMap(hasTimedWork ? next : {});
+    };
+
+    tickTimedWork();
+    const interval = setInterval(tickTimedWork, 1000);
+    return () => clearInterval(interval);
+  }, [buildings, completeTimedWork]);
+
+  const ghostIsValid =
+    selectedBuildingType && ghostPosition
+      ? canPlaceAt(
+          ghostPosition.x,
+          ghostPosition.y,
+          undefined,
+          BUILDING_DEFINITIONS[selectedBuildingType].size,
+        )
+      : false;
+
   const sortedBuildings = useMemo(
-    () => [...buildings].sort((left, right) => getBuildingRenderOrder(left) - getBuildingRenderOrder(right)),
+    () =>
+      [...buildings].sort(
+        (left, right) => getBuildingRenderOrder(left) - getBuildingRenderOrder(right),
+      ),
     [buildings],
   );
 
@@ -227,6 +481,7 @@ const EmpireCanvas: React.FC = () => {
         <div
           ref={viewport.transformRef}
           className="h-full w-full touch-none will-change-transform"
+          style={{ contain: 'layout paint' }}
         >
           <svg
             className="block h-full w-full"
@@ -238,83 +493,99 @@ const EmpireCanvas: React.FC = () => {
             data-tutorial="empire-grid"
             onPointerDownCapture={viewport.onPointerDownCapture}
           >
-        {/* Definitions */}
-        <defs>
-          {/* Water shimmer gradient */}
-          <linearGradient id="waterShimmer" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#93c5fd" stopOpacity="0.5" />
-            <stop offset="50%" stopColor="#60a5fa" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.5" />
-          </linearGradient>
-          
-          {/* Gold glow for banks */}
-          <radialGradient id="goldGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#fbbf24" stopOpacity="0" />
-          </radialGradient>
-          
-          {/* Lily pad gradient */}
-          <radialGradient id="lilyPadGradient" cx="30%" cy="30%" r="70%">
-            <stop offset="0%" stopColor="#4ade80" />
-            <stop offset="100%" stopColor="#16a34a" />
-          </radialGradient>
-        </defs>
-        
-        {/* Isometric Grid */}
-        <IsometricGrid
-          selectedTile={selectedTile}
-          onTileClick={handleTileClick}
-          onTileHover={handleTileHover}
-          ghostBuilding={selectedBuildingType && ghostPosition ? {
-            type: selectedBuildingType,
-            size: BUILDING_DEFINITIONS[selectedBuildingType].size,
-            position: ghostPosition,
-            isValid: ghostIsValid,
-          } : null}
-        />
-        
-        {/* Buildings */}
-        <g>
-          {sortedBuildings.map((building: PlacedBuilding) => {
-            const constructionProgress = building.status === 'constructing' && building.constructionStartTime && building.constructionEndTime
-              ? Math.min(100, ((Date.now() - building.constructionStartTime) / (building.constructionEndTime - building.constructionStartTime)) * 100)
-              : 100;
+            <defs>
+              <linearGradient id="waterShimmer" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#93c5fd" stopOpacity="0.5" />
+                <stop offset="50%" stopColor="#60a5fa" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.5" />
+              </linearGradient>
+              <radialGradient id="goldGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="#fbbf24" stopOpacity="0" />
+              </radialGradient>
+              <radialGradient id="lilyPadGradient" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stopColor="#4ade80" />
+                <stop offset="100%" stopColor="#16a34a" />
+              </radialGradient>
+            </defs>
 
-            return (
-              <BuildingSprite
-                key={building.id}
-                type={building.type as BuildingType}
-                level={building.level}
-                status={building.status}
-                gridX={building.position.x}
-                gridY={building.position.y}
-                constructionProgress={constructionProgress}
-                pendingCollection={building.pendingCollection}
-                isSelected={selectedBuilding?.id === building.id}
-                onClick={() => setSelectedBuilding(building)}
-              />
-            );
-          })}
-          
-          {/* Ghost Preview */}
-          {selectedBuildingType && ghostPosition && (
-            <GhostPreview
-              type={selectedBuildingType}
-              gridX={ghostPosition.x}
-              gridY={ghostPosition.y}
-              isValid={ghostIsValid}
+            <IsometricGrid
+              selectedTile={selectedTile}
+              onTileClick={handleTileClick}
+              onTileHover={handleTileHover}
+              highlightBuildableTiles={isTutorialPlaceStep}
+              ghostBuilding={
+                selectedBuildingType && ghostPosition
+                  ? {
+                      type: selectedBuildingType,
+                      size: BUILDING_DEFINITIONS[selectedBuildingType].size,
+                      position: ghostPosition,
+                      isValid: ghostIsValid,
+                    }
+                  : null
+              }
             />
-          )}
-        </g>
-        </svg>
+
+            <g>
+              {sortedBuildings.map((building: PlacedBuilding) => {
+                const constructionProgress =
+                  building.status === 'constructing' || building.status === 'upgrading'
+                    ? (constructionProgressMap[building.id] ?? 0)
+                    : 100;
+
+                return (
+                  <BuildingSprite
+                    key={building.id}
+                    type={building.type as BuildingType}
+                    level={building.level}
+                    status={building.status}
+                    gridX={building.position.x}
+                    gridY={building.position.y}
+                    constructionProgress={constructionProgress}
+                    pendingCollection={building.pendingCollection}
+                    isSelected={selectedBuilding?.id === building.id}
+                    hiRes={hiRes}
+                    onClick={() => {
+                      if (
+                        tutorial.isActive &&
+                        isFirstTimeTutorial &&
+                        tutorial.step.action === 'select_placed_building' &&
+                        building.id === tutorial.tutorialBuildingId
+                      ) {
+                        setSelectedBuilding(building);
+                        tutorial.reportAction('select_placed_building');
+                        return;
+                      }
+                      if (tutorial.isActive) return;
+                      setSelectedBuilding(building);
+                    }}
+                  />
+                );
+              })}
+
+              {selectedBuildingType && ghostPosition && (
+                <GhostPreview
+                  type={selectedBuildingType}
+                  gridX={ghostPosition.x}
+                  gridY={ghostPosition.y}
+                  isValid={ghostIsValid}
+                />
+              )}
+            </g>
+          </svg>
         </div>
       </div>
 
       <CoinCounter
         totalStorage={totalStorage}
-        onOpenCredit={creditEnabled ? () => setShowCreditPanel(true) : undefined}
-        onOpenEventHistory={() => setShowEventHistory(true)}
+        onOpenCredit={
+          creditEnabled && !tutorial.isActive ? () => setShowCreditPanel(true) : undefined
+        }
+        onOpenEventHistory={
+          !tutorial.isActive ? () => setShowEventHistory(true) : undefined
+        }
         onGoHome={() => navigate('/')}
+        onStartTutorial={isTutorialActive ? undefined : restartTutorial}
         eventHistoryCount={eventHistory.length}
         creditOverdue={isOverdue}
       />
@@ -335,30 +606,36 @@ const EmpireCanvas: React.FC = () => {
           type="button"
           onClick={viewport.zoomOut}
           className="flex h-11 w-11 items-center justify-center rounded-lg bg-white/90 text-gray-800 shadow-lg dark:bg-gray-800/90 dark:text-white touch-manipulation"
-          aria-label="Zoom out"
         >
           <Minus className="h-5 w-5" />
         </button>
       </div>
-      
-      {/* Event Banner */}
+
       {showEventBanner && (
         <EventBanner
           activeEvent={activeEvent}
           getRemainingTime={getRemainingTime}
           insuranceProtection={insuranceProtection}
-          onDismiss={activeEvent?.event.duration === 0 ? handleEventBannerDismiss : undefined}
+          onDismiss={handleEventBannerDismiss}
         />
       )}
-      
-      {/* Build Button (when not in placement mode) — pinned above mobile browser chrome */}
+
       {!selectedBuildingType && (
         <button
           type="button"
           data-tutorial="build-button"
-          onClick={() => setShowBuildMenu(true)}
-          className="absolute left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 rounded-2xl bg-emerald-500 active:bg-emerald-600 px-7 py-4 text-base sm:text-lg font-bold text-white shadow-xl ring-2 ring-white/30 touch-manipulation select-none"
-          style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 1.25rem)' }}
+          onClick={() => {
+            setShowBuildMenu(true);
+            if (tutorial.isActive && isFirstTimeTutorial && tutorial.step.action === 'tap_build') {
+              tutorial.reportAction('tap_build');
+            }
+          }}
+          className={`absolute left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-2xl bg-emerald-500 active:bg-emerald-600 px-7 py-4 text-base sm:text-lg font-bold text-white shadow-xl ring-2 ring-white/30 touch-manipulation select-none ${
+            isTutorialActive && tutorialStep.id === 'open_build' ? 'z-[110]' : 'z-20'
+          }`}
+          style={{
+            bottom: isTutorialActive ? EMPIRE_BOTTOM_UI_TUTORIAL : EMPIRE_BOTTOM_UI,
+          }}
           aria-label="Open build menu"
         >
           <Hammer className="w-5 h-5" />
@@ -366,33 +643,47 @@ const EmpireCanvas: React.FC = () => {
         </button>
       )}
 
-      {/* Cancel Placement Button */}
-      {selectedBuildingType && (
+      {selectedBuildingType && !tutorial.isActive && (
         <button
           type="button"
           onClick={cancelPlacement}
           className="absolute left-1/2 -translate-x-1/2 z-20 rounded-2xl bg-red-500 active:bg-red-600 px-7 py-4 text-base sm:text-lg font-bold text-white shadow-xl ring-2 ring-white/30 touch-manipulation select-none"
-          style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 1.25rem)' }}
+          style={{
+            bottom: tutorial.isActive ? EMPIRE_BOTTOM_UI_TUTORIAL : EMPIRE_BOTTOM_UI,
+          }}
         >
           Cancel Placement
         </button>
       )}
-      
-      {/* Building Menu */}
+
       <BuildingMenu
         isOpen={showBuildMenu}
-        onClose={() => setShowBuildMenu(false)}
+        onClose={() => {
+          if (!tutorial.isActive) setShowBuildMenu(false);
+        }}
         onSelectBuilding={handleSelectBuilding}
+        lockToBuildingType={
+          tutorial.isActive && isFirstTimeTutorial && tutorial.step.id === 'select_farm'
+            ? 'bamboo_farm'
+            : null
+        }
       />
-      
-      {/* Building Info Panel */}
+
       <BuildingInfoPanel
         building={selectedBuilding}
         onClose={() => setSelectedBuilding(null)}
         onCollect={handleCollect}
+        onUpgrade={() => {
+          if (
+            tutorial.isActive &&
+            isFirstTimeTutorial &&
+            tutorial.step.action === 'upgrade_building'
+          ) {
+            tutorial.reportAction('upgrade_building');
+          }
+        }}
       />
-      
-      {/* Offline Progress Modal */}
+
       <OfflineProgress
         isOpen={showOfflineProgress}
         earnings={offlineEarnings.amount}
@@ -400,27 +691,35 @@ const EmpireCanvas: React.FC = () => {
         onClose={() => setShowOfflineProgress(false)}
         onCollect={handleCollectOffline}
       />
-      
-      {/* Event History Panel */}
+
+      <OfflineAwaySummary
+        isOpen={showAwaySummary}
+        events={awayEvents}
+        onClose={() => setShowAwaySummary(false)}
+      />
+
       <EventHistory
         isOpen={showEventHistory}
         onClose={() => setShowEventHistory(false)}
         history={eventHistory}
       />
-      
-      {/* Credit Card Panel */}
-      <CreditCardPanel
-        isOpen={showCreditPanel}
-        onClose={() => setShowCreditPanel(false)}
-      />
-      
-      {/* Credit Unlock Banner */}
-      <CreditUnlockBanner />
 
-      {/* First-visit Bamboo Empire tutorial */}
+      {!tutorial.isActive && (
+        <>
+          <CreditCardPanel isOpen={showCreditPanel} onClose={() => setShowCreditPanel(false)} />
+          <CreditUnlockBanner />
+        </>
+      )}
+
       <BambooEmpireTutorial />
     </div>
   );
 };
+
+const EmpireCanvas: React.FC = () => (
+  <EmpireTutorialProvider>
+    <EmpireCanvasInner />
+  </EmpireTutorialProvider>
+);
 
 export default EmpireCanvas;

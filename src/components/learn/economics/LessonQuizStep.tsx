@@ -19,11 +19,13 @@ import {
   Lightbulb
 } from 'lucide-react';
 import type { EconomicsQuizQuestion } from '@/types/economics-curriculum';
-
 interface LessonQuizStepProps {
   questions: EconomicsQuizQuestion[];
   onComplete: (score: number, total: number) => void;
   onBack: () => void;
+  /** Minimum fraction to pass (default 0.75 for MI lessons; economics uses 0.6) */
+  passThreshold?: number;
+  requirePassToContinue?: boolean;
 }
 
 interface QuestionResult {
@@ -36,6 +38,8 @@ const LessonQuizStep: React.FC<LessonQuizStepProps> = ({
   questions,
   onComplete,
   onBack,
+  passThreshold = 0.6,
+  requirePassToContinue = false,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -78,6 +82,14 @@ const LessonQuizStep: React.FC<LessonQuizStepProps> = ({
     onComplete(correctCount, questions.length);
   };
 
+  const handleRetry = () => {
+    setCurrentIndex(0);
+    setSelectedAnswer(null);
+    setHasAnswered(false);
+    setResults([]);
+    setShowResults(false);
+  };
+
   const getOptionClassName = (index: number) => {
     const baseClass = "w-full p-4 text-left rounded-lg border-2 transition-all";
     
@@ -100,7 +112,7 @@ const LessonQuizStep: React.FC<LessonQuizStepProps> = ({
   if (showResults) {
     const correctCount = results.filter(r => r.isCorrect).length;
     const percentage = Math.round((correctCount / questions.length) * 100);
-    const passed = percentage >= 60;
+    const passed = percentage >= passThreshold * 100;
 
     return (
       <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-green-50/50 to-teal-50/30">
@@ -135,7 +147,7 @@ const LessonQuizStep: React.FC<LessonQuizStepProps> = ({
               </p>
             ) : (
               <p className="text-amber-600 font-medium">
-                Keep learning! Review the flashcards and try again to improve your score.
+                You need {Math.round(passThreshold * 100)}% to pass. Review the lesson and try again.
               </p>
             )}
           </div>
@@ -165,15 +177,27 @@ const LessonQuizStep: React.FC<LessonQuizStepProps> = ({
             </CardContent>
           </Card>
 
-          <div className="flex justify-center">
-            <Button
-              onClick={handleComplete}
-              size="lg"
-              className="bg-emerald-600 hover:bg-emerald-700 text-white px-8"
-            >
-              Continue
-              <ChevronRight className="h-5 w-5 ml-2" />
-            </Button>
+          <div className="flex flex-col items-center gap-3">
+            {requirePassToContinue && !passed ? (
+              <Button
+                onClick={handleRetry}
+                size="lg"
+                variant="outline"
+                className="border-emerald-400 text-emerald-800 px-8"
+              >
+                Try Again
+              </Button>
+            ) : (
+              <Button
+                onClick={handleComplete}
+                size="lg"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-8"
+                disabled={requirePassToContinue && !passed}
+              >
+                Continue
+                <ChevronRight className="h-5 w-5 ml-2" />
+              </Button>
+            )}
           </div>
         </div>
       </div>

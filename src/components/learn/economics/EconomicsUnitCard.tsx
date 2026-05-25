@@ -109,7 +109,7 @@ const EconomicsUnitCard: React.FC<EconomicsUnitCardProps> = ({
                   {totalLessons} lessons
                 </Badge>
                 <Badge variant="outline" className={`text-xs ${isLocked ? 'text-gray-400 border-gray-200' : 'bg-green-50 text-green-700 border-green-200'}`}>
-                  +{unit.rewards.xp} XP
+                  +{unit.rewards?.xp ?? 0} XP
                 </Badge>
               </div>
 
@@ -233,10 +233,10 @@ const EconomicsUnitCard: React.FC<EconomicsUnitCardProps> = ({
               </span>
               <div className="flex items-center gap-3">
                 <span className="text-sm font-medium text-green-800">
-                  +{unit.rewards.bamboo} 🎋
+                  +{unit.rewards?.bamboo ?? 0} 🎋
                 </span>
                 <span className="text-sm font-medium text-green-800">
-                  +{unit.rewards.xp} XP
+                  +{unit.rewards?.xp ?? 0} XP
                 </span>
               </div>
             </div>
