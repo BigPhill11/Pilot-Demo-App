@@ -348,7 +348,7 @@ const CompanyTinderGame: React.FC<CompanyTinderGameProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/[0.07] via-background to-muted/30 px-4 py-3">
         <div className="flex items-center gap-3 min-w-0">
           <img
-            src="/lovable-uploads/ae543fd6-94e8-4c76-a9aa-b6cb9460a647.png"
+            src="/logo.png"
             alt=""
             className="h-10 w-10 shrink-0 rounded-lg object-contain shadow-sm ring-1 ring-primary/15"
           />

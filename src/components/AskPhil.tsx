@@ -41,8 +41,6 @@ const AskPhil = () => {
             navigate('/learn?tab=companies');
         } else if (mod.id === 'interviewing' && mod.path.includes('/career')) {
             navigate('/career/interviewing');
-        } else if (mod.path.includes('/soft-skills')) {
-            navigate('/soft-skills?category=' + encodeURIComponent(mod.id));
         } else {
             navigate(mod.path);
         }

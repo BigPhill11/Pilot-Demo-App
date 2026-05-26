@@ -158,19 +158,6 @@ export function calculateTotalTimeSpentMinutes(): number {
         }
       }
 
-      if (key.startsWith('soft_skills_modules_')) {
-        const stored = localStorage.getItem(key);
-        if (stored) {
-          const modules = JSON.parse(stored);
-          if (Array.isArray(modules)) {
-            for (const mod of modules) {
-              if (mod.timeSpentMinutes) {
-                totalMinutes += mod.timeSpentMinutes;
-              }
-            }
-          }
-        }
-      }
     }
   } catch {
     /* ignore parse errors */

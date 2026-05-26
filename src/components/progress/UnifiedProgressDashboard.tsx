@@ -46,7 +46,6 @@ const UnifiedProgressDashboard: React.FC = () => {
 
   const getModuleTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
-      'soft_skills': 'Soft Skills',
       'career_finance': 'Career Finance',
       'personal_finance': 'Personal Finance',
       'trading': 'Trading',

@@ -16,7 +16,6 @@ import {
   PiggyBank,
   Rocket,
   ShieldCheck,
-  Sparkles,
   Target,
   Users,
   Wallet,
@@ -42,7 +41,6 @@ const INTEREST_OPTIONS = [
   { id: 'market-intelligence', label: 'Market Intelligence', icon: LineChart },
   { id: 'business-economics', label: 'Business Economics', icon: Landmark },
   { id: 'crypto', label: 'Crypto', icon: BadgeDollarSign },
-  { id: 'soft-skills', label: 'Soft Skills', icon: Sparkles },
   { id: 'career-readiness', label: 'Career Readiness', icon: Target },
   { id: 'phils-friends', label: "Phil's Friends", icon: Users },
 ];

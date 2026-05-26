@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const PHIL_LOGO = '/lovable-uploads/ae543fd6-94e8-4c76-a9aa-b6cb9460a647.png';
+const PHIL_LOGO = '/logo.png';
 
 interface TinderCardProps {
   company: CompanyProfile;

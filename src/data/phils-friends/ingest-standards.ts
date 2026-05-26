@@ -76,7 +76,6 @@ export const COURSE_CATEGORY_SLUGS = [
   'personal-finance',
   'market-intelligence',
   'careers-in-finance',
-  'soft-skills',
   'general',
 ] as const;
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, Star, Sparkles } from 'lucide-react';
+import { Clock, Sparkles, Star, Trophy } from 'lucide-react';
 import { FinanceCareerData } from '@/data/finance-careers';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -50,6 +50,7 @@ const CareerRecommendations: React.FC<CareerRecommendationsProps> = ({
         {topRecommendations.map((rec, index) => {
           const career = getCareerById(rec.careerId);
           if (!career) return null;
+          const isAvailable = career.id === 'wealth-management';
 
           return (
             <Card
@@ -76,6 +77,12 @@ const CareerRecommendations: React.FC<CareerRecommendationsProps> = ({
                         <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-semibold`}>
                           {getMedalLabel(index)}
                         </span>
+                        {!isAvailable && (
+                          <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">
+                            <Clock className="mr-1 h-3 w-3" />
+                            Coming soon
+                          </Badge>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -86,10 +93,14 @@ const CareerRecommendations: React.FC<CareerRecommendationsProps> = ({
               </CardHeader>
               <CardContent>
                 <CardDescription className={`${isMobile ? 'text-sm' : 'text-base'} mb-3`}>
-                  {career.kidFriendlyDescription}
+                  {isAvailable
+                    ? career.kidFriendlyDescription
+                    : 'This match is saved for later. Lessons and career details are not available yet.'}
                 </CardDescription>
                 <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground`}>
-                  {career.description}
+                  {isAvailable
+                    ? career.description
+                    : 'Open the card to see the coming-soon notice, or head to Wealth Management for the active path.'}
                 </p>
               </CardContent>
             </Card>

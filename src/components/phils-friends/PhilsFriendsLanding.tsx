@@ -3,7 +3,6 @@ import {
   Wallet,
   TrendingUp,
   Briefcase,
-  MessageCircle,
   Play,
   Users,
   ChevronRight,
@@ -46,13 +45,6 @@ const CATEGORY_META: Record<
     description: 'Hear what bankers, VCs, and traders actually do day to day.',
     previewImage: '/market-intelligence/ownership/own-a-piece/hero.png',
     accent: 'from-green-600/15 to-green-50',
-  },
-  'soft-skills': {
-    icon: <MessageCircle className="h-6 w-6" />,
-    tagline: 'People skills',
-    description: 'Interviews, networking, and communication that open doors.',
-    previewImage: '/market-intelligence/language-finance/ethics-in-accounting/hero.png',
-    accent: 'from-lime-600/15 to-green-50',
   },
 };
 

@@ -8,67 +8,106 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Clock, Lock, Sprout } from 'lucide-react';
 import { FinanceCareerData } from '@/data/finance-careers';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
 
 interface CareerPathCardProps {
   career: FinanceCareerData;
   onClick: () => void;
+  available?: boolean;
 }
 
-const CareerPathCard: React.FC<CareerPathCardProps> = ({ career, onClick }) => {
+const CareerPathCard: React.FC<CareerPathCardProps> = ({ career, onClick, available = false }) => {
   const isMobile = useIsMobile();
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onClick();
+    }
+  };
 
   return (
     <Card
-      className={`
-        relative overflow-hidden cursor-pointer transition-all duration-300
-        hover:shadow-lg hover:scale-[1.02] hover:border-green-400
-        bg-white border-green-200 border
-      `}
+      role="button"
+      tabIndex={0}
+      aria-label={`${career.name} ${available ? 'open career path' : 'coming soon'}`}
+      className={cn(
+        'relative overflow-hidden cursor-pointer border transition-all duration-300 focus:outline-none focus-visible:ring-4 focus-visible:ring-green-300/80',
+        available
+          ? 'border-emerald-300 bg-white shadow-lg shadow-emerald-900/10 hover:scale-[1.02] hover:border-emerald-500 hover:shadow-xl'
+          : 'border-amber-200 bg-white/85 opacity-90 hover:border-amber-300 hover:shadow-md'
+      )}
       onClick={onClick}
+      onKeyDown={handleKeyDown}
     >
 
-      {/* Subtle gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 to-transparent" />
+      <div className={cn(
+        'absolute inset-0 bg-gradient-to-br',
+        available ? 'from-emerald-50 via-green-50/70 to-transparent' : 'from-amber-50 via-green-50/60 to-transparent'
+      )} />
 
       <CardContent className={`relative z-10 ${isMobile ? 'p-4' : 'p-5'}`}>
         <div className="flex items-start gap-4">
-          {/* Career Icon */}
           <div className={`
             ${isMobile ? 'p-2.5' : 'p-3'} 
-            rounded-xl bg-gradient-to-br from-green-100 to-emerald-100 
-            border border-green-200 shadow-sm
+            rounded-xl border shadow-sm
             transition-transform group-hover:scale-110
+            ${available ? 'border-emerald-200 bg-gradient-to-br from-green-100 to-emerald-100' : 'border-amber-200 bg-amber-50'}
           `}>
-            <career.icon className={`${isMobile ? 'h-6 w-6' : 'h-7 w-7'} text-green-600`} />
+            <career.icon className={`${isMobile ? 'h-6 w-6' : 'h-7 w-7'} ${available ? 'text-green-600' : 'text-amber-600'}`} />
           </div>
 
-          {/* Content */}
           <div className="flex-1 min-w-0">
             <h3 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold text-green-800 mb-1`}>
               {career.name}
             </h3>
             
             <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-green-600/80 mb-2 line-clamp-2`}>
-              {career.kidFriendlyDescription}
+              {available
+                ? career.kidFriendlyDescription
+                : 'This career path is still growing. Lessons and details are not available yet.'}
             </p>
 
-            {/* Career type badge */}
             <div className="flex items-center gap-2 flex-wrap">
-              <Badge variant="outline" className="text-xs border-green-200 text-green-700 bg-green-50">
-                {career.levels.length} modules
-              </Badge>
+              {available ? (
+                <>
+                  <Badge className="bg-emerald-600 text-white hover:bg-emerald-600">
+                    <Sprout className="mr-1 h-3 w-3" />
+                    Open path
+                  </Badge>
+                  <Badge variant="outline" className="text-xs border-green-200 bg-green-50 text-green-700">
+                    Wealth Management
+                  </Badge>
+                </>
+              ) : (
+                <>
+                  <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">
+                    <Clock className="mr-1 h-3 w-3" />
+                    Coming soon
+                  </Badge>
+                  <Badge variant="outline" className="text-xs border-amber-200 bg-white/70 text-amber-700">
+                    No lessons yet
+                  </Badge>
+                </>
+              )}
             </div>
           </div>
 
-          {/* Arrow */}
-          <ChevronRight className="h-5 w-5 text-green-400 flex-shrink-0 self-center" />
+          {available ? (
+            <ChevronRight className="h-5 w-5 flex-shrink-0 self-center text-green-500" />
+          ) : (
+            <Lock className="h-5 w-5 flex-shrink-0 self-center text-amber-500" />
+          )}
         </div>
 
-        {/* Decorative bottom accent */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-green-200 via-emerald-300 to-green-200 opacity-50" />
+        <div className={cn(
+          'absolute bottom-0 left-0 right-0 h-1 opacity-70',
+          available
+            ? 'bg-gradient-to-r from-green-300 via-emerald-400 to-green-300'
+            : 'bg-gradient-to-r from-amber-200 via-green-200 to-amber-200'
+        )} />
       </CardContent>
     </Card>
   );

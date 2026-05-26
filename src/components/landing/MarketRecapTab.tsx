@@ -64,7 +64,7 @@ const MarketRecapTab = () => {
               day: 'numeric' 
             })}
             <span className="text-sm font-normal text-green-600 ml-auto">
-              {getComplexityDescription(userLevel)} (Powered by Lovable AI)
+              {getComplexityDescription(userLevel)}
             </span>
           </CardTitle>
         </CardHeader>

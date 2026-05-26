@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Crown, MessageCircle, Home, BookOpen, ChevronLeft, ChevronRight, Briefcase, Users } from 'lucide-react';
+import { Crown, MessageCircle, Home, BookOpen, Briefcase, Users } from 'lucide-react';
 import { useAskPhilUi } from '@/contexts/AskPhilUiContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
@@ -14,14 +14,11 @@ const NAV_TABS = [
   { value: 'ask-phil',      label: 'Ask Phil', icon: MessageCircle, action: 'ask-phil', path: null,             tutorialId: 'app-nav-ask-phil' },
 ];
 
-const VISIBLE_COUNT = 3;
-
 const PageNavigationTabs: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { openAskPhil } = useAskPhilUi();
   const isMobile = useIsMobile();
-  const [offset, setOffset] = useState(0);
 
   const getCurrentTab = () => {
     if (location.pathname === '/learn') return 'learn';
@@ -33,7 +30,6 @@ const PageNavigationTabs: React.FC = () => {
   };
 
   const currentTab = getCurrentTab();
-  const maxOffset = NAV_TABS.length - VISIBLE_COUNT;
 
   const handleTabClick = (tab: typeof NAV_TABS[number]) => {
     if (tab.action === 'ask-phil') {
@@ -43,35 +39,16 @@ const PageNavigationTabs: React.FC = () => {
     }
   };
 
-  const shiftLeft = () => setOffset(o => Math.max(0, o - 1));
-  const shiftRight = () => setOffset(o => Math.min(maxOffset, o + 1));
-
-  const canGoLeft = isMobile && offset > 0;
-  const canGoRight = isMobile && offset < maxOffset;
-  const visibleTabs = isMobile ? NAV_TABS.slice(offset, offset + VISIBLE_COUNT) : NAV_TABS;
+  if (isMobile) {
+    return null;
+  }
 
   return (
     <div className="border-b bg-background" data-tutorial="app-nav-tabs">
       <div className="container mx-auto px-4">
         <div className="flex items-center h-12 gap-1">
-          {isMobile && (
-            <button
-              onClick={shiftLeft}
-              disabled={!canGoLeft}
-              aria-label="Previous"
-              className={cn(
-                'flex-shrink-0 h-8 w-8 flex items-center justify-center rounded transition-all',
-                canGoLeft
-                  ? 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  : 'text-muted-foreground/20 cursor-not-allowed'
-              )}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-          )}
-
           <div className="flex flex-1 h-full overflow-hidden">
-            {visibleTabs.map((tab) => {
+            {NAV_TABS.map((tab) => {
               const Icon = tab.icon;
               const isActive = currentTab === tab.value;
               return (
@@ -92,22 +69,6 @@ const PageNavigationTabs: React.FC = () => {
               );
             })}
           </div>
-
-          {isMobile && (
-            <button
-              onClick={shiftRight}
-              disabled={!canGoRight}
-              aria-label="Next"
-              className={cn(
-                'flex-shrink-0 h-8 w-8 flex items-center justify-center rounded transition-all',
-                canGoRight
-                  ? 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                  : 'text-muted-foreground/20 cursor-not-allowed'
-              )}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          )}
         </div>
       </div>
     </div>

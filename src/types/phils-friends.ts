@@ -3,7 +3,6 @@ export type ReelCourseCategory =
   | 'personal-finance'
   | 'market-intelligence'
   | 'careers-in-finance'
-  | 'soft-skills'
   | 'general';
 
 export interface PhilsFriendsVideo {
@@ -54,7 +53,6 @@ export const REEL_CATEGORIES: {
   { id: 'personal-finance', label: 'Personal Finance', courseCategory: 'personal-finance' },
   { id: 'market-intelligence', label: 'Market Intel', courseCategory: 'market-intelligence' },
   { id: 'careers-in-finance', label: 'Careers', courseCategory: 'careers-in-finance' },
-  { id: 'soft-skills', label: 'Soft Skills', courseCategory: 'soft-skills' },
 ];
 
 /** Categories users pick on the landing page (no "All") */
@@ -66,7 +64,6 @@ const FEED_CATEGORY_IDS: PhilsFriendsFeedCategory[] = [
   'personal-finance',
   'market-intelligence',
   'careers-in-finance',
-  'soft-skills',
 ];
 
 export function isPhilsFriendsFeedCategory(
@@ -84,7 +81,6 @@ export function normalizeCourseCategory(raw: string | null | undefined): string 
   if (!raw) return 'general';
   const lower = raw.toLowerCase().trim();
   if (lower === 'careers' || lower === 'careers-in-finance') return 'careers-in-finance';
-  if (lower === 'softskills' || lower === 'soft-skills') return 'soft-skills';
   if (lower === 'personal finance' || lower === 'personal-finance') return 'personal-finance';
   if (lower === 'market intelligence' || lower === 'market-intelligence' || lower === 'companies')
     return 'market-intelligence';
@@ -100,8 +96,6 @@ export function getLearnMorePath(courseCategory: string | null | undefined): str
       return '/learn?tab=companies';
     case 'careers-in-finance':
       return '/learn?tab=careers';
-    case 'soft-skills':
-      return '/soft-skills';
     default:
       return '/learn';
   }

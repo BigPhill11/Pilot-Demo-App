@@ -4,7 +4,7 @@
  * Jungle pathway navigation:
  * 1. CareerJungleMap (landing) -> 4 jungle categories
  * 2. JungleCategoryView -> careers within a category
- * 3. PlaceholderCareerJourney -> module placeholders per career
+ * 3. WealthManagementCareerView or ComingSoonCareerNotice
  */
 
 import React, { useState, useEffect } from 'react';
@@ -12,7 +12,7 @@ import { FinanceCareerData, financeCareerData } from '@/data/finance-careers';
 import { JungleCategory } from '@/data/career-jungle-categories';
 import CareerJungleMap from './careers/CareerJungleMap';
 import JungleCategoryView from './careers/JungleCategoryView';
-import PlaceholderCareerJourney from './careers/PlaceholderCareerJourney';
+import { ComingSoonCareerNotice, WealthManagementCareerView } from './careers/CareerAvailabilityViews';
 import CareerPreferenceSurvey from './CareerPreferenceSurvey';
 import CareerRecommendations from './CareerRecommendations';
 import { recordPathTouched } from '@/hooks/useDashboardProgress';
@@ -119,8 +119,15 @@ const CareersInFinanceTab = () => {
 
   if (viewState === 'career' && selectedCareer) {
     const onBack = selectedJungle ? handleBackToJungle : handleBackToMap;
+
+    if (selectedCareer.id === 'wealth-management') {
+      return (
+        <WealthManagementCareerView career={selectedCareer} onBack={onBack} />
+      );
+    }
+
     return (
-      <PlaceholderCareerJourney careerId={selectedCareer.id} onBack={onBack} />
+      <ComingSoonCareerNotice career={selectedCareer} onBack={onBack} />
     );
   }
 

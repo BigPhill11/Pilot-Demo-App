@@ -1,8 +1,8 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from '@/components/ui/sheet';
 import PandaLogo from '@/components/icons/PandaLogo';
 import ProfileSettings from '@/components/profile/ProfileSettings';
 import GameProgressBadge from '@/components/ui/game-progress-badge';
@@ -16,7 +16,7 @@ import { usePersonalDashboard } from '@/contexts/PersonalDashboardContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useUnifiedStreak } from '@/hooks/useUnifiedStreak';
 import { useDailyTimeGoal } from '@/hooks/useDailyTimeGoal';
-import { LogOut, User, Flame, Moon, Sun, MessageCircle, BarChart2 } from 'lucide-react';
+import { LogOut, User, Flame, Moon, Sun, MessageCircle, BarChart2, Menu, Home, Crown, BookOpen, Briefcase, Users } from 'lucide-react';
 interface MinimalLayoutProps {
   children: React.ReactNode;
 }
@@ -33,6 +33,8 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
     toggleTheme
   } = useTheme();
   const isMobile = useIsMobile();
+  const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const {
     currentStreak,
     streakMultiplier
@@ -43,6 +45,14 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
   const isGuest = !user;
   useDailyTimeGoal({ trackActivity: true });
 
+  const mobileNavItems = [
+    { label: 'Home', path: '/', icon: Home },
+    { label: 'Empire', path: '/empire', icon: Crown },
+    { label: 'Learn', path: '/learn', icon: BookOpen },
+    { label: 'Career', path: '/career', icon: Briefcase },
+    { label: 'Friends', path: '/phils-friends', icon: Users },
+  ];
+
   const handleDashboardNavigate = (tab: string) => {
     closeDashboard();
     if (tab.startsWith('/')) {
@@ -50,6 +60,31 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
       return;
     }
     navigate(`/learn?tab=${tab}`);
+  };
+
+  const handleMobileNavigate = (path: string) => {
+    navigate(path);
+    setIsMobileMenuOpen(false);
+  };
+
+  const handleMobileAskPhil = () => {
+    openAskPhil();
+    setIsMobileMenuOpen(false);
+  };
+
+  const handleMobileDashboard = () => {
+    openDashboard();
+    setIsMobileMenuOpen(false);
+  };
+
+  const handleMobileThemeToggle = () => {
+    toggleTheme();
+    setIsMobileMenuOpen(false);
+  };
+
+  const handleMobileSignOut = () => {
+    signOut();
+    setIsMobileMenuOpen(false);
   };
   const getLevelBadgeColor = (level: string) => {
     switch (level) {
@@ -78,76 +113,143 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
             </span>
             </div>
             
-            {/* User Info and Actions */}
-            <div className="flex items-center space-x-2 md:space-x-4">
-              {/* My Progress Button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={openDashboard}
-                className="gap-1.5"
-                aria-label="My Progress"
-                data-tutorial="app-header-my-progress"
-              >
-                <BarChart2 className="h-4 w-4" />
-                <span className="hidden sm:inline text-sm">My Progress</span>
-              </Button>
-
-              {/* Ask Phil Button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={openAskPhil}
-                className="gap-1.5"
-                aria-label="Ask Phil"
-                data-tutorial="app-header-ask-phil"
-              >
-                <MessageCircle className="h-4 w-4" />
-                <span className="hidden sm:inline text-sm">Ask Phil</span>
-              </Button>
-
-              {/* Theme Toggle */}
-              <Button variant="ghost" size="sm" onClick={toggleTheme}>
-                {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              </Button>
-
-              {/* Guest Mode - Just settings with notification */}
-              {isGuest && <ProfileSettings isGuest />}
-
-              {/* Authenticated User */}
-              {user && profile && <>
-                  {/* Streak Display */}
-                  <div data-tutorial="app-header-streak" className="flex items-center space-x-1 text-sm">
-                    <Flame className="h-4 w-4 text-orange-500" />
-                    <span className="font-medium">{currentStreak}</span>
-                    {streakMultiplier > 1 && <span className="text-xs text-orange-600">({streakMultiplier.toFixed(1)}x)</span>}
-                  </div>
-
-                  {!isMobile && <>
-                      {/* User Level Badge */}
-                      <Badge className={`${getLevelBadgeColor(profile.app_version)} text-white px-3 py-1`} variant="secondary">
-                        {formatLevel(profile.app_version)}
-                      </Badge>
-
-                      {/* Game Progress Badge - links to Bamboo Empire */}
-                      <GameProgressBadge compact />
-
-                      {/* Username */}
-                      <div className="flex items-center space-x-1 text-sm">
-                        <User className="h-4 w-4" />
-                        <span>{profile.username || 'User'}</span>
-                      </div>
-                    </>}
-                  
-                  {/* Profile Settings */}
-                  <ProfileSettings />
-                  
-                  {/* Sign Out */}
-                  <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground hover:text-foreground">
-                    <LogOut className="h-4 w-4" />
+            {isMobile ? (
+              <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2 rounded-xl">
+                    <Menu className="h-4 w-4" />
+                    Menu
                   </Button>
-                </>}
-            </div>
+                </SheetTrigger>
+                <SheetContent side="right" className="flex w-[320px] flex-col overflow-y-auto sm:w-[400px]">
+                  <SheetHeader>
+                    <SheetTitle>Phil's Financials</SheetTitle>
+                    <SheetDescription>Navigate, check progress, or ask Phil.</SheetDescription>
+                  </SheetHeader>
+
+                  <div className="mt-6 space-y-6">
+                    <div className="grid gap-2">
+                      {mobileNavItems.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
+                        return (
+                          <button
+                            key={item.path}
+                            onClick={() => handleMobileNavigate(item.path)}
+                            className={`flex items-center gap-3 rounded-2xl border p-4 text-left transition-colors ${
+                              isActive
+                                ? 'border-primary bg-primary/10 text-primary'
+                                : 'border-border bg-background hover:bg-muted'
+                            }`}
+                          >
+                            <Icon className="h-5 w-5" />
+                            <span className="font-medium">{item.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div className="space-y-2 border-t pt-4">
+                      <Button variant="ghost" className="w-full justify-start gap-3" onClick={handleMobileDashboard}>
+                        <BarChart2 className="h-4 w-4" />
+                        My Progress
+                      </Button>
+                      <Button variant="ghost" className="w-full justify-start gap-3" onClick={handleMobileAskPhil}>
+                        <MessageCircle className="h-4 w-4" />
+                        Ask Phil
+                      </Button>
+                      <Button variant="ghost" className="w-full justify-start gap-3" onClick={handleMobileThemeToggle}>
+                        {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                        {isDark ? 'Light Mode' : 'Dark Mode'}
+                      </Button>
+                    </div>
+
+                    {user && profile && (
+                      <div className="space-y-3 rounded-2xl border bg-muted/40 p-4">
+                        <div className="flex items-center gap-2 text-sm font-medium">
+                          <User className="h-4 w-4" />
+                          {profile.username || 'User'}
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Flame className="h-4 w-4 text-orange-500" />
+                          {currentStreak} day streak
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="space-y-2 border-t pt-4">
+                      <div className="flex items-center justify-between rounded-xl px-3 py-2">
+                        <span className="text-sm font-medium">Settings</span>
+                        <ProfileSettings isGuest={isGuest} />
+                      </div>
+                      {user && (
+                        <Button variant="ghost" className="w-full justify-start gap-3 text-muted-foreground" onClick={handleMobileSignOut}>
+                          <LogOut className="h-4 w-4" />
+                          Sign Out
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            ) : (
+              <div className="flex items-center space-x-2 md:space-x-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={openDashboard}
+                  className="gap-1.5"
+                  aria-label="My Progress"
+                  data-tutorial="app-header-my-progress"
+                >
+                  <BarChart2 className="h-4 w-4" />
+                  <span className="hidden sm:inline text-sm">My Progress</span>
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={openAskPhil}
+                  className="gap-1.5"
+                  aria-label="Ask Phil"
+                  data-tutorial="app-header-ask-phil"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  <span className="hidden sm:inline text-sm">Ask Phil</span>
+                </Button>
+
+                <Button variant="ghost" size="sm" onClick={toggleTheme}>
+                  {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                </Button>
+
+                {isGuest && <ProfileSettings isGuest />}
+
+                {user && profile && <>
+                    <div data-tutorial="app-header-streak" className="flex items-center space-x-1 text-sm">
+                      <Flame className="h-4 w-4 text-orange-500" />
+                      <span className="font-medium">{currentStreak}</span>
+                      {streakMultiplier > 1 && <span className="text-xs text-orange-600">({streakMultiplier.toFixed(1)}x)</span>}
+                    </div>
+
+                    <Badge className={`${getLevelBadgeColor(profile.app_version)} text-white px-3 py-1`} variant="secondary">
+                      {formatLevel(profile.app_version)}
+                    </Badge>
+
+                    <GameProgressBadge compact />
+
+                    <div className="flex items-center space-x-1 text-sm">
+                      <User className="h-4 w-4" />
+                      <span>{profile.username || 'User'}</span>
+                    </div>
+                    
+                    <ProfileSettings />
+                    
+                    <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground hover:text-foreground">
+                      <LogOut className="h-4 w-4" />
+                    </Button>
+                  </>}
+              </div>
+            )}
           </div>
         </div>
       </header>
