@@ -38,22 +38,28 @@ const BambooEmpireTutorial: React.FC = () => {
     useEmpireTutorial();
   const [targetRect, setTargetRect] = useState<TutorialRect | null>(null);
   const [cardTop, setCardTop] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 640);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const padding = getTutorialPadding();
 
   const updatePlacement = useCallback(() => {
+    const mobile = window.innerWidth < 640;
+    setIsMobile(mobile);
+
     const viewport = getVisualViewportBounds();
     const rect = step.target ? measureTargetRect(step.target, padding) : null;
     setTargetRect(rect);
 
-    const cardHeight = cardRef.current?.offsetHeight ?? 0;
-    const top = computeCardTop({
-      targetRect: rect,
-      cardHeight: cardHeight > 0 ? cardHeight : 180,
-      preference: step.cardPlacement ?? 'auto',
-      viewport,
-    });
-    setCardTop(top);
+    if (!mobile) {
+      const cardHeight = cardRef.current?.offsetHeight ?? 0;
+      const top = computeCardTop({
+        targetRect: rect,
+        cardHeight: cardHeight > 0 ? cardHeight : 180,
+        preference: step.cardPlacement ?? 'auto',
+        viewport,
+      });
+      setCardTop(top);
+    }
   }, [step.target, step.cardPlacement, padding]);
 
   useLayoutEffect(() => {
@@ -99,13 +105,88 @@ const BambooEmpireTutorial: React.FC = () => {
   const isReplayActionStep = isActionStep && runType === 'replay';
   const progress = ((stepIndex + 1) / totalSteps) * 100;
 
-  const cardStyle: React.CSSProperties =
+  // On mobile, if the spotlight target sits in the lower half of the screen
+  // (e.g. the Build button), anchor the sheet to the top so it doesn't
+  // overlap the highlighted element.
+  const targetCenterY = targetRect ? targetRect.top + targetRect.height / 2 : 0;
+  const anchorSheetToTop = isMobile && targetRect != null && targetCenterY > window.innerHeight * 0.5;
+
+  const desktopCardStyle: React.CSSProperties =
     cardTop != null
       ? { top: cardTop, left: '50%', transform: 'translateX(-50%)' }
       : { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
 
+  const cardBody = (
+    <>
+      <div className="h-1 bg-gray-200 dark:bg-gray-800">
+        <motion.div
+          className={`h-full ${accent.button}`}
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.3 }}
+        />
+      </div>
+
+      <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
+        <div className="flex items-start gap-3">
+          <div
+            className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl shrink-0 ${accent.chip}`}
+          >
+            <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
+              Step {stepIndex + 1} of {totalSteps}
+            </div>
+            <h3 className="text-base sm:text-xl font-bold text-gray-900 dark:text-white leading-tight">
+              {step.title}
+            </h3>
+          </div>
+          <button
+            type="button"
+            onClick={skipTutorial}
+            className="pointer-events-auto shrink-0 rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white touch-manipulation"
+            aria-label="Skip tutorial"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+          {step.body}
+        </p>
+
+        {(!isActionStep || isReplayActionStep) && (
+          <button
+            type="button"
+            onClick={advance}
+            className={`pointer-events-auto w-full flex items-center justify-center gap-2 rounded-xl ${accent.button} px-5 py-3 sm:px-6 sm:py-3.5 text-sm sm:text-base font-bold text-white shadow-lg touch-manipulation select-none`}
+          >
+            {isLast ? "Let's build" : 'Next'}
+            {!isLast && <ChevronRight className="h-5 w-5" />}
+          </button>
+        )}
+
+        {isActionStep && !isReplayActionStep && (
+          <p className="text-center text-xs sm:text-sm font-medium text-amber-600 dark:text-amber-400">
+            Follow the highlight to continue ↑
+          </p>
+        )}
+
+        <button
+          type="button"
+          onClick={skipTutorial}
+          className="pointer-events-auto w-full text-center text-xs sm:text-sm font-medium text-gray-500 underline-offset-2 hover:underline dark:text-gray-400 touch-manipulation"
+        >
+          Skip tutorial — replay anytime from the Tutorial button
+        </button>
+      </div>
+    </>
+  );
+
   return (
     <div className="fixed inset-0 z-[100] pointer-events-none" aria-live="polite">
+      {/* Skip button always visible in top-right */}
       <button
         type="button"
         onClick={skipTutorial}
@@ -116,6 +197,7 @@ const BambooEmpireTutorial: React.FC = () => {
         Skip tutorial
       </button>
 
+      {/* Spotlight overlay */}
       <svg
         className={`absolute inset-0 w-full h-full ${isActionStep ? 'pointer-events-none' : 'pointer-events-auto'}`}
         onClick={(e) => e.stopPropagation()}
@@ -159,6 +241,7 @@ const BambooEmpireTutorial: React.FC = () => {
         )}
       </svg>
 
+      {/* Transparent tap target over spotlight for action steps */}
       {isActionStep && !isReplayActionStep && targetRect && (
         <button
           type="button"
@@ -174,97 +257,53 @@ const BambooEmpireTutorial: React.FC = () => {
         />
       )}
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={step.id}
-          ref={cardRef}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -12 }}
-          transition={{ duration: 0.22 }}
-          className={`absolute w-[min(92vw,28rem)] ${isActionStep ? 'pointer-events-none' : 'pointer-events-auto'}`}
-          style={cardStyle}
-        >
-          <div className="rounded-2xl bg-white dark:bg-gray-900 shadow-2xl border border-white/10 overflow-hidden">
-            <div className="h-1 bg-gray-200 dark:bg-gray-800">
-              <motion.div
-                className={`h-full ${accent.button}`}
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.3 }}
-              />
-            </div>
-
+      {/* ── Mobile: fixed bottom (or top) sheet ── */}
+      {isMobile && (
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={step.id}
+            ref={cardRef}
+            initial={{ opacity: 0, y: anchorSheetToTop ? -24 : 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: anchorSheetToTop ? -24 : 24 }}
+            transition={{ duration: 0.22 }}
+            className="pointer-events-auto fixed left-0 right-0"
+            style={
+              anchorSheetToTop
+                ? { top: 0, paddingTop: 'env(safe-area-inset-top, 0px)' }
+                : { bottom: 0, paddingBottom: 'env(safe-area-inset-bottom, 0px)' }
+            }
+          >
             <div
-              className={`p-4 sm:p-6 space-y-3 sm:space-y-4 ${isActionStep ? 'pointer-events-auto' : ''}`}
+              className={`bg-white dark:bg-gray-900 shadow-2xl border border-white/10 overflow-hidden ${
+                anchorSheetToTop ? 'rounded-b-2xl' : 'rounded-t-2xl'
+              }`}
             >
-              <div className="flex items-start gap-3">
-                <div
-                  className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl shrink-0 ${accent.chip}`}
-                >
-                  <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[10px] sm:text-[11px] font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                    Step {stepIndex + 1} of {totalSteps}
-                  </div>
-                  <h3 className="text-base sm:text-xl font-bold text-gray-900 dark:text-white leading-tight">
-                    {step.title}
-                  </h3>
-                </div>
-                <button
-                  type="button"
-                  onClick={skipTutorial}
-                  className="pointer-events-auto shrink-0 rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white touch-manipulation"
-                  aria-label="Skip tutorial"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-
-              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed max-h-[40dvh] overflow-y-auto">
-                {step.body}
-              </p>
-
-              {!isActionStep && (
-                <button
-                  type="button"
-                  onClick={advance}
-                  className={`w-full flex items-center justify-center gap-2 rounded-xl ${accent.button} px-5 py-3 sm:px-6 sm:py-3.5 text-sm sm:text-base font-bold text-white shadow-lg touch-manipulation select-none`}
-                >
-                  {isLast ? "Let's build" : 'Next'}
-                  {!isLast && <ChevronRight className="h-5 w-5" />}
-                </button>
-              )}
-
-              {isReplayActionStep && (
-                <button
-                  type="button"
-                  onClick={advance}
-                  className={`w-full flex items-center justify-center gap-2 rounded-xl ${accent.button} px-5 py-3 sm:px-6 sm:py-3.5 text-sm sm:text-base font-bold text-white shadow-lg touch-manipulation select-none`}
-                >
-                  {isLast ? "Let's build" : 'Next'}
-                  {!isLast && <ChevronRight className="h-5 w-5" />}
-                </button>
-              )}
-
-              {isActionStep && !isReplayActionStep && (
-                <p className="text-center text-xs sm:text-sm font-medium text-amber-600 dark:text-amber-400">
-                  Follow the highlight to continue
-                </p>
-              )}
-
-              <button
-                type="button"
-                onClick={skipTutorial}
-                className="pointer-events-auto w-full text-center text-xs sm:text-sm font-medium text-gray-500 underline-offset-2 hover:underline dark:text-gray-400 touch-manipulation"
-              >
-                Skip tutorial — replay anytime from the Tutorial button
-              </button>
+              {cardBody}
             </div>
-          </div>
-        </motion.div>
-      </AnimatePresence>
+          </motion.div>
+        </AnimatePresence>
+      )}
+
+      {/* ── Desktop: floating positioned card ── */}
+      {!isMobile && (
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={step.id}
+            ref={cardRef}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.22 }}
+            className={`absolute w-[min(92vw,28rem)] ${isActionStep ? 'pointer-events-none' : 'pointer-events-auto'}`}
+            style={desktopCardStyle}
+          >
+            <div className="rounded-2xl bg-white dark:bg-gray-900 shadow-2xl border border-white/10 overflow-hidden">
+              {cardBody}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      )}
     </div>
   );
 };
