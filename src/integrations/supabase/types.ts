@@ -470,6 +470,7 @@ export type Database = {
           description: string | null
           duration_sec: number | null
           duration_seconds: number | null
+          feed_section: string | null
           id: string
           level: string | null
           name: string | null
@@ -479,6 +480,7 @@ export type Database = {
           role_tier: string | null
           soft_skills_section: string | null
           source_type: string | null
+          source_url: string | null
           speaker_name: string | null
           storage_path: string | null
           tags: string | null
@@ -499,6 +501,7 @@ export type Database = {
           description?: string | null
           duration_sec?: number | null
           duration_seconds?: number | null
+          feed_section?: string | null
           id?: string
           level?: string | null
           name?: string | null
@@ -508,6 +511,7 @@ export type Database = {
           role_tier?: string | null
           soft_skills_section?: string | null
           source_type?: string | null
+          source_url?: string | null
           speaker_name?: string | null
           storage_path?: string | null
           tags?: string | null
@@ -528,6 +532,7 @@ export type Database = {
           description?: string | null
           duration_sec?: number | null
           duration_seconds?: number | null
+          feed_section?: string | null
           id?: string
           level?: string | null
           name?: string | null
@@ -537,6 +542,7 @@ export type Database = {
           role_tier?: string | null
           soft_skills_section?: string | null
           source_type?: string | null
+          source_url?: string | null
           speaker_name?: string | null
           storage_path?: string | null
           tags?: string | null
@@ -1051,6 +1057,7 @@ export type Database = {
           end_sec: number
           excerpt: string | null
           feed_category: string | null
+          feed_section: string | null
           id: string
           learn_more_path: string | null
           production_status: string | null
@@ -1068,6 +1075,7 @@ export type Database = {
           end_sec: number
           excerpt?: string | null
           feed_category?: string | null
+          feed_section?: string | null
           id?: string
           learn_more_path?: string | null
           production_status?: string | null
@@ -1085,6 +1093,7 @@ export type Database = {
           end_sec?: number
           excerpt?: string | null
           feed_category?: string | null
+          feed_section?: string | null
           id?: string
           learn_more_path?: string | null
           production_status?: string | null

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Wallet,
   TrendingUp,
   Briefcase,
+  GraduationCap,
   Play,
   Users,
   ChevronRight,
@@ -13,7 +14,7 @@ import {
   PHILS_FRIENDS_LANDING_CATEGORIES,
   type PhilsFriendsFeedCategory,
 } from '@/types/phils-friends';
-import { getMockReelCount } from '@/data/phils-friends/mock-reels';
+import { supabase } from '@/integrations/supabase/client';
 
 const CATEGORY_META: Record<
   PhilsFriendsFeedCategory,
@@ -34,7 +35,7 @@ const CATEGORY_META: Record<
   },
   'market-intelligence': {
     icon: <TrendingUp className="h-6 w-6" />,
-    tagline: 'Markets & companies',
+    tagline: 'Business & markets',
     description: 'Headlines, stocks, and financial statements explained without jargon.',
     previewImage: '/market-intelligence/language-finance/balance-sheet-basics/hero.png',
     accent: 'from-teal-500/20 to-emerald-50',
@@ -46,6 +47,13 @@ const CATEGORY_META: Record<
     previewImage: '/market-intelligence/ownership/own-a-piece/hero.png',
     accent: 'from-green-600/15 to-green-50',
   },
+  'career-readiness': {
+    icon: <GraduationCap className="h-6 w-6" />,
+    tagline: 'Launch skills',
+    description: 'Interview prep, resumes, workplace habits, and advice for your first real opportunity.',
+    previewImage: '/market-intelligence/ownership/time-is-your-ally/hero.png',
+    accent: 'from-lime-500/20 to-green-50',
+  },
 };
 
 interface PhilsFriendsLandingProps {
@@ -53,6 +61,23 @@ interface PhilsFriendsLandingProps {
 }
 
 const PhilsFriendsLanding: React.FC<PhilsFriendsLandingProps> = ({ onSelectCategory }) => {
+  const [clipCounts, setClipCounts] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    supabase
+      .from('video_clips')
+      .select('feed_section')
+      .eq('published', true)
+      .then(({ data }) => {
+        if (!data) return;
+        const counts: Record<string, number> = {};
+        for (const row of data) {
+          if (row.feed_section) counts[row.feed_section] = (counts[row.feed_section] ?? 0) + 1;
+        }
+        setClipCounts(counts);
+      });
+  }, []);
+
   return (
     <div className="min-h-[calc(100dvh-8rem)] pb-8">
       <div className="px-4 pt-6 pb-8 text-center max-w-lg mx-auto">
@@ -72,7 +97,7 @@ const PhilsFriendsLanding: React.FC<PhilsFriendsLandingProps> = ({ onSelectCateg
       <div className="px-4 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
         {PHILS_FRIENDS_LANDING_CATEGORIES.map((cat) => {
           const meta = CATEGORY_META[cat.id as PhilsFriendsFeedCategory];
-          const clipCount = getMockReelCount(cat.id);
+          const clipCount = clipCounts[cat.id] ?? 0;
 
           return (
             <button

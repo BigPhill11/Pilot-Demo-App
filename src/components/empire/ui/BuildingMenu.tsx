@@ -68,7 +68,7 @@ const BuildingMenu: React.FC<BuildingMenuProps> = ({
                   Build New Structure
                 </h2>
                 <p className="text-xs text-indigo-600 dark:text-indigo-400">
-                  Empire purchases use your credit card only
+                  Builds charge your card. Production creates bamboo. Use bamboo to pay debt down.
                 </p>
               </div>
               <button

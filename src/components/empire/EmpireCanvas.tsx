@@ -12,6 +12,8 @@ import {
   isTutorialComplete,
   TUTORIAL_DEMO_EVENT,
   TUTORIAL_GRANT_COINS,
+  TUTORIAL_GRANT_XP,
+  TUTORIAL_SEEDED_COLLECTION,
   type EmpireTutorialStep,
   type TutorialAction,
 } from './tutorial/empireTutorialSteps';
@@ -31,7 +33,7 @@ import {
   CreditUnlockBanner,
 } from './ui';
 import { useProductionManager, useEventManager, useCreditManager } from './systems';
-import type { EventHistoryEntry } from './systems/EventManager';
+import type { EventHistoryEntry, EventType } from './systems/EventManager';
 import { useBaseLayoutStore, PlacedBuilding } from '@/store/useBaseLayoutStore';
 import { useGameStore } from '@/store/useGameStore';
 import { useCreditStore } from '@/store/useCreditStore';
@@ -102,6 +104,7 @@ const EmpireCanvasInner: React.FC = () => {
   const [showCreditPanel, setShowCreditPanel] = useState(false);
   const [pendingCreditPurchase, setPendingCreditPurchase] = useState<BuildingType | null>(null);
   const [constructionProgressMap, setConstructionProgressMap] = useState<Record<string, number>>({});
+  const [dojoCooldowns, setDojoCooldowns] = useState<Record<string, number>>({});
   const [hiRes, setHiRes] = useState(false);
   const lastHoverRef = useRef(0);
   const timedWorkBootstrappedRef = useRef(false);
@@ -112,10 +115,12 @@ const EmpireCanvasInner: React.FC = () => {
   const completeTimedWork = useBaseLayoutStore((state) => state.completeTimedWork);
   const catchUpTimedWork = useBaseLayoutStore((state) => state.catchUpTimedWork);
   const completeConstruction = useBaseLayoutStore((state) => state.completeConstruction);
-  const bamboo = useGameStore((state) => state.bamboo);
+  const updateBuildingCollection = useBaseLayoutStore((state) => state.updateBuildingCollection);
   const xp = useGameStore((state) => state.xp);
   const addBamboo = useGameStore((state) => state.addBamboo);
+  const addXp = useGameStore((state) => state.addXp);
   const empireProductivity = useGameStore((state) => state.empireProductivity);
+  const applyEmpireProductivityDelta = useGameStore((state) => state.applyEmpireProductivityDelta);
   const productivityFactor = Math.max(0.05, Math.min(1, empireProductivity / 100));
 
   const { chargeEmpireExpense, enabled: creditEnabled, enableCreditCard } = useCreditStore();
@@ -175,7 +180,7 @@ const EmpireCanvasInner: React.FC = () => {
     setShowOfflineProgress(true);
   }, []);
 
-  const { totalStorage, collectFromBuilding } = useProductionManager({
+  const { totalStorage, productionRate, collectFromBuilding } = useProductionManager({
     onOfflineEarnings: handleOfflineEarnings,
     productionMultiplier,
     storageMultiplier: activeEvent?.event.effect.storageMultiplier ?? 1,
@@ -202,10 +207,11 @@ const EmpireCanvasInner: React.FC = () => {
   const handleStepEnter = useCallback(
     (step: EmpireTutorialStep) => {
       switch (step.onEnter) {
-        case 'grant_coins':
+        case 'grant_starter_resources':
           if (tutorialRunType === 'first_time' && !grantCoinsAppliedRef.current) {
             grantCoinsAppliedRef.current = true;
             addBamboo(TUTORIAL_GRANT_COINS, 'tutorial');
+            addXp(TUTORIAL_GRANT_XP, 'tutorial');
           }
           break;
         case 'open_build_menu':
@@ -219,6 +225,25 @@ const EmpireCanvasInner: React.FC = () => {
           if (id) completeConstruction(id);
           break;
         }
+        case 'seed_collection': {
+          if (tutorialRunType !== 'first_time') break;
+          const id = tutorial.tutorialBuildingId;
+          if (!id) break;
+          const building = useBaseLayoutStore.getState().buildings.find((b) => b.id === id);
+          if (!building || building.type !== 'bamboo_farm') break;
+          const currentPending = building.pendingCollection ?? 0;
+          if (currentPending < TUTORIAL_SEEDED_COLLECTION) {
+            updateBuildingCollection(id, TUTORIAL_SEEDED_COLLECTION - currentPending);
+          }
+          const updated = useBaseLayoutStore.getState().buildings.find((b) => b.id === id);
+          if (updated) setSelectedBuilding(updated);
+          break;
+        }
+        case 'open_credit_panel':
+          if (tutorialRunType === 'first_time') {
+            setShowCreditPanel(true);
+          }
+          break;
         case 'trigger_demo_event':
           if (tutorialRunType === 'first_time') {
             triggerEvent(TUTORIAL_DEMO_EVENT);
@@ -228,7 +253,15 @@ const EmpireCanvasInner: React.FC = () => {
           break;
       }
     },
-    [addBamboo, completeConstruction, triggerEvent, tutorial.tutorialBuildingId, tutorialRunType],
+    [
+      addBamboo,
+      addXp,
+      completeConstruction,
+      triggerEvent,
+      tutorial.tutorialBuildingId,
+      tutorialRunType,
+      updateBuildingCollection,
+    ],
   );
 
   useEffect(() => {
@@ -252,6 +285,16 @@ const EmpireCanvasInner: React.FC = () => {
     setGhostPosition(null);
     setTutorialBuildingId(null);
   }, [sessionId, setTutorialBuildingId]);
+
+  useEffect(() => {
+    if (!selectedBuilding) return;
+    const updated = buildings.find((building) => building.id === selectedBuilding.id);
+    if (updated) {
+      setSelectedBuilding(updated);
+    } else {
+      setSelectedBuilding(null);
+    }
+  }, [buildings, selectedBuilding]);
 
   const finishTutorialPlacement = useCallback(
     (buildingId: string) => {
@@ -280,7 +323,11 @@ const EmpireCanvasInner: React.FC = () => {
               const placed = useBaseLayoutStore.getState().buildings[before];
               if (placed && tutorial.isActive && isFirstTimeTutorial) {
                 finishTutorialPlacement(placed.id);
-                tutorial.reportAction('place_building');
+                if (tutorial.step.action === 'place_dojo') {
+                  tutorial.reportAction('place_dojo');
+                } else {
+                  tutorial.reportAction('place_building');
+                }
               }
               setSelectedBuildingType(null);
               setGhostPosition(null);
@@ -297,11 +344,12 @@ const EmpireCanvasInner: React.FC = () => {
         if (
           tutorial.isActive &&
           isFirstTimeTutorial &&
-          tutorial.step.action === 'select_placed_building' &&
+          (tutorial.step.action === 'select_placed_building' ||
+            tutorial.step.action === 'select_dojo_building') &&
           clickedBuilding.id === tutorial.tutorialBuildingId
         ) {
           setSelectedBuilding(clickedBuilding);
-          tutorial.reportAction('select_placed_building');
+          tutorial.reportAction(tutorial.step.action);
         } else if (!tutorial.isActive) {
           setSelectedBuilding(clickedBuilding);
         }
@@ -343,11 +391,24 @@ const EmpireCanvasInner: React.FC = () => {
       setSelectedBuildingType(type);
       setShowBuildMenu(false);
       setPendingCreditPurchase(type);
-      if (isTutorialActive && isFirstTimeTutorial && type === 'bamboo_farm') {
+      if (
+        isTutorialActive &&
+        isFirstTimeTutorial &&
+        type === 'bamboo_farm' &&
+        tutorial.step.action === 'select_farm'
+      ) {
         reportAction('select_farm');
       }
+      if (
+        isTutorialActive &&
+        isFirstTimeTutorial &&
+        type === 'training_dojo' &&
+        tutorial.step.action === 'select_dojo'
+      ) {
+        reportAction('select_dojo');
+      }
     },
-    [isTutorialActive, isFirstTimeTutorial, reportAction],
+    [isTutorialActive, isFirstTimeTutorial, reportAction, tutorial.step.action],
   );
 
   useEffect(() => {
@@ -365,7 +426,11 @@ const EmpireCanvasInner: React.FC = () => {
         case 'select_farm':
           handleSelectBuilding('bamboo_farm');
           break;
+        case 'select_dojo':
+          handleSelectBuilding('training_dojo');
+          break;
         case 'place_building':
+        case 'place_dojo':
           break;
         case 'select_placed_building': {
           const building = buildings.find((b) => b.id === tutorialBuildingId);
@@ -375,13 +440,40 @@ const EmpireCanvasInner: React.FC = () => {
           }
           break;
         }
+        case 'select_dojo_building': {
+          const building = buildings.find((b) => b.id === tutorialBuildingId);
+          if (building) {
+            setSelectedBuilding(building);
+            reportAction('select_dojo_building');
+          }
+          break;
+        }
+        case 'collect_building':
+          document
+            .querySelector<HTMLElement>('[data-tutorial="building-info-collect"]')
+            ?.click();
+          break;
         case 'upgrade_building':
           document
             .querySelector<HTMLElement>('[data-tutorial="building-info-upgrade"]')
             ?.click();
           break;
+        case 'open_credit':
+          setShowCreditPanel(true);
+          reportAction('open_credit');
+          break;
+        case 'pay_minimum':
+          document
+            .querySelector<HTMLElement>('[data-tutorial="credit-pay-minimum"]')
+            ?.click();
+          break;
         case 'dismiss_event':
           handleEventBannerDismiss();
+          break;
+        case 'use_dojo':
+          document
+            .querySelector<HTMLElement>('[data-tutorial="dojo-meditation"]')
+            ?.click();
           break;
         default:
           break;
@@ -404,16 +496,72 @@ const EmpireCanvasInner: React.FC = () => {
   const handleCollect = useCallback(
     (buildingId: string) => {
       if (isCollectionBlocked) return;
-      collectFromBuilding(buildingId);
+      const collected = collectFromBuilding(buildingId);
+      if (
+        collected > 0 &&
+        tutorial.isActive &&
+        isFirstTimeTutorial &&
+        tutorial.step.action === 'collect_building'
+      ) {
+        tutorial.reportAction('collect_building');
+        const updated = useBaseLayoutStore.getState().buildings.find((building) => building.id === buildingId);
+        if (updated) setSelectedBuilding(updated);
+        return;
+      }
       setSelectedBuilding(null);
     },
-    [collectFromBuilding, isCollectionBlocked],
+    [collectFromBuilding, isCollectionBlocked, isFirstTimeTutorial, tutorial],
   );
 
   const handleCollectOffline = useCallback(() => {
     addBamboo(offlineEarnings.amount, 'offline');
     setShowOfflineProgress(false);
   }, [offlineEarnings.amount, addBamboo]);
+
+  const handleDojoProgram = useCallback(
+    (program: 'meditation' | 'workout' | 'happy_hour') => {
+      const now = Date.now();
+      if ((dojoCooldowns[program] ?? 0) > now) {
+        return false;
+      }
+
+      let triggered = true;
+      let cooldownMs = 5 * 60 * 1000;
+
+      if (program === 'meditation') {
+        applyEmpireProductivityDelta(12);
+        cooldownMs = 3 * 60 * 1000;
+      } else {
+        const eventType: EventType = program === 'workout' ? 'workout_session' : 'happy_hour';
+        triggered = Boolean(triggerEvent(eventType));
+      }
+
+      if (!triggered) return false;
+
+      setDojoCooldowns((current) => ({
+        ...current,
+        [program]: now + cooldownMs,
+      }));
+
+      if (
+        tutorial.isActive &&
+        isFirstTimeTutorial &&
+        tutorial.step.action === 'use_dojo' &&
+        program === 'meditation'
+      ) {
+        tutorial.reportAction('use_dojo');
+      }
+
+      return true;
+    },
+    [
+      applyEmpireProductivityDelta,
+      dojoCooldowns,
+      isFirstTimeTutorial,
+      triggerEvent,
+      tutorial,
+    ],
+  );
 
   const cancelPlacement = useCallback(() => {
     if (tutorial.isActive) return;
@@ -549,11 +697,12 @@ const EmpireCanvasInner: React.FC = () => {
                       if (
                         tutorial.isActive &&
                         isFirstTimeTutorial &&
-                        tutorial.step.action === 'select_placed_building' &&
+                        (tutorial.step.action === 'select_placed_building' ||
+                          tutorial.step.action === 'select_dojo_building') &&
                         building.id === tutorial.tutorialBuildingId
                       ) {
                         setSelectedBuilding(building);
-                        tutorial.reportAction('select_placed_building');
+                        tutorial.reportAction(tutorial.step.action);
                         return;
                       }
                       if (tutorial.isActive) return;
@@ -578,8 +727,11 @@ const EmpireCanvasInner: React.FC = () => {
 
       <CoinCounter
         totalStorage={totalStorage}
+        productionRate={productionRate}
         onOpenCredit={
-          creditEnabled && !tutorial.isActive ? () => setShowCreditPanel(true) : undefined
+          creditEnabled && (!tutorial.isActive || tutorial.step.action === 'open_credit')
+            ? () => setShowCreditPanel(true)
+            : undefined
         }
         onOpenEventHistory={
           !tutorial.isActive ? () => setShowEventHistory(true) : undefined
@@ -665,6 +817,8 @@ const EmpireCanvasInner: React.FC = () => {
         lockToBuildingType={
           tutorial.isActive && isFirstTimeTutorial && tutorial.step.id === 'select_farm'
             ? 'bamboo_farm'
+            : tutorial.isActive && isFirstTimeTutorial && tutorial.step.id === 'select_dojo'
+              ? 'training_dojo'
             : null
         }
       />
@@ -682,6 +836,8 @@ const EmpireCanvasInner: React.FC = () => {
             tutorial.reportAction('upgrade_building');
           }
         }}
+        onDojoProgram={handleDojoProgram}
+        dojoCooldowns={dojoCooldowns}
       />
 
       <OfflineProgress
@@ -704,9 +860,26 @@ const EmpireCanvasInner: React.FC = () => {
         history={eventHistory}
       />
 
+      {(!tutorial.isActive || tutorial.step.action === 'pay_minimum') && (
+        <CreditCardPanel
+          isOpen={showCreditPanel}
+          onClose={() => {
+            if (!tutorial.isActive) setShowCreditPanel(false);
+          }}
+          onPayMinimum={() => {
+            if (
+              tutorial.isActive &&
+              isFirstTimeTutorial &&
+              tutorial.step.action === 'pay_minimum'
+            ) {
+              tutorial.reportAction('pay_minimum');
+            }
+          }}
+        />
+      )}
+
       {!tutorial.isActive && (
         <>
-          <CreditCardPanel isOpen={showCreditPanel} onClose={() => setShowCreditPanel(false)} />
           <CreditUnlockBanner />
         </>
       )}

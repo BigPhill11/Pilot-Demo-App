@@ -22,6 +22,9 @@ export type EventType =
   | 'bamboo_boom'
   | 'lucky_visitor'
   | 'festival_day'
+  | 'happy_hour'
+  | 'meditation_break'
+  | 'workout_session'
   | 'credit_check'
   | 'interest_spike'
   | 'debt_collector';
@@ -178,6 +181,36 @@ export const EVENT_DEFINITIONS: Record<EventType, Omit<EconomicEvent, 'id'>> = {
     effect: { xpMultiplier: 2, productivityDelta: 4 },
     emoji: '🎉',
   },
+  happy_hour: {
+    type: 'happy_hour',
+    name: 'Dojo Happy Hour',
+    description: 'Team bonding pays off! Production rises for 2 minutes and productivity improves.',
+    educationalDescription: 'Healthy social connection can improve morale, trust, and collaboration. In real workplaces, networking and team culture can make productive work easier.',
+    isNegative: false,
+    duration: 120000,
+    effect: { productionMultiplier: 1.35, productivityDelta: 6 },
+    emoji: '🤝',
+  },
+  meditation_break: {
+    type: 'meditation_break',
+    name: 'Meditation Break',
+    description: 'A focused pause restores clarity and productivity.',
+    educationalDescription: 'Rest is not wasted time. Short recovery breaks can reduce burnout and help people make better financial and work decisions.',
+    isNegative: false,
+    duration: 0,
+    effect: { productivityDelta: 10 },
+    emoji: '🧘',
+  },
+  workout_session: {
+    type: 'workout_session',
+    name: 'Workout Session',
+    description: 'Exercise boosts energy! Production rises briefly and productivity improves.',
+    educationalDescription: 'Physical health supports earning power. Exercise can improve focus, resilience, and long-term productivity.',
+    isNegative: false,
+    duration: 90000,
+    effect: { productionMultiplier: 1.2, productivityDelta: 5 },
+    emoji: '🏋️',
+  },
   credit_check: {
     type: 'credit_check',
     name: 'Credit Bureau Check',
@@ -247,7 +280,14 @@ const NEGATIVE_EVENTS: EventType[] = [
   'repair_bill',
 ];
 const CREDIT_NEGATIVE_EVENTS: EventType[] = ['credit_check', 'interest_spike', 'debt_collector'];
-const POSITIVE_EVENTS: EventType[] = ['bamboo_boom', 'lucky_visitor', 'festival_day'];
+const POSITIVE_EVENTS: EventType[] = [
+  'bamboo_boom',
+  'lucky_visitor',
+  'festival_day',
+  'happy_hour',
+  'meditation_break',
+  'workout_session',
+];
 
 interface UseEventManagerOptions {
   onEventStart?: (event: ActiveEvent) => void;

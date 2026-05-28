@@ -2,14 +2,13 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import AdminTab from '@/components/admin/AdminTab';
-
-const ADMIN_EMAILS = ['phillipghead@gmail.com'];
+import { isPhilAdminEmail } from '@/lib/adminAccess';
 
 const AdminPage = () => {
   const { user, loading } = useAuth();
 
   if (loading) return null;
-  if (!user || !ADMIN_EMAILS.includes(user.email ?? '')) {
+  if (!user || !isPhilAdminEmail(user.email)) {
     return <Navigate to="/" replace />;
   }
 

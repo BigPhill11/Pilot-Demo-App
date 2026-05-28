@@ -31,13 +31,47 @@ interface BuildingInfoPanelProps {
   onClose: () => void;
   onCollect: (buildingId: string) => void;
   onUpgrade?: () => void;
+  onDojoProgram?: (program: DojoProgram) => boolean;
+  dojoCooldowns?: Record<string, number>;
 }
+
+export type DojoProgram = 'meditation' | 'workout' | 'happy_hour';
+
+const DOJO_PROGRAMS: Array<{
+  id: DojoProgram;
+  label: string;
+  description: string;
+  effect: string;
+  tutorialTarget?: string;
+}> = [
+  {
+    id: 'meditation',
+    label: 'Meditation',
+    description: 'A focused rest break that restores productivity right away.',
+    effect: '+12 productivity',
+    tutorialTarget: 'dojo-meditation',
+  },
+  {
+    id: 'workout',
+    label: 'Workout',
+    description: 'Movement boosts morale and creates a short production lift.',
+    effect: 'Productivity + production event',
+  },
+  {
+    id: 'happy_hour',
+    label: 'Happy Hour',
+    description: 'A social event that improves morale and networking energy.',
+    effect: 'Social production boost',
+  },
+];
 
 const BuildingInfoPanel: React.FC<BuildingInfoPanelProps> = ({
   building,
   onClose,
   onCollect,
   onUpgrade,
+  onDojoProgram,
+  dojoCooldowns = {},
 }) => {
   const [showEducational, setShowEducational] = useState(false);
   const xp = useGameStore((state) => state.xp);
@@ -69,6 +103,7 @@ const BuildingInfoPanel: React.FC<BuildingInfoPanelProps> = ({
   const MIN_COLLECT_THRESHOLD = getBuildingCollectThresholdFor(building.type);
   const canCollect = isBuildingCollectionReady(building.type, building.pendingCollection || 0);
   const hasCollection = pendingAmount > 0;
+  const now = Date.now();
 
   const handleUpgrade = () => {
     if (!canUpgrade) return;
@@ -115,7 +150,7 @@ const BuildingInfoPanel: React.FC<BuildingInfoPanelProps> = ({
       insurance_hut:
         "Insurance might seem like an expense, but it's really peace of mind. One bad event without protection can wipe out months of progress!",
       training_dojo:
-        "Education is the best investment. The skills you learn compound forever - unlike money, knowledge can't be taken away from you.",
+        "Education, health, and rest are all productivity investments. The dojo helps your empire grow without pretending nonstop grinding is sustainable.",
       trading_post:
         'Sometimes spending money strategically is better than hoarding it. Smart investments in growth can multiply your returns.',
       panda_house:
@@ -270,6 +305,7 @@ const BuildingInfoPanel: React.FC<BuildingInfoPanelProps> = ({
               {hasCollection && (
                 <div className="mb-4">
                   <motion.button
+                    data-tutorial="building-info-collect"
                     onClick={() => canCollect && !isBusy && onCollect(building.id)}
                     disabled={!canCollect || isBusy}
                     className={`w-full p-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg ${
@@ -285,6 +321,57 @@ const BuildingInfoPanel: React.FC<BuildingInfoPanelProps> = ({
                       ? `Collect ${pendingAmount} Coins!`
                       : `${pendingAmount} / ${MIN_COLLECT_THRESHOLD} coins (min to collect)`}
                   </motion.button>
+                </div>
+              )}
+
+              {building.type === 'training_dojo' && (
+                <div className="mb-4 p-3 rounded-xl bg-gradient-to-br from-emerald-50 to-lime-50 dark:from-emerald-900/20 dark:to-lime-900/20">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Zap className="w-4 h-4 text-emerald-600" />
+                    <div>
+                      <div className="text-sm font-bold text-emerald-800 dark:text-emerald-300">
+                        Dojo Programs
+                      </div>
+                      <p className="text-xs text-emerald-700/80 dark:text-emerald-200/80">
+                        Rest, training, and social connection keep production sustainable.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {DOJO_PROGRAMS.map((program) => {
+                      const cooldownUntil = dojoCooldowns[program.id] ?? 0;
+                      const remainingMs = Math.max(0, cooldownUntil - now);
+                      const isCoolingDown = remainingMs > 0;
+                      const remainingMinutes = Math.ceil(remainingMs / 60000);
+                      const disabled = isBusy || isCoolingDown || !onDojoProgram;
+
+                      return (
+                        <motion.button
+                          key={program.id}
+                          type="button"
+                          data-tutorial={program.tutorialTarget}
+                          onClick={() => {
+                            if (!disabled) onDojoProgram?.(program.id);
+                          }}
+                          disabled={disabled}
+                          className={`rounded-xl p-3 text-left shadow-sm transition-all ${
+                            disabled
+                              ? 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                              : 'bg-white/80 dark:bg-gray-800/70 text-emerald-900 dark:text-emerald-100 hover:shadow-md'
+                          }`}
+                          whileHover={!disabled ? { scale: 1.02 } : {}}
+                          whileTap={!disabled ? { scale: 0.98 } : {}}
+                        >
+                          <div className="text-sm font-bold">{program.label}</div>
+                          <p className="mt-1 text-xs opacity-80">{program.description}</p>
+                          <div className="mt-2 text-xs font-semibold text-emerald-600 dark:text-emerald-300">
+                            {isCoolingDown ? `Ready in ${remainingMinutes}m` : program.effect}
+                          </div>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
 

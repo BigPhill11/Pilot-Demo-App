@@ -8,9 +8,10 @@ import { CREDIT_CONFIG } from '@/engine/credit';
 interface CreditCardPanelProps {
   isOpen: boolean;
   onClose: () => void;
+  onPayMinimum?: () => void;
 }
 
-const CreditCardPanel: React.FC<CreditCardPanelProps> = ({ isOpen, onClose }) => {
+const CreditCardPanel: React.FC<CreditCardPanelProps> = ({ isOpen, onClose, onPayMinimum }) => {
   const [paymentAmount, setPaymentAmount] = useState('');
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
   const [lastScoreChange, setLastScoreChange] = useState<number | null>(null);
@@ -78,6 +79,7 @@ const CreditCardPanel: React.FC<CreditCardPanelProps> = ({ isOpen, onClose }) =>
     if (result.success) {
       setShowPaymentSuccess(true);
       setLastScoreChange(result.scoreChange);
+      onPayMinimum?.();
       setTimeout(() => {
         setShowPaymentSuccess(false);
         setLastScoreChange(null);
@@ -221,6 +223,26 @@ const CreditCardPanel: React.FC<CreditCardPanelProps> = ({ isOpen, onClose }) =>
               </span>
             </div>
           </div>
+
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-indigo-50/70 dark:bg-indigo-950/20">
+            <h3 className="text-sm font-bold text-indigo-900 dark:text-indigo-200 mb-2">
+              How empire credit works
+            </h3>
+            <div className="space-y-1.5 text-xs text-indigo-900/80 dark:text-indigo-100/80">
+              <p>
+                <span className="font-semibold">Balance</span> is what you borrowed for builds and upgrades.
+              </p>
+              <p>
+                <span className="font-semibold">Available credit</span> is what you can still use for new structures.
+              </p>
+              <p>
+                <span className="font-semibold">Bamboo</span> is cash on hand, earned from lessons and collected production, used to pay the card.
+              </p>
+              <p>
+                <span className="font-semibold">Utilization</span> is the share of your limit in use; keeping it low protects your score.
+              </p>
+            </div>
+          </div>
           
           {/* Payment Due Section */}
           {balance > 0 && (
@@ -274,6 +296,7 @@ const CreditCardPanel: React.FC<CreditCardPanelProps> = ({ isOpen, onClose }) =>
               <div className="space-y-3">
                 <div className="flex gap-2">
                   <button
+                    data-tutorial="credit-pay-minimum"
                     onClick={handlePayMinimum}
                     disabled={bamboo < minPaymentDue}
                     className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${

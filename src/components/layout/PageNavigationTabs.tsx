@@ -1,8 +1,10 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Crown, MessageCircle, Home, BookOpen, Briefcase, Users } from 'lucide-react';
+import { Crown, MessageCircle, Home, BookOpen, Briefcase, Users, Shield } from 'lucide-react';
 import { useAskPhilUi } from '@/contexts/AskPhilUiContext';
+import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { isPhilAdminEmail } from '@/lib/adminAccess';
 import { cn } from '@/lib/utils';
 
 const NAV_TABS = [
@@ -18,12 +20,22 @@ const PageNavigationTabs: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { openAskPhil } = useAskPhilUi();
+  const { user } = useAuth();
   const isMobile = useIsMobile();
+  const isAdmin = isPhilAdminEmail(user?.email);
+  const tabs = isAdmin
+    ? [
+        ...NAV_TABS.slice(0, 5),
+        { value: 'admin', label: 'Admin', icon: Shield, action: 'navigate', path: '/admin', tutorialId: 'app-nav-admin' },
+        NAV_TABS[5],
+      ]
+    : NAV_TABS;
 
   const getCurrentTab = () => {
     if (location.pathname === '/learn') return 'learn';
     if (location.pathname === '/career' || location.pathname.startsWith('/career/')) return 'career';
     if (location.pathname === '/phils-friends') return 'phils-friends';
+    if (location.pathname === '/admin') return 'admin';
     if (location.pathname === '/empire') return 'empire';
     if (location.pathname === '/') return 'home';
     return 'home';
@@ -48,7 +60,7 @@ const PageNavigationTabs: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center h-12 gap-1">
           <div className="flex flex-1 h-full overflow-hidden">
-            {NAV_TABS.map((tab) => {
+            {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = currentTab === tab.value;
               return (

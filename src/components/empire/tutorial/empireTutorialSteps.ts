@@ -1,10 +1,12 @@
 import type { LucideIcon } from 'lucide-react';
-import { Coins, Zap, Hammer, Sparkles, TrendingDown, ArrowUp } from 'lucide-react';
+import { Coins, Zap, Hammer, Sparkles, TrendingDown, ArrowUp, CreditCard } from 'lucide-react';
 
 export const TUTORIAL_STORAGE_KEY = 'bamboo_empire_tutorial_v2_completed';
 /** @deprecated No longer used — users may place on any buildable grass tile */
 export const TUTORIAL_PLACE_TILE = { x: 10, y: 10 };
 export const TUTORIAL_GRANT_COINS = 150;
+export const TUTORIAL_GRANT_XP = 50;
+export const TUTORIAL_SEEDED_COLLECTION = 12;
 export const TUTORIAL_DEMO_EVENT = 'tax_collection' as const;
 
 export type TutorialAdvanceMode = 'next' | 'action';
@@ -16,8 +18,15 @@ export type TutorialAction =
   | 'select_farm'
   | 'place_building'
   | 'select_placed_building'
+  | 'collect_building'
   | 'upgrade_building'
-  | 'dismiss_event';
+  | 'open_credit'
+  | 'pay_minimum'
+  | 'dismiss_event'
+  | 'select_dojo'
+  | 'place_dojo'
+  | 'select_dojo_building'
+  | 'use_dojo';
 
 export interface EmpireTutorialStep {
   id: string;
@@ -29,7 +38,13 @@ export interface EmpireTutorialStep {
   advance: TutorialAdvanceMode;
   action?: TutorialAction;
   cardPlacement?: TutorialCardPlacement;
-  onEnter?: 'grant_coins' | 'open_build_menu' | 'trigger_demo_event' | 'instant_complete_building';
+  onEnter?:
+    | 'grant_starter_resources'
+    | 'open_build_menu'
+    | 'trigger_demo_event'
+    | 'instant_complete_building'
+    | 'seed_collection'
+    | 'open_credit_panel';
 }
 
 export const EMPIRE_TUTORIAL_STEPS: EmpireTutorialStep[] = [
@@ -47,7 +62,7 @@ export const EMPIRE_TUTORIAL_STEPS: EmpireTutorialStep[] = [
     id: 'simulate',
     title: 'What you are simulating',
     body:
-      'Farms and markets are income. Storage is your emergency fund. Banks earn interest. Credit lets you build now and pay later. Random events mimic taxes, crashes, and bills — just like the real world.',
+      'Farms and markets are income. Storage is your emergency fund. Banks earn interest. Credit lets you build now and pay from future bamboo. Training dojos keep your empire productive through rest and skill-building.',
     target: 'empire-grid',
     icon: Sparkles,
     accent: 'emerald',
@@ -57,7 +72,7 @@ export const EMPIRE_TUTORIAL_STEPS: EmpireTutorialStep[] = [
     id: 'coins',
     title: 'Bamboo coins',
     body:
-      'Coins are your spending money. You earn them from lessons and from structures on your map. The number below your balance is storage — if you are full, production pauses until you spend or expand storage.',
+      'Coins are cash on hand. You earn them from lessons and from buildings after you collect production. The number below your balance is storage — if storage is full, new production pauses until you spend or expand capacity.',
     target: 'coin-counter',
     icon: Coins,
     accent: 'amber',
@@ -67,7 +82,7 @@ export const EMPIRE_TUTORIAL_STEPS: EmpireTutorialStep[] = [
     id: 'productivity',
     title: 'Productivity',
     body:
-      'Productivity multiplies everything your buildings produce. It drops if you grind without breaks, and events can knock it down. A healthy empire stays productive.',
+      'Productivity is your empire wellness score. It multiplies production, drops when you grind without breaks, and recovers through time, positive events, and dojo programs like meditation or workouts.',
     target: 'productivity-indicator',
     icon: Zap,
     accent: 'emerald',
@@ -75,13 +90,24 @@ export const EMPIRE_TUTORIAL_STEPS: EmpireTutorialStep[] = [
   },
   {
     id: 'grant_coins',
-    title: 'Starter coins',
-    body: `Here are ${TUTORIAL_GRANT_COINS} bamboo coins to get started. You will use them to build and upgrade in the next steps.`,
+    title: 'Starter cash and XP',
+    body: `Here are ${TUTORIAL_GRANT_COINS} bamboo coins and ${TUTORIAL_GRANT_XP} XP. Builds charge your card, while bamboo is the cash you collect and use to pay that card down.`,
     target: 'coin-counter',
     icon: Coins,
     accent: 'amber',
     advance: 'next',
-    onEnter: 'grant_coins',
+    onEnter: 'grant_starter_resources',
+  },
+  {
+    id: 'credit_intro',
+    title: 'Credit builds the empire',
+    body:
+      'Tap your credit score to see the card. Balance is what you borrowed, available credit is what you can still build with, and bamboo is what you use to make payments.',
+    target: 'credit-indicator',
+    icon: CreditCard,
+    accent: 'indigo',
+    advance: 'action',
+    action: 'open_credit',
   },
   {
     id: 'open_build',
@@ -128,14 +154,50 @@ export const EMPIRE_TUTORIAL_STEPS: EmpireTutorialStep[] = [
     onEnter: 'instant_complete_building',
   },
   {
+    id: 'collect_production',
+    title: 'Collect production',
+    body:
+      'Production starts as coins waiting on the building. Collecting moves those coins into your bamboo balance so you can store, spend, or pay debt.',
+    target: 'building-info-collect',
+    icon: Coins,
+    accent: 'amber',
+    advance: 'action',
+    action: 'collect_building',
+    onEnter: 'seed_collection',
+  },
+  {
     id: 'upgrade',
     title: 'Upgrade for more income',
-    body: 'Upgrading costs coins but increases production — like investing in better tools or skills. Tap Upgrade once.',
+    body:
+      'Upgrades also charge your card, but they increase future production. That is the tradeoff: borrow carefully, then use higher income to pay the balance down.',
     target: 'building-info-upgrade',
     icon: ArrowUp,
     accent: 'purple',
     advance: 'action',
     action: 'upgrade_building',
+  },
+  {
+    id: 'open_credit_after_spend',
+    title: 'Pay the card from bamboo',
+    body:
+      'Your build and upgrade created a card balance. Open the card again and make the minimum payment with bamboo so the debt stays healthy.',
+    target: 'credit-indicator',
+    icon: CreditCard,
+    accent: 'indigo',
+    advance: 'action',
+    action: 'open_credit',
+  },
+  {
+    id: 'pay_minimum',
+    title: 'Make a payment',
+    body:
+      'Paying at least the minimum on time lowers debt pressure and can improve your score. Paying more keeps utilization low.',
+    target: 'credit-pay-minimum',
+    icon: CreditCard,
+    accent: 'indigo',
+    advance: 'action',
+    action: 'pay_minimum',
+    onEnter: 'open_credit_panel',
   },
   {
     id: 'economic_event',
@@ -150,10 +212,69 @@ export const EMPIRE_TUTORIAL_STEPS: EmpireTutorialStep[] = [
     onEnter: 'trigger_demo_event',
   },
   {
+    id: 'open_build_dojo',
+    title: 'Unlock the Training Dojo early',
+    body:
+      'At 50 XP, the Training Dojo is already available. Build it early so your empire has a place for rest, training, and morale boosts.',
+    target: 'build-button',
+    icon: Hammer,
+    accent: 'emerald',
+    advance: 'action',
+    action: 'tap_build',
+    cardPlacement: 'above',
+  },
+  {
+    id: 'select_dojo',
+    title: 'Choose the Training Dojo',
+    body:
+      'The dojo boosts farm production and unlocks wellness programs. It represents investing in skills, health, and sustainable work.',
+    target: 'building-training_dojo',
+    icon: Zap,
+    accent: 'emerald',
+    advance: 'action',
+    action: 'select_dojo',
+    onEnter: 'open_build_menu',
+    cardPlacement: 'above',
+  },
+  {
+    id: 'place_dojo',
+    title: 'Place your dojo',
+    body:
+      'Place the dojo on any green grass tile. It becomes the hub for meditation, workouts, and productive social events.',
+    target: null,
+    icon: Hammer,
+    accent: 'emerald',
+    advance: 'action',
+    action: 'place_dojo',
+  },
+  {
+    id: 'select_dojo_building',
+    title: 'Open the dojo',
+    body:
+      'Your dojo is ready. Open it to see the wellness programs that keep production healthy instead of relying on nonstop grinding.',
+    target: null,
+    icon: Zap,
+    accent: 'emerald',
+    advance: 'action',
+    action: 'select_dojo_building',
+    onEnter: 'instant_complete_building',
+  },
+  {
+    id: 'use_dojo',
+    title: 'Rest is productive',
+    body:
+      'Use Meditation to restore productivity. Workouts and happy hours can create temporary production boosts, but every program has a cooldown.',
+    target: 'dojo-meditation',
+    icon: Sparkles,
+    accent: 'emerald',
+    advance: 'action',
+    action: 'use_dojo',
+  },
+  {
     id: 'done',
     title: 'You are ready to rule',
     body:
-      'You have built, upgraded, and survived an economic hit. Keep learning, keep building, and check back — events will visit your empire every few hours.',
+      'You have built with credit, collected production, paid the card, survived a shock, and used the dojo to recover. Keep learning, keep building, and balance growth with rest.',
     target: null,
     icon: Sparkles,
     accent: 'emerald',

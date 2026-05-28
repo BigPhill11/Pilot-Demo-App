@@ -16,9 +16,17 @@ type ClipRow = VideoClip & {
   phils_friends_videos: PhilsFriendsVideo | null;
 };
 
-function matchesCategory(video: PhilsFriendsVideo, category: ReelCourseCategory): boolean {
+function getFeedSection(video: PhilsFriendsVideo, clipFeedSection?: string | null): string {
+  return normalizeCourseCategory(clipFeedSection ?? video.feed_section ?? video.course_category);
+}
+
+function matchesCategory(
+  video: PhilsFriendsVideo,
+  category: ReelCourseCategory,
+  clipFeedSection?: string | null
+): boolean {
   if (category === 'all') return true;
-  return normalizeCourseCategory(video.course_category) === category;
+  return getFeedSection(video, clipFeedSection) === category;
 }
 
 function sortClips(a: VideoClip, b: VideoClip): number {
@@ -51,6 +59,7 @@ export function useReelFeed(category: ReelCourseCategory) {
           end_sec,
           clip_order,
           published,
+          feed_section,
           thumbnail_url,
           phils_friends_videos (
             id,
@@ -69,6 +78,7 @@ export function useReelFeed(category: ReelCourseCategory) {
             published,
             company,
             speaker_name,
+            feed_section,
             course_category,
             soft_skills_section,
             level
@@ -86,8 +96,8 @@ export function useReelFeed(category: ReelCourseCategory) {
 
       for (const row of (clipRows || []) as ClipRow[]) {
         const video = row.phils_friends_videos;
-        if (!video || !video.published) continue;
-        if (!matchesCategory(video, category)) continue;
+        if (!video) continue;
+        if (!matchesCategory(video, category, row.feed_section)) continue;
 
         videoIdsWithClips.add(video.id);
         const clip: VideoClip = {
@@ -100,6 +110,7 @@ export function useReelFeed(category: ReelCourseCategory) {
           clip_order: row.clip_order,
           published: row.published,
           thumbnail_url: row.thumbnail_url,
+          feed_section: row.feed_section,
         };
         clipItems.push({ type: 'clip', clip, video });
       }
@@ -109,7 +120,7 @@ export function useReelFeed(category: ReelCourseCategory) {
         return sortClips(a.clip, b.clip);
       });
 
-      let videoQuery = supabase
+      const videoQuery = supabase
         .from('phils_friends_videos')
         .select(
           `
@@ -129,6 +140,7 @@ export function useReelFeed(category: ReelCourseCategory) {
           published,
           company,
           speaker_name,
+          feed_section,
           course_category,
           soft_skills_section,
           level

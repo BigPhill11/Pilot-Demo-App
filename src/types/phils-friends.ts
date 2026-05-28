@@ -3,6 +3,7 @@ export type ReelCourseCategory =
   | 'personal-finance'
   | 'market-intelligence'
   | 'careers-in-finance'
+  | 'career-readiness'
   | 'general';
 
 export interface PhilsFriendsVideo {
@@ -23,6 +24,7 @@ export interface PhilsFriendsVideo {
   published: boolean | null;
   company: string | null;
   speaker_name: string | null;
+  feed_section?: string | null;
   course_category: string | null;
   soft_skills_section: string | null;
   level: string | null;
@@ -38,6 +40,7 @@ export interface VideoClip {
   clip_order: number | null;
   published: boolean | null;
   thumbnail_url: string | null;
+  feed_section?: string | null;
 }
 
 export type ReelFeedItem =
@@ -51,8 +54,9 @@ export const REEL_CATEGORIES: {
 }[] = [
   { id: 'all', label: 'All', courseCategory: null },
   { id: 'personal-finance', label: 'Personal Finance', courseCategory: 'personal-finance' },
-  { id: 'market-intelligence', label: 'Market Intel', courseCategory: 'market-intelligence' },
+  { id: 'market-intelligence', label: 'Business / Market Intelligence', courseCategory: 'market-intelligence' },
   { id: 'careers-in-finance', label: 'Careers', courseCategory: 'careers-in-finance' },
+  { id: 'career-readiness', label: 'Career Readiness', courseCategory: 'career-readiness' },
 ];
 
 /** Categories users pick on the landing page (no "All") */
@@ -64,6 +68,7 @@ const FEED_CATEGORY_IDS: PhilsFriendsFeedCategory[] = [
   'personal-finance',
   'market-intelligence',
   'careers-in-finance',
+  'career-readiness',
 ];
 
 export function isPhilsFriendsFeedCategory(
@@ -81,8 +86,15 @@ export function normalizeCourseCategory(raw: string | null | undefined): string 
   if (!raw) return 'general';
   const lower = raw.toLowerCase().trim();
   if (lower === 'careers' || lower === 'careers-in-finance') return 'careers-in-finance';
+  if (lower === 'career readiness' || lower === 'career-readiness') return 'career-readiness';
   if (lower === 'personal finance' || lower === 'personal-finance') return 'personal-finance';
-  if (lower === 'market intelligence' || lower === 'market-intelligence' || lower === 'companies')
+  if (
+    lower === 'business/market intelligence' ||
+    lower === 'business-market-intelligence' ||
+    lower === 'market intelligence' ||
+    lower === 'market-intelligence' ||
+    lower === 'companies'
+  )
     return 'market-intelligence';
   return lower;
 }
@@ -96,6 +108,8 @@ export function getLearnMorePath(courseCategory: string | null | undefined): str
       return '/learn?tab=companies';
     case 'careers-in-finance':
       return '/learn?tab=careers';
+    case 'career-readiness':
+      return '/career';
     default:
       return '/learn';
   }

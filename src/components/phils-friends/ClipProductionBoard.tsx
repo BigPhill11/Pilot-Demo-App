@@ -15,19 +15,39 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import {
   PRODUCTION_STATUS_LABELS,
   type ProductionStatus,
 } from '@/data/phils-friends/ingest-standards';
 import VideoManagementPanel from '@/components/videos/VideoManagementPanel';
 import VideoUploadDialog from '@/components/videos/VideoUploadDialog';
-import { PHILS_FRIENDS_REWARDS } from '@/config/philsFriendsRewards';
 import {
   fetchPilotMetrics,
   type PhilsFriendsPilotMetrics,
 } from '@/lib/philsFriendsMetrics';
 import { CheckCircle, Loader2, Scissors, Upload, Wand2 } from 'lucide-react';
+import {
+  normalizeCourseCategory,
+  REEL_CATEGORIES,
+  type PhilsFriendsFeedCategory,
+} from '@/types/phils-friends';
+
+const SECTION_IDS = REEL_CATEGORIES
+  .filter((category) => category.id !== 'all' && category.id !== 'general')
+  .map((category) => category.id as PhilsFriendsFeedCategory);
+
+const SECTION_LABELS = REEL_CATEGORIES.reduce<Record<string, string>>((acc, category) => {
+  acc[category.id] = category.label;
+  return acc;
+}, {});
+
+const getSection = (value: string | null | undefined): PhilsFriendsFeedCategory => {
+  const normalized = normalizeCourseCategory(value);
+  return SECTION_IDS.includes(normalized as PhilsFriendsFeedCategory)
+    ? (normalized as PhilsFriendsFeedCategory)
+    : 'careers-in-finance';
+};
 
 interface SourceVideo {
   id: string;
@@ -35,6 +55,7 @@ interface SourceVideo {
   speaker_name: string | null;
   company: string | null;
   course_category: string | null;
+  feed_section: string | null;
   production_status: string | null;
   processing_status: string | null;
   published: boolean | null;
@@ -51,6 +72,7 @@ interface DraftClip {
   published: boolean | null;
   production_status: string | null;
   clip_order: number | null;
+  feed_section: string | null;
 }
 
 interface DraftQuiz {
@@ -64,7 +86,6 @@ interface DraftQuiz {
 }
 
 const ClipProductionBoard: React.FC = () => {
-  const { toast } = useToast();
   const [videos, setVideos] = useState<SourceVideo[]>([]);
   const [clips, setClips] = useState<DraftClip[]>([]);
   const [quizzes, setQuizzes] = useState<Record<string, DraftQuiz>>({});
@@ -80,7 +101,7 @@ const ClipProductionBoard: React.FC = () => {
       const { data: videoData, error: vErr } = await supabase
         .from('phils_friends_videos')
         .select(
-          'id, title, speaker_name, company, course_category, production_status, processing_status, published, duration_sec'
+          'id, title, speaker_name, company, course_category, feed_section, production_status, processing_status, published, duration_sec'
         )
         .order('created_at', { ascending: false });
 
@@ -114,11 +135,11 @@ const ClipProductionBoard: React.FC = () => {
       setPilotMetrics(metrics);
     } catch (e) {
       console.error(e);
-      toast({ title: 'Failed to load production board', variant: 'destructive' });
+      toast.error('Failed to load production board');
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, []);
 
   useEffect(() => {
     fetchBoard();
@@ -127,58 +148,18 @@ const ClipProductionBoard: React.FC = () => {
   const runSegmentation = async (videoId: string) => {
     setProcessingId(videoId);
     try {
-      const { data: transcriptRow } = await supabase
-        .from('video_transcripts')
-        .select('raw_content')
-        .eq('video_id', videoId)
-        .maybeSingle();
-
-      let transcript = transcriptRow?.raw_content;
-
-      if (!transcript) {
-        const { data: video } = await supabase
-          .from('phils_friends_videos')
-          .select('storage_path, source_type, source_url, youtube_url')
-          .eq('id', videoId)
-          .single();
-
-        const { error: txError } = await supabase.functions.invoke('enhanced-transcription', {
-          body: {
-            videoId,
-            sourceType: video?.source_type ?? 'upload',
-            sourceUrl: video?.source_url || video?.youtube_url,
-            storagePath: video?.storage_path,
-          },
-        });
-        if (txError) throw txError;
-        await fetchBoard();
-        const { data: retry } = await supabase
-          .from('video_transcripts')
-          .select('raw_content')
-          .eq('video_id', videoId)
-          .maybeSingle();
-        transcript = retry?.raw_content;
-      }
-
-      if (!transcript) {
-        toast({
-          title: 'Transcript required',
-          description: 'Upload a transcript file or use a smaller video for auto-transcription.',
-          variant: 'destructive',
-        });
-        return;
-      }
-
-      const { error } = await supabase.functions.invoke('process-video-transcript', {
-        body: { videoId, transcript, generateQuizzes: true },
+      const { error } = await supabase.functions.invoke('ingest-video', {
+        body: { videoId },
       });
       if (error) throw error;
 
-      toast({ title: 'Clips suggested', description: 'Review draft clips below before publishing.' });
+      toast.success('Clips suggested', { description: 'Review draft clips below before publishing.' });
       fetchBoard();
     } catch (e) {
       console.error(e);
-      toast({ title: 'Segmentation failed', variant: 'destructive' });
+      toast.error('Segmentation failed', {
+        description: e instanceof Error ? e.message : 'Could not run video ingestion.',
+      });
     } finally {
       setProcessingId(null);
     }
@@ -200,18 +181,24 @@ const ClipProductionBoard: React.FC = () => {
           .eq('clip_id', clip.id);
       }
 
-      toast({ title: 'Clip published', description: clip.title });
+      // Publishing a clip makes its source video live so the feed can surface it.
+      await supabase
+        .from('phils_friends_videos')
+        .update({ published: true })
+        .eq('id', clip.video_id);
+
+      toast.success('Clip published', { description: clip.title });
       fetchBoard();
     } catch (e) {
       console.error(e);
-      toast({ title: 'Publish failed', variant: 'destructive' });
+      toast.error('Publish failed');
     }
   };
 
   const updateClip = async (clipId: string, updates: Partial<DraftClip>) => {
     const { error } = await supabase.from('video_clips').update(updates).eq('id', clipId);
     if (error) {
-      toast({ title: 'Update failed', variant: 'destructive' });
+      toast.error('Update failed');
       return;
     }
     fetchBoard();
@@ -230,7 +217,7 @@ const ClipProductionBoard: React.FC = () => {
       })
       .eq('clip_id', clipId);
     if (error) {
-      toast({ title: 'Quiz update failed', variant: 'destructive' });
+      toast.error('Quiz update failed');
       return;
     }
     fetchBoard();
@@ -249,6 +236,21 @@ const ClipProductionBoard: React.FC = () => {
     },
     {} as Record<string, number>
   );
+
+  const sectionCounts = SECTION_IDS.reduce<Record<string, number>>((acc, section) => {
+    acc[section] = videos.filter((video) => getSection(video.feed_section ?? video.course_category) === section).length;
+    return acc;
+  }, {});
+
+  const clipSection = (clip: DraftClip): PhilsFriendsFeedCategory => {
+    const parent = videos.find((video) => video.id === clip.video_id);
+    return getSection(clip.feed_section ?? parent?.feed_section ?? parent?.course_category);
+  };
+
+  const groupedFilteredClips = SECTION_IDS.map((section) => ({
+    section,
+    clips: filteredClips.filter((clip) => clipSection(clip) === section),
+  })).filter((group) => group.clips.length > 0);
 
   return (
     <div className="space-y-6">
@@ -269,6 +271,11 @@ const ClipProductionBoard: React.FC = () => {
         {Object.entries(PRODUCTION_STATUS_LABELS).map(([key, label]) => (
           <Badge key={key} variant="outline">
             {label}: {statusCounts[key] ?? 0}
+          </Badge>
+        ))}
+        {SECTION_IDS.map((section) => (
+          <Badge key={section} variant="outline">
+            {SECTION_LABELS[section]}: {sectionCounts[section] ?? 0}
           </Badge>
         ))}
         <Badge variant="secondary">Draft clips: {draftClips.length}</Badge>
@@ -315,10 +322,18 @@ const ClipProductionBoard: React.FC = () => {
                   No draft clips. Run segmentation on a source video below.
                 </p>
               ) : (
-                <div className="space-y-6">
-                  {filteredClips.map((clip) => {
-                    const quiz = quizzes[clip.id];
-                    const parent = videos.find((v) => v.id === clip.video_id);
+                <div className="space-y-8">
+                  {groupedFilteredClips.map(({ section, clips: sectionClips }) => (
+                    <div key={section} className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary">{SECTION_LABELS[section]}</Badge>
+                        <span className="text-xs text-muted-foreground">
+                          {sectionClips.length} draft clip{sectionClips.length === 1 ? '' : 's'}
+                        </span>
+                      </div>
+                      {sectionClips.map((clip) => {
+                        const quiz = quizzes[clip.id];
+                        const parent = videos.find((v) => v.id === clip.video_id);
                     return (
                       <Card key={clip.id} className="border-green-100">
                         <CardHeader className="pb-2">
@@ -467,7 +482,9 @@ const ClipProductionBoard: React.FC = () => {
                         </CardContent>
                       </Card>
                     );
-                  })}
+                      })}
+                    </div>
+                  ))}
                 </div>
               )}
             </CardContent>
@@ -484,7 +501,7 @@ const ClipProductionBoard: React.FC = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Title</TableHead>
-                    <TableHead>Category</TableHead>
+                    <TableHead>Section</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
@@ -501,7 +518,11 @@ const ClipProductionBoard: React.FC = () => {
                           {v.speaker_name || v.title}
                         </button>
                       </TableCell>
-                      <TableCell>{v.course_category ?? '—'}</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">
+                          {SECTION_LABELS[getSection(v.feed_section ?? v.course_category)] ?? 'Careers'}
+                        </Badge>
+                      </TableCell>
                       <TableCell>
                         <Badge variant="outline">
                           {PRODUCTION_STATUS_LABELS[
@@ -544,7 +565,6 @@ const ClipProductionBoard: React.FC = () => {
           setUploadOpen(false);
           fetchBoard();
         }}
-        defaultCategory={PHILS_FRIENDS_REWARDS.pilotCategory}
       />
     </div>
   );

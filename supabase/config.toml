@@ -3,6 +3,9 @@ project_id = "qssqbpllqkorfjcxgomh"
 [functions.process-video-transcript]
 verify_jwt = true
 
+[functions.ingest-video]
+verify_jwt = true
+
 [functions.market-data]
 verify_jwt = true
 

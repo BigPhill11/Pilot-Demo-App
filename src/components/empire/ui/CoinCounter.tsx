@@ -17,6 +17,7 @@ import { useCreditStore } from '@/store/useCreditStore';
 
 export interface CoinCounterProps {
   totalStorage: number;
+  productionRate?: number;
   onOpenCredit?: () => void;
   onOpenEventHistory?: () => void;
   onGoHome?: () => void;
@@ -27,6 +28,7 @@ export interface CoinCounterProps {
 
 const CoinCounter: React.FC<CoinCounterProps> = ({
   totalStorage,
+  productionRate = 0,
   onOpenCredit,
   onOpenEventHistory,
   onGoHome,
@@ -186,10 +188,21 @@ const CoinCounter: React.FC<CoinCounterProps> = ({
         <div
           data-tutorial="productivity-indicator"
           className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white/85 dark:bg-gray-800/90 shadow-md backdrop-blur-sm border border-emerald-200/50 dark:border-emerald-800/40"
-          title="Empire productivity — drops if you grind without breaks; events can lower it too."
+          title="Empire productivity — drops if you grind without breaks; events and dojo programs can change it too."
         >
           <span className="text-[10px] sm:text-xs font-semibold text-emerald-800 dark:text-emerald-300 whitespace-nowrap">
             {Math.round(empireProductivity)}% prod
+          </span>
+        </div>
+
+        <div
+          data-tutorial="production-rate"
+          className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white/85 dark:bg-gray-800/90 shadow-md backdrop-blur-sm border border-amber-200/60 dark:border-amber-800/40"
+          title="Hourly production before collection. Buildings create pending coins that you collect into bamboo."
+        >
+          <Coins className="h-3.5 w-3.5 text-amber-500" />
+          <span className="text-[10px] sm:text-xs font-semibold text-amber-700 dark:text-amber-300 whitespace-nowrap">
+            +{Math.round(productionRate)}/hr
           </span>
         </div>
 

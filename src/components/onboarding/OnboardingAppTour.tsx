@@ -9,11 +9,13 @@ import {
   Flame,
   GraduationCap,
   Home,
+  Menu,
   MessageCircle,
   Sparkles,
   Users,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { useNavigate } from 'react-router-dom';
 import PandaLogo from '@/components/icons/PandaLogo';
 import {
   computeCardTop,
@@ -27,13 +29,17 @@ interface AppTourStep {
   title: string;
   body: string;
   target: string | null;
-  // On mobile the scrollable nav may hide individual tabs — fall back to the whole bar
   mobileTarget?: string | null;
   icon: LucideIcon;
   cardPlacement?: 'above' | 'below' | 'auto';
+  /** Path to navigate to when this step becomes active */
+  navigateTo?: string;
+  /** Use a light semi-transparent overlay so the page is visible behind the card */
+  pageView?: boolean;
 }
 
-const APP_TOUR_STEPS: AppTourStep[] = [
+// ─── Desktop tour: spotlight nav tabs one by one ────────────────────────────
+const DESKTOP_APP_TOUR_STEPS: AppTourStep[] = [
   {
     id: 'welcome',
     target: null,
@@ -52,7 +58,6 @@ const APP_TOUR_STEPS: AppTourStep[] = [
   {
     id: 'nav-home',
     target: 'app-nav-home',
-    mobileTarget: 'app-nav-tabs',
     icon: Home,
     title: 'Home',
     body: 'Your dashboard. See daily progress, streak, XP, and quick access to every module.',
@@ -61,7 +66,6 @@ const APP_TOUR_STEPS: AppTourStep[] = [
   {
     id: 'nav-learn',
     target: 'app-nav-learn',
-    mobileTarget: 'app-nav-tabs',
     icon: GraduationCap,
     title: 'Learn',
     body: 'Courses in Personal Finance, Markets, and Business. Bite-sized lessons with XP rewards.',
@@ -70,7 +74,6 @@ const APP_TOUR_STEPS: AppTourStep[] = [
   {
     id: 'nav-empire',
     target: 'app-nav-empire',
-    mobileTarget: 'app-nav-tabs',
     icon: Building2,
     title: 'Bamboo Empire',
     body: 'Spend your XP and bamboo coins to build and grow your own financial empire.',
@@ -79,7 +82,6 @@ const APP_TOUR_STEPS: AppTourStep[] = [
   {
     id: 'nav-career',
     target: 'app-nav-career',
-    mobileTarget: 'app-nav-tabs',
     icon: BriefcaseBusiness,
     title: 'Career Hub',
     body: 'Interview prep, resume tips, and deep dives into finance career paths.',
@@ -88,7 +90,6 @@ const APP_TOUR_STEPS: AppTourStep[] = [
   {
     id: 'nav-phils-friends',
     target: 'app-nav-phils-friends',
-    mobileTarget: 'app-nav-tabs',
     icon: Users,
     title: "Phil's Friends",
     body: 'Exclusive videos from real finance pros — career stories and insider tips.',
@@ -127,6 +128,79 @@ const APP_TOUR_STEPS: AppTourStep[] = [
   },
 ];
 
+// ─── Mobile tour: navigate to each page so users see it live ────────────────
+const MOBILE_APP_TOUR_STEPS: AppTourStep[] = [
+  {
+    id: 'welcome',
+    target: null,
+    navigateTo: '/',
+    icon: Sparkles,
+    title: "Welcome to Phil's Financials!",
+    body: "I'm Phil, your finance panda! I'll take you on a quick tour of the app. Tap Next to explore each section!",
+  },
+  {
+    id: 'home-page',
+    target: null,
+    navigateTo: '/',
+    pageView: true,
+    icon: Home,
+    title: 'Home — Your Dashboard',
+    body: 'This is your home base. See your daily progress, XP, streaks, and quick links to every module.',
+  },
+  {
+    id: 'learn-page',
+    target: null,
+    navigateTo: '/learn',
+    pageView: true,
+    icon: GraduationCap,
+    title: 'Learn',
+    body: 'Bite-sized courses in Personal Finance, Markets, and Business. Complete lessons to earn XP!',
+  },
+  {
+    id: 'empire-page',
+    target: null,
+    navigateTo: '/empire',
+    pageView: true,
+    icon: Building2,
+    title: 'Bamboo Empire',
+    body: 'Spend your XP and bamboo coins to build and grow your own financial empire here.',
+  },
+  {
+    id: 'career-page',
+    target: null,
+    navigateTo: '/career',
+    pageView: true,
+    icon: BriefcaseBusiness,
+    title: 'Career Hub',
+    body: 'Interview prep, resume tips, and deep dives into finance career paths — all in one place.',
+  },
+  {
+    id: 'friends-page',
+    target: null,
+    navigateTo: '/phils-friends',
+    pageView: true,
+    icon: Users,
+    title: "Phil's Friends",
+    body: 'Exclusive videos from real finance pros sharing career stories and insider tips.',
+  },
+  {
+    id: 'menu-button',
+    target: 'app-mobile-menu',
+    navigateTo: '/',
+    icon: Menu,
+    title: 'Navigate Anywhere',
+    body: "Tap this Menu button to switch between sections, check your progress, or chat with Ask Phil anytime.",
+    cardPlacement: 'below',
+  },
+  {
+    id: 'done',
+    target: null,
+    icon: Sparkles,
+    title: "You're All Set!",
+    body: "That's the tour! Use the Menu button whenever you need to switch sections. Let's build your financial future!",
+  },
+];
+
 function useViewportHeight() {
   const getHeight = () =>
     typeof window !== 'undefined'
@@ -159,38 +233,48 @@ const OnboardingAppTour: React.FC<OnboardingAppTourProps> = ({ onComplete, onSki
   const [targetRect, setTargetRect] = useState<TutorialRect | null>(null);
   const [cardTop, setCardTop] = useState<number | null>(null);
   const cardRef = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
 
   const viewportHeight = useViewportHeight();
 
-  // Detect mobile once on mount — never changes during the tour
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-  // Compact on mobile or landscape/short screens
   const isCompact = isMobile || viewportHeight < 500;
 
+  const STEPS = isMobile ? MOBILE_APP_TOUR_STEPS : DESKTOP_APP_TOUR_STEPS;
+
   const maxCardHeight = isMobile
-    ? 999 // bottom sheet — no height limit, content drives height
+    ? 999
     : Math.max(200, Math.round(viewportHeight * 0.50));
 
   const padding = isMobile ? 6 : 10;
 
-  const step = APP_TOUR_STEPS[stepIndex];
-  const totalSteps = APP_TOUR_STEPS.length;
+  const step = STEPS[stepIndex];
+  const totalSteps = STEPS.length;
   const isLastStep = stepIndex >= totalSteps - 1;
   const isFirstStep = stepIndex === 0;
   const progress = ((stepIndex + 1) / totalSteps) * 100;
   const Icon = step.icon;
 
-  // On mobile, individual tabs may not be in the DOM (hidden by offset scroll).
-  // Fall back to highlighting the whole nav bar.
+  // Desktop only: fall back to whole nav bar when individual tabs aren't in DOM
   const effectiveTarget =
-    isMobile && 'mobileTarget' in step ? step.mobileTarget ?? null : step.target;
+    !isMobile && 'mobileTarget' in step
+      ? (step as AppTourStep & { mobileTarget?: string | null }).mobileTarget ?? null
+      : step.target;
+
+  // Navigate to the page associated with the current step
+  useEffect(() => {
+    if (step.navigateTo) {
+      navigate(step.navigateTo, { replace: true });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stepIndex]);
 
   // --- Placement logic (desktop only) ---
   const updatePlacement = useCallback(() => {
     const vp = getVisualViewportBounds();
     const rect = effectiveTarget ? measureTargetRect(effectiveTarget, padding) : null;
     setTargetRect(rect);
-    if (isMobile) return; // bottom sheet needs no top calculation
+    if (isMobile) return;
     const cardHeight = cardRef.current?.offsetHeight ?? (isCompact ? 160 : 220);
     const top = computeCardTop({
       targetRect: rect,
@@ -254,10 +338,13 @@ const OnboardingAppTour: React.FC<OnboardingAppTourProps> = ({ onComplete, onSki
       ? { top: safeCardTop, left: '50%', transform: 'translateX(-50%)' }
       : { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
 
+  // pageView steps use a lighter overlay so users can see the page beneath
+  const overlayOpacity = isMobile && step.pageView ? 0.38 : 0.72;
+
   return (
     <div className="fixed inset-0 z-[100] pointer-events-none" aria-live="polite">
 
-      {/* Skip button — above everything */}
+      {/* Skip button */}
       <button
         type="button"
         onClick={onSkip}
@@ -267,18 +354,14 @@ const OnboardingAppTour: React.FC<OnboardingAppTourProps> = ({ onComplete, onSki
         Skip
       </button>
 
-      {/*
-       * Click-blocker div: prevents taps from reaching app content behind the overlay.
-       * Kept separate from the SVG so the SVG can be pointer-events-none (purely visual),
-       * which ensures the tour card buttons are always tappable on iOS.
-       */}
+      {/* Click-blocker: prevents accidental taps on app content */}
       <div
         className="pointer-events-auto absolute inset-0"
         onClick={(e) => e.stopPropagation()}
         onTouchStart={(e) => e.stopPropagation()}
       />
 
-      {/* SVG spotlight — purely visual, no pointer events */}
+      {/* SVG spotlight overlay */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none"
         aria-hidden="true"
@@ -299,7 +382,12 @@ const OnboardingAppTour: React.FC<OnboardingAppTourProps> = ({ onComplete, onSki
             )}
           </mask>
         </defs>
-        <rect width="100%" height="100%" fill="rgba(0,0,0,0.72)" mask="url(#app-tour-mask)" />
+        <rect
+          width="100%"
+          height="100%"
+          fill={`rgba(0,0,0,${overlayOpacity})`}
+          mask="url(#app-tour-mask)"
+        />
         {targetRect && (
           <rect
             x={targetRect.left}
@@ -320,9 +408,8 @@ const OnboardingAppTour: React.FC<OnboardingAppTourProps> = ({ onComplete, onSki
       <AnimatePresence mode="wait">
         {isMobile ? (
           /*
-           * MOBILE: fixed bottom sheet.
-           * Always pinned to the bottom edge — no viewport math needed.
-           * Rounded top corners only, safe-area padding for iPhone home bar.
+           * MOBILE: fixed bottom sheet, always pinned to the bottom.
+           * Safe-area padding for iPhone home bar.
            */
           <motion.div
             key={step.id}
@@ -375,8 +462,24 @@ const OnboardingAppTour: React.FC<OnboardingAppTourProps> = ({ onComplete, onSki
                 </p>
               </div>
 
+              {/* Step dots */}
+              <div className="flex justify-center gap-1.5">
+                {STEPS.map((_, i) => (
+                  <div
+                    key={i}
+                    className={`rounded-full transition-all ${
+                      i === stepIndex
+                        ? 'bg-primary w-4 h-2'
+                        : i < stepIndex
+                        ? 'bg-primary/40 w-2 h-2'
+                        : 'bg-gray-300 dark:bg-gray-600 w-2 h-2'
+                    }`}
+                  />
+                ))}
+              </div>
+
               {/* Navigation buttons — large tap targets */}
-              <div className="flex items-center gap-2 pt-1">
+              <div className="flex items-center gap-2">
                 {!isFirstStep && (
                   <button
                     type="button"
@@ -497,9 +600,9 @@ const OnboardingAppTour: React.FC<OnboardingAppTourProps> = ({ onComplete, onSki
                   </button>
                 </div>
 
-                {/* Step dot indicators — desktop only */}
+                {/* Step dot indicators */}
                 <div className="flex justify-center gap-1 shrink-0">
-                  {APP_TOUR_STEPS.map((_, i) => (
+                  {STEPS.map((_, i) => (
                     <button
                       key={i}
                       type="button"

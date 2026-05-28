@@ -16,7 +16,8 @@ import { usePersonalDashboard } from '@/contexts/PersonalDashboardContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useUnifiedStreak } from '@/hooks/useUnifiedStreak';
 import { useDailyTimeGoal } from '@/hooks/useDailyTimeGoal';
-import { LogOut, User, Flame, Moon, Sun, MessageCircle, BarChart2, Menu, Home, Crown, BookOpen, Briefcase, Users } from 'lucide-react';
+import { LogOut, User, Flame, Moon, Sun, MessageCircle, BarChart2, Menu, Home, Crown, BookOpen, Briefcase, Users, Shield } from 'lucide-react';
+import { isPhilAdminEmail } from '@/lib/adminAccess';
 interface MinimalLayoutProps {
   children: React.ReactNode;
 }
@@ -43,6 +44,7 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
   const { isOpen: isDashboardOpen, openDashboard, closeDashboard } = usePersonalDashboard();
   const navigate = useNavigate();
   const isGuest = !user;
+  const isAdmin = isPhilAdminEmail(user?.email);
   useDailyTimeGoal({ trackActivity: true });
 
   const mobileNavItems = [
@@ -51,6 +53,7 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
     { label: 'Learn', path: '/learn', icon: BookOpen },
     { label: 'Career', path: '/career', icon: Briefcase },
     { label: 'Friends', path: '/phils-friends', icon: Users },
+    ...(isAdmin ? [{ label: 'Admin', path: '/admin', icon: Shield }] : []),
   ];
 
   const handleDashboardNavigate = (tab: string) => {
@@ -116,7 +119,7 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
             {isMobile ? (
               <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2 rounded-xl">
+                  <Button variant="outline" size="sm" className="gap-2 rounded-xl" data-tutorial="app-mobile-menu">
                     <Menu className="h-4 w-4" />
                     Menu
                   </Button>

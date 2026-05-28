@@ -123,6 +123,30 @@ const MOCK_REELS: MockReelDef[] = [
     excerpt: 'Clubs, mock interviews, and curiosity mattered more than fancy internships at first.',
     durationSec: 64,
   },
+  {
+    id: 'mock-ready-1',
+    courseCategory: 'career-readiness',
+    thumbnail: '/market-intelligence/ownership/time-is-your-ally/hero.png',
+    speaker: 'Taylor Brooks',
+    company: 'Career Launch Lab',
+    role: 'Professional',
+    industry: 'Other',
+    title: 'Answering “tell me about yourself”',
+    excerpt: 'A simple past-present-future structure turns a stressful opener into your strongest start.',
+    durationSec: 58,
+  },
+  {
+    id: 'mock-ready-2',
+    courseCategory: 'career-readiness',
+    thumbnail: '/market-intelligence/language-finance/balance-sheet-basics/connect-career.png',
+    speaker: 'Imani Reed',
+    company: 'First Role Coaching',
+    role: 'Professional',
+    industry: 'Other',
+    title: 'Resume bullets that sound real',
+    excerpt: 'Start with the action, add the result, and make even school projects feel concrete.',
+    durationSec: 61,
+  },
 ];
 
 function buildMockItem(def: MockReelDef): ReelFeedItem {
@@ -144,6 +168,7 @@ function buildMockItem(def: MockReelDef): ReelFeedItem {
     published: true,
     company: def.company,
     speaker_name: def.speaker,
+    feed_section: def.courseCategory,
     course_category: def.courseCategory,
     soft_skills_section: null,
     level: 'Beginner',
@@ -159,6 +184,7 @@ function buildMockItem(def: MockReelDef): ReelFeedItem {
     clip_order: 0,
     published: true,
     thumbnail_url: def.thumbnail,
+    feed_section: def.courseCategory,
   };
 
   return { type: 'clip', clip, video };

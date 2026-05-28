@@ -87,7 +87,8 @@ export async function suggestClipsFromTranscript(
     : 'Estimate timestamps from speech pace (~150 words/min).';
 
   const prompt = `Analyze this interview transcript for a teen finance education app.
-Create 4-6 clips, each 30-90 seconds long, with natural topic breaks.
+Create 6-10 short clips with natural topic breaks. Each clip should target about 60 seconds,
+with a hard acceptable range of 45-90 seconds unless the transcript is too short.
 ${durationHint}
 
 Return JSON array only. Each item:
@@ -96,6 +97,9 @@ Return JSON array only. Each item:
 - title (max 60 chars, teen-friendly hook)
 - description (max 200 chars, one-line takeaway)
 - clip_type: "question" | "response" | "insight" | "general"
+
+Prioritize moments that can stand alone as a vertical reel: clear setup, one useful idea,
+and a satisfying endpoint. Avoid tiny fragments, duplicate ideas, or clips that end mid-thought.
 
 Transcript:
 ${transcript.slice(0, 45000)}`;
