@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import OnboardingAuthGate from './OnboardingAuthGate';
 import OnboardingInterestSurvey from './OnboardingInterestSurvey';
 import OnboardingAppTour from './OnboardingAppTour';
 
@@ -11,48 +12,74 @@ interface SurveyData {
   timeCommitment: string;
 }
 
-type Phase = 'loading' | 'survey' | 'tour' | 'complete';
+type Phase = 'loading' | 'auth-gate' | 'survey' | 'tour' | 'complete';
 
-// Also imported by useOnboarding.resetOnboarding() to clear on explicit restart
+// Cleared by useOnboarding.resetOnboarding() to force restart
 export const ONBOARDING_DONE_KEY = 'phils_onboarding_done';
 
 const OnboardingOrchestrator: React.FC = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const [phase, setPhase] = useState<Phase>('loading');
+  const [isGuest, setIsGuest] = useState(false);
 
+  // ── Main phase resolver ──────────────────────────────────────────────────
   useEffect(() => {
-    if (!profile || phase !== 'loading') return;
+    if (authLoading) return;
+    if (phase !== 'loading') return;
 
-    // localStorage is written synchronously when the tour finishes, so it's
-    // always ahead of the async Supabase write. If it says done, trust it.
-    if (localStorage.getItem(ONBOARDING_DONE_KEY) === 'true') {
+    // Signed-in user who already finished onboarding
+    if (user && localStorage.getItem(ONBOARDING_DONE_KEY) === 'true') {
       setPhase('complete');
       return;
     }
 
-    if (!profile.survey_completed) {
-      setPhase('survey');
-    } else if (!profile.app_tour_completed) {
-      setPhase('tour');
-    } else {
-      // DB already has both flags — cache in localStorage for future loads
-      localStorage.setItem(ONBOARDING_DONE_KEY, 'true');
-      setPhase('complete');
+    // No session → show auth gate
+    if (!user) {
+      setPhase('auth-gate');
+      return;
     }
-  }, [profile, phase]);
 
-  // Only restart when ProfileSettings explicitly resets onboarding.
-  // The localStorage guard prevents any stale-profile race condition from
-  // sending the user back to the tour after they just finished.
+    // Signed-in but profile hasn't loaded yet
+    if (!profile) return;
+
+    if (!profile.survey_completed) { setPhase('survey'); return; }
+    if (!profile.app_tour_completed) { setPhase('tour'); return; }
+
+    localStorage.setItem(ONBOARDING_DONE_KEY, 'true');
+    setPhase('complete');
+  }, [authLoading, user, profile, phase]);
+
+  // When a user signs in while on the auth gate, re-run the resolver
+  useEffect(() => {
+    if (user && phase === 'auth-gate') {
+      setPhase('loading');
+    }
+  }, [user, phase]);
+
+  // Explicit restart from ProfileSettings (localStorage cleared)
   useEffect(() => {
     if (!profile || phase !== 'complete') return;
     if (localStorage.getItem(ONBOARDING_DONE_KEY) === 'true') return;
-    // localStorage was cleared (explicit restart) — re-evaluate DB flags
     if (!profile.survey_completed) setPhase('survey');
     else if (!profile.app_tour_completed) setPhase('tour');
   }, [profile, phase]);
 
-  if (!user || phase === 'loading' || phase === 'complete') return null;
+  // ── Render ───────────────────────────────────────────────────────────────
+
+  if (phase === 'auth-gate') {
+    return (
+      <OnboardingAuthGate
+        onSignedIn={() => {
+          // Auth state change will flip phase via the useEffect above.
+          // Nothing extra needed here.
+        }}
+        onGuest={() => {
+          setIsGuest(true);
+          setPhase('tour');
+        }}
+      />
+    );
+  }
 
   if (phase === 'survey') {
     const handleSurveyComplete = (data: SurveyData) => {
@@ -66,33 +93,35 @@ const OnboardingOrchestrator: React.FC = () => {
           time_commitment: data.timeCommitment,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', user.id)
-        .then(({ error }) => {
-          if (error) console.error('Error saving survey:', error);
-        });
+        .eq('id', user!.id)
+        .then(({ error }) => { if (error) console.error('Error saving survey:', error); });
     };
     return <OnboardingInterestSurvey onComplete={handleSurveyComplete} />;
   }
 
-  const handleTourComplete = () => {
-    // Write localStorage BEFORE setPhase so the guard is in place
-    // before any effects can fire with a stale profile.
-    localStorage.setItem(ONBOARDING_DONE_KEY, 'true');
-    setPhase('complete');
-    supabase
-      .from('profiles')
-      .update({
-        app_tour_completed: true,
-        onboarding_completed: true,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', user.id)
-      .then(({ error }) => {
-        if (error) console.error('Error saving tour completion:', error);
-      });
-  };
+  if (phase === 'tour') {
+    const handleTourComplete = () => {
+      if (!isGuest) {
+        // Persist for signed-in users so they never see it again
+        localStorage.setItem(ONBOARDING_DONE_KEY, 'true');
+        supabase
+          .from('profiles')
+          .update({
+            app_tour_completed: true,
+            onboarding_completed: true,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', user!.id)
+          .then(({ error }) => { if (error) console.error('Error saving tour completion:', error); });
+      }
+      // Guests: no localStorage save — they'll see auth gate + tour again next session
+      setPhase('complete');
+    };
 
-  return <OnboardingAppTour onComplete={handleTourComplete} onSkip={handleTourComplete} />;
+    return <OnboardingAppTour onComplete={handleTourComplete} onSkip={handleTourComplete} />;
+  }
+
+  return null;
 };
 
 export default OnboardingOrchestrator;
