@@ -63,12 +63,10 @@ const BambooLeafCard: React.FC<BambooLeafCardProps> = ({
       >
         {/* Front — term */}
         <div
-          className="absolute inset-0 rounded-3xl overflow-hidden"
+          className="absolute inset-0 rounded-3xl overflow-hidden bg-gradient-to-br from-emerald-50 to-emerald-100 border-2 border-emerald-200 dark:from-emerald-950 dark:to-emerald-900 dark:border-emerald-800"
           style={{
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
-            background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
-            border: '2px solid #a7f3d0',
             boxShadow: '0 8px 32px rgba(5,150,105,0.12)',
           }}
         >
@@ -101,8 +99,7 @@ const BambooLeafCard: React.FC<BambooLeafCardProps> = ({
             )}
             {/* Term */}
             <h3
-              className="text-xl font-bold leading-snug mb-4"
-              style={{ color: '#065f46' }}
+              className="text-xl font-bold leading-snug mb-4 text-emerald-900 dark:text-emerald-100"
             >
               {card.term}
             </h3>
@@ -123,12 +120,12 @@ const BambooLeafCard: React.FC<BambooLeafCardProps> = ({
               <span
                 className={`w-2 h-2 rounded-full ${DIFFICULTY_DOT[card.difficulty] ?? 'bg-gray-400'}`}
               />
-              <span className="text-xs text-emerald-700 capitalize">
+              <span className="text-xs text-emerald-700 dark:text-emerald-300 capitalize">
                 {card.difficulty}
               </span>
             </div>
             {/* Tap hint */}
-            <p className="absolute bottom-4 text-[10px] text-emerald-500 font-medium tracking-wide">
+            <p className="absolute bottom-4 text-[10px] text-emerald-500 dark:text-emerald-400 font-medium tracking-wide">
               Tap to flip
             </p>
           </div>
@@ -136,13 +133,11 @@ const BambooLeafCard: React.FC<BambooLeafCardProps> = ({
 
         {/* Back — definition */}
         <div
-          className="absolute inset-0 rounded-3xl overflow-hidden"
+          className="absolute inset-0 rounded-3xl overflow-hidden bg-gradient-to-br from-emerald-100 to-emerald-200 border-2 border-emerald-300 dark:from-emerald-900 dark:to-emerald-800 dark:border-emerald-700"
           style={{
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)',
-            background: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)',
-            border: '2px solid #6ee7b7',
             boxShadow: '0 8px 32px rgba(5,150,105,0.18)',
           }}
         >
@@ -159,26 +154,20 @@ const BambooLeafCard: React.FC<BambooLeafCardProps> = ({
           <div className="relative h-full flex flex-col justify-center p-6 overflow-y-auto">
             {/* Definition */}
             <p
-              className="text-sm font-semibold leading-relaxed mb-4 text-center"
-              style={{ color: '#065f46' }}
+              className="text-sm font-semibold leading-relaxed mb-4 text-center text-emerald-900 dark:text-emerald-100"
             >
               {card.definition}
             </p>
             {/* Phil's analogy */}
             {card.philExample && (
               <div
-                className="rounded-xl p-3 text-xs leading-relaxed text-center"
-                style={{
-                  background: 'rgba(255,255,255,0.55)',
-                  color: '#065f46',
-                  borderLeft: '3px solid #059669',
-                }}
+                className="rounded-xl p-3 text-xs leading-relaxed text-center bg-white/55 dark:bg-emerald-900/40 border-l-[3px] border-l-emerald-600 text-emerald-900 dark:text-emerald-100"
               >
                 <span className="font-bold">🐼 Phil says: </span>
                 {card.philExample}
               </div>
             )}
-            <p className="absolute bottom-4 left-0 right-0 text-center text-[10px] text-emerald-600 font-medium tracking-wide">
+            <p className="absolute bottom-4 left-0 right-0 text-center text-[10px] text-emerald-600 dark:text-emerald-400 font-medium tracking-wide">
               Tap to flip back
             </p>
           </div>

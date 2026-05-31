@@ -16,6 +16,7 @@ import {
   useMotionValue,
   useTransform,
   AnimatePresence,
+  animate,
   type PanInfo,
 } from 'framer-motion';
 import type { UnifiedFlashcard } from '@/data/unified-flashcards';
@@ -54,7 +55,6 @@ const SwipeableFlashcard: React.FC<SwipeableFlashcardProps> = ({
 
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-220, 220], [-18, 18]);
-  const opacity = useTransform(x, [-200, -80, 0, 80, 200], [0.5, 1, 1, 1, 0.5]);
   const leftOverlay = useTransform(x, [-160, -50, 0], [0.85, 0.3, 0]);
   const rightOverlay = useTransform(x, [0, 50, 160], [0, 0.3, 0.85]);
 
@@ -71,11 +71,14 @@ const SwipeableFlashcard: React.FC<SwipeableFlashcardProps> = ({
   const handleDragEnd = (_: unknown, info: PanInfo) => {
     setIsDragging(false);
     if (info.offset.x > SWIPE_THRESHOLD) {
+      // Drive x to the right before exit so the green overlay stays visible
+      animate(x, 400, { duration: 0.2, ease: 'easeOut' });
       setExitDir('right');
-      setTimeout(onSwipeRight, 200);
+      setTimeout(onSwipeRight, 220);
     } else if (info.offset.x < -SWIPE_THRESHOLD) {
+      animate(x, -400, { duration: 0.2, ease: 'easeOut' });
       setExitDir('left');
-      setTimeout(onSwipeLeft, 200);
+      setTimeout(onSwipeLeft, 220);
     }
   };
 
@@ -85,14 +88,16 @@ const SwipeableFlashcard: React.FC<SwipeableFlashcardProps> = ({
 
   const triggerLeft = (e: React.MouseEvent) => {
     e.stopPropagation();
+    animate(x, -400, { duration: 0.2, ease: 'easeOut' });
     setExitDir('left');
-    setTimeout(onSwipeLeft, 200);
+    setTimeout(onSwipeLeft, 220);
   };
 
   const triggerRight = (e: React.MouseEvent) => {
     e.stopPropagation();
+    animate(x, 400, { duration: 0.2, ease: 'easeOut' });
     setExitDir('right');
-    setTimeout(onSwipeRight, 200);
+    setTimeout(onSwipeRight, 220);
   };
 
   const badge = SECTION_BADGE[card.sourceModule] ?? {
@@ -109,7 +114,7 @@ const SwipeableFlashcard: React.FC<SwipeableFlashcardProps> = ({
             <motion.div
               key={card.id}
               className="relative w-full cursor-grab active:cursor-grabbing touch-none"
-              style={{ x, rotate, opacity }}
+              style={{ x, rotate }}
               drag="x"
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.65}
@@ -117,11 +122,7 @@ const SwipeableFlashcard: React.FC<SwipeableFlashcardProps> = ({
               onDragEnd={handleDragEnd}
               initial={{ scale: 0.95, opacity: 0, y: 8 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{
-                x: exitDir === 'right' ? 320 : -320,
-                opacity: 0,
-                transition: { duration: 0.22 },
-              }}
+              exit={{ opacity: 0, transition: { duration: 0.22 } }}
               onClick={handleCardClick}
             >
               {/* "Review" red overlay */}
@@ -159,13 +160,10 @@ const SwipeableFlashcard: React.FC<SwipeableFlashcardProps> = ({
               >
                 {/* ── Front ── */}
                 <div
-                  className="absolute inset-0 rounded-3xl overflow-hidden"
+                  className="absolute inset-0 rounded-3xl overflow-hidden bg-gradient-to-br from-emerald-50 to-emerald-100 border-2 border-emerald-200 dark:from-emerald-950 dark:to-emerald-900 dark:border-emerald-800"
                   style={{
                     backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
-                    background:
-                      'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
-                    border: '2px solid #a7f3d0',
                     boxShadow: '0 8px 32px rgba(5,150,105,0.14)',
                     minHeight: 360,
                   }}
@@ -209,8 +207,7 @@ const SwipeableFlashcard: React.FC<SwipeableFlashcardProps> = ({
                       <div className="text-5xl mb-4 leading-none">{card.icon}</div>
                     )}
                     <h2
-                      className="text-2xl font-bold leading-snug mb-5"
-                      style={{ color: '#065f46' }}
+                      className="text-2xl font-bold leading-snug mb-5 text-emerald-900 dark:text-emerald-100"
                     >
                       {card.term}
                     </h2>
@@ -221,7 +218,7 @@ const SwipeableFlashcard: React.FC<SwipeableFlashcardProps> = ({
                       {card.subcategory && (
                         <Badge
                           variant="outline"
-                          className="text-xs border-emerald-300 text-emerald-700"
+                          className="text-xs border-emerald-300 text-emerald-700 dark:border-emerald-600 dark:text-emerald-300"
                         >
                           {card.subcategory}
                         </Badge>
@@ -231,11 +228,11 @@ const SwipeableFlashcard: React.FC<SwipeableFlashcardProps> = ({
                       <span
                         className={`w-2 h-2 rounded-full ${DIFFICULTY_DOT[card.difficulty] ?? 'bg-gray-400'}`}
                       />
-                      <span className="text-xs text-emerald-700 capitalize">
+                      <span className="text-xs text-emerald-700 dark:text-emerald-300 capitalize">
                         {card.difficulty}
                       </span>
                     </div>
-                    <p className="absolute bottom-4 text-[10px] text-emerald-500 font-medium tracking-wide">
+                    <p className="absolute bottom-4 text-[10px] text-emerald-500 dark:text-emerald-400 font-medium tracking-wide">
                       Tap to reveal definition
                     </p>
                   </div>
@@ -243,14 +240,11 @@ const SwipeableFlashcard: React.FC<SwipeableFlashcardProps> = ({
 
                 {/* ── Back ── */}
                 <div
-                  className="absolute inset-0 rounded-3xl overflow-hidden"
+                  className="absolute inset-0 rounded-3xl overflow-hidden bg-gradient-to-br from-emerald-100 to-emerald-200 border-2 border-emerald-300 dark:from-emerald-900 dark:to-emerald-800 dark:border-emerald-700"
                   style={{
                     backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
                     transform: 'rotateY(180deg)',
-                    background:
-                      'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)',
-                    border: '2px solid #6ee7b7',
                     boxShadow: '0 8px 32px rgba(5,150,105,0.18)',
                     minHeight: 360,
                   }}
@@ -261,31 +255,24 @@ const SwipeableFlashcard: React.FC<SwipeableFlashcardProps> = ({
                   >
                     {/* Term reminder */}
                     <p
-                      className="text-xs font-bold uppercase tracking-widest mb-3 opacity-60"
-                      style={{ color: '#065f46' }}
+                      className="text-xs font-bold uppercase tracking-widest mb-3 opacity-60 text-emerald-900 dark:text-emerald-100"
                     >
                       {card.term}
                     </p>
                     <p
-                      className="text-base font-semibold leading-relaxed mb-5"
-                      style={{ color: '#065f46' }}
+                      className="text-base font-semibold leading-relaxed mb-5 text-emerald-900 dark:text-emerald-100"
                     >
                       {card.definition}
                     </p>
                     {card.philExample && (
                       <div
-                        className="rounded-2xl p-4 text-sm leading-relaxed"
-                        style={{
-                          background: 'rgba(255,255,255,0.6)',
-                          borderLeft: '3px solid #059669',
-                          color: '#065f46',
-                        }}
+                        className="rounded-2xl p-4 text-sm leading-relaxed bg-white/60 dark:bg-emerald-900/40 border-l-[3px] border-l-emerald-600 text-emerald-900 dark:text-emerald-100"
                       >
                         <span className="font-bold">🐼 Phil says: </span>
                         {card.philExample}
                       </div>
                     )}
-                    <p className="absolute bottom-4 left-0 right-0 text-center text-[10px] text-emerald-600 font-medium tracking-wide">
+                    <p className="absolute bottom-4 left-0 right-0 text-center text-[10px] text-emerald-600 dark:text-emerald-400 font-medium tracking-wide">
                       Tap to flip back
                     </p>
                   </div>

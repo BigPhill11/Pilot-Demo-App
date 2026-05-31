@@ -7,41 +7,13 @@ export const lesson5MultipleIncomeStreams: Lesson = {
   moduleOverview: "The wealthy don't rely on one income source. Financial freedom comes from building multiple streams that work together.",
   realityHook: "The average millionaire has 7 income streams. But here's the secret: they usually built them one at a time, starting with their primary career.",
   outcomePreview: "You'll understand different income types and create a roadmap to diversify your income over time.",
-  microLesson: `One income source = one point of failure. Multiple streams = financial resilience and freedom.
+  microLesson: `One income source creates one point of failure. Multiple income streams add resilience because money can come from more than one place.
 
-**The Income Stream Hierarchy**
-Build in this order (most people get this wrong):
+The strongest order starts with your main career. Primary income builds skills and cash flow, which can later fund freelancing, investing, products, or business systems.
 
-1. **Active Income (Your Job)**: Maximize this first. It funds everything else.
-2. **Active Side Income**: Skills-based freelancing, consulting, gig work
-3. **Portfolio Income**: Dividends, interest, capital gains
-4. **Passive Business Income**: Businesses that run without you
-5. **Royalty/Licensing Income**: Content, products, intellectual property
+Passive income is not easy money at the start. Most streams require upfront work, money, or skill before they become easier to maintain.
 
-**Active vs. Passive: The Reality**
-- Active: Trade time for money (jobs, freelancing)
-- Passive: Systems generate money (investments, automated businesses)
-
-The myth: Passive income is easy.
-The reality: Passive income requires massive upfront investment of time, money, or both.
-
-**The Income Ladder Strategy**
-1. Get great at your job (maximize active income)
-2. Use excess to invest (build portfolio income)
-3. Use skills to freelance (active side income)
-4. Productize your skills (scalable income)
-5. Build systems that work without you (true passive)
-
-**Warning Signs of Income Stream Scams**
-- "Make $10K/month with no work!"
-- Requires big upfront investment to "unlock" the opportunity
-- Success depends on recruiting others
-- No clear value being created
-
-**Financial Freedom Formula**
-Financial Freedom = Passive Income > Expenses
-
-When your investments and systems generate more than you spend, work becomes optional.`,
+Financial freedom grows when investments and systems eventually produce more than your expenses. The goal is to build streams slowly, honestly, and one layer at a time.`,
   flashcards: [
     {
       term: 'Active Income',

@@ -23,13 +23,13 @@ You decide whether to move faster or move with purpose.`,
 
   outcomePreview: 'Mastering this lesson unlocks the Goal Compass, allowing future choices to be evaluated by alignment instead of impulse.',
 
-  microLesson: `Money without direction creates confusion, not progress. You can increase income, save regularly, and even make smart investments, yet still feel stuck because those actions are not connected to a specific outcome. Activity replaces advancement when there is no clear endpoint guiding decisions.
+  microLesson: `Money without direction creates confusion. Phil can earn, save, and invest, but if he has no destination, all that activity can still feel like running in circles.
 
-Financial goals are not aspirations or vague intentions. They are concrete decisions about what your money is supposed to accomplish and within what timeframe. When goals are defined clearly, they introduce constraints that narrow your choices. Fewer choices reduce mental friction and improve consistency, because decisions no longer require constant judgment calls.
+Clear goals turn money into a decision system. Once Phil chooses what the money is for, each choice becomes easier to sort.
 
-Goals also change how progress is evaluated. Instead of measuring success by external benchmarks or other people's outcomes, you measure whether your actions move you closer to what you personally decided matters. This removes emotional noise from financial decisions and replaces it with practical feedback.
+Progress is measured by alignment, not by someone else’s path. Phil asks whether today’s action moves him closer to the goal he chose.
 
-Before improving tactics like earning, saving, or investing, direction must be set. Otherwise, better tactics simply move you faster in an undefined direction.`,
+Direction comes before speed. Better earning, saving, and investing only help when Phil knows where he is trying to go.`,
 
   flashcards: [
     {

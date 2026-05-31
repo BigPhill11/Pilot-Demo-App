@@ -22,15 +22,13 @@ Is saving something you do only if life cooperates, or is it something that runs
 
   outcomePreview: 'Mastering this lesson unlocks first-line financial protection and saving system upgrades.',
 
-  microLesson: `Saving breaks down for most people because it is treated as an afterthought. The plan is usually to spend first and save whatever remains, but spending rarely stays contained. Needs blend into wants, small purchases stack up, and unexpected costs appear. By the time saving becomes the priority, the money is already gone.
+  microLesson: `Saving breaks down when it is treated as an afterthought. The plan sounds simple: spend carefully, then save whatever is left. But spending rarely stays neat. Needs blend into wants, small purchases stack up, and surprise costs show up. By the time saving gets its turn, the money may already be gone.
 
-Saving works differently when it happens at the start. When money arrives and a portion is moved immediately, the rest of your choices adjust around what is left. This removes constant decision-making and replaces it with a simple rule. You are no longer asking yourself whether you should save. That choice has already been made.
+Saving works better when it happens first. When money arrives and a portion moves into savings right away, the rest of your choices adjust around what is left. You do not have to debate saving every day. The decision has already been made, which makes the whole system easier to follow.
 
-The main function of saving is protection. It protects you from turning small problems into financial setbacks. A broken phone, a higher bill, or a missed shift feels manageable when savings exist. Without savings, those same events often lead to borrowing, stress, or pulling money away from more important goals.
+The main job of saving is protection. A broken phone, a higher bill, or a missed shift feels much more manageable when savings exist. Without a buffer, the same small problem can turn into borrowing, stress, or pulling money away from goals that matter more.
 
-Saving first does not immediately improve your lifestyle. What it improves is your position. You gain time, breathing room, and the ability to respond instead of react. Over time, this changes how you handle money decisions because fewer choices are made under pressure.
-
-Saving is not controlled by income alone. It is controlled by priority. When saving happens first, spending naturally reorganizes around it, and progress becomes more consistent instead of accidental.`,
+Saving first may not instantly upgrade your lifestyle, but it upgrades your position. You gain time, breathing room, and the ability to respond instead of panic. Saving is not controlled by income alone. It is controlled by priority, and when saving comes first, progress becomes consistent instead of accidental.`,
 
   flashcards: [
     {

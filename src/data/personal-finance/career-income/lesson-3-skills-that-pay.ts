@@ -7,37 +7,13 @@ export const lesson3SkillsThatPay: Lesson = {
   moduleOverview: 'Not all skills are created equal. Some skills multiply your earning power; others are commodities.',
   realityHook: "A graphic designer who learns sales can charge 3x more. A developer who learns communication becomes a tech lead. The most valuable skill is often the one you don't have yet.",
   outcomePreview: "You'll identify high-leverage skills and create a strategic skill-building plan.",
-  microLesson: `Skills are investments. Some appreciate, some depreciate, some compound.
+  microLesson: `Skills are investments. Some skills become more valuable over time, some lose value, and some multiply the value of everything else you know.
 
-**The Skill Premium Pyramid**
-1. **Commodity Skills** (Low premium): Basic computer skills, typing, filing
-2. **Foundational Skills** (Medium premium): Industry knowledge, technical basics
-3. **Specialized Skills** (High premium): Unique technical expertise, certifications
-4. **Multiplier Skills** (Highest premium): Leadership, sales, communication, strategic thinking
+The highest-paying skills usually solve important problems or help others work better. Communication, leadership, sales, data literacy, and technical fluency can raise the value of many careers.
 
-**Skill Stacking: The Secret Weapon**
-You don't need to be world-class at one thing. Being top 20% at 3 complementary skills makes you rare:
-- Engineer + Communication = Tech Lead
-- Designer + Business = Product Designer
-- Analyst + Storytelling = Executive Presenter
+Skill stacking makes you rare. You do not need to be the best at one thing if you combine complementary skills that few people have together.
 
-**High-ROI Skills Across Industries**
-1. **Sales**: Every company needs revenue. People who generate it get paid.
-2. **Communication**: Writing, speaking, presenting—these multiply all other skills.
-3. **Data Literacy**: Understanding numbers makes you strategic.
-4. **Leadership**: Managing people and projects opens doors.
-5. **Technical Fluency**: Even non-tech roles benefit from understanding technology.
-
-**The Depreciation Trap**
-Some skills lose value:
-- Industry-specific tools that become obsolete
-- Knowledge that AI can replace
-- Skills tied to shrinking industries
-
-**Build Skills That:**
-- Transfer across companies and industries
-- Compound with other skills
-- Remain valuable as technology changes`,
+Strong skill plans avoid depreciation. Build skills that transfer across companies, compound with other strengths, and stay useful as technology changes.`,
   flashcards: [
     {
       term: 'Skill Stacking',

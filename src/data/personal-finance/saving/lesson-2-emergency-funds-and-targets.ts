@@ -22,15 +22,13 @@ Are emergencies rare events, or are they predictable moments you have not planne
 
   outcomePreview: 'Mastering this lesson unlocks emergency fund targets, milestone tracking, and protection upgrades.',
 
-  microLesson: `An emergency fund exists for one reason. It creates distance between a problem and a bad decision. Emergencies are not unusual events. They are a normal part of life that arrive on an unpredictable schedule. What makes them damaging is not the cost itself, but the lack of preparation.
+  microLesson: `An emergency fund exists for one reason: it creates distance between a problem and a bad decision. Emergencies are not rare magical events. They are normal parts of life that arrive on a weird schedule. What makes them damaging is not always the cost. It is having no buffer when the cost arrives.
 
-Many people avoid building an emergency fund because the recommended numbers feel overwhelming. Hearing targets like three to six months of expenses makes saving feel impossible, especially early on. This leads to inaction, which is worse than starting small.
+Many people avoid emergency funds because the big targets sound impossible. Hearing "three to six months of expenses" can make saving feel out of reach, especially at the beginning. But waiting until the goal feels easy usually means doing nothing, and doing nothing leaves every surprise expense in charge.
 
-Emergency funds work in stages. The first stage is not about covering everything. It is about stopping immediate damage. A few hundred dollars can prevent late fees, credit card balances, or missed obligations. As income grows, the fund expands and absorbs larger disruptions, such as temporary job loss or major repairs.
+Emergency funds work in stages. The first stage is not about covering everything. It is about stopping immediate damage. A few hundred dollars can prevent late fees, credit card debt, or missed obligations. Later, as income grows, the fund can expand to handle bigger disruptions.
 
-The correct emergency fund size depends on your situation. Stable income requires less buffer than unstable income. Fewer fixed expenses reduce required savings. More responsibility increases it. The goal is not perfection. The goal is enough protection for your current stage.
-
-An emergency fund does not grow to impress anyone. It grows to quietly keep your life from unraveling when timing turns against you.`,
+The right emergency fund target depends on your life. Stable income, fewer fixed expenses, and fewer responsibilities may need a smaller buffer. Unstable income or bigger responsibilities need more. The goal is not perfection or showing off. The goal is enough protection for your current stage.`,
 
   flashcards: [
     {

@@ -21,13 +21,13 @@ You decide whether to spread effort or concentrate it.`,
 
   outcomePreview: 'Mastering this lesson unlocks Priority Stacking, allowing one goal to accelerate while others pause without guilt.',
 
-  microLesson: `Most people do not fail because they lack goals. They fail because they pursue too many at the same time. When money is spread evenly across multiple priorities, progress slows everywhere, creating the feeling that nothing works even when effort is high.
+  microLesson: `Phil does not fail because he lacks goals. He gets stuck when he tries to fund too many goals at the same time.
 
-Priority stacking means choosing which goal matters most right now and allowing others to wait. This is not neglect. It is sequencing. Goals do not disappear when they are paused. They become clearer and easier to fund later once momentum exists.
+Priority stacking means choosing what matters most right now. Other goals are not abandoned; they are waiting their turn.
 
-Focus creates visible progress, and visible progress builds confidence. Confidence reduces friction and makes follow-through easier. Without focus, every decision feels heavy because everything competes at once.
+Focus creates visible progress. When Phil sees one goal moving, confidence builds and follow-through gets easier.
 
-The goal is not to abandon important goals. The goal is to decide the order in which they deserve attention.`,
+The point is not to care about fewer things. The point is to choose the order so important goals can actually finish.`,
 
   flashcards: [
     {

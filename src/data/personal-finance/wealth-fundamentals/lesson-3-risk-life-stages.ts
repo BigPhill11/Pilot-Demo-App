@@ -7,19 +7,13 @@ export const lesson3RiskLifeStages: Lesson = {
   moduleOverview: 'How risk changes as you age, and why smart risk-taking evolves through different life stages.',
   realityHook: "You make different choices at different ages. In high school, mistakes feel small and recoverable. Later in life, the same mistakes feel heavier because responsibilities increase. Wealth decisions follow the same pattern across life stages.",
   outcomePreview: "You'll understand why younger investors can take more risk, why stability matters later, and how to adjust risk intelligently over time.",
-  microLesson: `Risk means uncertainty about outcomes, including the chance of loss. The impact of risk depends on when it happens in your life. Early losses usually hurt less because time allows recovery. Later losses hurt more because fewer earning years remain.
+  microLesson: `Risk means uncertainty about outcomes, including the chance of loss. The impact of risk depends on when it happens in your life. Early losses usually hurt less because time allows recovery. Later losses can hurt more because fewer earning years remain.
 
-**Your Biggest Asset is Time**
-When people are young, their biggest asset is time. Time allows mistakes to heal and investments to recover. Taking calculated risks early helps build growth and experience. Avoiding all risk early often leads to missed opportunities.
+When people are young, their biggest asset is often time. Time allows mistakes to heal and investments to recover. Taking calculated risks early can build growth and experience. Avoiding all risk too early can mean missing opportunities.
 
-**Life Stage Changes Everything**
-As people age, priorities shift. Income supports families, housing, and responsibilities. Risk still exists, but risk control becomes more important. The goal moves from aggressive growth to stability and protection.
+Life stage changes everything. As people age, priorities shift toward housing, family, health, and responsibility. Risk still exists, but risk control becomes more important. The goal slowly moves from aggressive growth toward stability and protection.
 
-**Risk Capacity vs Risk Tolerance**
-Risk capacity is how much risk you CAN handle based on your situation. Risk tolerance is how much risk you WANT to take emotionally. Both matter, but capacity should guide decisions more than tolerance.
-
-**The Adjustment Principle**
-Smart investors adjust risk as life changes. They don't use one strategy forever. They match risk to age, goals, and responsibilities. A 25-year-old and a 55-year-old shouldn't have the same portfolio.`,
+Risk capacity is how much risk you can handle based on your situation. Risk tolerance is how much risk you want to take emotionally. Both matter, but capacity should guide decisions more than feelings. Smart investors adjust risk as life changes instead of using one strategy forever.`,
   flashcards: [
     {
       term: 'Life Stage',

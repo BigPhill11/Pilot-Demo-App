@@ -14,13 +14,13 @@ Your pay stops moving.
 
 You decide whether more work is helping or hurting.`,
   outcomePreview: 'Mastering this lesson protects your income engine and improves long-term earning capacity.',
-  microLesson: `More hours increase income only up to a point. After that point, fatigue reduces focus, speed, and judgment. Mistakes increase. Learning slows. Reliability drops. Even if your hours stay high, your value quietly falls. Many people confuse exhaustion with progress and do not realize their income growth has stalled.
+  microLesson: `More hours can raise income at first. Phil earns extra money when he takes more shifts, but each added hour also uses energy.
 
-Energy is a resource. It affects how well you perform, how quickly you learn, and how others perceive your reliability. High energy allows you to take on harder tasks, build skills faster, and earn trust. Low energy locks you into basic work because there is no capacity left to grow.
+After a point, fatigue lowers focus, speed, and judgment. Phil may still be working, but mistakes and slower learning make his work less valuable.
 
-Sustainable income comes from balancing effort and recovery. Short bursts of intensity help when used intentionally. Long periods of overwork reduce output quality and limit future options. People who manage energy well stay consistent, improve faster, and remain valuable over time.
+Recovery refills the earning engine. Rest, sleep, and focused breaks help Phil return with better attention and more capacity to improve.
 
-Protecting energy is not laziness. It is maintenance for your earning ability.`,
+Sustainable work balances effort and recovery. Protecting energy is not laziness; it is maintenance for future income.`,
   flashcards: [
     {
       term: 'Burnout',

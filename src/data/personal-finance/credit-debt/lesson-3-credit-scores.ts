@@ -7,13 +7,13 @@ export const lesson3CreditScores: Lesson = {
   moduleOverview: 'This lesson explains what a credit score is and how it is calculated. You learn why scores affect approvals and costs, and how everyday behavior shapes results over time.',
   realityHook: 'Two people apply for the same apartment. One gets approved quickly with a low deposit. The other gets rejected or asked to pay much more upfront. The difference is not personality or effort. The difference is credit score history.',
   outcomePreview: 'Credit scores summarize trust • Scores affect access and cost • Behavior matters more than income • Small actions compound',
-  microLesson: `A credit score is a number that summarizes how reliably you repay borrowed money. Lenders use this score to decide whether to approve you and how much to charge. Higher scores usually lead to lower costs and easier approval.
+  microLesson: `A credit score is a number that summarizes how reliably you repay borrowed money. Lenders use it to decide whether to approve you and how much to charge. Higher scores usually make approval easier and borrowing cheaper.
 
-Credit scores are built from behavior, not promises. Paying on time matters most. Keeping balances low matters next. Applying for too much credit too quickly can hurt scores.
+Credit scores are built from behavior, not promises. Paying on time matters most. Keeping balances low matters next. Applying for too much credit too quickly can hurt your score because it can look like you are taking on more risk.
 
-Scores affect more than loans. Housing applications, insurance pricing, and even some jobs look at credit history. A strong score opens doors. A weak score creates friction everywhere.
+Scores can affect more than loans. Housing applications, insurance pricing, and some job processes may look at credit history. A strong score can open doors with less friction. A weak score can add deposits, higher costs, or extra hurdles.
 
-Credit scores change slowly through consistent habits. There is no shortcut. Small actions repeated over time build strong results.`,
+Credit scores change slowly through consistent habits. There is no magic shortcut that replaces time. Small actions repeated over and over, like paying on time and using only a little available credit, build stronger results.`,
   flashcards: [
     {
       term: 'Credit Score',

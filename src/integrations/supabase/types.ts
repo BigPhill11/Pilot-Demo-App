@@ -462,6 +462,7 @@ export type Database = {
       }
       phils_friends_videos: {
         Row: {
+          assembly_transcript_id: string | null
           category: string | null
           company: string | null
           course_category: string | null
@@ -493,6 +494,7 @@ export type Database = {
           youtube_url: string | null
         }
         Insert: {
+          assembly_transcript_id?: string | null
           category?: string | null
           company?: string | null
           course_category?: string | null
@@ -524,6 +526,7 @@ export type Database = {
           youtube_url?: string | null
         }
         Update: {
+          assembly_transcript_id?: string | null
           category?: string | null
           company?: string | null
           course_category?: string | null

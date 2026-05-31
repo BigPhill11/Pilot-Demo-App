@@ -13,13 +13,13 @@ Understanding long-term strategy helps you build wealth through patience and con
 
   outcomePreview: 'Mastering this lesson helps you develop the discipline to stay invested through market cycles.',
 
-  microLesson: `A long-term strategy is a simple plan you follow across different market conditions. Markets move up and down, but a strategy stays steady. Without a plan, emotions control decisions.
+  microLesson: `A long-term strategy is a simple plan you follow through different market conditions. Markets move up and down, but a good strategy stays steady. Without a plan, emotions start making decisions for you.
 
-Staying invested matters because growth happens over time inside the market. Missing a few strong periods can reduce long-term results more than avoiding short-term losses helps. Leaving the market feels safe, but getting back in is difficult.
+Staying invested matters because growth happens over time inside the market. Missing a few strong periods can hurt long-term results more than avoiding a few short-term drops helps. Leaving the market can feel safe, but getting back in at the right time is very hard.
 
-Good strategies stay simple. They define what you invest in, how often you invest, how much risk you accept, and when you rebalance. Simple rules increase consistency and reduce mistakes.
+Good strategies stay simple. They define what you invest in, how often you invest, how much risk you accept, and when you rebalance. Simple rules are easier to repeat, and repeatable rules reduce mistakes.
 
-The hardest part of investing is doing nothing during stressful moments. Discipline turns volatility into background noise. Strategy turns uncertainty into progress.`,
+The hardest part of investing is often doing nothing during stressful moments. Discipline turns volatility into background noise. Strategy turns uncertainty into progress because you already know what to do before emotions get loud.`,
 
   flashcards: [
     {

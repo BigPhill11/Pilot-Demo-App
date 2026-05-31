@@ -9,11 +9,11 @@ export const lesson5BuildingCreditResponsibly: Lesson = {
   outcomePreview: 'Credit builds through consistency • Small habits protect scores • Time strengthens results • Discipline lowers future costs',
   microLesson: `Credit grows through repeated reliable behavior. Paying on time, keeping balances low, and avoiding unnecessary applications build trust steadily. There is no shortcut that replaces time and consistency.
 
-Responsible credit use focuses on control, not spending. Using a small portion of available credit shows discipline. Paying balances regularly prevents interest from erasing progress.
+Responsible credit use is about control, not spending more. Using a small portion of your available credit shows discipline. Paying balances regularly keeps interest from erasing progress and proves you can handle access without overusing it.
 
-Time strengthens credit because history matters. Older accounts show long-term reliability. Closing accounts too quickly or constantly opening new ones resets progress and adds risk.
+Time strengthens credit because history matters. Older accounts can show long-term reliability. Closing accounts too quickly or constantly opening new ones can interrupt progress and make your credit profile look less steady.
 
-Strong credit reduces stress later. Lower interest, easier approval, and more options come from habits built early and maintained consistently.`,
+Strong credit can reduce stress later. Lower interest, easier approvals, and more options come from habits built early and maintained consistently. The goal is not to borrow as much as possible. The goal is to build trust before you need it.`,
   flashcards: [
     {
       term: 'Credit Building',

@@ -13,13 +13,13 @@ Understanding this distinction changes how you view market movements and make in
 
   outcomePreview: 'Mastering this lesson helps you see past price movements to understand the real value of what you own.',
 
-  microLesson: `When you buy a stock, you buy ownership in a real company. That company sells products or services, earns money, and tries to grow over time. Your investment grows when the business performs well, not because the price moves randomly.
+  microLesson: `When you buy a stock, you buy ownership in a real company. That company sells products or services, pays people, earns money, and tries to grow over time. Your investment grows when the business becomes stronger, not just because a number on a screen moves around.
 
-Prices change every day because people react to news, fear, and excitement. Businesses change slowly because growth takes time. Value comes from how much money a company earns and how strong it becomes over years, not days.
+Prices move every day because people react to news, fear, and excitement. Businesses usually change more slowly because real growth takes time. Value comes from how much money a company can earn and how strong it becomes over years, not days.
 
-Funds work the same way but on a larger scale. When you buy a fund, you buy small pieces of many companies at once. This spreads risk and reduces the damage from one company failing.
+Funds work the same way, just on a larger scale. When you buy a fund, you buy small pieces of many companies at once. That spreads risk, so one company struggling does not have to wreck the whole plan.
 
-Investing feels confusing when you watch prices constantly. Investing feels clearer when you focus on the businesses you own.`,
+Investing feels confusing when you stare at prices all day. It feels clearer when you remember what you actually own: real businesses trying to create value. The screen shows the price, but the business underneath is the story that matters.`,
 
   flashcards: [
     {

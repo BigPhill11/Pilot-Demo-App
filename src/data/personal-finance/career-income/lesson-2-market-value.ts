@@ -7,34 +7,13 @@ export const lesson2MarketValue: Lesson = {
   moduleOverview: "Most people have no idea what they're worth. They accept whatever they're offered and hope for the best.",
   realityHook: "Two people with identical skills can earn 40% different salaries simply because one knows their market value and the other doesn't.",
   outcomePreview: "You'll learn how to research, calculate, and communicate your true market value.",
-  microLesson: `Your salary isn't based on what you deserve—it's based on what the market will pay.
+  microLesson: `Your salary is shaped by what the market will pay for your skills, not just by effort or loyalty. Demand, scarcity, and the supply of people with similar skills all affect your value.
 
-**The Market Value Equation**
-Your worth = (Demand for your skills × Scarcity of those skills) ÷ Supply of people with those skills
+Researching market value takes more than one source. Salary sites, job postings, recruiter conversations, and trusted peers help you see the real range for your role.
 
-**How to Research Your Value**
-1. **Salary websites**: Glassdoor, Levels.fyi, Payscale, LinkedIn Salary
-2. **Job postings**: Look at salary ranges for roles you could get
-3. **Recruiters**: They know exactly what companies pay
-4. **Network**: Ask peers (yes, it's awkward but valuable)
+Total compensation is bigger than base salary. Bonuses, equity, benefits, flexibility, learning budgets, and time off can change the real value of an offer.
 
-**The Value Stack**
-Your total compensation includes:
-- Base salary
-- Bonuses (signing, performance, retention)
-- Equity (RSUs, options, shares)
-- Benefits (health, 401k match, PTO)
-- Perks (remote work, flexibility, learning budget)
-
-**Why Most People Are Underpaid**
-- They don't research market rates
-- They accept the first offer
-- They don't negotiate
-- They stay too long without raises
-- They undervalue their unique skills
-
-**The 10% Rule**
-If you're not getting 10%+ raises every 2-3 years, you're likely falling behind market rate.`,
+People fall behind when they do not check market rates, negotiate, or ask for adjustments. Knowing your value gives you confidence to make better career decisions.`,
   flashcards: [
     {
       term: 'Market Rate',

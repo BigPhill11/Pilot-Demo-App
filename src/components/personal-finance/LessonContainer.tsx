@@ -14,7 +14,51 @@ import PowerMove from './PowerMove';
 import { cn } from '@/lib/utils';
 
 /** Lessons that use the comic micro-lesson UI (roll out module-by-module). */
-const COMIC_MICRO_LESSON_IDS = new Set<string>(['active-income-basics']);
+const COMIC_MICRO_LESSON_IDS = new Set<string>([
+  'active-income-basics',
+  'active-income-lesson-2',
+  'active-income-lesson-3',
+  'active-income-lesson-4',
+  'active-income-lesson-5',
+  'direction-before-speed',
+  'time-horizons-tradeoffs',
+  'wants-needs-targets',
+  'priority-stacking-focus',
+  'measuring-progress',
+  'why-saving-comes-before-spending',
+  'emergency-funds-and-targets',
+  'automating-and-maintaining-savings',
+  'saving-tradeoffs-and-opportunity-cost',
+  'when-to-increase-savings',
+  'ownership-time-consistency',
+  'what-you-buy-when-investing',
+  'risk-volatility-price-movement',
+  'diversification-risk-control',
+  'long-term-strategy',
+  'protecting-your-assets',
+  'insurance-basics-risk-transfer',
+  'fraud-scams-identity-protection',
+  'legal-basics-liability-protection',
+  'digital-security-protection-habits',
+  'understanding-taxes',
+  'income-types-taxation',
+  'deductions-credits',
+  'tax-advantaged-accounts',
+  'tax-planning-mindset',
+  'credit-debt-1',
+  'credit-debt-2',
+  'credit-debt-3',
+  'credit-debt-4',
+  'credit-debt-5',
+  'wealth-fundamentals-1',
+  'wealth-fundamentals-2',
+  'wealth-fundamentals-3',
+  'career-income-1',
+  'career-income-2',
+  'career-income-3',
+  'career-income-4',
+  'career-income-5',
+]);
 
 interface LessonContainerProps {
   lesson: Lesson;

@@ -14,13 +14,13 @@ Something about your position did.
 
 You decide what to change next.`,
   outcomePreview: 'Mastering this lesson increases your wage growth rate and unlocks negotiation and skill-path choices later.',
-  microLesson: `Not all active income is equal. Even when two people trade time for money, the amount they earn per hour depends on how replaceable their work is. Jobs that many people can do tend to pay less because supply is high. Jobs that require specific skills, training, or trust pay more because fewer people can step in.
+  microLesson: `Two people can work the same number of hours and still earn different pay. The difference is not always effort. It is often the value of the work each person can do.
 
-Pay increases rarely come from effort alone. They come from leverage within active income. Leverage shows up when your work affects outcomes beyond your individual task. Someone who only follows instructions is easier to replace than someone who solves problems, improves systems, or reduces risk for others.
+When a task is easy for many people to do, pay stays capped. If Phil only does work that anyone can replace tomorrow, his hourly value has a ceiling.
 
-Control over pay grows when you become harder to substitute. That usually means learning skills that stack together, gaining experience that others lack, or taking on responsibility that impacts results. These moves often feel uncomfortable because they add pressure before they add pay.
+Phil gains control by learning skills that fewer people have and by taking responsibility for outcomes. Scarce skills, trust, and responsibility make each hour more valuable.
 
-The key insight is that even inside active income, you are not stuck. You either remain interchangeable, or you slowly position yourself to earn more per hour without working more hours.`,
+The goal is not to work endlessly. The goal is to become harder to substitute so pay can rise without adding more hours.`,
   flashcards: [
     {
       term: 'Replaceable work',

@@ -7,28 +7,13 @@ export const lesson1CareerInvestment: Lesson = {
   moduleOverview: 'Most people obsess over stock returns while ignoring their biggest asset: their ability to earn income.',
   realityHook: "You'll earn $2-3 million over your lifetime. A 10% increase in your earning power is worth $200-300K. That's more than most people's entire investment portfolio.",
   outcomePreview: "You'll understand why career decisions are financial decisions and how to think about your human capital.",
-  microLesson: `Your career isn't just a job—it's an investment that compounds over decades.
+  microLesson: `Your career is not just a job. It is an investment in your future earning power, and your skills, knowledge, and reputation are the assets that make that investment more valuable.
 
-**Human Capital = Your Future Earning Power**
-Think of yourself as a stock. Your skills, knowledge, and reputation are your fundamentals. Every career decision either increases or decreases your "share price."
+Career growth compounds because each raise can become the base for future raises, benefits, savings, and negotiating power. A small increase early can become a much larger lifetime advantage.
 
-**The Career Compounding Effect**
-A $5,000 raise at 25 isn't just $5,000. It's:
-- The base for all future raises
-- Higher 401(k) matches
-- Better negotiating position
-- $200,000+ over your career
+Smart career decisions use return-on-investment thinking. Training, certifications, job changes, and skill-building should be judged by whether they increase earning power more than they cost.
 
-**Career ROI Thinking**
-Smart investors ask: "What's the return?" Smart careerists ask the same:
-- That certification: Will it increase my earning power by more than it costs?
-- That job hop: Does the risk justify the potential upside?
-- That skill: Is the market paying a premium for it?
-
-**The Wealth Formula**
-Wealth = Income × Savings Rate × Time × Investment Returns
-
-Notice income comes FIRST. You can't save or invest what you don't earn.`,
+Income comes first in the wealth formula because you cannot save or invest what you do not earn. Growing your career gives every other financial habit more room to work.`,
   flashcards: [
     {
       term: 'Human Capital',

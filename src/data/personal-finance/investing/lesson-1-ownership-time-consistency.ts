@@ -13,15 +13,13 @@ Completion unlocks advanced portfolio concepts and compound growth tracking.`,
 
   outcomePreview: 'Mastering this lesson unlocks understanding of ownership principles and the power of time in building wealth.',
 
-  microLesson: `Investing means ownership. When you invest, you purchase a claim on the future earnings of a system that produces value. That system might be a company, a group of companies, or the broader economy. Instead of trading hours for income, you allow capital to participate in long-term value creation.
+  microLesson: `Investing means ownership. When you invest, you buy a tiny claim on something that can create value over time, like a company, a group of companies, or the broader economy. Instead of only trading hours for money, your money gets a chance to participate in long-term growth.
 
-Time does most of the work. Short periods feel loud because prices change quickly and emotions dominate. Long periods feel quiet because business growth compounds slowly. Over extended horizons, earnings, reinvestment, and scale matter more than daily movement. This is why investing money needed soon creates stress and poor decisions.
+Time does most of the heavy lifting. Short periods feel loud because prices move quickly and emotions take over. Long periods are quieter because business growth builds slowly through earnings, reinvestment, and scale. That is why money needed soon should not be invested.
 
-Consistency matters more than timing. Waiting for perfect conditions feels logical, but missed time reduces compounding. Consistent investing removes emotion from the process. You invest during optimism and fear alike. This discipline matters more than predicting news or trends.
+Consistency matters more than perfect timing. Waiting for the ideal moment feels smart, but missed time can reduce compounding. A steady investing habit removes some emotion from the process. You keep going during optimism and fear instead of trying to predict every headline.
 
-Risk does not disappear. Risk changes shape. Short-term risk appears as volatility. Long-term risk appears as lost ownership and missed growth. Cash feels stable, but stability without growth becomes its own form of risk over time.
-
-Wealth builds when ownership combines with time and consistency. Systems reward patience and discipline.`,
+Risk does not disappear. It changes shape. Short-term risk looks like volatility. Long-term risk can look like lost ownership and missed growth. Wealth builds when ownership, time, and consistency work together, because patient systems reward discipline.`,
 
   flashcards: [
     {

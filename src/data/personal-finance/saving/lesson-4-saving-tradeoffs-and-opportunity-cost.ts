@@ -19,15 +19,13 @@ What are you giving up when you choose one option over another?`,
 
   outcomePreview: 'Mastering this lesson unlocks opportunity-cost awareness and tradeoff clarity in financial decisions.',
 
-  microLesson: `Every financial choice involves a tradeoff, even when it does not feel like one. When you spend money, you are choosing the benefit of that purchase over every other use of those dollars. When you save money, you are choosing future flexibility over immediate comfort. The mistake many people make is ignoring the second option entirely.
+  microLesson: `Every money choice has a tradeoff, even when it does not feel like one. When you spend, you choose that purchase over every other thing those dollars could do. When you save, you choose future flexibility over immediate comfort. The mistake is forgetting that the second option exists.
 
-Opportunity cost is the value of the next best alternative you give up when you make a decision. It does not appear on receipts or bank statements, but it shapes outcomes over time. Small spending choices often feel harmless because the opportunity cost is delayed, not visible.
+Opportunity cost is the value of the next best option you give up. It does not show up on receipts or bank statements, but it still shapes your future. Small spending choices can feel harmless because the cost is delayed and hidden instead of loud and immediate.
 
-Saving makes tradeoffs easier to see. When money is scarce, every decision feels painful. When savings exist, choices become clearer. You are no longer deciding between spending and survival. You are deciding between two reasonable options with different outcomes.
+Saving makes tradeoffs easier to see. When money is tight, every choice can feel stressful. When savings exist, choices become clearer. You are not deciding between spending and survival. You are comparing two reasonable options and choosing the one that fits your priorities.
 
-Tradeoffs do not mean denial. They mean alignment. Choosing to save for one goal often means spending less on something else, not on everything. Intentional tradeoffs reduce regret because the choice reflects priorities rather than impulse.
-
-Learning to recognize opportunity cost helps you move from reactive spending to deliberate decision-making. You stop asking whether you can afford something and start asking what it costs you in terms of future options.`,
+Tradeoffs do not mean saying no to everything. They mean alignment. Choosing to save for one goal often means spending less on something else, not giving up all fun. When you recognize opportunity cost, you stop asking only, "Can I afford this?" and start asking, "What future option am I trading away?"`,
 
   flashcards: [
     {

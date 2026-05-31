@@ -7,13 +7,13 @@ export const lesson2TypesOfDebt: Lesson = {
   moduleOverview: 'This lesson explains that not all debt works the same way. You learn the difference between productive debt and consumptive debt, and how choosing the wrong type creates long-term stress.',
   realityHook: 'Two people borrow the same amount of money. One uses it to gain skills and increase future income. The other uses it for short-term spending that loses value quickly. Years later, their outcomes look very different. The difference comes from the type of debt chosen.',
   outcomePreview: 'Debt types matter more than debt amount • Some debt supports future growth • Some debt creates long-term pressure • Intent determines outcomes',
-  microLesson: `Debt becomes powerful or harmful based on how it is used. Productive debt supports future value. It helps increase income, skills, or opportunities over time. Consumptive debt pays for things that lose value quickly and do not improve future earning ability.
+  microLesson: `Debt becomes helpful or harmful based on how it is used. Productive debt supports future value by helping increase income, skills, or opportunities over time. Consumptive debt pays for things that lose value quickly and do not improve your future earning ability.
 
-Productive debt often has a long-term payoff. Education, tools, or training can increase income for years. This type of debt still requires discipline, but it usually creates something valuable in return.
+Productive debt can have a long-term payoff. Education, tools, or training may help you earn more for years. This type of debt still requires discipline, planning, and repayment, but it usually creates something useful in return.
 
-Consumptive debt feels easier in the moment. Credit cards and high-interest loans often fund convenience or status. These purchases disappear quickly, but the payments remain. This creates pressure without long-term benefit.
+Consumptive debt can feel easy in the moment. Credit cards and high-interest loans often fund convenience, status, or impulse purchases. The item may lose value quickly, but the payments remain. That creates pressure without much long-term benefit.
 
-Smart debt decisions focus on future impact. Asking how debt improves your life later helps avoid regret and stress.`,
+Smart debt decisions focus on future impact. Before borrowing, ask what this debt will do for future you. If it builds skills, stability, or opportunity, it may be worth considering. If it only buys a short-term feeling, slow down before signing up.`,
   flashcards: [
     {
       term: 'Productive Debt',

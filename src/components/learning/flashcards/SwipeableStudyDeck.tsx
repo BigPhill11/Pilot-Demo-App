@@ -202,11 +202,7 @@ const SwipeableStudyDeck: React.FC<SwipeableStudyDeckProps> = ({
   if (cards.length === 0) {
     return (
       <div
-        className="rounded-2xl p-8 text-center"
-        style={{
-          background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
-          border: '2px solid #a7f3d0',
-        }}
+        className="rounded-2xl p-8 text-center bg-gradient-to-br from-emerald-50 to-emerald-100 border-2 border-emerald-200 dark:from-emerald-950 dark:to-emerald-900 dark:border-emerald-800"
       >
         <p className="text-emerald-800 mb-4">No flashcards in this deck.</p>
         <Button onClick={onBack} className="bg-emerald-600 hover:bg-emerald-700 text-white">
@@ -229,10 +225,8 @@ const SwipeableStudyDeck: React.FC<SwipeableStudyDeckProps> = ({
         className="max-w-md mx-auto"
       >
         <div
-          className="rounded-3xl overflow-hidden"
+          className="rounded-3xl overflow-hidden bg-gradient-to-br from-emerald-50 to-emerald-100 border-2 border-emerald-200 dark:from-emerald-950 dark:to-emerald-900 dark:border-emerald-800"
           style={{
-            background: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)',
-            border: '2px solid #a7f3d0',
             boxShadow: '0 8px 32px rgba(5,150,105,0.14)',
           }}
         >
@@ -240,8 +234,7 @@ const SwipeableStudyDeck: React.FC<SwipeableStudyDeckProps> = ({
           <div className="text-center pt-8 pb-4 px-6">
             <div className="text-5xl mb-3">🎉</div>
             <h2
-              className="text-2xl font-bold mb-1"
-              style={{ color: '#065f46' }}
+              className="text-2xl font-bold mb-1 text-emerald-900 dark:text-emerald-100"
             >
               Session Complete!
             </h2>
@@ -253,12 +246,11 @@ const SwipeableStudyDeck: React.FC<SwipeableStudyDeckProps> = ({
             <div className="grid grid-cols-2 gap-3">
               <div
                 className="rounded-2xl p-4 text-center"
-                style={{ background: 'rgba(255,255,255,0.6)' }}
+                className="bg-white/60 dark:bg-emerald-900/40"
               >
                 <Trophy className="h-7 w-7 mx-auto text-emerald-600 mb-2" />
                 <div
-                  className="text-2xl font-bold"
-                  style={{ color: '#065f46' }}
+                  className="text-2xl font-bold text-emerald-900 dark:text-emerald-100"
                 >
                   {masteredCount}
                 </div>
@@ -266,7 +258,7 @@ const SwipeableStudyDeck: React.FC<SwipeableStudyDeckProps> = ({
               </div>
               <div
                 className="rounded-2xl p-4 text-center"
-                style={{ background: 'rgba(255,255,255,0.6)' }}
+                className="bg-white/60 dark:bg-emerald-900/40"
               >
                 <RotateCcw className="h-7 w-7 mx-auto text-amber-500 mb-2" />
                 <div className="text-2xl font-bold text-amber-700">
@@ -279,14 +271,13 @@ const SwipeableStudyDeck: React.FC<SwipeableStudyDeckProps> = ({
             {/* Accuracy */}
             <div
               className="rounded-2xl p-4 text-center"
-              style={{ background: 'rgba(255,255,255,0.6)' }}
+              className="bg-white/60 dark:bg-emerald-900/40"
             >
               <div className="text-xs text-emerald-700 mb-1 uppercase tracking-wide font-semibold">
                 Accuracy
               </div>
               <div
-                className="text-4xl font-bold"
-                style={{ color: '#065f46' }}
+                className="text-4xl font-bold text-emerald-900 dark:text-emerald-100"
               >
                 {accuracy}%
               </div>
@@ -295,11 +286,10 @@ const SwipeableStudyDeck: React.FC<SwipeableStudyDeckProps> = ({
             {/* Rewards */}
             <div
               className="rounded-2xl p-4"
-              style={{ background: 'rgba(255,255,255,0.6)' }}
+              className="bg-white/60 dark:bg-emerald-900/40"
             >
               <h3
-                className="font-semibold text-center text-sm mb-3 uppercase tracking-wide"
-                style={{ color: '#065f46' }}
+                className="font-semibold text-center text-sm mb-3 uppercase tracking-wide text-emerald-900 dark:text-emerald-100"
               >
                 Empire Rewards Earned
               </h3>
@@ -307,8 +297,7 @@ const SwipeableStudyDeck: React.FC<SwipeableStudyDeckProps> = ({
                 <div className="flex items-center gap-2">
                   <Coins className="h-5 w-5 text-amber-500" />
                   <span
-                    className="text-xl font-bold"
-                    style={{ color: '#065f46' }}
+                    className="text-xl font-bold text-emerald-900 dark:text-emerald-100"
                   >
                     +{totalBamboo} 🎋
                   </span>

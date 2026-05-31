@@ -16,13 +16,13 @@ They asked at the right moment.
 
 You decide whether to do nothing or speak up.`,
   outcomePreview: 'Mastering this lesson increases your negotiation success rate and unlocks wage adjustment opportunities later.',
-  microLesson: `Pay does not increase just because time passes. It increases when your contribution changes in a way that others can feel. Most people avoid negotiation because they believe asking is awkward or risky. In reality, asking without preparation is what creates discomfort, not the conversation itself.
+  microLesson: `Pay does not rise just because time passes. Phil can wait months and still stay at the same rate if nothing about his visible value changes.
 
-Negotiation works best after value is already visible. That value shows up through results, reliability, or responsibility. When your work reduces problems, improves outcomes, or saves time for others, replacement becomes harder. At that point, pay that stays flat feels misaligned.
+Negotiation works best after Phil creates value others can see. When he solves a problem, saves time, or takes responsibility, the ask has a real reason behind it.
 
-Timing matters because leverage changes over time. Asking before value is proven feels premature. Asking long after value is obvious feels overdue. The strongest moment is when your contribution is clear and fresh. Evidence anchors the conversation and removes emotion.
+Evidence makes the conversation calmer. Phil brings clear examples of results instead of only saying he worked hard or feels underpaid.
 
-Negotiation is not a demand. It is a recalibration. You are aligning pay with impact. When that alignment makes sense, negotiation feels less like risk and more like maintenance.`,
+Good negotiation is not a random demand. It is a pay adjustment at the right moment, when impact and pay no longer match.`,
   flashcards: [
     {
       term: 'Negotiation',

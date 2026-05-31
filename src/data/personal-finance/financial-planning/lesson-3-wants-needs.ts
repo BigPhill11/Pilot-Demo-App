@@ -21,13 +21,13 @@ You decide whether money supports comfort or progress.`,
 
   outcomePreview: 'Mastering this lesson unlocks the Spending Lens, allowing purchases to be evaluated by purpose instead of impulse.',
 
-  microLesson: `Most financial frustration does not come from spending itself. It comes from spending that conflicts with goals. When wants, needs, and targets are mixed together, money leaks quietly and progress feels slower than expected, even with good income.
+  microLesson: `Spending itself is not the problem. Phil gets frustrated when spending quietly pulls money away from the goals he already chose.
 
-Needs are expenses required to function. Wants improve comfort or enjoyment. Targets are intentional uses of money tied directly to goals. The mistake is treating wants like needs or assuming targets will happen automatically if money is left over. Leftover money rarely exists without intention.
+Needs keep life stable. Wants add comfort. Targets move Phil toward a specific goal. Mixing them together makes money hard to control.
 
-Clear separation reduces guilt and friction. Wants are allowed when chosen deliberately. Needs are funded first without debate. Targets receive priority because they move you closer to outcomes you already decided matter.
+Clear labels reduce guilt. Phil can enjoy wants when he chooses them honestly, while needs and targets still get protected.
 
-Discipline becomes less necessary when categories are clear. Decisions become easier because money already has a job before temptation appears.`,
+Decisions get easier when money has a job before temptation appears. Phil does not need to debate every purchase from scratch.`,
 
   flashcards: [
     {

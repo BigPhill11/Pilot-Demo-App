@@ -7,18 +7,13 @@ export const lesson1WhatWealthIs: Lesson = {
   moduleOverview: 'Understanding what wealth truly means and why it differs fundamentally from income.',
   realityHook: "You know someone who makes a lot of money but always feels stressed. Their paycheck looks big, but their savings stay small and their bills stay high. You also know someone who earns less but feels calm because they own assets and have a plan. The difference is not income size. The difference is what they own and how stable their system is.",
   outcomePreview: "You'll understand the difference between income and wealth, and why owning assets matters more than looking rich.",
-  microLesson: `Wealth is what you own that keeps working even when you stop working. Income is money you receive for work you do, like a paycheck. Wealth usually comes from assets, like investments, businesses, or property. Assets can grow in value and can create cash flow.
+  microLesson: `Wealth is what you own that can keep working even when you stop working. Income is money you receive for work you do, like a paycheck. Wealth usually comes from assets, such as investments, businesses, or property. Assets can grow in value and sometimes create cash flow.
 
-**Income ≠ Wealth**
-A person can earn a lot and still have low wealth. That happens when spending rises with income and assets never build. A person can earn less and still build wealth if they save, invest, and keep expenses controlled.
+Income and wealth are not the same thing. A person can earn a lot and still have low wealth if spending rises with every raise and assets never build. Another person can earn less and still build wealth if they save, invest, and keep expenses controlled.
 
-**Wealth = Ownership + Systems**
-Wealth is not about showing status. Wealth is about building a system that creates stability and options. Your net worth (assets minus liabilities) is the true measure.
+Wealth is not about showing status. It is about ownership and systems. Your net worth, which is what you own minus what you owe, is the real measure. The goal is to build a system that creates stability, choices, and room to breathe.
 
-**Resilience is Part of Wealth**
-Wealth also includes resilience—the ability to handle problems without panic. Savings help with emergencies. Investments help with long-term growth. Skills help with earning. Good planning connects all of these pieces.
-
-If you understand wealth, you stop chasing appearances. You start building ownership, stability, and long-term freedom.`,
+Resilience is part of wealth too. Savings help with emergencies. Investments help with long-term growth. Skills help with earning. Good planning connects those pieces so you stop chasing appearances and start building ownership, stability, and long-term freedom.`,
   flashcards: [
     {
       term: 'Wealth',

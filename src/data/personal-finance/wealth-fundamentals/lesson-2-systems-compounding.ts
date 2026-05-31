@@ -7,21 +7,13 @@ export const lesson2SystemsCompounding: Lesson = {
   moduleOverview: 'How systems build wealth more reliably than motivation, and why small habits compound into massive results.',
   realityHook: "You notice one student always seems prepared and calm. They turn in work on time and handle stress better than others. They're not smarter or working nonstop. They follow simple routines every day that make life easier over time. Wealth works the same way through systems.",
   outcomePreview: "You'll understand how systems guide behavior automatically and why consistency beats motivation every time.",
-  microLesson: `A system is a set of rules or routines that guide behavior without constant decision making. Systems reduce reliance on motivation, which rises and falls every day. When systems exist, progress continues even during low energy periods.
+  microLesson: `A system is a set of rules or routines that guides behavior without constant decision-making. Systems reduce reliance on motivation, which rises and falls every day. When systems exist, progress can continue even during busy, tired, or low-energy periods.
 
-**Compounding Habits**
-Small actions repeated consistently grow into large outcomes over time. Saving small amounts, investing regularly, and controlling spending may feel slow at first, but results build quietly.
+Small actions repeated consistently can grow into large outcomes over time. Saving small amounts, investing regularly, and controlling spending may feel slow at first, but results build quietly. Compounding works because each small action becomes part of the next one.
 
-**Why Systems Beat Motivation**
-Motivation is unreliable—it comes and goes based on mood, stress, and circumstances. Systems run regardless of how you feel. Automatic saving, planned investing, and spending limits remove emotion from decisions.
+Systems beat motivation because motivation is unreliable. It changes with mood, stress, and circumstances. Automatic saving, planned investing, and spending limits remove emotion from routine decisions so your plan keeps running even when you do not feel inspired.
 
-**The Power of Automation**
-People who rely only on motivation often stop when things feel hard. People with systems continue without thinking. Automation removes friction and ensures progress happens.
-
-**Feedback Loops**
-Positive feedback loops reinforce good habits. Seeing savings grow motivates continued saving. Early wins create momentum.
-
-If you want long-term results, design systems that work even when you feel distracted, tired, or emotional.`,
+Feedback loops help strong systems get stronger. Seeing savings grow can motivate continued saving, and early wins create momentum. If you want long-term results, design systems that work even when you feel distracted, tired, or emotional.`,
   flashcards: [
     {
       term: 'System',

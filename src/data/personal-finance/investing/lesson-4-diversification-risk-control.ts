@@ -13,13 +13,13 @@ Understanding diversification and risk control helps you build resilient portfol
 
   outcomePreview: 'Mastering this lesson helps you build portfolios that survive unexpected events and grow over time.',
 
-  microLesson: `Diversification means spreading money across many investments instead of relying on one outcome. No matter how confident someone feels, unexpected events always happen. Diversification plans for uncertainty instead of pretending it does not exist.
+  microLesson: `Diversification means spreading money across many investments instead of relying on one outcome. No matter how confident someone feels, surprises still happen. Diversification plans for uncertainty instead of pretending it does not exist.
 
-Risk control focuses on survival. If one bad decision can wipe everything out, growth stops permanently. Investors who survive downturns allow time and consistency to work.
+Risk control is about survival. If one bad decision can wipe everything out, growth stops before time can help. Investors who survive downturns give consistency and compounding the chance to work.
 
-Concentration feels exciting because wins look bigger. Losses grow the same way. A single failure can erase years of progress. Diversification trades extreme upside for stability and endurance.
+Concentration feels exciting because wins can look bigger. The problem is that losses grow the same way. A single failure can erase years of progress. Diversification trades the thrill of one huge bet for stability and endurance.
 
-You do not diversify to win quickly. You diversify to stay in the game long enough for growth to matter.`,
+You do not diversify to win quickly. You diversify to stay in the game. The goal is not to avoid every drop. The goal is to prevent one bad outcome from ending the whole journey before growth has time to matter.`,
 
   flashcards: [
     {

@@ -57,10 +57,12 @@ const ComicPanel: React.FC<ComicPanelProps> = ({
           )}
         >
           <img
+            key={resolvedSrc}
             src={resolvedSrc}
             alt={caption || 'Comic panel'}
             className="h-full w-full object-cover"
-            loading="lazy"
+            loading="eager"
+            decoding="async"
             onError={() => {
               if (imageFallbackUrl && resolvedSrc !== imageFallbackUrl) {
                 setResolvedSrc(imageFallbackUrl);

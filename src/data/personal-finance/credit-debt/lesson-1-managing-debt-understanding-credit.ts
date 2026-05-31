@@ -7,13 +7,13 @@ export const lesson1ManagingDebtUnderstandingCredit: Lesson = {
   moduleOverview: 'This lesson explains what debt and credit actually are and how they affect future opportunities. You learn why some debt helps growth, why some debt causes stress, and why credit history matters early.',
   realityHook: 'You want to buy something important, like a phone or help with future housing. One person gets approved easily and pays less over time. Another person gets denied or pays much more. The difference is not intelligence or effort. The difference is how debt and credit were handled earlier.',
   outcomePreview: 'Debt creates future obligations • Credit measures repayment behavior • Some debt supports growth • Early habits affect future access',
-  microLesson: `Debt is money you borrow with an agreement to repay it later. Every debt comes with rules, including interest and deadlines. Debt itself is not good or bad. How debt is used and managed determines its impact.
+  microLesson: `Debt is money you borrow with an agreement to repay it later. Every debt comes with rules, like interest, deadlines, and required payments. Debt itself is not automatically good or bad. What matters is why you borrow and how carefully you manage it.
 
-Credit reflects trust built over time. Lenders look at your credit history to see if you follow agreements. Strong credit lowers costs and increases access. Weak credit makes borrowing harder and more expensive.
+Credit is trust built over time. Lenders look at your credit history to see whether you follow agreements. Strong credit can lower costs and open doors. Weak credit can make borrowing harder, more expensive, or unavailable when you need it.
 
-Some debt supports long-term progress. Education or tools that increase earning ability often fall into this category. Other debt funds short-term spending and loses value quickly. That type of debt creates pressure without future benefit.
+Some debt can support long-term progress. Education, tools, or training that increase earning ability can create future value. Other debt pays for short-term spending that loses value quickly. That kind of debt creates pressure without giving much back later.
 
-Understanding debt early gives you control. Credit rewards consistent behavior, not last-minute effort.`,
+Understanding debt early gives you more control. Credit rewards consistent behavior, not last-minute effort. The sooner you learn the rules, the easier it is to borrow carefully, avoid traps, and build a record that helps future opportunities.`,
   flashcards: [
     {
       term: 'Debt',

@@ -22,15 +22,13 @@ Should saving depend on willpower, or should it run without asking you every tim
 
   outcomePreview: 'Mastering this lesson unlocks saving automation, habit protection, and long-term consistency mechanics.',
 
-  microLesson: `Saving works best when it requires as little effort as possible. Any system that depends on remembering, deciding, or feeling motivated will eventually fail, especially when life becomes busy or stressful. Automation removes these weak points by making saving happen without ongoing input.
+  microLesson: `Saving works best when it requires as little effort as possible. Any system that depends on remembering, deciding, or feeling motivated will eventually get tested, especially when life gets busy. Automation removes those weak spots by making saving happen without needing your attention every time.
 
-Automating savings means setting up a process where money moves on a schedule or trigger you choose, such as every paycheck or once a week. The amount does not need to be large to be effective. What matters is that the action happens consistently, regardless of mood, timing, or distractions.
+Automating savings means money moves on a schedule or trigger you choose, like payday or once a week. The amount does not need to be huge to matter. What matters is that the action happens consistently, no matter your mood, your schedule, or how distracted life gets.
 
-Maintenance matters because life does not stay the same. Expenses shift, income changes, and priorities evolve. A saving system that is never reviewed can slowly break without you noticing. Maintenance is not about constant tweaking. It is about occasional check-ins to confirm the system still fits your situation.
+Maintenance matters because life does not stay the same. Expenses shift, income changes, and priorities evolve. A saving system that is never reviewed can slowly stop fitting your situation. Maintenance is not constant tweaking. It is the occasional check-in that keeps the system healthy.
 
-People often stop saving not because they chose to, but because friction returned. Transfers became manual. Accounts were hard to access. The system relied on effort again. Automation protects against this by keeping saving in motion even when attention is elsewhere.
-
-Strong saving habits feel boring. That is a sign the system is working. When saving runs quietly in the background, your energy stays focused on higher-level decisions instead of routine ones.`,
+People often stop saving because friction sneaks back in. Transfers become manual, accounts feel annoying to use, or the system starts relying on effort again. Strong saving habits usually feel boring, and that is a good sign. When saving runs quietly in the background, your energy is free for bigger decisions.`,
 
   flashcards: [
     {

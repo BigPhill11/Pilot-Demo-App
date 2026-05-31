@@ -7,35 +7,13 @@ export const lesson4NegotiationAdvancement: Lesson = {
   moduleOverview: "The difference between people who advance quickly and those who don't often isn't talent—it's knowing how to ask.",
   realityHook: "Failing to negotiate your starting salary can cost you $500,000+ over your career. Yet 57% of workers never negotiate at all.",
   outcomePreview: "You'll master the art of negotiation and learn how to strategically advance your career.",
-  microLesson: `Negotiation isn't confrontational—it's collaborative problem-solving.
+  microLesson: `Negotiation is not a fight. It is a business conversation about fair value, shared goals, and what both sides need to make the agreement work.
 
-**The Negotiation Mindset Shift**
-You're not asking for a favor. You're having a business conversation about fair value exchange.
+Strong negotiation uses data instead of emotion. Market research, documented impact, and a clear request make the conversation easier to understand and harder to dismiss.
 
-**The 5 Rules of Salary Negotiation**
-1. **Never give the first number**: Let them anchor first
-2. **Always negotiate**: Even 10% compounds massively
-3. **Use data**: "Based on market research..." not "I need..."
-4. **Negotiate the whole package**: Base, bonus, equity, title, flexibility
-5. **Get it in writing**: Verbal promises mean nothing
+Your leverage improves when you have alternatives. A backup option, even one you never use, gives you confidence and makes the current offer less risky.
 
-**The Power of Alternatives**
-Your negotiating power = Your alternatives. The person with more options wins.
-- BATNA: Best Alternative To Negotiated Agreement
-- Always have a Plan B, even if you don't use it
-
-**Visibility > Ability**
-Hard truth: Great work in the dark doesn't get rewarded. You need:
-- **Documentation**: Track your wins and impact
-- **Visibility**: Make sure decision-makers know your value
-- **Advocates**: People who speak up for you when you're not in the room
-
-**The Advancement Formula**
-1. Do excellent work (baseline)
-2. Document your impact with numbers
-3. Build relationships with decision-makers
-4. Ask explicitly for what you want
-5. Make it easy for them to say yes`,
+Career advancement requires visibility. Excellent work matters, but documenting results, building advocates, and asking clearly help decision-makers say yes.`,
   flashcards: [
     {
       term: 'BATNA',

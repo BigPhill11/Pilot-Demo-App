@@ -34,34 +34,6 @@ export async function callOpenAIJson(
   return JSON.parse(cleaned);
 }
 
-export async function transcribeWithWhisper(
-  apiKey: string,
-  audioBlob: Blob,
-  filename = 'audio.mp4'
-): Promise<{ text: string; segments?: { start: number; end: number; text: string }[] }> {
-  const form = new FormData();
-  form.append('file', audioBlob, filename);
-  form.append('model', 'whisper-1');
-  form.append('response_format', 'verbose_json');
-
-  const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${apiKey}` },
-    body: form,
-  });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`Whisper API error: ${response.status} ${errText}`);
-  }
-
-  const data = await response.json();
-  return {
-    text: data.text ?? '',
-    segments: data.segments,
-  };
-}
-
 export interface SuggestedClip {
   start_time: number;
   end_time: number;

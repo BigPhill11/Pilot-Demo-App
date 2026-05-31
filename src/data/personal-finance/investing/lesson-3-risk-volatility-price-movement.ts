@@ -13,13 +13,13 @@ Understanding this distinction helps you stay calm during market turbulence.`,
 
   outcomePreview: 'Mastering this lesson helps you distinguish between normal price movement and actual risk to your investments.',
 
-  microLesson: `Prices move because people react emotionally. News, rumors, fear, and excitement cause buying and selling every day. This constant movement is called volatility.
+  microLesson: `Prices move because people react emotionally. News, rumors, fear, and excitement can cause buying and selling every day. That constant up-and-down movement is called volatility.
 
-Volatility feels scary because losses show up fast on screens. Real risk is different. Real risk means losing money permanently, usually because a business fails or money is needed too soon.
+Volatility feels scary because losses show up fast on screens. Real risk is different. Real risk means losing money permanently, often because a business fails, an investment is too concentrated, or money is needed too soon.
 
-Time changes how risk behaves. Over short periods, volatility controls outcomes and emotions run high. Over long periods, business performance matters more than daily price movement.
+Time changes how risk behaves. Over short periods, volatility can control your emotions. Over long periods, business performance matters more than daily price movement. The longer the timeline, the easier it is to separate noise from real damage.
 
-Understanding volatility helps investors stay calm. Calm decisions lead to better long-term results.`,
+Understanding volatility helps investors stay calm when the screen turns red. Calm does not mean ignoring risk. It means asking the better question: did the business change, or did the price just move? Better questions lead to better long-term decisions.`,
 
   flashcards: [
     {

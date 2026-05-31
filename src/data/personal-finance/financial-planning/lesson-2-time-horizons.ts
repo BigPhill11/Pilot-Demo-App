@@ -22,13 +22,13 @@ You decide how Panda Phil should use time, not effort.`,
 
   outcomePreview: 'Mastering this lesson unlocks the Goal Timeline and allows future choices to be evaluated by short-term versus long-term impact.',
 
-  microLesson: `Every financial goal lives on a timeline. Some goals demand money soon, while others benefit from patience. When timelines are unclear, goals compete silently for the same dollars, creating tension and frustration even when income is sufficient.
+  microLesson: `Every financial goal lives on a timeline. Phil’s bike, travel fund, and long-term security cannot all demand the same coin jar at the same time.
 
-Short-term goals prioritize certainty and accessibility. They require money to be available when needed. Long-term goals prioritize growth and flexibility. They can tolerate waiting and short-term volatility. Treating both the same leads to poor decisions, either taking too much risk early or being too conservative for the future.
+Short-term goals need stable, available money. Long-term goals can use patience because time gives money room to grow.
 
-Clear time horizons force tradeoffs. Money used for a near-term goal cannot simultaneously serve a long-term one. This is not a failure of discipline. It is a reality of limited resources. Assigning timelines makes these tradeoffs explicit and manageable.
+Timelines make tradeoffs visible. When Phil funds one goal first, he can see what waits instead of feeling like everything is failing.
 
-Progress improves when goals are grouped by when they matter, not just by how important they feel. Time creates structure, and structure improves follow-through.`,
+Goals work better when grouped by when they matter. Time creates structure, and structure makes follow-through easier.`,
 
   flashcards: [
     {

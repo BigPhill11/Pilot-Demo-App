@@ -21,13 +21,13 @@ You decide whether progress is measured by noise or by direction.`,
 
   outcomePreview: 'Mastering this lesson unlocks the Progress Tracker, allowing success to be measured against goals instead of external benchmarks.',
 
-  microLesson: `Comparison creates false signals. When you judge progress based on other people's outcomes, you lose context about their goals, timelines, and tradeoffs. This leads to frustration even when your own plan is working as intended.
+  microLesson: `Comparison creates false signals. Phil only sees another panda’s highlight, not their goals, timeline, tradeoffs, or starting point.
 
-Goal-based measurement replaces comparison with clarity. Instead of asking whether you are ahead or behind others, you ask whether your actions move you closer to what you decided matters. This keeps decisions grounded in purpose rather than emotion.
+Goal-based measurement brings clarity back. Phil asks whether his actions are moving him closer to what he decided matters.
 
-Progress also looks different at different stages. Early phases often feel slow because foundations are being built. Comparing early-stage effort to someone else's later-stage outcome creates pressure to abandon good plans prematurely.
+Early progress can look slow because foundations are being built. A quiet month can still be part of a working plan.
 
-Measuring progress against your own goals protects consistency. Consistency compounds. Comparison interrupts it.`,
+Consistency compounds when Phil keeps measuring against his own path. Comparison interrupts that consistency and tempts him to switch too soon.`,
 
   flashcards: [
     {

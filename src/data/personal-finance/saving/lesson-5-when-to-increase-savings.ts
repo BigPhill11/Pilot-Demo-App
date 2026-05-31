@@ -19,15 +19,13 @@ How do you know when saving more is helping and when it is quietly hurting?`,
 
   outcomePreview: 'Mastering this lesson unlocks adaptive saving controls and progression-based saving increases.',
 
-  microLesson: `Saving is not a one-direction decision. There are moments when increasing savings accelerates progress, and moments when holding steady or pausing protects stability. Treating saving as something that must always increase can create pressure that undermines the entire system.
+  microLesson: `Saving is not a one-direction decision. Sometimes increasing savings speeds up progress. Other times, holding steady or pausing protects stability. Treating saving like it must always go up can create pressure that weakens the whole system.
 
-The right time to increase savings is when your core expenses feel manageable and your emergency fund covers common disruptions. At this stage, extra savings do not create stress because the basics are already protected. Increasing savings then strengthens flexibility and speeds future options without destabilizing daily life.
+The right time to increase savings is when your core expenses feel manageable and your emergency fund can handle common disruptions. At that point, extra saving does not create daily stress. It strengthens flexibility and speeds up future options without making normal life feel unstable.
 
-There are also times when saving more is not the best move. During income changes, rising fixed costs, or unstable periods, forcing higher savings can lead to burnout, anxiety, or repeated withdrawals. These withdrawals break confidence and weaken the habit. Pausing or holding steady preserves consistency, which matters more than temporary increases.
+There are also times when saving more is not the smartest move. During income changes, rising fixed costs, or unstable periods, forcing higher savings can lead to burnout, anxiety, or repeated withdrawals. Those withdrawals can break confidence. Holding steady can protect the habit.
 
-Smart saving adjusts to reality. Progress comes from matching saving intensity to your current capacity, not from pushing blindly. Long-term success depends on staying in motion without snapping the system under pressure.
-
-Saving is strongest when it responds to conditions instead of ignoring them.`,
+Smart saving adjusts to reality. Progress comes from matching your saving intensity to your current capacity, not pushing blindly. Long-term success depends on staying in motion without snapping the system under pressure. Saving is strongest when it responds to conditions instead of ignoring them.`,
 
   flashcards: [
     {

@@ -94,6 +94,7 @@ const ClipProductionBoard: React.FC = () => {
   const [uploadOpen, setUploadOpen] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [pilotMetrics, setPilotMetrics] = useState<PhilsFriendsPilotMetrics | null>(null);
+  const [activeTab, setActiveTab] = useState<string>('review');
 
   const fetchBoard = useCallback(async () => {
     setLoading(true);
@@ -148,12 +149,21 @@ const ClipProductionBoard: React.FC = () => {
   const runSegmentation = async (videoId: string) => {
     setProcessingId(videoId);
     try {
-      const { error } = await supabase.functions.invoke('ingest-video', {
+      const { data, error } = await supabase.functions.invoke('ingest-video', {
         body: { videoId },
       });
       if (error) throw error;
 
-      toast.success('Clips suggested', { description: 'Review draft clips below before publishing.' });
+      if (data?.status === 'pending_transcript') {
+        toast.info('Still transcribing…', {
+          description: data.message ?? 'Click Segment again in 2–3 minutes to finish.',
+          duration: 8000,
+        });
+      } else if (data?.success) {
+        toast.success(`${data.clipsCreated ?? 0} clips suggested`, {
+          description: 'Review draft clips below before publishing.',
+        });
+      }
       fetchBoard();
     } catch (e) {
       console.error(e);
@@ -294,7 +304,7 @@ const ClipProductionBoard: React.FC = () => {
         )}
       </div>
 
-      <Tabs defaultValue="review">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="review">Review queue</TabsTrigger>
           <TabsTrigger value="sources">Source videos</TabsTrigger>
@@ -524,11 +534,16 @@ const ClipProductionBoard: React.FC = () => {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline">
-                          {PRODUCTION_STATUS_LABELS[
-                            (v.production_status ?? 'ingested') as ProductionStatus
-                          ] ?? v.production_status}
-                        </Badge>
+                        <div className="flex flex-col gap-1">
+                          <Badge variant="outline">
+                            {PRODUCTION_STATUS_LABELS[
+                              (v.production_status ?? 'ingested') as ProductionStatus
+                            ] ?? v.production_status}
+                          </Badge>
+                          {v.processing_status === 'pending_transcript' && (
+                            <Badge variant="secondary" className="text-xs">Transcribing…</Badge>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell>
                         <Button
@@ -542,7 +557,7 @@ const ClipProductionBoard: React.FC = () => {
                           ) : (
                             <Wand2 className="h-4 w-4 mr-1" />
                           )}
-                          Segment
+                          {v.processing_status === 'pending_transcript' ? 'Check status' : 'Segment'}
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -564,6 +579,7 @@ const ClipProductionBoard: React.FC = () => {
         onVideoCreated={() => {
           setUploadOpen(false);
           fetchBoard();
+          setActiveTab('sources'); // show the new draft so admin can trigger segmentation
         }}
       />
     </div>

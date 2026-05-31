@@ -13,13 +13,13 @@ Nothing about your future changed.
 
 You decide whether to upgrade comfort or upgrade options.`,
   outcomePreview: 'Mastering this lesson unlocks reinvestment mechanics and future income transition opportunities.',
-  microLesson: `Active income gives you choice. The mistake many people make is using every increase in income to increase comfort. When spending rises at the same speed as earnings, progress stalls even though life feels fuller. Motion replaces momentum.
+  microLesson: `Active income gives Phil choices. A bigger paycheck can buy comfort today, or it can create more options for tomorrow.
 
-Using active income as a launchpad means directing early earnings toward things that expand future earning power. That includes learning skills, buying time, and creating flexibility. Small sacrifices early often create large advantages later because they reduce pressure and increase options.
+If every raise turns into new spending, progress stalls. Phil may feel busier and more comfortable, but his future has not changed.
 
-Wealth builders treat early income like fuel, not a reward. Fuel goes into the engine so the system can move faster and farther. When income is reinvested instead of consumed, it creates runway. Runway allows experimentation, learning, and smarter risk.
+Reinvestment turns income into fuel. Phil can use money for skills, savings, tools, or time that expands his earning power.
 
-The question that matters is not how much you earn today. The question is what today's income makes possible tomorrow.`,
+The question is not only how much Phil earns today. The question is what today’s income makes possible next.`,
   flashcards: [
     {
       term: 'Lifestyle inflation',

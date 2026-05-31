@@ -208,24 +208,25 @@ const VideoUploadDialog: React.FC<VideoUploadDialogProps> = ({
         body: { videoId }
       });
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
-      if (data?.needsTranscript) {
-        toast.warning('Video stored, but needs a transcript', {
-          description: data.message ?? 'Upload a shorter MP4 or add captions before clipping.',
+      if (data?.status === 'pending_transcript') {
+        toast.info('Transcription in progress', {
+          description: data.message ?? 'Open the Production Board in a few minutes and click Segment to finish.',
+          duration: 8000,
         });
         return;
       }
 
-      toast.success('Video ingested', {
-        description: 'Clips will appear in the review queue when processing finishes.',
-      });
-    } catch (error) {
-      console.error('Error triggering ingestion:', error);
-      toast.warning('Video stored, but clipping did not start', {
-        description: error instanceof Error ? error.message : 'Try running segmentation from the review board.',
+      if (data?.success) {
+        toast.success(`${data.clipsCreated ?? 0} clips generated`, {
+          description: 'Review and publish them from the Production Board.',
+        });
+      }
+    } catch (err) {
+      console.error('Error triggering ingestion:', err);
+      toast.warning('Video saved — clipping did not start', {
+        description: err instanceof Error ? err.message : 'Open the Production Board and click Segment to retry.',
       });
     }
   };

@@ -7,13 +7,13 @@ export const lesson4PayingDownDebt: Lesson = {
   moduleOverview: 'This lesson explains practical strategies for paying down debt and avoiding common traps. You learn how interest works against you, how payoff order matters, and how structure creates momentum.',
   realityHook: 'You check your balance and feel stuck. Payments go out every month, but the total barely moves. Interest keeps adding pressure, and motivation drops. A clear payoff plan turns confusion into progress.',
   outcomePreview: 'Interest accelerates debt growth • Payoff order changes outcomes • Structure builds momentum • Traps slow progress',
-  microLesson: `Debt shrinks only when payments exceed interest. When interest is high, balances grow faster than expected. Understanding this math helps you choose smarter strategies.
+  microLesson: `Debt shrinks only when your payments beat the interest being added. When interest is high, balances can grow faster than expected. Understanding that math helps you see why some debts feel stuck even when payments are happening.
 
-Payoff order matters. Targeting high interest balances first reduces total cost. Targeting small balances first can increase motivation. Both approaches work when used consistently.
+Payoff order matters. Targeting high-interest balances first can reduce the total cost. Targeting small balances first can create quick wins and motivation. Both approaches can work when you choose one and use it consistently.
 
-Traps appear when minimum payments feel safe. Minimums keep accounts current but extend debt for years. Fees, missed payments, and new borrowing slow progress further.
+Debt traps appear when minimum payments feel safer than they really are. Minimums keep accounts current, but they can stretch payoff for years. Fees, missed payments, and new borrowing slow progress even more.
 
-Structure turns effort into results. A written plan, automatic payments, and clear goals reduce stress and speed payoff.`,
+Structure turns effort into results. A written payoff plan, automatic payments, and clear goals reduce stress because you know where extra money should go. Debt payoff feels less overwhelming when every payment has a job.`,
   flashcards: [
     {
       term: 'Interest Accrual',
