@@ -245,8 +245,7 @@ const SwipeableStudyDeck: React.FC<SwipeableStudyDeckProps> = ({
             {/* Stats grid */}
             <div className="grid grid-cols-2 gap-3">
               <div
-                className="rounded-2xl p-4 text-center"
-                className="bg-white/60 dark:bg-emerald-900/40"
+                className="rounded-2xl p-4 text-center bg-white/60 dark:bg-emerald-900/40"
               >
                 <Trophy className="h-7 w-7 mx-auto text-emerald-600 mb-2" />
                 <div
@@ -257,8 +256,7 @@ const SwipeableStudyDeck: React.FC<SwipeableStudyDeckProps> = ({
                 <div className="text-xs text-emerald-700">Mastered</div>
               </div>
               <div
-                className="rounded-2xl p-4 text-center"
-                className="bg-white/60 dark:bg-emerald-900/40"
+                className="rounded-2xl p-4 text-center bg-white/60 dark:bg-emerald-900/40"
               >
                 <RotateCcw className="h-7 w-7 mx-auto text-amber-500 mb-2" />
                 <div className="text-2xl font-bold text-amber-700">
@@ -270,8 +268,7 @@ const SwipeableStudyDeck: React.FC<SwipeableStudyDeckProps> = ({
 
             {/* Accuracy */}
             <div
-              className="rounded-2xl p-4 text-center"
-              className="bg-white/60 dark:bg-emerald-900/40"
+              className="rounded-2xl p-4 text-center bg-white/60 dark:bg-emerald-900/40"
             >
               <div className="text-xs text-emerald-700 mb-1 uppercase tracking-wide font-semibold">
                 Accuracy
@@ -285,8 +282,7 @@ const SwipeableStudyDeck: React.FC<SwipeableStudyDeckProps> = ({
 
             {/* Rewards */}
             <div
-              className="rounded-2xl p-4"
-              className="bg-white/60 dark:bg-emerald-900/40"
+              className="rounded-2xl p-4 bg-white/60 dark:bg-emerald-900/40"
             >
               <h3
                 className="font-semibold text-center text-sm mb-3 uppercase tracking-wide text-emerald-900 dark:text-emerald-100"
