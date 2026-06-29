@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import OnboardingAuthGate from './OnboardingAuthGate';
 import OnboardingInterestSurvey from './OnboardingInterestSurvey';
 import OnboardingAppTour from './OnboardingAppTour';
+import { isOnboardingDoneLocally, markOnboardingDoneLocally } from '@/lib/onboardingState';
 
 interface SurveyData {
   goal: string;
@@ -38,10 +39,13 @@ const OnboardingOrchestrator: React.FC = () => {
     // Signed-in but profile hasn't loaded yet
     if (!profile) return;
 
-    // app_tour_completed is the authoritative per-account completion flag (a real
-    // DB column). Once it's true, onboarding is done for this account — on any
-    // device. If it's false (every brand-new account), run survey → tour.
-    if (profile.app_tour_completed === true) {
+    // Onboarding is "done" for this account if EITHER the DB flag says so OR we
+    // recorded completion locally for this user id. The per-account local marker
+    // makes this robust even when the DB write didn't persist (un-migrated column,
+    // transient error) — so a returning account is never replayed through it.
+    // A brand-new account has neither, so it still gets survey → tour.
+    if (profile.app_tour_completed === true || isOnboardingDoneLocally(user.id)) {
+      markOnboardingDoneLocally(user.id);
       localStorage.setItem(ONBOARDING_DONE_KEY, 'true');
       setPhase('complete');
       return;
@@ -94,8 +98,11 @@ const OnboardingOrchestrator: React.FC = () => {
 
   if (phase === 'tour') {
     const handleTourComplete = () => {
-      // Persist so the signed-in user never sees onboarding again
+      // Persist so the signed-in user never sees onboarding again. The per-account
+      // local marker is the durable source of truth on this device; the DB update
+      // below is best-effort and also enables cross-device recognition.
       localStorage.setItem(ONBOARDING_DONE_KEY, 'true');
+      markOnboardingDoneLocally(user?.id);
       if (user) {
         supabase
           .from('profiles')

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { markOnboardingDoneLocally, clearOnboardingDoneLocally } from '@/lib/onboardingState';
 
 interface OnboardingState {
   placementTrack: string | null;
@@ -72,14 +73,21 @@ export const useOnboarding = () => {
 
       if (error) throw error;
 
+      markOnboardingDoneLocally(user.id);
       setState(prev => ({ ...prev, appTourCompleted: true }));
     } catch (error) {
+      // Even if the DB write fails, the local marker keeps onboarding from replaying.
+      markOnboardingDoneLocally(user.id);
       console.error('Error marking tour complete:', error);
     }
   };
 
   const resetTour = async () => {
     if (!user) return;
+
+    // Clearing the per-account local marker is what actually lets the orchestrator
+    // replay onboarding (the DB flag alone is no longer the sole gate).
+    clearOnboardingDoneLocally(user.id);
 
     try {
       const { error } = await supabase
@@ -103,6 +111,7 @@ export const useOnboarding = () => {
 
     // Clear localStorage so the orchestrator allows the flow to restart
     localStorage.removeItem('phils_onboarding_done');
+    clearOnboardingDoneLocally(user.id);
 
     try {
       const { error } = await supabase
