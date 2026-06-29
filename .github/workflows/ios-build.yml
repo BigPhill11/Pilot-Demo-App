@@ -1,14 +1,13 @@
 name: iOS App Store Build
 
+# NOTE: This GitHub Actions pipeline is DISABLED for automatic runs. The iOS
+# build + TestFlight upload is handled by Xcode Cloud (in App Store Connect),
+# which manages code signing automatically and does not require certificate
+# secrets. This workflow remains available as a MANUAL fallback only, and will
+# only work once the IOS_DISTRIBUTION_CERT_BASE64 / _PASSWORD / KEYCHAIN_PASSWORD
+# and IOS_PROVISIONING_PROFILE_BASE64 repository secrets are configured.
 on:
-  workflow_dispatch:  # Manual trigger only
-  push:
-    branches: [main]
-    paths:
-      - 'src/**'
-      - 'ios/**'
-      - 'capacitor.config.json'
-      - 'package.json'
+  workflow_dispatch:  # Manual trigger only — does not run on push.
 
 jobs:
   build-ios:
