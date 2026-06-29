@@ -4,73 +4,51 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Eye, EyeOff, Loader2, Mail, Lock, Phone, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Mail, Lock, KeyRound } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Capacitor } from '@capacitor/core';
 import PandaLogo from '@/components/icons/PandaLogo';
-
-const GoogleIcon = () => (
-  <svg className="h-4 w-4 mr-2 shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-  </svg>
-);
-
-const Divider = () => (
-  <div className="relative my-1">
-    <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-white/20" /></div>
-    <div className="relative flex justify-center text-xs uppercase">
-      <span className="bg-white/10 px-2 text-white/60 rounded">or</span>
-    </div>
-  </div>
-);
+import { validateAccessCode } from '@/lib/accessCode';
 
 interface OnboardingAuthGateProps {
   /** Called when the user successfully signs in or creates an account.
    *  The orchestrator will detect the new auth state automatically. */
   onSignedIn: () => void;
-  /** Called when the user chooses to continue without an account. */
-  onGuest: () => void;
 }
 
-const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn, onGuest }) => {
+const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [ageConfirmed, setAgeConfirmed] = useState(false);
+  const [accessCode, setAccessCode] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // Phone OTP
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
+  const [tab, setTab] = useState<'signup' | 'signin'>('signup');
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
 
   const redirectTo = Capacitor.isNativePlatform() ? undefined : `${window.location.origin}/`;
-
-  const handleGoogleSignIn = async () => {
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
-      if (error) toast.error(error.message);
-    } catch {
-      toast.error('Google sign-in failed');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!ageConfirmed) { toast.error('Please confirm you are 13 years or older'); return; }
+    if (!accessCode.trim()) { toast.error('Enter the access code you were given'); return; }
     setLoading(true);
     try {
+      const normalizedCode = accessCode.trim().toUpperCase();
+      const codeValid = await validateAccessCode(normalizedCode);
+      if (!codeValid) {
+        toast.error("That access code isn't valid. Check it and try again.");
+        return;
+      }
       const { data, error } = await supabase.auth.signUp({
         email, password,
-        options: { emailRedirectTo: redirectTo, data: { username: username || email.split('@')[0] } },
+        options: {
+          emailRedirectTo: redirectTo,
+          // access_code is also enforced server-side by the handle_new_user trigger.
+          data: { username: username || email.split('@')[0], access_code: normalizedCode },
+        },
       });
       if (error) throw error;
       if (data.user) {
@@ -78,21 +56,45 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn, onG
           id: data.user.id, email,
           username: username || email.split('@')[0],
           age_confirmed: true,
+          signup_access_code: normalizedCode,
           placement_track: 'personal-finance',
           app_tour_completed: false,
           survey_completed: false,
           onboarding_completed: false,
           updated_at: new Date().toISOString(),
-        }, { onConflict: 'id' });
+        } as never, { onConflict: 'id' });
         if (data.session) {
           toast.success("Account created! Let's get started!");
           onSignedIn();
         } else {
+          // Email confirmation is required — guide the user to confirm, then sign in.
+          setPendingEmail(email);
+          setPassword('');
+          setTab('signin');
           toast.success('Account created! Check your email to confirm, then sign in.');
         }
       }
     } catch (err: any) {
       toast.error(err.message || 'Sign up failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email.trim()) {
+      toast.error('Enter your email above first, then tap “Forgot password”.');
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo,
+      });
+      if (error) throw error;
+      toast.success(`Password reset email sent to ${email.trim()}. Check your inbox.`);
+    } catch (err: any) {
+      toast.error(err.message || 'Could not send reset email');
     } finally {
       setLoading(false);
     }
@@ -126,35 +128,6 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn, onG
     }
   };
 
-  const handleSendOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const normalized = phone.startsWith('+') ? phone : `+1${phone.replace(/\D/g, '')}`;
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOtp({ phone: normalized });
-      if (error) { toast.error(error.message); }
-      else { setPhone(normalized); setOtpSent(true); toast.success('Code sent! Check your texts.'); }
-    } catch {
-      toast.error('Failed to send code');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.verifyOtp({ phone, token: otp, type: 'sms' });
-      if (error) { toast.error(error.message); }
-      else { toast.success('Welcome!'); onSignedIn(); }
-    } catch {
-      toast.error('Verification failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div
       className="fixed inset-0 z-[9990] flex flex-col overflow-y-auto"
@@ -169,10 +142,19 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn, onG
 
       {/* Auth card */}
       <div className="flex-1 flex flex-col justify-start px-4 pb-6">
+        {pendingEmail && (
+          <div className="w-full max-w-md mx-auto mb-3 rounded-xl bg-white/95 p-3 text-center shadow-lg">
+            <p className="text-sm font-semibold text-emerald-900">Check your email</p>
+            <p className="text-xs text-gray-600 mt-1">
+              We sent a confirmation link to <span className="font-medium">{pendingEmail}</span>.
+              Tap it, then sign in below.
+            </p>
+          </div>
+        )}
         <div className="w-full max-w-md mx-auto bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 shadow-2xl overflow-hidden">
 
-          <Tabs defaultValue="signup" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-white/10 rounded-none border-b border-white/20">
+          <Tabs value={tab} onValueChange={(v) => setTab(v as 'signup' | 'signin')} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 bg-white/10 rounded-none border-b border-white/20">
               <TabsTrigger
                 value="signup"
                 className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-white/20 rounded-none"
@@ -185,27 +167,22 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn, onG
               >
                 Sign In
               </TabsTrigger>
-              <TabsTrigger
-                value="phone"
-                className="text-white/70 data-[state=active]:text-white data-[state=active]:bg-white/20 rounded-none"
-              >
-                Phone
-              </TabsTrigger>
             </TabsList>
 
             {/* ── Sign Up ── */}
             <TabsContent value="signup" className="p-4 space-y-3">
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full bg-white text-gray-800 border-white hover:bg-gray-50"
-                disabled={loading}
-                onClick={handleGoogleSignIn}
-              >
-                <GoogleIcon />Continue with Google
-              </Button>
-              <Divider />
               <form onSubmit={handleSignUp} className="space-y-3">
+                <div className="relative">
+                  <KeyRound className="absolute left-3 top-3 h-4 w-4 text-white/60" />
+                  <Input
+                    placeholder="Access code"
+                    value={accessCode}
+                    onChange={(e) => setAccessCode(e.target.value)}
+                    className="pl-9 bg-white/20 border-white/30 text-white placeholder:text-white/50 focus:bg-white/30 uppercase"
+                    autoCapitalize="characters"
+                    required
+                  />
+                </div>
                 <Input
                   placeholder="Username (optional)"
                   value={username}
@@ -268,16 +245,6 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn, onG
 
             {/* ── Sign In ── */}
             <TabsContent value="signin" className="p-4 space-y-3">
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full bg-white text-gray-800 border-white hover:bg-gray-50"
-                disabled={loading}
-                onClick={handleGoogleSignIn}
-              >
-                <GoogleIcon />Continue with Google
-              </Button>
-              <Divider />
               <form onSubmit={handleSignIn} className="space-y-3">
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-white/60" />
@@ -316,87 +283,24 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn, onG
                   {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                   Sign In
                 </Button>
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  disabled={loading}
+                  className="w-full text-center text-xs text-white/80 hover:text-white underline underline-offset-2 py-1"
+                >
+                  Forgot password?
+                </button>
               </form>
             </TabsContent>
 
-            {/* ── Phone OTP ── */}
-            <TabsContent value="phone" className="p-4 space-y-3">
-              {!otpSent ? (
-                <form onSubmit={handleSendOtp} className="space-y-3">
-                  <p className="text-xs text-white/70">
-                    Enter your phone number and we'll text a one-time code. US numbers can omit the country code.
-                  </p>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-3 h-4 w-4 text-white/60" />
-                    <Input
-                      type="tel"
-                      placeholder="+1 (555) 000-0000"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="pl-9 bg-white/20 border-white/30 text-white placeholder:text-white/50 focus:bg-white/30"
-                      required
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    className="w-full bg-white text-green-800 font-bold hover:bg-green-50"
-                    disabled={loading}
-                  >
-                    {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                    Send Code
-                  </Button>
-                </form>
-              ) : (
-                <form onSubmit={handleVerifyOtp} className="space-y-3">
-                  <p className="text-xs text-white/70">
-                    Enter the 6-digit code sent to <span className="font-semibold text-white">{phone}</span>.
-                  </p>
-                  <Input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]{6}"
-                    maxLength={6}
-                    placeholder="123456"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                    className="text-center text-2xl tracking-widest bg-white/20 border-white/30 text-white placeholder:text-white/30 focus:bg-white/30"
-                    required
-                  />
-                  <Button
-                    type="submit"
-                    className="w-full bg-white text-green-800 font-bold hover:bg-green-50"
-                    disabled={loading || otp.length < 6}
-                  >
-                    {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                    Verify & Sign In
-                  </Button>
-                  <button
-                    type="button"
-                    className="flex items-center gap-1 text-xs text-white/60 hover:text-white mx-auto"
-                    onClick={() => { setOtpSent(false); setOtp(''); }}
-                  >
-                    <ArrowLeft className="h-3 w-3" />Change number
-                  </button>
-                </form>
-              )}
-            </TabsContent>
           </Tabs>
         </div>
 
-        {/* Guest option */}
-        <div className="flex flex-col items-center mt-6 gap-1">
-          <button
-            type="button"
-            onClick={onGuest}
-            className="flex items-center gap-1.5 text-sm text-white/70 hover:text-white transition-colors touch-manipulation py-2 px-4"
-          >
-            Continue as Guest
-            <ArrowRight className="h-3.5 w-3.5" />
-          </button>
-          <p className="text-[11px] text-white/40 text-center max-w-[240px]">
-            Guest progress is not saved between sessions
-          </p>
-        </div>
+        <p className="text-[11px] text-white/40 text-center max-w-[260px] mx-auto mt-6">
+          You&apos;ll need an access code to create an account. Don&apos;t have one? Ask the
+          person who invited you.
+        </p>
       </div>
     </div>
   );

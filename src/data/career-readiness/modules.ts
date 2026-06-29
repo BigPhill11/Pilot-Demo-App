@@ -35,14 +35,14 @@ export const CAREER_MODULES: CareerModule[] = [
   {
     id: 'email-etiquette',
     title: 'Email Etiquette',
-    description: 'Write professional emails that make a great impression.',
+    description: 'Write emails that open doors.',
     icon: Mail,
-    estimatedMinutes: 30,
+    estimatedMinutes: 40,
     badgeId: 'badge-email',
     learningPoints: [
-      'Write clear subject lines',
-      'Use a professional greeting and sign-off',
-      'Keep messages concise and proofread',
+      'Match tone to audience — cold, warm, or internal',
+      'Build subject lines and bodies that get read',
+      'CC, BCC, timing, signatures, and follow-up done right',
     ],
   },
   {

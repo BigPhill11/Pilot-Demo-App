@@ -90,12 +90,13 @@ const VideoModal: React.FC<VideoModalProps> = ({ video, isOpen, onClose }) => {
   };
 
   const checkExistingRating = async () => {
+    if (!user) return;
     try {
       const { data, error } = await supabase
         .from('video_ratings')
         .select('*')
         .eq('video_id', video.id)
-        .eq('user_id', user!.id)
+        .eq('user_id', user.id)
         .single();
 
       if (data) {

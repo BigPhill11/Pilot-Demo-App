@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getAllModules } from '@/data/personal-finance/modules';
 import BambooNode from './BambooNode';
@@ -11,12 +11,19 @@ interface BambooSkillTreeProps {
   moduleProgress: Record<string, { status: ModuleStatus; completedLessons: string[]; testedOut: boolean }>;
   onModuleClick: (moduleId: string) => void;
   onTestOut: (moduleId: string, passed: boolean) => void;
+  /** A module to open as if the user tapped it (e.g. an Ask Phil deep link).
+   *  Runs through the same lock gate: locked modules show the Test-Out modal. */
+  pendingModuleId?: string | null;
+  /** Called once the pending module has been handled, so the parent can clear it. */
+  onPendingHandled?: () => void;
 }
 
 const BambooSkillTree: React.FC<BambooSkillTreeProps> = ({
   moduleProgress,
   onModuleClick,
   onTestOut,
+  pendingModuleId,
+  onPendingHandled,
 }) => {
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
   const [showTestOut, setShowTestOut] = useState(false);
@@ -46,6 +53,19 @@ const BambooSkillTree: React.FC<BambooSkillTreeProps> = ({
       onModuleClick(moduleId);
     }
   };
+
+  // A deep link (e.g. an Ask Phil "Learn More" link) opens a module through the
+  // exact same gate as a tap: unlocked modules open, locked ones show the
+  // Test-Out / locked modal instead of bypassing it.
+  useEffect(() => {
+    if (!pendingModuleId) return;
+    const index = modules.findIndex((m) => m.id === pendingModuleId);
+    if (index >= 0) {
+      handleNodeClick(pendingModuleId, getModuleStatus(pendingModuleId, index));
+    }
+    onPendingHandled?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingModuleId]);
 
   const handleTestOutComplete = (passed: boolean) => {
     if (selectedModule) {

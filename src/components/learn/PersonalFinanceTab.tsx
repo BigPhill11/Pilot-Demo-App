@@ -6,7 +6,7 @@ import ModuleLessonsView from '@/components/personal-finance/ModuleLessonsView';
 import BossGamePlayer from '@/components/personal-finance/boss-game/BossGamePlayer';
 import { usePersonalFinanceProgress } from '@/hooks/usePersonalFinanceProgress';
 import { usePlatformIntegration } from '@/hooks/usePlatformIntegration';
-import { getModuleById } from '@/data/personal-finance/modules';
+import { getModuleById, getModuleUnlockStatus } from '@/data/personal-finance/modules';
 import { getBossGameForModule } from '@/data/personal-finance/boss-games';
 import { recordPathTouched } from '@/hooks/useDashboardProgress';
 import { consumeDashboardDeepLink } from '@/lib/dashboardDeepLink';
@@ -27,17 +27,29 @@ const PersonalFinanceTab: React.FC = () => {
   const [viewState, setViewState] = useState<ViewState>('tree');
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
   const [activeLessonIndex, setActiveLessonIndex] = useState(0);
+  // A deep-linked module that is still locked — handed to the skill tree so it
+  // shows the same locked / Test-Out experience as tapping a locked module.
+  const [pendingTreeModuleId, setPendingTreeModuleId] = useState<string | null>(null);
 
   // Track that user visited this tab for dashboard goal prioritization
   useEffect(() => {
     recordPathTouched('personalFinance');
   }, []);
 
-  // Deep-link from dashboard daily goals
+  // Deep-link from dashboard daily goals / Ask Phil "Learn More" links
   useEffect(() => {
     if (loading) return;
     const intent = consumeDashboardDeepLink();
     if (!intent?.moduleId || intent.targetTab !== 'personal-finance') return;
+
+    // Respect the lock gate: never open a module the student hasn't unlocked.
+    const status = getModuleUnlockStatus(moduleProgress, intent.moduleId);
+    if (status === 'locked') {
+      setViewState('tree');
+      setPendingTreeModuleId(intent.moduleId);
+      return;
+    }
+
     setActiveModuleId(intent.moduleId);
     if (intent.lessonIndex !== undefined) {
       setActiveLessonIndex(intent.lessonIndex);
@@ -124,7 +136,7 @@ const PersonalFinanceTab: React.FC = () => {
               <p className="text-muted-foreground">Master your money, one module at a time</p>
               <p className="text-sm text-primary/80 mt-2">New Personal Finance Videos coming soon! Phil will help you grasp each lesson in 90 seconds or less with engaging Tik-Tok style content.</p>
             </div>
-            <BambooSkillTree moduleProgress={moduleProgress} onModuleClick={handleModuleClick} onTestOut={handleTestOut} />
+            <BambooSkillTree moduleProgress={moduleProgress} onModuleClick={handleModuleClick} onTestOut={handleTestOut} pendingModuleId={pendingTreeModuleId} onPendingHandled={() => setPendingTreeModuleId(null)} />
           </div>}
       </AnimatePresence>
     </div>;

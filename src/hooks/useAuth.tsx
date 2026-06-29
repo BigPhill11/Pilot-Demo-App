@@ -112,6 +112,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signOut = async () => {
     try {
+      // Clear per-device onboarding markers so the NEXT account that signs in
+      // on this device gets the first-run onboarding + empire tutorial.
+      localStorage.removeItem('phils_onboarding_done');
+      localStorage.removeItem('bamboo_empire_tutorial_v2_completed');
       await supabase.auth.signOut();
     } catch (error) {
       console.error('Error signing out:', error);

@@ -43,12 +43,14 @@ const SecuritiesSearch: React.FC<SecuritiesSearchProps> = ({ onSelectSecurity })
 
     setIsSearching(true);
     try {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
       const response = await fetch(
-        `https://aqqbxivolegafwuurxxm.supabase.co/functions/v1/securities-search?query=${encodeURIComponent(searchQuery)}`,
+        `${supabaseUrl}/functions/v1/securities-search?query=${encodeURIComponent(searchQuery)}`,
         {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxcWJ4aXZvbGVnYWZ3dXVyeHhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5NjkwMTcsImV4cCI6MjA2NTU0NTAxN30.W5pB4lv_OTYvXn9dx6146ms16HZdfdfaTv2bs3cK-r0`,
+            'Authorization': `Bearer ${supabaseKey}`,
             'Content-Type': 'application/json',
           },
         }

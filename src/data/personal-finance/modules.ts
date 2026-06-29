@@ -1,5 +1,5 @@
 // Personal Finance Module Registry
-import { PersonalFinanceModule } from '@/types/personal-finance';
+import { PersonalFinanceModule, ModuleStatus } from '@/types/personal-finance';
 import { activeIncomeBasicsLesson } from './income/lesson-1-active-income';
 import { lesson2ControllingPay } from './lessons/lesson-2-controlling-pay';
 import { lesson3Negotiation } from './lessons/lesson-3-negotiation';
@@ -791,6 +791,29 @@ export const wealthFundamentalsModule: PersonalFinanceModule = {
 
 // Get all modules for display
 export const getAllModules = () => PERSONAL_FINANCE_MODULES;
+
+/**
+ * Single source of truth for a module's unlock state. Mirrors the gating used by
+ * the skill tree: a module is unlocked if it has an explicit status, is the first
+ * module, or the previous module is completed — otherwise it's locked.
+ * Used to stop deep links (e.g. Ask Phil "Learn More" links) from opening a
+ * module the student hasn't unlocked yet.
+ */
+export const getModuleUnlockStatus = (
+  moduleProgress: Record<string, { status?: ModuleStatus } | undefined>,
+  moduleId: string
+): ModuleStatus => {
+  const modules = PERSONAL_FINANCE_MODULES;
+  const index = modules.findIndex((m) => m.id === moduleId);
+  if (index < 0) return 'locked';
+  const progress = moduleProgress[moduleId];
+  if (progress?.status) return progress.status;
+  if (index === 0) return 'unlocked';
+  const prev = modules[index - 1];
+  const prevProgress = prev ? moduleProgress[prev.id] : undefined;
+  if (prevProgress?.status === 'completed') return 'unlocked';
+  return 'locked';
+};
 
 // Get full module by ID
 export const getModuleById = (id: string): PersonalFinanceModule | undefined => {

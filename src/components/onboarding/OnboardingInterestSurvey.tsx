@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import PandaLogo from '@/components/icons/PandaLogo';
 import {
-  BadgeDollarSign,
   BriefcaseBusiness,
   Building2,
   Check,
@@ -31,7 +30,7 @@ interface SurveyData {
 
 const MAIN_GOALS = [
   { id: 'personal-finance', label: 'Personal Finance', icon: Wallet, desc: 'Budgeting, saving & debt' },
-  { id: 'investing', label: 'Investing & Markets', icon: LineChart, desc: 'Stocks, crypto & trading' },
+  { id: 'investing', label: 'Investing & Markets', icon: LineChart, desc: 'Stocks & trading' },
   { id: 'career', label: 'Finance Career', icon: BriefcaseBusiness, desc: 'Break into finance' },
   { id: 'curious', label: 'Just Curious', icon: Compass, desc: 'Explore everything' },
 ];
@@ -40,7 +39,6 @@ const INTEREST_OPTIONS = [
   { id: 'personal-finance', label: 'Personal Finance', icon: Wallet },
   { id: 'market-intelligence', label: 'Market Intelligence', icon: LineChart },
   { id: 'business-economics', label: 'Business Economics', icon: Landmark },
-  { id: 'crypto', label: 'Crypto', icon: BadgeDollarSign },
   { id: 'career-readiness', label: 'Career Readiness', icon: Target },
   { id: 'phils-friends', label: "Phil's Friends", icon: Users },
 ];

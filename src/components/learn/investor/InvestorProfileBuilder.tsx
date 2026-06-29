@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { User, Target, TrendingUp, Shield, Leaf, Zap } from 'lucide-react';
 import { InvestorProfile } from '@/types/investor-profile';
+import { safeRandomUUID } from '@/lib/uuid';
 
 interface InvestorProfileBuilderProps {
   onProfileComplete: (profile: Partial<InvestorProfile>) => void;
@@ -44,7 +45,7 @@ const InvestorProfileBuilder: React.FC<InvestorProfileBuilderProps> = ({ onProfi
 
   const handleComplete = () => {
     const profile: Partial<InvestorProfile> = {
-      id: crypto.randomUUID(),
+      id: safeRandomUUID(),
       preferences,
       createdAt: new Date(),
       updatedAt: new Date()

@@ -35,6 +35,8 @@ const CareerReadinessDashboard: React.FC = () => {
         navigate('/career/interviewing');
         return;
       }
+      // Email Etiquette content is still in progress — show the "coming soon"
+      // sheet (same as Business Etiquette) instead of the unfinished module.
       setSelectedModule(module);
       setSheetOpen(true);
     },

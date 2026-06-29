@@ -8,10 +8,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Settings, User, RotateCcw, LogIn } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from '@/components/ui/alert-dialog';
+import { Settings, User, RotateCcw, LogIn, Trash2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { useGuestMode } from '@/hooks/useGuestMode';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import AuthModal from '@/components/auth/AuthModal';
 
@@ -29,12 +41,15 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ isGuest = false }) =>
   const handleRestartTour = async () => {
     if (isGuest) {
       updateGuestData({ tourCompleted: false, surveyCompleted: false });
-    } else {
-      await resetOnboarding();
-      await refreshProfile();
+      toast.success('Onboarding restarted!');
+      setIsOpen(false);
+      return;
     }
-    toast.success('Onboarding restarted!');
-    setIsOpen(false);
+    // resetTour clears the app_tour_completed flag; reloading re-runs the
+    // onboarding resolver so the tour plays again.
+    await resetTour();
+    toast.success('Restarting onboarding…');
+    window.location.href = '/';
   };
 
   if (isGuest) {
@@ -84,6 +99,24 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ isGuest = false }) =>
     );
   }
 
+  const handleDeleteAccount = async () => {
+    if (!profile) return;
+    try {
+      // Permanently deletes the auth account + all the user's data, server-side.
+      // (A user can only ever delete their own account — see delete_my_account.)
+      const { error } = await (supabase as never as {
+        rpc: (fn: string) => Promise<{ error: unknown }>;
+      }).rpc('delete_my_account');
+      if (error) throw error;
+      // Session is now invalid; clear it locally (ignore any error).
+      try { await supabase.auth.signOut(); } catch { /* already gone */ }
+      toast.success('Your account has been deleted.');
+      window.location.href = '/';
+    } catch {
+      toast.error('Something went wrong. Please try again.');
+    }
+  };
+
   if (!profile) return null;
 
   return (
@@ -132,15 +165,46 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ isGuest = false }) =>
             <Button
               variant="outline"
               onClick={async () => {
+                await resetTour();
                 await resetOnboarding();
-                toast.success('Onboarding reset! Reload the page to restart.');
-                setIsOpen(false);
+                toast.success('Restarting onboarding…');
+                window.location.href = '/';
               }}
               className="w-full flex items-center justify-center space-x-2 text-muted-foreground"
             >
               <RotateCcw className="h-4 w-4" />
               <span>Restart Full Onboarding</span>
             </Button>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:border-red-400 flex items-center justify-center space-x-2"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  <span>Delete Account</span>
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete Account</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently delete your account and all your learning progress, XP,
+                    Bamboo Coins, and achievements. This cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteAccount}
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    Yes, delete my account
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </DialogContent>

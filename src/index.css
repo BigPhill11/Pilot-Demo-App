@@ -106,6 +106,24 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Hide scrollbars app-wide so the WebView feels native, not browser-y.
+     Scrolling still works via touch/wheel. We avoid setting touch-action
+     here so component-level gesture handlers (e.g. the Bamboo Empire's
+     pan/pinch viewport) keep receiving pointer events normally. */
+  html, body {
+    scrollbar-width: none;            /* Firefox */
+    -ms-overflow-style: none;         /* IE/old Edge */
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
+  }
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  *::-webkit-scrollbar {
+    display: none;                    /* WebKit (iOS WebView, Chrome) */
+    width: 0;
+    height: 0;
+  }
 }
 
 /* Mobile Optimizations */

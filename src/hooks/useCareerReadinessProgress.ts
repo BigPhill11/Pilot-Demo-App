@@ -9,18 +9,25 @@ import type {
   CareerActivityId,
   CareerPhaseId,
   CareerReadinessProgressState,
+  EmailEtiquetteModuleDetails,
   InterviewModuleDetails,
   ResumeBuilderAnswers,
   ResumeBuilderDetails,
 } from '@/types/career-readiness';
 import {
+  EMAIL_BADGE_ID,
+  EMAIL_MODULE_ID,
+  calculateEmailEtiquetteProgress,
   calculateInterviewProgress,
   calculateResumeProgress,
+  getDefaultEmailEtiquetteDetails,
   getDefaultInterviewDetails,
   getDefaultResumeDetails,
+  isEmailEtiquetteModuleComplete,
   isInterviewModuleComplete,
   isPhaseComplete,
   isResumeModuleComplete,
+  normalizeEmailEtiquetteDetails,
   normalizeInterviewDetails,
   normalizeResumeDetails,
   RESUME_BADGE_ID,
@@ -74,6 +81,16 @@ export function getResumeDetails(
     return normalizeResumeDetails(stored as Partial<ResumeBuilderDetails>);
   }
   return getDefaultResumeDetails();
+}
+
+export function getEmailEtiquetteDetails(
+  details: CareerReadinessProgressState['details']
+): EmailEtiquetteModuleDetails {
+  const stored = details[EMAIL_MODULE_ID];
+  if (stored && typeof stored === 'object') {
+    return normalizeEmailEtiquetteDetails(stored as Partial<EmailEtiquetteModuleDetails>);
+  }
+  return getDefaultEmailEtiquetteDetails();
 }
 
 export function getInterviewDetails(
@@ -219,6 +236,51 @@ export function useCareerReadinessProgress() {
     });
   }, []);
 
+  const getEmailEtiquetteModuleDetails = useCallback(
+    () => getEmailEtiquetteDetails(progress.details),
+    [progress.details]
+  );
+
+  const updateEmailEtiquetteDetails = useCallback(
+    (updater: (current: EmailEtiquetteModuleDetails) => EmailEtiquetteModuleDetails) => {
+      setProgress((prev) => {
+        const current = getEmailEtiquetteDetails(prev.details);
+        const next = updater(current);
+        const percent = calculateEmailEtiquetteProgress(next);
+        const completed = isEmailEtiquetteModuleComplete(next);
+
+        const badgesEarned =
+          completed && !prev.badgesEarned.includes(EMAIL_BADGE_ID)
+            ? [...prev.badgesEarned, EMAIL_BADGE_ID]
+            : prev.badgesEarned;
+
+        return {
+          ...prev,
+          modules: {
+            ...prev.modules,
+            [EMAIL_MODULE_ID]: completed ? 100 : percent,
+          },
+          badgesEarned,
+          details: {
+            ...prev.details,
+            [EMAIL_MODULE_ID]: next,
+          },
+        };
+      });
+    },
+    []
+  );
+
+  const updateEmailEtiquetteAnswers = useCallback(
+    (answers: Partial<EmailEtiquetteModuleDetails['answers']>) => {
+      updateEmailEtiquetteDetails((current) => ({
+        ...current,
+        answers: { ...current.answers, ...answers },
+      }));
+    },
+    [updateEmailEtiquetteDetails]
+  );
+
   const getResumeModuleDetails = useCallback(
     () => getResumeDetails(progress.details),
     [progress.details]
@@ -288,6 +350,9 @@ export function useCareerReadinessProgress() {
     completeInterviewActivity,
     setInterviewPhase,
     updateInterviewAnswers,
+    getEmailEtiquetteModuleDetails,
+    updateEmailEtiquetteDetails,
+    updateEmailEtiquetteAnswers,
     getResumeModuleDetails,
     updateResumeDetails,
     updateResumeAnswers,

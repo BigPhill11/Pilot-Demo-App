@@ -15,7 +15,7 @@ const PrivacyPage = () => {
         </Button>
 
         <h1 className="text-3xl font-bold mb-2">Privacy Policy</h1>
-        <p className="text-sm text-muted-foreground mb-8">Last updated: May 24, 2025</p>
+        <p className="text-sm text-muted-foreground mb-8">Last updated: June 2026</p>
 
         <div className="prose prose-sm dark:prose-invert max-w-none space-y-6">
           <section>
@@ -84,7 +84,7 @@ const PrivacyPage = () => {
           <section>
             <h2 className="text-xl font-semibold mb-2">10. Contact Us</h2>
             <p className="text-muted-foreground">
-              If you have questions or concerns about this Privacy Policy or our data practices, please contact us through the App.
+              If you have questions or concerns about this Privacy Policy or our data practices, please contact us at: philliphead@philsfinancials.com
             </p>
           </section>
         </div>

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, MemoryRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, MemoryRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { Capacitor } from "@capacitor/core";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/contexts/ThemeContext";
@@ -54,6 +54,7 @@ import CareerPage from "./pages/CareerPage";
 import CareerInterviewPage from "./pages/CareerInterviewPage";
 import CareerResumePage from "./pages/CareerResumePage";
 import PhilsFriendsPage from "./pages/PhilsFriendsPage";
+import ProfilePage from "./pages/ProfilePage";
 import AdminPage from "./pages/AdminPage";
 import SplashScreen from "@/components/onboarding/SplashScreen";
 import OnboardingOrchestrator from "@/components/onboarding/OnboardingOrchestrator";
@@ -78,26 +79,39 @@ function App() {
             <Router>
               <AskPhilUiProvider>
                 <PersonalDashboardProvider>
-                  <OnboardingOrchestrator />
-                  <ProtectedRoute>
-                    <MinimalLayout>
-                      <Routes>
-                        <Route path="/" element={<Index />} />
-                        <Route path="/empire" element={<EmpirePage />} />
-                        <Route path="/learn" element={<LearnPage />} />
-                        <Route path="/career" element={<CareerPage />} />
-                        <Route path="/career/interviewing" element={<CareerInterviewPage />} />
-                        <Route path="/career/resume" element={<CareerResumePage />} />
-                        <Route path="/phils-friends" element={<PhilsFriendsPage />} />
-                        <Route path="/ask-phil" element={<AskPhilPage />} />
-                        <Route path="/paper-trading" element={<PaperTradingPage />} />
-                        <Route path="/admin" element={<AdminPage />} />
-                        <Route path="/terms" element={<TermsPage />} />
-                        <Route path="/privacy" element={<PrivacyPage />} />
-                        <Route path="*" element={<Navigate to="/" replace />} />
-                      </Routes>
-                    </MinimalLayout>
-                  </ProtectedRoute>
+                  <Routes>
+                    {/* Public, standalone pages — no login and no app layout.
+                        Apple requires a publicly accessible Privacy Policy URL. */}
+                    <Route path="/privacy" element={<PrivacyPage />} />
+                    <Route path="/terms" element={<TermsPage />} />
+
+                    {/* Everything else lives behind auth + the app layout. */}
+                    <Route
+                      element={
+                        <>
+                          <OnboardingOrchestrator />
+                          <ProtectedRoute>
+                            <MinimalLayout>
+                              <Outlet />
+                            </MinimalLayout>
+                          </ProtectedRoute>
+                        </>
+                      }
+                    >
+                      <Route path="/" element={<Index />} />
+                      <Route path="/empire" element={<EmpirePage />} />
+                      <Route path="/learn" element={<LearnPage />} />
+                      <Route path="/career" element={<CareerPage />} />
+                      <Route path="/career/interviewing" element={<CareerInterviewPage />} />
+                      <Route path="/career/resume" element={<CareerResumePage />} />
+                      <Route path="/phils-friends" element={<PhilsFriendsPage />} />
+                      <Route path="/profile" element={<ProfilePage />} />
+                      <Route path="/ask-phil" element={<AskPhilPage />} />
+                      <Route path="/paper-trading" element={<PaperTradingPage />} />
+                      <Route path="/admin" element={<AdminPage />} />
+                      <Route path="*" element={<Navigate to="/" replace />} />
+                    </Route>
+                  </Routes>
                 </PersonalDashboardProvider>
               </AskPhilUiProvider>
             </Router>

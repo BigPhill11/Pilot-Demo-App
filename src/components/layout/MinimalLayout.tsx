@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,7 +16,7 @@ import { usePersonalDashboard } from '@/contexts/PersonalDashboardContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useUnifiedStreak } from '@/hooks/useUnifiedStreak';
 import { useDailyTimeGoal } from '@/hooks/useDailyTimeGoal';
-import { LogOut, User, Flame, Moon, Sun, MessageCircle, BarChart2, Menu, Home, Crown, BookOpen, Briefcase, Users, Shield } from 'lucide-react';
+import { LogOut, User, Flame, Moon, Sun, MessageCircle, BarChart2, Menu, Home, Crown, BookOpen, Briefcase, Users, Shield, X } from 'lucide-react';
 import { isPhilAdminEmail } from '@/lib/adminAccess';
 interface MinimalLayoutProps {
   children: React.ReactNode;
@@ -43,6 +43,25 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
   const { isOpen: isAskPhilOpen, openAskPhil, closeAskPhil } = useAskPhilUi();
   const { isOpen: isDashboardOpen, openDashboard, closeDashboard } = usePersonalDashboard();
   const navigate = useNavigate();
+
+  // Swipe-right-to-close for the Ask Phil panel (it slides in from the right).
+  const askPhilTouchStart = useRef<{ x: number; y: number } | null>(null);
+  const handleAskPhilTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    askPhilTouchStart.current = { x: t.clientX, y: t.clientY };
+  };
+  const handleAskPhilTouchEnd = (e: React.TouchEvent) => {
+    const start = askPhilTouchStart.current;
+    askPhilTouchStart.current = null;
+    if (!start) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - start.x;
+    const dy = t.clientY - start.y;
+    // Mostly-horizontal swipe to the right, far enough to count as a dismiss.
+    if (dx > 70 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      closeAskPhil();
+    }
+  };
   const isGuest = !user;
   const isAdmin = isPhilAdminEmail(user?.email);
   useDailyTimeGoal({ trackActivity: true });
@@ -181,6 +200,16 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
                     )}
 
                     <div className="space-y-2 border-t pt-4">
+                      {user && (
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start gap-3"
+                          onClick={() => { setIsMobileMenuOpen(false); navigate('/profile'); }}
+                        >
+                          <User className="h-4 w-4" />
+                          Profile
+                        </Button>
+                      )}
                       <div className="flex items-center justify-between rounded-xl px-3 py-2">
                         <span className="text-sm font-medium">Settings</span>
                         <ProfileSettings isGuest={isGuest} />
@@ -240,11 +269,16 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
 
                     <GameProgressBadge compact />
 
-                    <div className="flex items-center space-x-1 text-sm">
+                    <button
+                      type="button"
+                      onClick={() => navigate('/profile')}
+                      className="flex items-center space-x-1 text-sm hover:text-primary transition-colors"
+                      aria-label="Profile"
+                    >
                       <User className="h-4 w-4" />
                       <span>{profile.username || 'User'}</span>
-                    </div>
-                    
+                    </button>
+
                     <ProfileSettings />
                     
                     <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground hover:text-foreground">
@@ -285,8 +319,15 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
 
       {/* Ask Phil Chat Sheet */}
       <Sheet open={isAskPhilOpen} onOpenChange={(open) => (open ? openAskPhil() : closeAskPhil())}>
-        <SheetContent side="right" className="w-full sm:max-w-lg p-0 flex flex-col">
-          <SheetHeader className="px-6 pt-6 pb-2 border-b">
+        {/* [&>button]:hidden hides the tiny built-in close button for this sheet only,
+            so we can show a larger, easier-to-tap one below. */}
+        <SheetContent
+          side="right"
+          className="w-full sm:max-w-lg p-0 flex flex-col [&>button]:hidden"
+          onTouchStart={handleAskPhilTouchStart}
+          onTouchEnd={handleAskPhilTouchEnd}
+        >
+          <SheetHeader className="px-6 pt-6 pb-2 border-b relative">
             <SheetTitle className="flex items-center gap-2">
               <MessageCircle className="h-5 w-5 text-primary" />
               Ask Phil
@@ -294,6 +335,14 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
             <SheetDescription>
               Your AI finance buddy — ask anything about budgeting, investing, or saving.
             </SheetDescription>
+            <button
+              type="button"
+              onClick={closeAskPhil}
+              aria-label="Close Ask Phil"
+              className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-muted text-foreground shadow-sm hover:bg-muted-foreground/20 active:scale-95 transition touch-manipulation"
+            >
+              <X className="h-6 w-6" />
+            </button>
           </SheetHeader>
           <div className="flex-1 overflow-hidden">
             <PhilChatAssistant variant="embedded" />

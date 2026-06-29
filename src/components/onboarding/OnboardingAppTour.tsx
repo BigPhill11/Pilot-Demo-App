@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronRight, X } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import {
   BarChart2,
@@ -225,10 +225,9 @@ function useViewportHeight() {
 
 interface OnboardingAppTourProps {
   onComplete: () => void;
-  onSkip: () => void;
 }
 
-const OnboardingAppTour: React.FC<OnboardingAppTourProps> = ({ onComplete, onSkip }) => {
+const OnboardingAppTour: React.FC<OnboardingAppTourProps> = ({ onComplete }) => {
   const [stepIndex, setStepIndex] = useState(0);
   const [targetRect, setTargetRect] = useState<TutorialRect | null>(null);
   const [cardTop, setCardTop] = useState<number | null>(null);
@@ -344,16 +343,6 @@ const OnboardingAppTour: React.FC<OnboardingAppTourProps> = ({ onComplete, onSki
   return (
     <div className="fixed inset-0 z-[100] pointer-events-none" aria-live="polite">
 
-      {/* Skip button */}
-      <button
-        type="button"
-        onClick={onSkip}
-        className="pointer-events-auto fixed right-3 z-[103] rounded-full bg-white/95 px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-lg backdrop-blur-sm touch-manipulation dark:bg-gray-900/95 dark:text-gray-200"
-        style={{ top: 'max(12px, env(safe-area-inset-top, 0px))' }}
-      >
-        Skip
-      </button>
-
       {/* Click-blocker: prevents accidental taps on app content */}
       <div
         className="pointer-events-auto absolute inset-0"
@@ -442,14 +431,6 @@ const OnboardingAppTour: React.FC<OnboardingAppTourProps> = ({ onComplete, onSki
                     {step.title}
                   </h3>
                 </div>
-                <button
-                  type="button"
-                  onClick={onSkip}
-                  className="shrink-0 rounded-xl p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 touch-manipulation"
-                  aria-label="Skip tour"
-                >
-                  <X className="h-4 w-4" />
-                </button>
               </div>
 
               {/* Body: icon + description */}
@@ -553,14 +534,6 @@ const OnboardingAppTour: React.FC<OnboardingAppTourProps> = ({ onComplete, onSki
                       {step.title}
                     </h3>
                   </div>
-                  <button
-                    type="button"
-                    onClick={onSkip}
-                    className="shrink-0 rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-white touch-manipulation"
-                    aria-label="Skip tour"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
                 </div>
 
                 {/* Body */}

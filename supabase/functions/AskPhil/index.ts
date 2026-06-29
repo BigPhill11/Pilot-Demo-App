@@ -1,10 +1,16 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.50.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Always respond 200 with a JSON body. The app calls this via
+// supabase.functions.invoke(), which collapses ANY non-2xx into an opaque
+// "Edge Function returned a non-2xx status code" error and drops the body.
+// Returning 200 with { error } lets the client read and show a real message
+// (both callers check `data?.error`).
 const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
@@ -78,12 +84,52 @@ Deno.serve(async (req) => {
     const userLevel = String(body?.userLevel ?? "normal").trim();
 
     if (!message) {
-      return json({ error: "Missing message" }, 400);
+      return json({ error: "Missing message" });
     }
 
     const geminiKey = Deno.env.get("GEMINI_API_KEY");
     if (!geminiKey) {
-      return json({ error: "GEMINI_API_KEY not set" }, 500);
+      return json({ error: "Phil is temporarily unavailable. Please try again later." });
+    }
+
+    // ── Best-effort per-user daily quota ───────────────────────────────────
+    // The gateway (verify_jwt) already requires a valid token to reach here.
+    // If we can identify a signed-in user, enforce their daily limit. Any
+    // problem identifying the user or checking the quota FAILS OPEN so Phil
+    // never breaks for a legitimate user because of a setup hiccup.
+    try {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+      const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+      const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+      const authHeader = req.headers.get("Authorization") ?? "";
+
+      if (authHeader && supabaseUrl && anonKey && serviceKey) {
+        const userClient = createClient(supabaseUrl, anonKey, {
+          global: { headers: { Authorization: authHeader } },
+        });
+        const { data: { user } } = await userClient.auth.getUser();
+
+        if (user) {
+          const serviceClient = createClient(supabaseUrl, serviceKey);
+          const { data: quota, error: quotaError } = await serviceClient.rpc(
+            "ask_phil_try_consume",
+            { p_user_id: user.id },
+          );
+          if (!quotaError && quota && quota.allowed === false) {
+            return json({
+              error:
+                "You've reached today's limit of " +
+                (quota.limit ?? 10) +
+                " questions for Phil. Come back tomorrow!",
+              limitReached: true,
+              quota,
+            });
+          }
+        }
+      }
+    } catch (quotaErr) {
+      // Fail open — never block a real user on a quota/setup problem.
+      console.error("AskPhil quota check skipped:", quotaErr);
     }
 
     const style = styleGuides[userLevel] ?? styleGuides["normal"];
@@ -120,10 +166,9 @@ Deno.serve(async (req) => {
 
     if (!geminiRes.ok) {
       console.error("Gemini error:", JSON.stringify(geminiData));
-      return json(
-        { error: "Gemini error: " + (geminiData?.error?.message ?? geminiRes.status) },
-        502
-      );
+      return json({
+        error: "Phil couldn't think of an answer just now. Please try again in a moment.",
+      });
     }
 
     const content = geminiData?.choices?.[0]?.message?.content ?? "";
@@ -142,6 +187,6 @@ Deno.serve(async (req) => {
     return json(parsed);
   } catch (err) {
     console.error("AskPhil error:", err);
-    return json({ error: String(err) }, 500);
+    return json({ error: "Phil hit an unexpected error. Please try again." });
   }
 });

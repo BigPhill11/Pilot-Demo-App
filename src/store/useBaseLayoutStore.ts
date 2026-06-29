@@ -16,8 +16,6 @@ import {
   type PlacedBuilding,
 } from '@/components/empire/buildings/BuildingTypes';
 import {
-  getBuildDurationMs,
-  getUpgradeDurationMs,
   isTimedWorkComplete,
 } from '@/components/empire/buildings/buildingTiming';
 import { canPlaceBuildingAt, findNearestValidPlacement } from '@/components/empire/lib/grid';
@@ -292,18 +290,18 @@ export const useBaseLayoutStore = create<BaseLayoutStore>()(
         const state = get();
         if (!state.canPlaceAt(gridX, gridY, undefined, size)) return;
 
-        const now = Date.now();
-        const constructionTime = getBuildDurationMs(type, 1, playerXp);
+        // playerXp accepted for API stability; build is instant so unused here.
+        void playerXp;
 
+        const now = Date.now();
         const newBuilding: PlacedBuilding = {
           id: `building_${type}_${Date.now()}`,
           type,
           level: 1,
           position: { x: gridX, y: gridY },
           size,
-          status: 'constructing',
-          constructionStartTime: now,
-          constructionEndTime: now + constructionTime,
+          status: 'active',
+          lastCollectionTime: now,
           pendingCollection: 0,
           placedAt: now,
         };
@@ -417,17 +415,18 @@ export const useBaseLayoutStore = create<BaseLayoutStore>()(
         const def = BUILDING_DEFINITIONS[building.type];
         if (building.level >= def.maxLevel) return false;
 
-        const now = Date.now();
-        const upgradeDuration = getUpgradeDurationMs(building.type, building.level, playerXp);
+        // playerXp accepted for API stability; upgrade is instant so unused here.
+        void playerXp;
 
         set({
           buildings: state.buildings.map((b) =>
             b.id === id
               ? {
                   ...b,
-                  status: 'upgrading' as BuildingStatus,
-                  constructionStartTime: now,
-                  constructionEndTime: now + upgradeDuration,
+                  level: b.level + 1,
+                  status: 'active' as BuildingStatus,
+                  constructionStartTime: undefined,
+                  constructionEndTime: undefined,
                 }
               : b,
           ),

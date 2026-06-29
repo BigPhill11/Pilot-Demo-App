@@ -1,5 +1,7 @@
 /** Career Readiness module content & progress types */
 
+import { safeRandomUUID } from '@/lib/uuid';
+
 export type CareerPhaseId = 'prepare' | 'practice' | 'follow-up' | 'finish';
 
 export type InterviewLessonId = 'prepare' | 'practice' | 'follow-up';
@@ -420,6 +422,225 @@ export function canNavigateToLesson(
   );
 }
 
+// --- Email Etiquette ---
+
+export const EMAIL_MODULE_ID = 'email-etiquette';
+export const EMAIL_BADGE_ID = 'badge-email';
+
+export type EmailLessonId = 'audience' | 'construct' | 'send' | 'followthrough';
+
+export type EmailActivityId =
+  | 'recipient-id'
+  | 'contact-type-sorter'
+  | 'subject-line-surgeon'
+  | 'email-anatomy-builder'
+  | 'tone-calibrator'
+  | 'length-editor'
+  | 'cc-bcc-simulator'
+  | 'timing-picker'
+  | 'signature-builder'
+  | 'followup-timing-simulator'
+  | 'thankyou-email-builder'
+  | 'tone-check-advanced';
+
+export const EMAIL_LESSON_ORDER: EmailLessonId[] = [
+  'audience',
+  'construct',
+  'send',
+  'followthrough',
+];
+
+export interface EmailEtiquetteModuleAnswers {
+  recipientIdResults?: Record<string, string>;
+  contactTypeSorts?: Record<string, 'cold' | 'warm' | 'internal'>;
+  subjectLineRewrites?: Record<string, string>;
+  emailAnatomyDraft?: {
+    subjectLine: string;
+    openingHook: string;
+    whyYouWhyThem: string;
+    theAsk: string;
+    professionalClose: string;
+  };
+  toneCalibrationResults?: Record<string, 'too-casual' | 'too-formal' | 'just-right'>;
+  lengthEditResult?: string;
+  ccBccSimulatorResults?: Record<string, 'individual' | 'cc' | 'bcc'>;
+  timingRankingResult?: string[];
+  signatureDraft?: {
+    fullName: string;
+    schoolOrRole: string;
+    email: string;
+    linkedIn?: string;
+  };
+  followupTimingResults?: Record<string, string>;
+  thankYouEmailDraft?: {
+    subjectLine: string;
+    specificReference: string;
+    whyItMattered: string;
+    reinstateInterest: string;
+    close: string;
+  };
+  toneCheckAdvancedResults?: Record<string, string>;
+  lessonReflections?: Record<string, string>;
+  testCheckpointResults?: Record<string, string | string[]>;
+}
+
+export interface EmailEtiquetteModuleDetails {
+  currentLessonId: EmailLessonId;
+  currentStepId: InterviewLessonStepId; // same 4-step flow: context | example | practice | test
+  currentPracticeActivityIndex: number;
+  completedLessonSteps: string[];
+  completedLessons: EmailLessonId[];
+  completedActivityIds: EmailActivityId[];
+  answers: EmailEtiquetteModuleAnswers;
+}
+
+export const EMAIL_REQUIRED_ACTIVITIES: Record<EmailLessonId, EmailActivityId[]> = {
+  audience: ['recipient-id', 'contact-type-sorter'],
+  construct: ['email-anatomy-builder', 'tone-calibrator'],
+  send: ['cc-bcc-simulator', 'signature-builder'],
+  followthrough: ['followup-timing-simulator', 'thankyou-email-builder'],
+};
+
+export function emailLessonStepKey(
+  lessonId: EmailLessonId,
+  stepId: InterviewLessonStepId
+): string {
+  return `${lessonId}:${stepId}`;
+}
+
+export function getDefaultEmailEtiquetteDetails(): EmailEtiquetteModuleDetails {
+  return {
+    currentLessonId: 'audience',
+    currentStepId: 'context',
+    currentPracticeActivityIndex: 0,
+    completedLessonSteps: [],
+    completedLessons: [],
+    completedActivityIds: [],
+    answers: {},
+  };
+}
+
+export function normalizeEmailEtiquetteDetails(
+  raw: Partial<EmailEtiquetteModuleDetails> | null | undefined
+): EmailEtiquetteModuleDetails {
+  const base = getDefaultEmailEtiquetteDetails();
+  if (!raw || typeof raw !== 'object') return base;
+  return {
+    ...base,
+    ...raw,
+    answers: { ...base.answers, ...(raw.answers ?? {}) },
+    completedActivityIds: raw.completedActivityIds ?? [],
+    completedLessonSteps: raw.completedLessonSteps ?? [],
+    completedLessons: raw.completedLessons ?? [],
+    currentLessonId: raw.currentLessonId ?? base.currentLessonId,
+    currentStepId: raw.currentStepId ?? base.currentStepId,
+    currentPracticeActivityIndex: raw.currentPracticeActivityIndex ?? 0,
+  };
+}
+
+export function isEmailLessonComplete(
+  lessonId: EmailLessonId,
+  completedLessonSteps: string[]
+): boolean {
+  return INTERVIEW_STEP_ORDER.every((stepId) =>
+    completedLessonSteps.includes(emailLessonStepKey(lessonId, stepId))
+  );
+}
+
+export function calculateEmailEtiquetteProgress(
+  details: EmailEtiquetteModuleDetails
+): number {
+  const lessonsDone = details.completedLessons.length;
+  if (lessonsDone >= EMAIL_LESSON_ORDER.length) return 100;
+
+  const stepKeys = EMAIL_LESSON_ORDER.flatMap((lessonId) =>
+    INTERVIEW_STEP_ORDER.map((stepId) => emailLessonStepKey(lessonId, stepId))
+  );
+  const stepsDone = stepKeys.filter((k) =>
+    details.completedLessonSteps.includes(k)
+  ).length;
+  const fromSteps = Math.round((stepsDone / stepKeys.length) * 100);
+
+  const allRequired = EMAIL_LESSON_ORDER.flatMap((id) => EMAIL_REQUIRED_ACTIVITIES[id]);
+  const completedRequired = allRequired.filter((id) =>
+    details.completedActivityIds.includes(id)
+  ).length;
+  const fromActivities = allRequired.length === 0
+    ? 0
+    : Math.round((completedRequired / allRequired.length) * 100);
+
+  return Math.max(fromSteps, fromActivities);
+}
+
+export function isEmailEtiquetteModuleComplete(
+  details: EmailEtiquetteModuleDetails
+): boolean {
+  if (details.completedLessons.length >= EMAIL_LESSON_ORDER.length) return true;
+  return EMAIL_LESSON_ORDER.every((id) =>
+    isEmailLessonComplete(id, details.completedLessonSteps)
+  );
+}
+
+export function getNextEmailLessonStep(
+  lessonId: EmailLessonId,
+  stepId: InterviewLessonStepId
+): { lessonId: EmailLessonId; stepId: InterviewLessonStepId } | 'finish' {
+  const stepIdx = INTERVIEW_STEP_ORDER.indexOf(stepId);
+  if (stepIdx < INTERVIEW_STEP_ORDER.length - 1) {
+    return { lessonId, stepId: INTERVIEW_STEP_ORDER[stepIdx + 1] };
+  }
+  const lessonIdx = EMAIL_LESSON_ORDER.indexOf(lessonId);
+  if (lessonIdx < EMAIL_LESSON_ORDER.length - 1) {
+    return { lessonId: EMAIL_LESSON_ORDER[lessonIdx + 1], stepId: 'context' };
+  }
+  return 'finish';
+}
+
+export function canAccessEmailLessonStep(
+  details: EmailEtiquetteModuleDetails,
+  lessonId: EmailLessonId,
+  stepId: InterviewLessonStepId
+): boolean {
+  const lessonIdx = EMAIL_LESSON_ORDER.indexOf(lessonId);
+  for (let i = 0; i < lessonIdx; i++) {
+    if (!isEmailLessonComplete(EMAIL_LESSON_ORDER[i], details.completedLessonSteps)) {
+      return false;
+    }
+  }
+  const stepIdx = INTERVIEW_STEP_ORDER.indexOf(stepId);
+  for (let j = 0; j < stepIdx; j++) {
+    if (!details.completedLessonSteps.includes(emailLessonStepKey(lessonId, INTERVIEW_STEP_ORDER[j]))) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function canReviewEmailLessonStep(
+  details: EmailEtiquetteModuleDetails,
+  lessonId: EmailLessonId,
+  stepId: InterviewLessonStepId
+): boolean {
+  const key = emailLessonStepKey(lessonId, stepId);
+  if (details.completedLessonSteps.includes(key)) {
+    return canNavigateToEmailLesson(details, lessonId);
+  }
+  return canAccessEmailLessonStep(details, lessonId, stepId);
+}
+
+export function canNavigateToEmailLesson(
+  details: EmailEtiquetteModuleDetails,
+  lessonId: EmailLessonId
+): boolean {
+  const lessonIdx = EMAIL_LESSON_ORDER.indexOf(lessonId);
+  if (lessonIdx <= 0) return true;
+  const prev = EMAIL_LESSON_ORDER[lessonIdx - 1];
+  return (
+    isEmailLessonComplete(prev, details.completedLessonSteps) ||
+    details.completedLessons.includes(prev)
+  );
+}
+
 // --- Resume Builder ---
 
 export const RESUME_MODULE_ID = 'resume-builder';
@@ -543,17 +764,17 @@ export function getDefaultResumeDetails(): ResumeBuilderDetails {
 
 export function createResumeRoleEntry(): ResumeRoleEntry {
   return {
-    id: crypto.randomUUID(),
+    id: safeRandomUUID(),
     organization: '',
     location: '',
     title: '',
     dateRange: '',
-    bullets: [{ id: crypto.randomUUID(), text: '' }],
+    bullets: [{ id: safeRandomUUID(), text: '' }],
   };
 }
 
 export function createResumeBullet(): ResumeBullet {
-  return { id: crypto.randomUUID(), text: '' };
+  return { id: safeRandomUUID(), text: '' };
 }
 
 function isContactComplete(contact: ResumeContact): boolean {
