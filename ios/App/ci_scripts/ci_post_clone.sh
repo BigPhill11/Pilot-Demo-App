@@ -2,22 +2,27 @@
 
 # ci_post_clone.sh — runs in Xcode Cloud immediately after the repository is cloned.
 #
-# This Capacitor iOS app depends on CocoaPods. The Pods/ directory and the
-# generated *.xcconfig files it produces are gitignored, so they do NOT exist in
-# the clean checkout Xcode Cloud creates. Without regenerating them the archive
-# fails with:
+# This is a Capacitor app, so the iOS archive depends on artifacts that are NOT in
+# the git checkout because they are gitignored / generated:
 #
-#   Unable to open base configuration reference file
-#   '.../ios/App/Pods/Target Support Files/Pods-App/Pods-App.release.xcconfig'
+#   * Node/npm is not preinstalled on the Xcode Cloud image            -> "npm: command not found"
+#   * ios/App/App/public (the bundled web app) is produced by cap sync  -> "Build input file cannot be found: .../public"
+#   * Pods/ + Pods-App.*.xcconfig are produced by pod install           -> "Unable to open base configuration reference file"
 #
-# Installing CocoaPods and running `pod install` recreates those files so the
-# build can open the Pods base configuration.
+# To make the clean checkout buildable we install Node + CocoaPods, install JS
+# dependencies, build the web app, then run `npx cap sync ios` which copies dist/
+# into ios/App/App/public AND runs pod install (regenerating the xcconfig files).
 
 set -eu
 
+# Homebrew (and anything we install through it) lives here on the Apple Silicon
+# Xcode Cloud runners. Put it on PATH up front so `npm`/`pod` resolve after install.
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+export HOMEBREW_NO_AUTO_UPDATE=1
+export HOMEBREW_NO_INSTALL_CLEANUP=1
+
 REPO_ROOT="${CI_PRIMARY_REPOSITORY_PATH:-$(cd "$(dirname "$0")/../../.." && pwd)}"
 IOS_APP_DIR="$REPO_ROOT/ios/App"
-CAPACITOR_PODS_HELPER="$REPO_ROOT/node_modules/@capacitor/ios/scripts/pods_helpers.rb"
 
 echo "▸ Using repository root: $REPO_ROOT"
 
@@ -26,25 +31,38 @@ if [ ! -f "$REPO_ROOT/package-lock.json" ]; then
   exit 1
 fi
 
+# 1. Node / npm — not preinstalled on Xcode Cloud. This is the step that was failing
+#    with "npm: command not found" (exit 127).
+if command -v npm >/dev/null 2>&1; then
+  echo "▸ npm already installed: $(npm --version)"
+else
+  echo "▸ npm not found — installing Node via Homebrew…"
+  brew install node
+fi
+
+# 2. CocoaPods — needed by `cap sync` to regenerate the Pods xcconfig files.
+if command -v pod >/dev/null 2>&1; then
+  echo "▸ CocoaPods already installed: $(pod --version)"
+else
+  echo "▸ Installing CocoaPods…"
+  brew install cocoapods
+fi
+
+# 3. JavaScript dependencies.
 echo "▸ Installing JavaScript dependencies with npm ci…"
 cd "$REPO_ROOT"
 npm ci
 
-if [ ! -f "$CAPACITOR_PODS_HELPER" ]; then
-  echo "✗ Capacitor CocoaPods helper not found after npm ci:"
-  echo "  $CAPACITOR_PODS_HELPER"
-  exit 1
-fi
+# 4. Build the web app (produces dist/). Vite reads VITE_* values from the Xcode
+#    Cloud environment, falling back to the committed .env.production defaults so the
+#    archive is functional even if those env vars are not configured in App Store
+#    Connect.
+echo "▸ Building web assets with npm run build…"
+npm run build
 
-echo "▸ Installing CocoaPods…"
-if command -v pod >/dev/null 2>&1; then
-  echo "▸ CocoaPods already installed: $(pod --version)"
-else
-  brew install cocoapods
-fi
+# 5. Sync into iOS: copies dist/ -> ios/App/App/public and runs pod install in
+#    ios/App, regenerating Pods + the *.xcconfig files the archive references.
+echo "▸ Running npx cap sync ios…"
+npx cap sync ios
 
-echo "▸ Running pod install in ios/App…"
-cd "$IOS_APP_DIR"
-pod install
-
-echo "✓ ci_post_clone complete — Pods regenerated."
+echo "✓ ci_post_clone complete — Node deps installed, web assets built, Pods regenerated."
