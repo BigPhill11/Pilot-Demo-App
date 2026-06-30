@@ -15,7 +15,7 @@
 set -eu
 
 PBXPROJ="${CI_PRIMARY_REPOSITORY_PATH:-$(cd "$(dirname "$0")/../../.." && pwd)}/ios/App/App.xcodeproj/project.pbxproj"
-BUILD_NUMBER="$(date -u +%Y%m%d%H%M)"
+BUILD_NUMBER="$(date -u +%Y%m%d%H%M%S)"
 
 echo "▸ Setting CURRENT_PROJECT_VERSION (CFBundleVersion) to $BUILD_NUMBER"
 # macOS/BSD sed (Xcode Cloud runs macOS): in-place edit with an empty backup suffix.
