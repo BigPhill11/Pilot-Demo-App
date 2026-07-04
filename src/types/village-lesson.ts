@@ -1,7 +1,9 @@
 /**
  * Village Lesson types — the new Market Intelligence lesson format.
- * Flow: Hook → Concepts → Simulator → Quiz → Reward
+ * Flow: Hook → Concepts → Simulator → Quiz → Teach Phil → Reward
  */
+
+import type { PhilAge, TeachBackSpec } from './teach-back';
 
 /** Inner pathways inside the Business Economics village building */
 export type BusinessEconomicsPathwayId =
@@ -60,6 +62,10 @@ export interface VillageLesson {
   simulator: DecisionSimulator;
   quiz: VillageQuizQuestion[];
   rewards: { xp: number; bamboo: number };
+  /** Phil's persona tier for the teach-back step; defaults by module */
+  philAge?: PhilAge;
+  /** Hand-written concept spec; auto-derived from concepts when absent */
+  teachBack?: TeachBackSpec;
 }
 
 export interface VillageConcept {
