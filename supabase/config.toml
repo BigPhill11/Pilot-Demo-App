@@ -30,6 +30,9 @@ verify_jwt = true
 [functions.AskPhil]
 verify_jwt = true
 
+[functions.TeachPhil]
+verify_jwt = true
+
 [functions.phil-chat]
 verify_jwt = true
 
