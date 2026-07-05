@@ -67,7 +67,7 @@ export const PERSONAL_FINANCE_MODULES: Omit<PersonalFinanceModule, 'lessons' | '
     name: 'Income',
     pillar: 'Foundation',
     icon: '💰',
-    description: 'Master the fundamentals of earning money through active and passive income streams.',
+    description: 'Get your first paycheck — then find out where the missing money went, and how to earn more without burning out.',
     level: 'beginner',
     unlockRequirements: {
       orTestOutScore: 85,
@@ -94,7 +94,7 @@ export const PERSONAL_FINANCE_MODULES: Omit<PersonalFinanceModule, 'lessons' | '
     name: 'Saving',
     pillar: 'Foundation',
     icon: '🏦',
-    description: 'Learn strategies to keep more of what you earn and build your financial cushion.',
+    description: 'Build a cash cushion before the kingdom needs it. When trouble hits, you\'ll be the one who\'s ready.',
     level: 'beginner',
     unlockRequirements: {
       previousModuleId: 'financial-planning',
@@ -763,7 +763,7 @@ export const careerIncomeModule: PersonalFinanceModule = {
     { question: 'Market value is primarily determined by:', options: ['Years of experience', 'Educational degrees', 'Supply and demand for your skills', 'Company loyalty'], correctIndex: 2 },
     { question: 'Skill stacking helps because:', options: ['One skill is enough', 'Combining skills creates unique value', 'Stacking certifications impresses employers', 'More skills mean more work'], correctIndex: 1 },
     { question: 'Multiplier skills include:', options: ['Specific software tools', 'Leadership and communication', 'Industry certifications', 'Technical specialties only'], correctIndex: 1 },
-    { question: 'BATNA stands for:', options: ['Best Alternative To Negotiated Agreement', 'Business And Technical Negotiation Approach', 'Baseline Annual Target Negotiation Amount', 'Benefits And Total Net Amount'], correctIndex: 0 },
+    { question: 'Before asking for a raise, why does it help to have another real option (another offer, another path)?', options: ['It lets you threaten to quit on the spot', 'A real backup option gives you the confidence to ask and the power to walk away', 'It guarantees the raise will be approved', 'It proves you are more loyal than your coworkers'], correctIndex: 1 },
     { question: 'Visibility matters because:', options: ['Good work speaks for itself', 'Leaders are too busy to notice everyone', 'It makes coworkers jealous', 'It replaces actual performance'], correctIndex: 1 },
     { question: 'Passive income requires:', options: ['No work at all', 'Massive upfront investment', 'Luck and timing', 'Quitting your job first'], correctIndex: 1 },
     { question: 'Financial freedom is achieved when:', options: ['You earn $1 million', 'Passive income exceeds expenses', 'You retire at 65', 'You have zero debt'], correctIndex: 1 },

@@ -12,8 +12,17 @@ APS partnership is actively being pursued.
 
 ## 1. Federal trademark — "Phil's Financials" (HIGHEST PRIORITY)
 
-**Status:** IN PROGRESS (clearance-search protocol documented 2026-07-05; searches not
-yet run) · **Owner:** Phil (with trademark counsel — Brian can advise)
+**Status:** IN PROGRESS (protocol documented 2026-07-05 AM; common-law + indexed-DB
+layers run 2026-07-05 PM — see AUDIT_LOG Run 2 §B; official USPTO expert-mode queries
+still pending) · **Owner:** Phil (with trademark counsel — Brian can advise)
+
+> **Preliminary results (2026-07-05, aggregator/web layer only — NOT a substitute for
+> the official USPTO search):** no identical "Phil's Financials" mark found in indexed
+> federal databases or third-party web use. **One confusion candidate found and flagged
+> for counsel (F-15): "Finance With Phil"** — Atlanta-based financial-literacy app +
+> courses (financewithphil.com/.org, @financewithphil), apparently common-law
+> (no federal registration indexed). Same city/field/channel, "Phil" dominant element,
+> adult-skewing audience. Counsel must assess before filing.
 
 - [ ] **Clearance search first.** USPTO trademark search (successor to TESS):
       https://tmsearch.uspto.gov — search "Phil's Financials," "Phils Financials,"

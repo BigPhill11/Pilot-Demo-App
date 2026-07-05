@@ -15,7 +15,7 @@ You will save whatever is left.
 
 A few days pass. Small purchases do not feel like a problem. Food costs a little more than expected. A plan comes up that you do not want to miss. None of these decisions feel irresponsible on their own.
 
-Then something unexpected happens. A repair. A fee. A missed shift. You look at your account and realize the saving you planned never actually started. The money was already assigned without you noticing.
+Then something happens. Your phone screen cracks. Your Breeze card needs reloading. Your manager cuts your Saturday shift. You check your account — the saving you planned never actually started. The money spent itself while you weren't looking.
 
 This moment forces a question.
 Is saving something you do only if life cooperates, or is it something that runs regardless of what happens?`,
@@ -43,7 +43,7 @@ Saving first may not instantly upgrade your lifestyle, but it upgrades your posi
     },
     {
       term: 'Liquidity',
-      definition: 'Liquidity describes how quickly you can access money without losing value or paying penalties. Highly liquid money keeps problems small because it is available exactly when timing matters most.',
+      definition: 'Liquidity means how fast you can get your money when you need it — no penalties, no waiting. Cash you can grab today keeps small problems small.',
       philsAnalogy: 'Access without penalty or delay.',
     },
     {

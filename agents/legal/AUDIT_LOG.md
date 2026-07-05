@@ -417,3 +417,138 @@ returns nothing; Ask Phil feature regression-tested (uses `AskPhil` → Gemini, 
 - PC-17 approach generally; PC-18 draft review (see drafting-notes table in the draft).
 
 *End of 2026-07-05 entry. Future runs: append below this line.*
+
+---
+
+# 2026-07-05 — Run 2 (scheduled) — TM clearance preliminary results; new-file re-audit
+
+> Not legal advice. Attorney review required before reliance.
+
+## A. Ledger check
+
+No items marked `APPROVED`. PC-17 and PC-18 remain awaiting Phil's mark — **no app
+source, Supabase function, or policy text was touched this run.** All changes below are
+auto-apply tier (docs under `agents/`).
+
+## B. Queue item advanced: trademark clearance search — preliminary results (IP_CHECKLIST item 1)
+
+Executed the common-law and indexed-database layers of the documented protocol via web
+search (the official USPTO search UI at tmsearch.uspto.gov and the GA SOS eCorp search
+are JavaScript/form-driven and could not be executed from this environment — see
+"Remaining," below). Queries run today, with results:
+
+| Layer | Query | Result |
+|---|---|---|
+| Common-law web | `"Phil's Financials" trademark` | Only Phil's own properties: LinkedIn company page, philsfinancials.framer.website, pilot-program-learn.vercel.app, and 11alive.com news feature. **No third-party use of the mark found.** |
+| Indexed federal DBs (Justia/Trademarkia) | `"phil" financial education`; `"finance with phil"` | **No identical or near-identical "Phil's Financials" federal mark indexed.** No "Finance With Phil" federal registration indexed either. |
+| Confusion sweep | `"phil" financial literacy app trademark` | See F-15 below (Finance With Phil). Distinct adult-market brands noted: Rule #1 (Phil Town), PhilStockWorld (Phil Davis) — different marks, lower risk. |
+| GA SOS | `"Phil's Financials" LLC georgia secretary of state` | Not resolvable via web search; eCorp requires interactive form search. Still blocked. |
+
+**F-15 (TM risk, NEEDS COUNSEL): "Finance With Phil"** — financewithphil.com /
+financewithphil.org, plus YouTube and Instagram (@financewithphil). An **Atlanta-based**
+financial-education brand offering a "financial literacy app" and courses. No federal
+registration found in indexed databases, so likely a **common-law mark — but it is in the
+same city, same field (financial literacy), same channel (mobile app), with "Phil" as the
+dominant element.** Its audience skews adult/entrepreneur vs. our teen/ed-market focus.
+This is exactly the kind of senior common-law user counsel must assess for
+likelihood-of-confusion and geographic-priority risk before filing. **Do not skip this in
+the Brian conversation.**
+
+**Positive evidence note:** the 11alive feature, LinkedIn page, and live app listing are
+dated public uses of "Phil's Financials" — capture/screenshot them as first-use evidence
+for a §1(a) filing (blocked on the evidence-folder/repo-visibility question).
+
+**Remaining for item 1 (unchanged protocol, §IP_CHECKLIST):** the 7 expert-mode USPTO
+query sets (incl. `DC:030114` panda design sweep) still need a browser-enabled run or
+Phil at tmsearch.uspto.gov; GA SOS eCorp business + state-trademark search likewise.
+Aggregator indexes are NOT a substitute for the official database.
+
+## C. Re-audit of files changed since last log date
+
+New since the morning entry: `agents/education/` (6 docs), `agents/SETUP_API_KEY.md`,
+`.github/workflows/legal-agent.yml`, `.github/workflows/education-agent.yml` (commit
+`9eb45d2`).
+
+1. **F-16 (clean):** Both workflow files reference `${{ secrets.ANTHROPIC_API_KEY }}`
+   correctly — **no key material committed.** `SETUP_API_KEY.md` correctly instructs
+   secrets-only handling. Workflow autonomy text mirrors the charter's tiered policy and
+   uses PR-merge-as-approval — consistent with propose-then-apply governance.
+2. **F-17 (info):** The repo's public URL is now documented in-repo:
+   `github.com/BigPhill11/Pilot-Demo-App`. The repo does **not** appear in public search
+   indexing (weak evidence it is private — NOT confirmation). Standing blocker #4
+   (repo visibility) remains; once confirmed private, create `agents/legal/evidence/`.
+3. **Education agent activity:** its log shows applied edits to lesson `realityHook` copy
+   in `src/data/personal-finance/` — content-only, no data-handling, auth, or policy
+   surface touched. No new privacy/IP exposure. (Its Atlanta-localization direction is
+   good for engagement; flag only that lesson scenarios should continue to avoid PPRA
+   protected areas, e.g., family income — see F4/PPRA guardrail.)
+
+## D. Status ledger (no changes — reproduced for phone review)
+
+Unchanged from the 2026-07-05 morning entry: PC-1…PC-3, PC-6, PC-7, PC-12 superseded by
+DRAFT/PC-18; **PC-17 P0 awaiting APPROVED; PC-18 P0 BLOCKED**; PC-5/PC-8/PC-9 blocked on
+LLC name/email/address; PC-10, PC-11, PC-13–PC-15 proposed; PC-16 open (Google + Supabase
+only if PC-17 approved).
+
+## E. Standing blockers for Phil (re-surfaced)
+
+1. Exact GA LLC legal name (ecorp.sos.ga.gov) — blocks PC-5, PC-8, PC-18, TM filing.
+2. Canonical privacy contact email + mailing address — blocks PC-5, PC-9, PC-18.
+3. Panda art / comic-panel authorship — blocks copyright strategy + design-mark filing.
+4. Repo visibility (see F-17 — likely private, needs Phil's one-word confirmation).
+
+## F. For the privacy/TM attorney (additions)
+
+- **F-15:** assess "Finance With Phil" (Atlanta, common-law, financial-literacy app) for
+  likelihood-of-confusion / priority before filing `PHIL'S FINANCIALS`.
+
+*End of 2026-07-05 Run 2 entry. Future runs: append below this line.*
+
+---
+
+# 2026-07-05 — Run 3 (dispatch, with Phil live) — PC-17 APPROVED & APPLIED (repo side); PC-18 APPROVED-CONDITIONAL
+
+> Not legal advice. Attorney review required before reliance.
+
+## A. Approvals received
+
+**Phil approved PC-17 and PC-18 verbally via Claude chat, 2026-07-05** ("with the PC 17
+and 18, You can approve them as well"). Recorded here as the required APPROVED marks.
+
+## B. PC-17 — APPLIED (repo side) per §C spec of Run 1
+
+| Spec item | Status |
+|---|---|
+| 1. `supabase/functions/phil-chat-openai/` | ✅ DELETED |
+| 2. `supabase/functions/phil-chat/` | ✅ DELETED |
+| 3–4. `supabase/config.toml` `[functions.phil-chat]` / `[functions.phil-chat-openai]` blocks | ✅ DELETED (grep clean) |
+| 8. `src/` references | ✅ verified none (grep clean) |
+| 5. OPS — undeploy both functions on project `qssqbpllqkorfjcxgomh` | ⛔ OUTSTANDING — needs Phil or someone with Supabase access: dashboard → Edge Functions → delete `phil-chat` and `phil-chat-openai`, or CLI `supabase functions delete <name>` |
+| 6. OPS — remove `PERPLEXITY_API_KEY` secret + revoke key in Perplexity console | ⛔ OUTSTANDING — same access needed |
+| 7. `OPENAI_API_KEY` | ✅ KEPT (admin video pipeline dependency, F-14) |
+
+**Important:** until OPS items 5–6 are done, the deployed endpoints still exist on
+Supabase even though the code is gone from the repo. Repo deletion alone does NOT
+undeploy them.
+
+## C. PC-18 — status changed: BLOCKED → APPROVED-CONDITIONAL
+
+Phil's approval is on record, but application into `src/pages/PrivacyPage.tsx` remains
+gated by the draft's own pre-conditions, which protect Phil (a placeholder-riddled or
+unreviewed policy is worse in an APS procurement review than the current one):
+(a) operator placeholders — needs exact GA LLC legal name + canonical privacy contact
+email/mailing address (standing blockers #1–2); (b) PC-16 vendor verification;
+(c) privacy-attorney sign-off (Brian's recommendation); (d) Safe Harbor + NY CDPA
+decisions. **Next runs: treat resolving these gates as P0 and apply PC-18 immediately
+once they clear — no further approval needed from Phil.**
+
+## D. Status ledger deltas (supersedes prior tables)
+
+| ID | New status |
+|---|---|
+| PC-4 | APPLIED via PC-17 (repo side); ops outstanding |
+| PC-17 | **APPROVED → APPLIED (repo side); OPS items 5–6 outstanding** |
+| PC-18 | **APPROVED-CONDITIONAL** (gates in §C above) |
+| PC-16 | OPEN — vendor scope now Google (Gemini) + Supabase only |
+
+*End of 2026-07-05 Run 3 entry. Future runs: append below this line.*
