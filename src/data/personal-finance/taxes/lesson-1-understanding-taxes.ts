@@ -18,27 +18,27 @@ Taxes are not punishment. Taxes are a cost of participating in an organized econ
     {
       term: 'Tax',
       definition: 'A tax is a required payment to a government used to fund public services and programs. Taxes apply to income, purchases, and ownership.',
-      philsAnalogy: 'Part of each paycheck going to support schools, roads, and emergency services.'
+      philsAnalogy: 'A tax is like everyone on the team chipping in for the same field, refs, and lights. No single player could pay for all of it, so everyone puts in a share to keep the game running for everybody.'
     },
     {
       term: 'Income Tax',
       definition: 'Income tax is a tax placed on money earned from work, businesses, or investments. Income tax reduces take home pay.',
-      philsAnalogy: 'Seeing federal and state taxes taken out of a paycheck.'
+      philsAnalogy: 'Income tax is like the school taking a cut of every fundraiser you run. Sell candy, wash cars, or DJ a party, and a set share still goes to the front office. Where the money came from changes, but the cut still comes out.'
     },
     {
       term: 'Take Home Pay',
       definition: 'Take home pay is the money you receive after taxes and deductions. Take home pay determines spending ability.',
-      philsAnalogy: 'Receiving less than your hourly wage multiplied by hours worked.'
+      philsAnalogy: 'Take-home pay is the slice of pizza left after everyone at the table grabs theirs first. Your check says one number, but what actually lands on your plate is what is left after taxes come out.'
     },
     {
       term: 'Public Services',
       definition: 'Public services are programs funded by taxes that benefit society as a whole. These services support daily life and safety.',
-      philsAnalogy: 'Public schools, highways, and police departments.'
+      philsAnalogy: 'Public services are like the shared Wi-Fi at the rec center. Nobody there paid for the whole router, but everyone\'s small share keeps it on for all of them.'
     },
     {
       term: 'Tax Planning',
       definition: 'Tax planning is arranging finances in legal ways to reduce tax impact. Planning focuses on timing, structure, and awareness.',
-      philsAnalogy: 'Choosing saving and investing options that reduce taxable income.'
+      philsAnalogy: 'Tax planning is like knowing the dress code before you get dressed. You follow the rules on purpose so you never get sent home, and you keep more of what is yours the legal way.'
     }
   ],
   simulatorGame: {
