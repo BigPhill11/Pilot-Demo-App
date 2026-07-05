@@ -13,6 +13,8 @@ export const EMPIRE_BUILDING_IMAGES: Record<BuildingType, string> = {
   training_dojo: '/empire/buildings/training_dojo.png',
   trading_post: '/empire/buildings/trading_post.png',
   panda_house: '/empire/buildings/panda_house.png',
+  // TODO: real pagoda art — reusing dojo sprite until teaching_pagoda.png exists
+  teaching_pagoda: '/empire/buildings/training_dojo.png',
 };
 
 export function empireBuildingImageSrc(type: BuildingType, preferHiRes = false): string {

@@ -10,6 +10,7 @@ import {
   Trophy,
   Star,
   MessageCircle,
+  GraduationCap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type {
@@ -94,6 +95,7 @@ const FLOW_STEPS = [
   { icon: BookOpen, label: 'Learn', color: 'bg-blue-100 text-blue-700' },
   { icon: Zap, label: 'Simulate', color: 'bg-orange-100 text-orange-700' },
   { icon: HelpCircle, label: 'Quiz', color: 'bg-purple-100 text-purple-700' },
+  { icon: GraduationCap, label: 'Teach', color: 'bg-emerald-100 text-emerald-700' },
   { icon: Trophy, label: 'Empire', color: 'bg-green-100 text-green-700' },
 ];
 

@@ -5,8 +5,9 @@ export type BuildingType =
   | 'market_stall' 
   | 'insurance_hut' 
   | 'training_dojo' 
-  | 'trading_post' 
-  | 'panda_house';
+  | 'trading_post'
+  | 'panda_house'
+  | 'teaching_pagoda';
 
 export type BuildingStatus = 'constructing' | 'active' | 'damaged' | 'upgrading';
 
@@ -43,6 +44,8 @@ export interface BuildingDefinition {
   buildingSlots?: number;
   collectThreshold?: number;
   unlockXP: number;
+  /** Successful Teach Phil sessions required to unlock (profiles.teach_backs_completed) */
+  unlockTeachBacks?: number;
   emoji: string;
   visual?: BuildingVisualConfig;
 }
@@ -176,6 +179,21 @@ export const BUILDING_DEFINITIONS: Record<BuildingType, BuildingDefinition> = {
     emoji: '🐼',
     visual: { anchorOffsetY: -15 },
   },
+  teaching_pagoda: {
+    id: 'teaching_pagoda',
+    name: 'Teaching Pagoda',
+    description: 'Grows every time you successfully teach Phil a concept.',
+    educationalDescription: 'The Teaching Pagoda celebrates the protégé effect - the best way to truly learn something is to teach it to someone else. Every concept you teach Phil makes your own understanding (and your pagoda) stronger!',
+    cost: 100,
+    size: { width: 2, height: 2 },
+    constructionTime: 45,
+    maxLevel: 5,
+    productionBoost: 10,
+    unlockXP: 0,
+    unlockTeachBacks: 1,
+    emoji: '🏯',
+    visual: { anchorOffsetY: -15 },
+  },
 };
 
 export const getBuildingStats = (type: BuildingType, level: number) => {
@@ -206,8 +224,15 @@ export const getUpgradeCost = (type: BuildingType, fromLevel: number): number =>
   return Math.floor(def.cost * Math.pow(UPGRADE_COST_EXPONENT, level));
 };
 
-export const isBuildingUnlocked = (type: BuildingType, currentXP: number): boolean => {
-  return currentXP >= BUILDING_DEFINITIONS[type].unlockXP;
+export const isBuildingUnlocked = (
+  type: BuildingType,
+  currentXP: number,
+  teachBacksCompleted = 0,
+): boolean => {
+  const def = BUILDING_DEFINITIONS[type];
+  if (currentXP < def.unlockXP) return false;
+  if (def.unlockTeachBacks != null && teachBacksCompleted < def.unlockTeachBacks) return false;
+  return true;
 };
 
 export const getCollectThreshold = (type: BuildingType): number => {

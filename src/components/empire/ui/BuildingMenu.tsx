@@ -10,6 +10,7 @@ import { getBuildDurationSeconds } from '../buildings/buildingTiming';
 import EmpireBuildingImage from '../buildings/EmpireBuildingImage';
 import { useGameStore } from '@/store/useGameStore';
 import { useCreditStore } from '@/store/useCreditStore';
+import { useTeachBacksCompleted } from '@/hooks/useTeachBacksCompleted';
 
 interface BuildingMenuProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ const BuildingMenu: React.FC<BuildingMenuProps> = ({
   lockToBuildingType = null,
 }) => {
   const xp = useGameStore((state) => state.xp);
+  const teachBacksCompleted = useTeachBacksCompleted();
 
   const { enabled: creditEnabled, balance: creditBalance, limit: creditLimit } = useCreditStore();
   const availableCredit = creditLimit - creditBalance;
@@ -35,7 +37,7 @@ const BuildingMenu: React.FC<BuildingMenuProps> = ({
   const handleSelectBuilding = (type: BuildingType) => {
     if (lockToBuildingType && type !== lockToBuildingType) return;
     const def = BUILDING_DEFINITIONS[type];
-    if (!isBuildingUnlocked(type, xp)) return;
+    if (!isBuildingUnlocked(type, xp, teachBacksCompleted)) return;
     if (!creditEnabled || def.cost > availableCredit) return;
 
     onSelectBuilding(type);
@@ -82,7 +84,7 @@ const BuildingMenu: React.FC<BuildingMenuProps> = ({
             <div className="p-4 overflow-y-auto max-h-[calc(60vh-60px)]">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {buildings.map((building, index) => {
-                  const isUnlocked = isBuildingUnlocked(building.id, xp);
+                  const isUnlocked = isBuildingUnlocked(building.id, xp, teachBacksCompleted);
                   const buildSeconds = getBuildDurationSeconds(building.id, 1, xp);
                   const canAffordWithCredit =
                     creditEnabled && building.cost <= availableCredit;
@@ -121,7 +123,9 @@ const BuildingMenu: React.FC<BuildingMenuProps> = ({
                           {!isUnlocked && (
                             <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-gray-200 dark:bg-gray-700 text-xs font-medium">
                               <Lock className="w-3 h-3" />
-                              {building.unlockXP} XP
+                              {building.unlockTeachBacks != null && teachBacksCompleted < building.unlockTeachBacks
+                                ? `Teach Phil ×${building.unlockTeachBacks} 🐼`
+                                : `${building.unlockXP} XP`}
                             </div>
                           )}
                         </div>

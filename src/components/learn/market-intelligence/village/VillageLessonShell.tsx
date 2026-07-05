@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, BookOpen, Zap, HelpCircle, Trophy, Sparkles, Star, MessageCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, BookOpen, Zap, HelpCircle, Trophy, Sparkles, Star, MessageCircle, GraduationCap } from 'lucide-react';
 import type { VillageLesson, VillageModuleConfig } from '@/types/village-lesson';
 import VillageLessonSimulator from './simulators/VillageLessonSimulator';
 import VillageQuizStep from './VillageQuizStep';
+import VillageTeachPhilStep from './VillageTeachPhilStep';
+import type { TeachPhilResult } from '@/hooks/useTeachPhilSession';
 
-type Step = 'intro' | 'learn' | 'simulate' | 'quiz' | 'empire';
+type Step = 'intro' | 'learn' | 'simulate' | 'quiz' | 'teach' | 'empire';
 
 interface Props {
   lesson: VillageLesson;
@@ -14,13 +16,14 @@ interface Props {
   onBack: () => void;
 }
 
-const STEPS: Step[] = ['intro', 'learn', 'simulate', 'quiz', 'empire'];
+const STEPS: Step[] = ['intro', 'learn', 'simulate', 'quiz', 'teach', 'empire'];
 
 const STEP_META: Record<Step, { label: string; icon: React.ElementType; color: string; bg: string; desc: string }> = {
   intro:    { label: 'Intro',    icon: Sparkles,   color: 'text-green-600',  bg: 'bg-green-600',  desc: 'Set the stage' },
   learn:    { label: 'Learn',    icon: BookOpen,   color: 'text-blue-600',   bg: 'bg-blue-600',   desc: 'Concepts' },
   simulate: { label: 'Simulate', icon: Zap,        color: 'text-orange-600', bg: 'bg-orange-600', desc: 'Real consequences' },
   quiz:     { label: 'Quiz',     icon: HelpCircle, color: 'text-purple-600', bg: 'bg-purple-600', desc: 'Test yourself' },
+  teach:    { label: 'Teach',    icon: GraduationCap, color: 'text-emerald-600', bg: 'bg-emerald-600', desc: 'Teach Phil' },
   empire:   { label: 'Empire',   icon: Trophy,     color: 'text-amber-600',  bg: 'bg-amber-500',  desc: 'Claim reward' },
 };
 
@@ -39,6 +42,7 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
   const [conceptIndex, setConceptIndex] = useState(0);
   const [quizPassed, setQuizPassed] = useState(false);
   const [finalScore, setFinalScore] = useState({ score: 0, total: 0 });
+  const [teachResult, setTeachResult] = useState<TeachPhilResult | null>(null);
 
   const stepIndex = STEPS.indexOf(step);
   const headerGradient = MODULE_HEADER_GRADIENT[module.id] ?? 'from-green-700 to-green-600';
@@ -148,6 +152,11 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
                   <HelpCircle className="h-4 w-4 text-purple-500 flex-shrink-0" />
                   <p className="text-xs font-semibold text-purple-900">{lesson.quiz.length}-question quiz</p>
                   <span className="ml-auto text-[9px] text-purple-400 font-medium">Quiz</span>
+                </div>
+                <div className="flex items-center gap-2.5 p-2 rounded-xl bg-emerald-50 border border-emerald-100">
+                  <GraduationCap className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                  <p className="text-xs font-semibold text-emerald-900">Teach it back to Phil</p>
+                  <span className="ml-auto text-[9px] text-emerald-400 font-medium">Teach Phil</span>
                 </div>
                 <div className="flex items-center gap-2.5 p-2 rounded-xl bg-amber-50 border border-amber-100">
                   <Trophy className="h-4 w-4 text-amber-500 flex-shrink-0" />
@@ -274,16 +283,29 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
               onComplete={(passed, score, total) => {
                 setQuizPassed(passed);
                 setFinalScore({ score, total });
-                goNext();
+                // Quiz failures skip Teach Phil and go straight to the retry
+                // screen; only passers earn the right to teach
+                setStep(passed ? 'teach' : 'empire');
               }}
             />
           </div>
         )}
 
+        {/* ══ TEACH PHIL STEP ══ */}
+        {step === 'teach' && (
+          <VillageTeachPhilStep
+            lesson={lesson}
+            onComplete={(result) => {
+              setTeachResult(result);
+              setStep('empire');
+            }}
+          />
+        )}
+
         {/* ══ EMPIRE REWARD STEP ══ */}
         {step === 'empire' && (
           <div className="space-y-4">
-            {quizPassed ? (
+            {quizPassed && teachResult ? (
               <>
                 {/* Victory header */}
                 <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-700 via-emerald-600 to-teal-600 p-5 text-white text-center shadow-xl">
@@ -325,6 +347,16 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
                       <div className="text-xs text-green-600 font-semibold">Bamboo</div>
                     </div>
                   </div>
+                  {(teachResult?.optUpBonusBamboo ?? 0) > 0 && (
+                    <div className="px-4 pb-1">
+                      <div className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
+                        <span className="text-lg">🎓</span>
+                        <p className="text-xs text-emerald-800 font-bold">
+                          +{teachResult!.optUpBonusBamboo} 🎋 bonus for teaching a tougher Phil!
+                        </p>
+                      </div>
+                    </div>
+                  )}
                   <div className="px-4 pb-3">
                     <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-50 border border-amber-100">
                       <span className="text-lg">🏗️</span>
@@ -355,7 +387,7 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
                 </div>
 
                 <Button
-                  onClick={() => onComplete(lesson.rewards.xp, lesson.rewards.bamboo)}
+                  onClick={() => onComplete(lesson.rewards.xp, lesson.rewards.bamboo + (teachResult?.optUpBonusBamboo ?? 0))}
                   className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white h-12 rounded-xl text-base font-bold shadow-lg"
                 >
                   Back to Village
@@ -395,7 +427,7 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
                   </Button>
                   <Button
                     className="flex-1 bg-purple-600 hover:bg-purple-700 text-white rounded-xl h-11"
-                    onClick={() => { setFinalScore({ score: 0, total: 0 }); setQuizPassed(false); setStep('quiz'); }}
+                    onClick={() => { setFinalScore({ score: 0, total: 0 }); setQuizPassed(false); setTeachResult(null); setStep('quiz'); }}
                   >
                     Retry Quiz
                     <ChevronRight className="ml-1 h-4 w-4" />
