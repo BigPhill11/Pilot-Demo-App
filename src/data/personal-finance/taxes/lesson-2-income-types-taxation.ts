@@ -15,11 +15,11 @@ Investment income follows its own rules. Some investments are taxed when you sel
 
 Understanding income types helps you plan smarter. Structure affects how much you keep, not just how much you earn.`,
   flashcards: [
-    { term: 'Wages', definition: 'Wages are income earned from working for an employer. Wages usually have taxes withheld automatically.', philsAnalogy: 'Receiving a paycheck with taxes already taken out.' },
-    { term: 'Payroll Taxes', definition: 'Payroll taxes fund programs like social security and medicare. These taxes apply to earned income from jobs.', philsAnalogy: 'Seeing deductions labeled social security on a paycheck.' },
-    { term: 'Self Employment Income', definition: 'Self employment income comes from running a business or side hustle. Taxes are not automatically withheld.', philsAnalogy: 'Earning money from tutoring or selling products online.' },
-    { term: 'Investment Income', definition: 'Investment income comes from owning assets like stocks or funds. Taxes depend on timing and type.', philsAnalogy: 'Making money from selling investments or receiving dividends.' },
-    { term: 'Capital Gains', definition: 'Capital gains are profits from selling an investment for more than you paid. Gains can be taxed differently based on how long you hold the asset.', philsAnalogy: 'Selling a stock after several years for a profit.' }
+    { term: 'Wages', definition: 'Wages are income earned from working for an employer. Wages usually have taxes withheld automatically.', philsAnalogy: 'Wages are like a paycheck that arrives pre-cut. Taxes are pulled before it reaches you, so you never hold the full amount you earned.' },
+    { term: 'Payroll Taxes', definition: 'Payroll taxes fund programs like social security and medicare. These taxes apply to earned income from jobs.', philsAnalogy: 'Payroll taxes are like paying into a team fund now so there is money for players who get hurt or age out later. Social Security and Medicare work the same way, funded by a slice of every paycheck.' },
+    { term: 'Self Employment Income', definition: 'Self employment income comes from running a business or side hustle. Taxes are not automatically withheld.', philsAnalogy: 'Self-employment income is like getting paid in full with no cut taken out. It feels great until you remember you still owe it. Nobody withholds for you, so you have to set the tax money aside yourself.' },
+    { term: 'Investment Income', definition: 'Investment income comes from owning assets like stocks or funds. Taxes depend on timing and type.', philsAnalogy: 'Investment income is like fruit from a tree you planted. How and when you pick it changes what you owe. Sell too soon or let it pay you along the way, and the tax rules differ.' },
+    { term: 'Capital Gains', definition: 'Capital gains are profits from selling an investment for more than you paid. Gains can be taxed differently based on how long you hold the asset.', philsAnalogy: 'Capital gains are like reselling limited sneakers for more than you paid. The profit is the part that gets taxed, and holding them longer can change how much you owe.' }
   ],
   simulatorGame: {
     title: 'Tax the Income',
