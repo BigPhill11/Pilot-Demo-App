@@ -552,3 +552,149 @@ once they clear — no further approval needed from Phil.**
 | PC-16 | OPEN — vendor scope now Google (Gemini) + Supabase only |
 
 *End of 2026-07-05 Run 3 entry. Future runs: append below this line.*
+
+---
+
+# 2026-07-05 — Run 4 (scheduled) — PC-16 vendor data-use verification (deep); iOS re-audit; PC-17 ops correction
+
+> Not legal advice. Attorney review required before reliance.
+
+## A. Ledger check — approved items
+
+- **PC-17: APPROVED (Run 3).** Repo-side deletions **re-verified clean this run**:
+  `supabase/functions/phil-chat/` and `.../phil-chat-openai/` gone; `config.toml` has no
+  `phil-chat*` blocks; `grep phil-chat src/` empty. **No new repo action needed.** OPS
+  items 5 (undeploy both functions) remain OUTSTANDING; **OPS item 6 is CORRECTED —
+  see F-19 below (do NOT revoke `PERPLEXITY_API_KEY`).**
+- **PC-18: APPROVED-CONDITIONAL (Run 3).** Gates unchanged and still unmet (LLC name,
+  privacy email/address, PC-16 vendor verification, attorney sign-off, Safe Harbor + NY
+  CDPA). This run **advances the PC-16 gate** (below) but does not clear the Phil/attorney
+  gates, so **PC-18 is NOT applied.** No user-facing policy/terms text touched this run.
+
+No source file, Supabase function, iOS/Android config, or policy text was modified this
+run. New work is auto-apply tier only: one new doc under `agents/legal/`.
+
+## B. Deep queue item — PC-16 vendor data-use / DPA verification (P0)
+
+New file (auto-apply, additive doc under `agents/`):
+**`agents/legal/VENDOR_DATA_USE_FINDINGS.md`** — full primary-source verification of every
+third party that can receive user-derived data, with citations to the Gemini API Additional
+Terms, the Supabase DPA, and the two live edge functions. Headline results:
+
+1. **The decisive open fact (P0):** Both remaining student-facing AI features — Ask Phil
+   (`AskPhil/index.ts:90,145,153`) and resume feedback (`resume-bullet-check/index.ts:56,80,88`)
+   — call the **Gemini Developer API** (`generativelanguage.googleapis.com`, `gemini-2.5-flash`)
+   with `GEMINI_API_KEY`. Per Google's own terms, compliance turns on **one binary: is
+   billing enabled on that key's Google Cloud project?**
+   - **Paid (billing on):** Google does **not** train on prompts/responses; Google Cloud DPA
+     governs; no human review for improvement. ✅ defensible.
+   - **Unpaid (free AI Studio key):** Google uses submitted content "to provide, improve, and
+     develop Google products and services and machine learning technologies," **human
+     reviewers may read it**, and Google's terms say **"Do not submit … personal information
+     to the Unpaid Services."** ❌ **P0** for a minors' service whose policy promises no such
+     use (FTC Act §5 deception; COPPA §312 notice accuracy; O.C.G.A. § 20-2-661 operator
+     duties). US users get the unpaid treatment (the EEA/UK/CH free-tier carve-out does not
+     help GA students).
+   - **Cannot be determined from the repo** (a key string reveals no billing status). **OPS
+     for Phil:** confirm the tier (see memo §4, step 1). This is the single highest-leverage
+     unresolved compliance fact in the audit.
+2. **`/openai/` path is not OpenAI.** The endpoint `.../v1beta/openai/chat/completions` is
+   Google's OpenAI-*compatibility* shim; the request goes to Google under the Gemini terms.
+   No OpenAI vendor is in the student path after PC-17.
+3. **Supabase:** DPA available, executed via dashboard PandaDoc flow; SOC 2 Type 2 / HIPAA /
+   ISO 27001; must capture the executed DPA + **project data region** for procurement.
+4. **Corrected subprocessor inventory:** Supabase (all data) · Google/Gemini (student
+   free-text) · Perplexity (market-news copy, **no PII** — see F-20) · OpenAI (admin video
+   pipeline only, no student data). This **supersedes** the Run 3 note that scoped vendors to
+   "Google + Supabase only" — Perplexity is still live via `market-headlines`.
+
+## C. New findings this run (re-audit of files added since the last log)
+
+Files new/changed since the 2026-07-05 morning baseline: the iOS project
+(`ios/App/App/Info.plist`, `ios/App/ci_scripts/*`, `project.pbxproj` build-number stamps —
+commits `ade0cc5`, `e745ae7`, `7188545`) and three lesson content files + `modules.ts`
+(commit `89297a5`).
+
+1. **F-18 (P0 App-Review / privacy accuracy) — iOS microphone purpose string contradicts
+   actual use.** `ios/App/App/Info.plist:29-30` declares
+   `NSMicrophoneUsageDescription = "Phil's Financials does not use your microphone."` **But
+   the app DOES use the microphone:** `src/components/career-readiness/interviewing/AudioRecorder.tsx:22`
+   calls `navigator.mediaDevices.getUserMedia({ audio: true })` for interview practice (the
+   same feature the audit praised as local-only, F-09/PC-12). On iOS WKWebView, `getUserMedia`
+   surfaces this exact string in the permission prompt — so users are told the app "does not
+   use your microphone" *at the moment it asks for the microphone*, and Apple Guideline 5.1.1
+   requires purpose strings to accurately state the use. **This is a self-contradiction and an
+   App-Review rejection risk.** (The camera / photo-library / tracking strings appear
+   accurate — the app genuinely doesn't use those.) Fix proposed as **PC-19** (iOS native
+   config → propose-only). This finally **closes the PC-12 iOS verification** that was
+   impossible while the iOS project was absent from earlier checkouts.
+2. **F-19 (OPS SAFETY — corrects PC-17 spec item #6).** PC-17's Run-1 spec asserted
+   `PERPLEXITY_API_KEY` had "no other consumer in repo" and told ops to remove the secret and
+   **revoke the Perplexity key.** That premise is **wrong**:
+   `supabase/functions/market-headlines/index.ts:51,92,382` calls `api.perplexity.ai`
+   (`sonar-*` models) with `PERPLEXITY_API_KEY`. **Revoking the key would break the
+   market-headlines feature in production.** → **PC-17 OPS item 6 is RETRACTED.** Corrected
+   ops scope: undeploy `phil-chat` + `phil-chat-openai` (item 5) ✅ still valid; **keep
+   `PERPLEXITY_API_KEY` and `OPENAI_API_KEY`.** No repo change needed (the retraction is a
+   correction to the ops runbook, logged here).
+3. **F-20 (info) — Perplexity is a low-sensitivity AI subprocessor.** `market-headlines`
+   sends Perplexity only a fixed news-assistant system prompt + the current date + a
+   `userLevel` enum. **No student PII, identifiers, or free-text.** It belongs in the
+   subprocessor inventory (§B.4) but carries minimal privacy risk. Verify Perplexity's
+   API-data-not-used-for-training term at its live terms page (routed to counsel).
+4. **Lesson content edits (clean).** `lesson-3-credit-scores.ts`,
+   `lesson-1-why-saving-comes-before-spending.ts`, `modules.ts` are curriculum copy only —
+   no data collection, network, storage, auth, or PII surface. The "income" strings are
+   pedagogical content, not survey fields → **PPRA guardrail (F4) still respected.** iOS
+   `ci_scripts` / build-number changes are release plumbing, no privacy surface.
+
+## D. PROPOSED CHANGE (awaiting APPROVED — nothing applied)
+
+### PC-19 · P0 · Correct the iOS microphone purpose string — `ios/App/App/Info.plist:29-30`
+
+- **Current:**
+  `<key>NSMicrophoneUsageDescription</key>`
+  `<string>Phil's Financials does not use your microphone.</string>`
+- **Proposed (if the interview-practice recorder ships in the iOS build):**
+  `<string>Phil's Financials uses your microphone only when you tap Record in interview practice, so you can record and play back your own answer. Recordings stay on your device and are never uploaded.</string>`
+- **Alternative (only if the recorder is disabled/removed from the shipped iOS build):**
+  keep "does not use your microphone" **and** confirm no code path can reach
+  `getUserMedia({audio:true})` on iOS (guard/remove `AudioRecorder`), so the string stays true.
+- **Rationale:** Apple App Review Guideline 5.1.1 (purpose-string accuracy); avoids a
+  user-facing contradiction in the iOS permission prompt; keeps the privacy narrative
+  (local-only audio, F-09) honest and affirmatively favorable. **High-risk (iOS native
+  config, analogous to `AndroidManifest.xml`) → PROPOSE-ONLY.**
+- **BLOCKED on Phil's answer:** does the shipped iOS build expose the interview-practice
+  recorder? (Determines which of the two texts to apply.)
+
+## E. Status ledger (deltas only; prior tables stand)
+
+| ID | Status |
+|---|---|
+| PC-16 | **ADVANCED** — vendor terms verified & documented (`VENDOR_DATA_USE_FINDINGS.md`); reduced to one OPS binary (Gemini billing tier) + 2 DPA signatures; subprocessor scope corrected (adds Perplexity) |
+| PC-17 | APPLIED (repo); OPS item 5 outstanding; **OPS item 6 RETRACTED (F-19)** |
+| PC-18 | APPROVED-CONDITIONAL — PC-16 research gate advanced; still blocked on LLC name/email/address + attorney sign-off + Safe Harbor/NY CDPA |
+| **PC-19** | **PROPOSED — awaiting APPROVED (iOS mic purpose string); blocked on Phil re: recorder in iOS build** |
+
+## F. Standing blockers for Phil (re-surfaced)
+
+1. **Exact GA LLC legal name** (ecorp.sos.ga.gov) — blocks PC-5, PC-8, PC-18, TM filing.
+2. **Canonical privacy contact email + mailing address** — blocks PC-5, PC-9, PC-18.
+3. **Panda art / comic-panel authorship** (human/AI/contractor) — blocks copyright + design-mark.
+4. **Repo visibility** (public/private?) — blocks creating `agents/legal/evidence/` for DPAs.
+5. **NEW — Gemini billing tier:** is `GEMINI_API_KEY` on a **paid/billed** Google Cloud
+   project? (P0; decides whether the AI features are compliant — VENDOR memo §4 step 1.)
+6. **NEW — iOS recorder:** does the shipped iOS build include the interview-practice audio
+   recorder? (Selects PC-19 text.)
+
+## G. For the privacy attorney (additions)
+
+- **PC-16:** is paid-tier Gemini Developer API sufficient for a **minors'** ed service, or is
+  Vertex AI (region controls + zero-data-retention amendment) warranted before APS? Does the
+  low-PII Perplexity `market-headlines` call need its own DPA/disclosure?
+- **F-18/PC-19:** confirm the corrected purpose-string language and whether the recorder's
+  local-only handling needs any additional in-app consent for minors.
+- **F-19:** confirm no residual Perplexity retention exposure from the removed `phil-chat`
+  path (check Supabase function logs before undeploy — logs are evidence).
+
+*End of 2026-07-05 Run 4 entry. Future runs: append below this line.*
