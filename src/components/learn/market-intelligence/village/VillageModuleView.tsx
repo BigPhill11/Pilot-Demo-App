@@ -239,18 +239,22 @@ const VillageModuleView: React.FC<Props> = ({ module, onBack }) => {
       <VillageLessonShell
         lesson={activeLesson}
         module={module}
+        alreadyCompleted={isLessonCompleted(activeLesson.id)}
         onBack={() => setActiveLesson(null)}
         onComplete={(xp, bamboo) => {
-          completeLesson(activeLesson.id, xp, bamboo);
-          emitDailyGoalEvent({
-            type: 'lesson',
-            pathId: 'companies',
-            moduleId: module.id,
-            lessonId: activeLesson.id,
-          });
-          emitDailyGoalEvent({ type: 'any_activity' });
-          awardResources(bamboo, Math.floor(xp / 5), 'Village Lesson Complete', true);
-          recordActivity();
+          // Rewards are one-time: replaying a completed lesson earns nothing
+          if (!isLessonCompleted(activeLesson.id)) {
+            completeLesson(activeLesson.id, xp, bamboo);
+            emitDailyGoalEvent({
+              type: 'lesson',
+              pathId: 'companies',
+              moduleId: module.id,
+              lessonId: activeLesson.id,
+            });
+            emitDailyGoalEvent({ type: 'any_activity' });
+            awardResources(bamboo, Math.floor(xp / 5), 'Village Lesson Complete', true);
+            recordActivity();
+          }
           setActiveLesson(null);
         }}
       />

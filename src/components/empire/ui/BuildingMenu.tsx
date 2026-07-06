@@ -124,7 +124,7 @@ const BuildingMenu: React.FC<BuildingMenuProps> = ({
                             <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-gray-200 dark:bg-gray-700 text-xs font-medium">
                               <Lock className="w-3 h-3" />
                               {building.unlockTeachBacks != null && teachBacksCompleted < building.unlockTeachBacks
-                                ? `Teach Phil ×${building.unlockTeachBacks} 🐼`
+                                ? `Teach Phil ×${building.unlockTeachBacks}`
                                 : `${building.unlockXP} XP`}
                             </div>
                           )}

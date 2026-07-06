@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, BookOpen, Zap, HelpCircle, Trophy, Sparkles, Star, MessageCircle, GraduationCap } from 'lucide-react';
+import { ChevronLeft, ChevronRight, BookOpen, Zap, HelpCircle, Trophy, Sparkles, Star, MessageCircle, GraduationCap, Leaf, Building2, CheckCircle2 } from 'lucide-react';
 import type { VillageLesson, VillageModuleConfig } from '@/types/village-lesson';
 import VillageLessonSimulator from './simulators/VillageLessonSimulator';
 import VillageQuizStep from './VillageQuizStep';
@@ -14,6 +14,8 @@ interface Props {
   module: VillageModuleConfig;
   onComplete: (xp: number, bamboo: number) => void;
   onBack: () => void;
+  /** Lesson was completed before this session — rewards were already claimed */
+  alreadyCompleted?: boolean;
 }
 
 const STEPS: Step[] = ['intro', 'learn', 'simulate', 'quiz', 'teach', 'empire'];
@@ -37,14 +39,21 @@ const MODULE_HEADER_GRADIENT: Record<string, string> = {
   'company-tinder':       'from-rose-700 to-rose-600',
 };
 
-const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBack }) => {
+const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBack, alreadyCompleted = false }) => {
   const [step, setStep] = useState<Step>('intro');
   const [conceptIndex, setConceptIndex] = useState(0);
   const [quizPassed, setQuizPassed] = useState(false);
   const [finalScore, setFinalScore] = useState({ score: 0, total: 0 });
   const [teachResult, setTeachResult] = useState<TeachPhilResult | null>(null);
+  // Furthest step reached this session — lets students revisit earlier
+  // sections via the progress track without losing their progress
+  const [maxStepIndex, setMaxStepIndex] = useState(0);
 
   const stepIndex = STEPS.indexOf(step);
+
+  useEffect(() => {
+    setMaxStepIndex((prev) => Math.max(prev, stepIndex));
+  }, [stepIndex]);
   const headerGradient = MODULE_HEADER_GRADIENT[module.id] ?? 'from-green-700 to-green-600';
 
   const goNext = () => {
@@ -86,17 +95,23 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
             const meta = STEP_META[s];
             const done = i < stepIndex;
             const active = i === stepIndex;
+            const visited = i <= maxStepIndex;
             const Icon = meta.icon;
             return (
               <React.Fragment key={s}>
-                <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold transition-all duration-300 ${
-                  active ? 'bg-white text-gray-800 shadow-md scale-105' :
-                  done  ? 'bg-white/30 text-white' :
-                          'bg-white/10 text-white/40'
-                }`}>
+                <button
+                  onClick={() => { if (visited && !active) setStep(s); }}
+                  disabled={!visited || active}
+                  className={`flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold transition-all duration-300 ${
+                    active ? 'bg-white text-gray-800 shadow-md scale-105' :
+                    done  ? 'bg-white/30 text-white' :
+                    visited ? 'bg-white/20 text-white/80' :
+                            'bg-white/10 text-white/40'
+                  } ${visited && !active ? 'cursor-pointer hover:bg-white/50' : ''}`}
+                >
                   <Icon className="h-2.5 w-2.5" />
                   <span className="hidden sm:inline">{meta.label}</span>
-                </div>
+                </button>
                 {i < STEPS.length - 1 && (
                   <div className={`flex-1 h-0.5 rounded-full mx-0.5 transition-all ${done ? 'bg-white/60' : 'bg-white/15'}`} />
                 )}
@@ -113,8 +128,8 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
         {step === 'intro' && (
           <div className="space-y-4">
             {/* Hero hook card */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-600 to-emerald-700 p-5 text-white shadow-lg">
-              <div className="absolute top-0 right-0 text-[80px] opacity-10 select-none leading-none pt-2 pr-2">💡</div>
+            <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-green-600 to-emerald-700 p-5 text-white shadow-lg">
+              <Sparkles className="absolute top-3 right-3 w-10 h-10 text-white/10" aria-hidden />
               <p className="text-base font-bold leading-snug relative z-10 mb-1">"{lesson.hook.question}"</p>
               <p className="text-xs text-green-200 relative z-10">Today's big question</p>
             </div>
@@ -155,7 +170,7 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
                 </div>
                 <div className="flex items-center gap-2.5 p-2 rounded-xl bg-emerald-50 border border-emerald-100">
                   <GraduationCap className="h-4 w-4 text-emerald-500 flex-shrink-0" />
-                  <p className="text-xs font-semibold text-emerald-900">Teach it back to Phil</p>
+                  <p className="text-xs font-semibold text-emerald-900">Teach it back to Phil (optional)</p>
                   <span className="ml-auto text-[9px] text-emerald-400 font-medium">Teach Phil</span>
                 </div>
                 <div className="flex items-center gap-2.5 p-2 rounded-xl bg-amber-50 border border-amber-100">
@@ -163,7 +178,7 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
                   <div className="flex-1">
                     <p className="text-xs font-semibold text-amber-900">Empire Reward</p>
                   </div>
-                  <span className="text-[10px] font-bold text-amber-600">⚡+{lesson.rewards.xp} 🎋+{lesson.rewards.bamboo}</span>
+                  <span className="text-[10px] font-bold text-amber-600">+{lesson.rewards.xp} XP · +{lesson.rewards.bamboo} bamboo</span>
                 </div>
               </div>
             </div>
@@ -305,90 +320,93 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
         {/* ══ EMPIRE REWARD STEP ══ */}
         {step === 'empire' && (
           <div className="space-y-4">
-            {quizPassed && teachResult ? (
+            {quizPassed ? (
               <>
                 {/* Victory header */}
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-700 via-emerald-600 to-teal-600 p-5 text-white text-center shadow-xl">
-                  <div className="absolute inset-0 opacity-20" style={{
-                    backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(255,255,255,0.1) 8px, rgba(255,255,255,0.1) 16px)'
-                  }} />
-                  <div className="relative z-10">
-                    <div className="text-5xl mb-2 animate-bounce">🏆</div>
-                    <h2 className="text-xl font-bold">Lesson Complete!</h2>
-                    <p className="text-green-200 text-sm mt-1">{lesson.title}</p>
-                    <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-sm font-semibold">
-                      <span>{finalScore.score}/{finalScore.total} correct</span>
-                      <span>·</span>
-                      <span>{Math.round((finalScore.score / finalScore.total) * 100)}%</span>
-                    </div>
+                <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-xl p-6 text-center">
+                  <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                    <Trophy className="w-7 h-7 text-primary" />
+                  </div>
+                  <h2 className="text-xl font-bold">Lesson Complete!</h2>
+                  <p className="text-muted-foreground text-sm mt-1">{lesson.title}</p>
+                  <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-sm font-medium text-primary">
+                    <span>{finalScore.score}/{finalScore.total} correct</span>
+                    <span>·</span>
+                    <span>{Math.round((finalScore.score / finalScore.total) * 100)}%</span>
                   </div>
                 </div>
 
                 {/* Empire reward section */}
-                <div className="bg-white rounded-2xl border-2 border-amber-200 shadow-sm overflow-hidden">
-                  <div className="bg-gradient-to-r from-amber-50 to-yellow-50 px-4 py-3 border-b border-amber-100">
+                <div className="bg-white rounded-xl border border-border shadow-sm overflow-hidden">
+                  <div className="bg-muted/30 px-4 py-3 border-b border-border">
                     <div className="flex items-center gap-2">
-                      <span className="text-xl">🏰</span>
+                      <Building2 className="w-4 h-4 text-primary" />
                       <div>
-                        <p className="text-sm font-bold text-amber-800">Battle Empire Reward</p>
-                        <p className="text-xs text-amber-600">Your empire grows with every lesson mastered</p>
+                        <p className="text-sm font-medium">Empire Reward</p>
+                        <p className="text-xs text-muted-foreground">Your empire grows with every lesson mastered</p>
                       </div>
                     </div>
                   </div>
-                  <div className="p-4 grid grid-cols-2 gap-3">
-                    <div className="text-center p-3 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-xl border border-amber-200">
-                      <div className="text-2xl mb-1">⚡</div>
-                      <div className="text-2xl font-bold text-amber-700">+{lesson.rewards.xp}</div>
-                      <div className="text-xs text-amber-600 font-semibold">XP Earned</div>
-                    </div>
-                    <div className="text-center p-3 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200">
-                      <div className="text-2xl mb-1">🎋</div>
-                      <div className="text-2xl font-bold text-green-700">+{lesson.rewards.bamboo}</div>
-                      <div className="text-xs text-green-600 font-semibold">Bamboo</div>
-                    </div>
-                  </div>
-                  {(teachResult?.optUpBonusBamboo ?? 0) > 0 && (
-                    <div className="px-4 pb-1">
-                      <div className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
-                        <span className="text-lg">🎓</span>
-                        <p className="text-xs text-emerald-800 font-bold">
-                          +{teachResult!.optUpBonusBamboo} 🎋 bonus for teaching a tougher Phil!
+                  {alreadyCompleted ? (
+                    <div className="p-4">
+                      <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/30">
+                        <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                        <p className="text-xs text-muted-foreground">
+                          You already completed this lesson — rewards were claimed the first time. Great review session!
                         </p>
                       </div>
                     </div>
+                  ) : (
+                    <>
+                      <div className="p-4 grid grid-cols-2 gap-3">
+                        <div className="text-center p-3 bg-muted/30 rounded-lg">
+                          <Zap className="w-5 h-5 text-amber-500 mx-auto mb-1" />
+                          <div className="text-2xl font-bold text-foreground">+{lesson.rewards.xp}</div>
+                          <div className="text-xs text-muted-foreground font-medium">XP Earned</div>
+                        </div>
+                        <div className="text-center p-3 bg-muted/30 rounded-lg">
+                          <Leaf className="w-5 h-5 text-primary mx-auto mb-1" />
+                          <div className="text-2xl font-bold text-foreground">+{lesson.rewards.bamboo}</div>
+                          <div className="text-xs text-muted-foreground font-medium">Bamboo</div>
+                        </div>
+                      </div>
+                      {(teachResult?.optUpBonusBamboo ?? 0) > 0 && (
+                        <div className="px-4 pb-1">
+                          <div className="flex items-center justify-center gap-2 p-2.5 rounded-lg bg-primary/5 border border-primary/20">
+                            <GraduationCap className="w-4 h-4 text-primary" />
+                            <p className="text-xs text-primary font-medium">
+                              +{teachResult!.optUpBonusBamboo} bamboo bonus for teaching a tougher Phil
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )}
-                  <div className="px-4 pb-3">
-                    <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-50 border border-amber-100">
-                      <span className="text-lg">🏗️</span>
-                      <p className="text-xs text-amber-800 font-medium">
-                        This knowledge fuels your empire — visit the <span className="font-bold">Empire tab</span> to see your growing village!
+                  <div className="px-4 pb-3 pt-1">
+                    <div className="flex items-center gap-2 p-2.5 rounded-lg bg-muted/30">
+                      <Sparkles className="w-4 h-4 text-primary flex-shrink-0" />
+                      <p className="text-xs text-muted-foreground">
+                        This knowledge fuels your empire — visit the <span className="font-medium text-foreground">Empire tab</span> to see your growing village.
                       </p>
                     </div>
                   </div>
                 </div>
 
                 {/* Phil congratulates */}
-                <div className="flex gap-3 p-4 bg-white rounded-2xl border-2 border-green-200 shadow-sm">
-                  <MessageCircle className="h-8 w-8 text-green-600 flex-shrink-0" aria-hidden />
+                <div className="flex gap-3 p-4 bg-white rounded-xl border border-border shadow-sm">
+                  <MessageCircle className="h-6 w-6 text-primary flex-shrink-0" aria-hidden />
                   <div>
-                    <p className="text-[11px] font-bold text-green-700 mb-1">Phil says:</p>
-                    <p className="text-sm text-gray-700 leading-relaxed">
+                    <p className="text-xs font-medium text-primary mb-1">Phil says:</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
                       Outstanding work! Every concept you master compounds — you are building real financial intelligence.
-                      Keep going — your empire awaits! 🎋
+                      Keep going — your empire awaits.
                     </p>
                   </div>
                 </div>
 
-                {/* Bamboo XP visual */}
-                <div className="flex items-center justify-center gap-3 py-2">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i} className="text-2xl" style={{ animationDelay: `${i * 0.1}s`, animation: 'bounce 1s infinite' }}>🎋</span>
-                  ))}
-                </div>
-
                 <Button
                   onClick={() => onComplete(lesson.rewards.xp, lesson.rewards.bamboo + (teachResult?.optUpBonusBamboo ?? 0))}
-                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white h-12 rounded-xl text-base font-bold shadow-lg"
+                  className="w-full h-12 text-base"
                 >
                   Back to Village
                   <ChevronRight className="ml-2 h-5 w-5" />
@@ -397,8 +415,10 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
             ) : (
               <>
                 {/* Not passed */}
-                <div className="rounded-2xl bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-200 p-5 text-center">
-                  <div className="text-4xl mb-2">📚</div>
+                <div className="rounded-xl bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 p-5 text-center">
+                  <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center mx-auto mb-3">
+                    <BookOpen className="w-6 h-6 text-orange-600" />
+                  </div>
                   <h2 className="text-xl font-bold text-orange-800">Almost There!</h2>
                   <p className="text-sm text-orange-700 mt-1">
                     You scored {finalScore.score}/{finalScore.total} ({Math.round((finalScore.score / finalScore.total) * 100)}%)

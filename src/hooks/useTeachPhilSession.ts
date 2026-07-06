@@ -25,6 +25,7 @@ import type { PhilAge, TeachBackAssessment } from '@/types/teach-back';
 export type TeachPhilOutcome =
   | 'passed'
   | 'completed-after-fallback'
+  | 'skipped-optional'
   | 'skipped-unavailable'
   | 'skipped-quota'
   | 'skipped-guest';
@@ -60,14 +61,23 @@ const MAX_CONSECUTIVE_ERRORS = 2;
 let entryId = 0;
 const nextEntryId = () => `teach-${++entryId}`;
 
-const openerFor = (age: PhilAge, conceptName: string): string => {
+/**
+ * Phil's opening question, grounded in the actual ideas taught (the labels
+ * of the derived key facts), not just the lesson title.
+ */
+const openerFor = (age: PhilAge, conceptName: string, keyFacts: string[]): string => {
+  const ideas = keyFacts
+    .slice(0, 2)
+    .map((f) => f.split(':')[0].trim())
+    .filter((label) => label.length > 0 && label.length < 60);
+  const ideaHint = ideas.length > 0 ? ` Especially the part about ${ideas.join(' and ')} — ` : ' ';
   switch (age) {
     case 'cub':
-      return `You just learned about ${conceptName}?? I have NO idea what that is. Can you explain it to me in really simple words, like you're talking to a little cub? 🐼`;
+      return `You just learned about ${conceptName}??${ideaHint}I have NO idea what any of that means. Can you explain it in really simple words, like you're talking to a little cub?`;
     case 'elder':
-      return `Ah, ${conceptName}... I knew it well once, but my memory is rusty. Teach it back to me properly — and be ready, I may poke at the tricky parts. 🐼`;
+      return `Ah, ${conceptName}... I knew this well once, but my memory is rusty.${ideaHint}teach it back to me properly, and be ready — I may poke at the tricky parts.`;
     default:
-      return `Okay, I sort of get what ${conceptName} is, but not really. Can you explain it to me like I'm your friend? What even IS it? 🐼`;
+      return `Okay, I sort of get what ${conceptName} is about, but not really.${ideaHint}can you explain it to me like I'm your friend? How does it actually work?`;
   }
 };
 
@@ -108,9 +118,9 @@ export function useTeachPhilSession(lesson: VillageLesson) {
     // Opting down below the lesson default is not allowed
     if (PHIL_AGE_ORDER.indexOf(age) < PHIL_AGE_ORDER.indexOf(defaultPhilAge)) return;
     setPhilAge(age);
-    setChatLog([{ id: nextEntryId(), sender: 'phil', text: openerFor(age, spec.conceptName) }]);
+    setChatLog([{ id: nextEntryId(), sender: 'phil', text: openerFor(age, spec.conceptName, spec.keyFacts) }]);
     setPhase('chatting');
-  }, [defaultPhilAge, spec.conceptName]);
+  }, [defaultPhilAge, spec]);
 
   /** Returns true if the message was delivered (component clears its input on true) */
   const sendMessage = useCallback(async (rawText: string): Promise<boolean> => {
@@ -195,9 +205,16 @@ export function useTeachPhilSession(lesson: VillageLesson) {
     setTurn(1);
     setAssessment(null);
     setSendError(null);
-    setChatLog([{ id: nextEntryId(), sender: 'phil', text: openerFor(philAge, spec.conceptName) }]);
+    setChatLog([{ id: nextEntryId(), sender: 'phil', text: openerFor(philAge, spec.conceptName, spec.keyFacts) }]);
     setPhase('chatting');
-  }, [philAge, spec.conceptName]);
+  }, [philAge, spec]);
+
+  /** Teach Phil is optional — students can bail at any point with no penalty */
+  const buildSkipResult = useCallback((): TeachPhilResult => ({
+    outcome: 'skipped-optional',
+    optUpBonusBamboo: 0,
+    teachBacksCompleted: null,
+  }), []);
 
   const buildResult = useCallback((): TeachPhilResult => {
     const outcome: TeachPhilOutcome =
@@ -233,5 +250,6 @@ export function useTeachPhilSession(lesson: VillageLesson) {
     sendMessage,
     startFreshAttempt,
     buildResult,
+    buildSkipResult,
   };
 }

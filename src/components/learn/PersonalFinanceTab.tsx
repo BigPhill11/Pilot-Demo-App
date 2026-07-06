@@ -71,19 +71,26 @@ const PersonalFinanceTab: React.FC = () => {
   };
   const handleBossGameComplete = (xpEarned: number, coinsEarned: number) => {
     if (activeModuleId) {
+      // Rewards are one-time: replaying a beaten boss game earns nothing
+      const alreadyBeaten = !!moduleProgress[activeModuleId]?.bossGameCompleted;
       completeBossGame(activeModuleId, xpEarned, coinsEarned);
 
-      // Award to Bamboo Empire game
-      // XP is converted at 1:5 ratio (game XP is smaller scale)
-      // Coins become bamboo directly
-      awardResources(coinsEarned, Math.floor(xpEarned / 5), 'Boss Game Complete', true);
+      if (!alreadyBeaten) {
+        // Award to Bamboo Empire game
+        // XP is converted at 1:5 ratio (game XP is smaller scale)
+        // Coins become bamboo directly
+        awardResources(coinsEarned, Math.floor(xpEarned / 5), 'Boss Game Complete', true);
+      }
     }
   };
   const handleLessonComplete = (xpEarned: number, coinsEarned: number) => {
     if (activeModuleId) {
       const module = getModuleById(activeModuleId);
       const lesson = module?.lessons[activeLessonIndex];
-      if (lesson) {
+      // Rewards are one-time: replaying a completed lesson earns nothing
+      const alreadyCompleted =
+        !!lesson && (moduleProgress[activeModuleId]?.completedLessons ?? []).includes(lesson.id);
+      if (lesson && !alreadyCompleted) {
         completeLesson(activeModuleId, lesson.id, xpEarned, coinsEarned);
         emitDailyGoalEvent({
           type: 'lesson',

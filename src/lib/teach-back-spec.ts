@@ -24,20 +24,41 @@ export function getPhilAge(lesson: VillageLesson): PhilAge {
   return lesson.philAge ?? DEFAULT_PHIL_AGE_BY_MODULE[lesson.moduleId] ?? 'teen';
 }
 
-/** First sentence of a concept body, trimmed to a teachable fact */
-function firstSentence(text: string): string {
-  const match = text.trim().match(/^[^.!?]+[.!?]/);
-  return (match ? match[0] : text.trim()).slice(0, 200);
+/**
+ * A concept body condensed to a teachable fact. The TeachPhil Edge Function
+ * caps each key fact at 300 chars, so pack in as much of the actual lesson
+ * content as fits — grading must be grounded in what was taught, not the
+ * lesson title.
+ */
+const FACT_MAX_CHARS = 280;
+
+function condense(text: string, budget: number): string {
+  const clean = text.trim().replace(/\s+/g, ' ');
+  if (clean.length <= budget) return clean;
+  // Cut at the last sentence end that fits; fall back to a hard trim
+  const slice = clean.slice(0, budget);
+  const lastStop = Math.max(slice.lastIndexOf('. '), slice.lastIndexOf('! '), slice.lastIndexOf('? '));
+  return lastStop > budget * 0.5 ? slice.slice(0, lastStop + 1) : slice;
 }
 
 export function getTeachBackSpec(lesson: VillageLesson): TeachBackSpec {
   if (lesson.teachBack) return lesson.teachBack;
 
+  const keyFacts = lesson.concepts.slice(0, 5).map((c) => {
+    const label = `${c.title}: `;
+    return label + condense(c.body, FACT_MAX_CHARS - label.length);
+  });
+
+  // The simulator's lesson is part of what was taught — include its takeaway
+  // as a fact when there is room (server accepts up to 6)
+  const simulatorTakeaway = lesson.simulator?.endMessage;
+  if (keyFacts.length < 6 && simulatorTakeaway) {
+    keyFacts.push('From the simulator: ' + condense(simulatorTakeaway, FACT_MAX_CHARS - 20));
+  }
+
   return {
     conceptName: lesson.title,
-    keyFacts: lesson.concepts
-      .slice(0, 4)
-      .map((c) => `${c.title}: ${firstSentence(c.body)}`),
+    keyFacts,
     misconceptions: [],
   };
 }
