@@ -17,7 +17,7 @@ export const languageFinanceLesson1: VillageLesson = {
       id: 'accounting_vs_finance',
       emoji: '📜',
       title: 'Accounting vs Finance',
-      body: 'Accounting is the backward-looking scoreboard: where every dollar came from, where it sits, and how it left. It values accuracy, legal rules, and historic cost. Finance is the forward-looking playbook: valuations, mergers, capital allocation, and risk bets. You cannot run reliable projections on fantasy baselines.',
+      body: 'Accounting and finance are teammates with opposite jobs. Accounting is the backward-looking scoreboard: it records where every dollar came from, where it sits now, and how it left, and it prizes accuracy, legal rules, and historic cost above all. Finance is the forward-looking playbook: valuing companies, weighing mergers, allocating capital, and betting on risk. The two depend on each other completely — every financial projection starts from accounting\'s recorded reality, and you cannot run a reliable forecast on a fantasy baseline. Master the scoreboard first; only then can you trust the playbook built on top of it.',
       realWorldExample:
         'A credit analyst reads audited financials (accounting) before approving a loan. An investment banker builds a DCF model (finance) only after trusting those numbers. FP&A teams bridge both.',
     },
@@ -25,7 +25,7 @@ export const languageFinanceLesson1: VillageLesson = {
       id: 'accrual',
       emoji: '📅',
       title: 'Cash vs Accrual Accounting',
-      body: 'In daily life you use cash thinking: if you have $50, you can spend $50. Big companies use accrual accounting: revenue is recorded when goods or services are delivered, not when cash arrives. Expenses match the period they belong to. That gap is where "profitable" companies go bankrupt.',
+      body: 'In daily life you use cash thinking: if you have $50, you can spend $50 — simple. Big companies use accrual accounting, which follows a different clock: revenue is recorded the moment goods or services are delivered, even if the customer won\'t pay for 90 days, and expenses are matched to the period they belong to, not when the bill is paid. This makes profits more meaningful — but it opens a dangerous gap between "profit on paper" and "cash in the bank." A company can book record revenue while its bank account empties, and that gap is precisely where "profitable" companies go bankrupt.',
       realWorldExample:
         'A sneaker startup signs a $500,000 delivery contract but gets paid in 90 days. Accrual may show huge revenue while the bank account is empty — payroll still due Friday.',
     },
@@ -33,7 +33,7 @@ export const languageFinanceLesson1: VillageLesson = {
       id: 'integrity',
       emoji: '⚖️',
       title: 'Why Accuracy Is Power',
-      body: 'GAAP and IFRS exist so statements are comparable and legally defensible. Auditors sample transactions to test whether records match reality. When accounting integrity breaks, credit lines freeze and stocks reprice overnight.',
+      body: 'Imagine if every company invented its own math — comparing two businesses would be impossible, and lying would be effortless. That\'s why GAAP (the US rulebook) and IFRS (the international one) exist: they force every company to keep score by the same rules, making statements comparable across firms and legally defensible in court. Independent auditors then sample transactions and test controls to verify the records match reality. The system runs on trust, and the punishment for breaking it is swift: when a company\'s accounting integrity cracks, lenders freeze credit lines and the stock reprices overnight — often catastrophically.',
       realWorldExample:
         'After reporting scandals, banks cut covenant limits for whole industries — especially hurting smaller firms with less bargaining power.',
     },
@@ -41,7 +41,7 @@ export const languageFinanceLesson1: VillageLesson = {
       id: 'symptom_vs_source',
       emoji: '📈',
       title: 'Stock Prices Are Symptoms',
-      body: 'Charts show what traders believe today. Financial statements show what the business actually did. As an investor or job candidate, statements help you ask: Is growth real? Is debt survivable? Is profit cash-backed?',
+      body: 'A stock chart and a financial statement answer two very different questions. The chart shows what traders believe right now — a mood ring painted by fear, greed, and momentum. The statements show what the business actually did: real sales, real costs, real cash. Beliefs can detach from reality for months, but they always reconnect eventually, and the statements tell you which direction the snap-back will go. Whether you\'re picking an investment or evaluating a company to work for, the statements arm you with the three questions that matter: Is the growth real? Is the debt survivable? Is the profit backed by actual cash?',
       realWorldExample:
         'Headlines scream "record earnings" while the cash flow statement shows the firm cannot pay suppliers — smart readers check both before buying shares or accepting a job offer.',
     },

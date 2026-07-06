@@ -150,33 +150,33 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
               </div>
               <div className="p-3 space-y-2">
                 {lesson.concepts.map((c, i) => (
-                  <div key={c.id} className="flex items-center gap-2.5 p-2 rounded-xl bg-blue-50 border border-blue-100">
-                    <span className="text-lg">{c.emoji}</span>
-                    <div>
-                      <p className="text-xs font-semibold text-blue-900">{c.title}</p>
+                  <div key={c.id} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-muted/30">
+                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <span className="text-[11px] font-bold text-primary">{i + 1}</span>
                     </div>
-                    <span className="ml-auto text-[9px] text-blue-400 font-medium">Concept {i + 1}</span>
+                    <p className="text-xs font-medium">{c.title}</p>
+                    <span className="ml-auto text-[9px] text-muted-foreground font-medium">Concept</span>
                   </div>
                 ))}
-                <div className="flex items-center gap-2.5 p-2 rounded-xl bg-orange-50 border border-orange-100">
-                  <Zap className="h-4 w-4 text-orange-500 flex-shrink-0" />
-                  <p className="text-xs font-semibold text-orange-900">{lesson.simulator.title}</p>
-                  <span className="ml-auto text-[9px] text-orange-400 font-medium">Simulator</span>
+                <div className="flex items-center gap-2.5 p-2.5 rounded-lg bg-muted/30">
+                  <Zap className="h-4 w-4 text-primary flex-shrink-0" />
+                  <p className="text-xs font-medium">{lesson.simulator.title}</p>
+                  <span className="ml-auto text-[9px] text-muted-foreground font-medium">Simulator</span>
                 </div>
-                <div className="flex items-center gap-2.5 p-2 rounded-xl bg-purple-50 border border-purple-100">
-                  <HelpCircle className="h-4 w-4 text-purple-500 flex-shrink-0" />
-                  <p className="text-xs font-semibold text-purple-900">{lesson.quiz.length}-question quiz</p>
-                  <span className="ml-auto text-[9px] text-purple-400 font-medium">Quiz</span>
+                <div className="flex items-center gap-2.5 p-2.5 rounded-lg bg-muted/30">
+                  <HelpCircle className="h-4 w-4 text-primary flex-shrink-0" />
+                  <p className="text-xs font-medium">{lesson.quiz.length}-question quiz</p>
+                  <span className="ml-auto text-[9px] text-muted-foreground font-medium">Quiz</span>
                 </div>
-                <div className="flex items-center gap-2.5 p-2 rounded-xl bg-emerald-50 border border-emerald-100">
-                  <GraduationCap className="h-4 w-4 text-emerald-500 flex-shrink-0" />
-                  <p className="text-xs font-semibold text-emerald-900">Teach it back to Phil (optional)</p>
-                  <span className="ml-auto text-[9px] text-emerald-400 font-medium">Teach Phil</span>
+                <div className="flex items-center gap-2.5 p-2.5 rounded-lg bg-muted/30">
+                  <GraduationCap className="h-4 w-4 text-primary flex-shrink-0" />
+                  <p className="text-xs font-medium">Teach it back to Phil (optional)</p>
+                  <span className="ml-auto text-[9px] text-muted-foreground font-medium">Teach Phil</span>
                 </div>
-                <div className="flex items-center gap-2.5 p-2 rounded-xl bg-amber-50 border border-amber-100">
+                <div className="flex items-center gap-2.5 p-2.5 rounded-lg bg-muted/30">
                   <Trophy className="h-4 w-4 text-amber-500 flex-shrink-0" />
                   <div className="flex-1">
-                    <p className="text-xs font-semibold text-amber-900">Empire Reward</p>
+                    <p className="text-xs font-medium">Empire Reward</p>
                   </div>
                   <span className="text-[10px] font-bold text-amber-600">+{lesson.rewards.xp} XP · +{lesson.rewards.bamboo} bamboo</span>
                 </div>
@@ -211,36 +211,33 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
               </div>
 
               {/* Concept card */}
-              <div className="bg-white rounded-2xl border-2 border-blue-100 shadow-sm overflow-hidden">
-                <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
-                  <div className="flex items-center gap-3">
-                    <span className="text-4xl">{concept.emoji}</span>
-                    <div>
-                      <p className="text-[10px] text-blue-500 font-bold uppercase tracking-wide">
-                        Concept {conceptIndex + 1} of {lesson.concepts.length}
-                      </p>
-                      <h3 className="font-bold text-gray-800 text-base leading-snug">{concept.title}</h3>
-                    </div>
-                  </div>
+              <div className="bg-card border rounded-xl overflow-hidden">
+                <div className="p-4 bg-muted/30 border-b">
+                  <p className="text-xs font-medium text-primary uppercase tracking-wider mb-1">
+                    Concept {conceptIndex + 1} of {lesson.concepts.length}
+                  </p>
+                  <h3 className="font-bold text-base leading-snug">{concept.title}</h3>
                 </div>
                 <div className="p-4">
-                  <p className="text-sm text-gray-700 leading-relaxed">{concept.body}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{concept.body}</p>
                 </div>
               </div>
 
               {/* Real world example */}
-              <div className="p-4 bg-amber-50 rounded-2xl border-2 border-amber-200">
-                <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wide mb-2 flex items-center gap-1">
-                  <Star className="h-3 w-3" />
-                  Real World Example
-                </p>
-                <p className="text-sm text-amber-900 leading-relaxed">{concept.realWorldExample}</p>
+              <div className="bg-muted/30 rounded-xl p-4">
+                <div className="flex items-start gap-3">
+                  <Star className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-medium mb-1 text-sm">Real World Example</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{concept.realWorldExample}</p>
+                  </div>
+                </div>
               </div>
 
               {/* Phil tip */}
-              <div className="flex gap-2.5 p-3 bg-green-50 rounded-xl border border-green-200">
-                <MessageCircle className="h-5 w-5 text-green-600 flex-shrink-0" aria-hidden />
-                <p className="text-xs text-green-800 italic leading-relaxed">
+              <div className="flex gap-2.5 p-3 bg-primary/5 border border-primary/20 rounded-xl">
+                <MessageCircle className="h-5 w-5 text-primary flex-shrink-0" aria-hidden />
+                <p className="text-xs text-muted-foreground italic leading-relaxed">
                   Remember: understanding the "why" behind each concept is what separates good investors from great ones.
                 </p>
               </div>
@@ -248,17 +245,16 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
               {/* Navigation */}
               <div className="flex gap-2">
                 {conceptIndex > 0 && (
-                  <Button variant="outline" className="flex-1 rounded-xl h-11" onClick={() => setConceptIndex(i => i - 1)}>
+                  <Button variant="outline" className="flex-1 h-11" onClick={() => setConceptIndex(i => i - 1)}>
                     <ChevronLeft className="mr-1 h-4 w-4" /> Previous
                   </Button>
                 )}
                 {conceptIndex < lesson.concepts.length - 1 ? (
-                  <Button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-11"
-                    onClick={() => setConceptIndex(i => i + 1)}>
+                  <Button className="flex-1 h-11" onClick={() => setConceptIndex(i => i + 1)}>
                     Next Concept <ChevronRight className="ml-1 h-4 w-4" />
                   </Button>
                 ) : (
-                  <Button className="flex-1 bg-orange-600 hover:bg-orange-700 text-white rounded-xl h-11" onClick={goNext}>
+                  <Button className="flex-1 h-11" onClick={goNext}>
                     Now Simulate It <Zap className="ml-2 h-4 w-4" />
                   </Button>
                 )}
@@ -271,11 +267,11 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
         {step === 'simulate' && (
           <div className="space-y-0">
             {/* Simulator intro banner */}
-            <div className="flex items-center gap-2.5 p-3 mb-4 bg-orange-50 rounded-2xl border-2 border-orange-200">
-              <Zap className="h-5 w-5 text-orange-500 flex-shrink-0" />
+            <div className="flex items-center gap-2.5 p-3 mb-4 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-xl">
+              <Zap className="h-5 w-5 text-primary flex-shrink-0" />
               <div>
-                <p className="text-xs font-bold text-orange-800">Real Consequences Simulator</p>
-                <p className="text-[11px] text-orange-600">Your decisions have real outcomes. Experience them safely here.</p>
+                <p className="text-xs font-medium">Real Consequences Simulator</p>
+                <p className="text-[11px] text-muted-foreground">Your decisions have real outcomes. Experience them safely here.</p>
               </div>
             </div>
             <VillageLessonSimulator lesson={lesson} onComplete={goNext} />
@@ -286,11 +282,11 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
         {step === 'quiz' && (
           <div className="space-y-0">
             {/* Quiz intro banner */}
-            <div className="flex items-center gap-2.5 p-3 mb-4 bg-purple-50 rounded-2xl border-2 border-purple-200">
-              <HelpCircle className="h-5 w-5 text-purple-500 flex-shrink-0" />
+            <div className="flex items-center gap-2.5 p-3 mb-4 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 rounded-xl">
+              <HelpCircle className="h-5 w-5 text-primary flex-shrink-0" />
               <div>
-                <p className="text-xs font-bold text-purple-800">Knowledge Check</p>
-                <p className="text-[11px] text-purple-600">Score 75%+ to unlock your Empire Reward!</p>
+                <p className="text-xs font-medium">Knowledge Check</p>
+                <p className="text-[11px] text-muted-foreground">Score 75%+ to unlock your Empire Reward!</p>
               </div>
             </div>
             <VillageQuizStep
@@ -431,7 +427,7 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
                   <div>
                     <p className="text-[11px] font-bold text-blue-700 mb-1">Phil says:</p>
                     <p className="text-sm text-gray-700 leading-relaxed">
-                      Mistakes are how we learn! Re-read the concepts — one more pass often makes it click. You've got this! 💪
+                      Mistakes are how we learn! Re-read the concepts — one more pass often makes it click. You've got this!
                     </p>
                   </div>
                 </div>

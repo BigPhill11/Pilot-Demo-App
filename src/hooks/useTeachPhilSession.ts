@@ -11,8 +11,6 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { VillageLesson } from '@/types/village-lesson';
-import { getPhilAge, getTeachBackSpec } from '@/lib/teach-back-spec';
 import {
   PHIL_AGE_ORDER,
   TEACH_BACK_MAX_ATTEMPTS,
@@ -20,7 +18,7 @@ import {
   TEACH_BACK_OPT_UP_BONUS_BAMBOO_PER_TIER,
   TEACH_BACK_PASS_THRESHOLDS,
 } from '@/types/teach-back';
-import type { PhilAge, TeachBackAssessment } from '@/types/teach-back';
+import type { PhilAge, TeachBackAssessment, TeachBackSpec } from '@/types/teach-back';
 
 export type TeachPhilOutcome =
   | 'passed'
@@ -56,7 +54,7 @@ export interface TeachPhilChatEntry {
 /** Window event fired when the server reports a new teach_backs_completed count */
 export const TEACH_BACKS_UPDATED_EVENT = 'teach-backs-updated';
 
-const MAX_CONSECUTIVE_ERRORS = 2;
+const MAX_CONSECUTIVE_ERRORS = 3;
 
 let entryId = 0;
 const nextEntryId = () => `teach-${++entryId}`;
@@ -81,10 +79,16 @@ const openerFor = (age: PhilAge, conceptName: string, keyFacts: string[]): strin
   }
 };
 
-export function useTeachPhilSession(lesson: VillageLesson) {
-  const spec = getTeachBackSpec(lesson);
-  const defaultPhilAge = getPhilAge(lesson);
+export interface TeachPhilSessionArgs {
+  /** Stable lesson id recorded with the session (any lesson system) */
+  lessonId: string;
+  /** The concept spec Phil is graded against */
+  spec: TeachBackSpec;
+  /** Persona tier the lesson defaults to (student may opt up) */
+  defaultPhilAge: PhilAge;
+}
 
+export function useTeachPhilSession({ lessonId, spec, defaultPhilAge }: TeachPhilSessionArgs) {
   const [phase, setPhase] = useState<TeachPhilPhase>('picker');
   const [philAge, setPhilAge] = useState<PhilAge>(defaultPhilAge);
   const [turn, setTurn] = useState(1);
@@ -137,7 +141,7 @@ export function useTeachPhilSession(lesson: VillageLesson) {
       const { data, error } = await supabase.functions.invoke('TeachPhil', {
         body: {
           message: text,
-          lessonId: lesson.id,
+          lessonId,
           conceptName: spec.conceptName,
           philAge,
           turnNumber: turn,
@@ -197,7 +201,7 @@ export function useTeachPhilSession(lesson: VillageLesson) {
     } finally {
       setIsThinking(false);
     }
-  }, [attempt, chatLog, consecutiveErrors, flaggedEarlier, isThinking, lesson.id, phase, philAge, spec, turn]);
+  }, [attempt, chatLog, consecutiveErrors, flaggedEarlier, isThinking, lessonId, phase, philAge, spec, turn]);
 
   /** Recap → one fresh attempt: turn counter and chat reset, flaggedEarlier sticks */
   const startFreshAttempt = useCallback(() => {

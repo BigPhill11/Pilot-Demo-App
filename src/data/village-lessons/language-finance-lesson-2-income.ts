@@ -17,7 +17,7 @@ export const languageFinanceLesson2: VillageLesson = {
       id: 'waterfall',
       emoji: '📉',
       title: 'The P&L Waterfall',
-      body: 'The income statement (P&L) covers a period — a quarter or year. Start at Gross Revenue. Subtract variable Cost of Goods Sold (COGS) to get Gross Profit. Subtract fixed Operating Expenses (OPEX) to get Operating Income (EBIT). Subtract interest and taxes to reach Net Income — the bottom line for owners.',
+      body: 'The income statement (also called the P&L) tells the story of a period — a quarter or a year — as a waterfall from top to bottom. Start at Gross Revenue: every dollar customers paid. Subtract Cost of Goods Sold (COGS), the direct cost of making what you sold, to get Gross Profit. Subtract Operating Expenses (OPEX) — rent, salaries, marketing — to reach Operating Income (EBIT), the profit from actually running the business. Finally subtract interest and taxes to arrive at Net Income, the famous "bottom line" that belongs to owners. Each level of the waterfall reveals where money leaks out.',
       realWorldExample:
         'AP Business with Personal Finance expects this exact ladder: Revenue − COGS = Gross Profit; Gross Profit − OPEX = EBIT; EBIT − interest & taxes = Net Income.',
     },
@@ -25,7 +25,7 @@ export const languageFinanceLesson2: VillageLesson = {
       id: 'cogs_opex',
       emoji: '🏭',
       title: 'COGS vs OPEX',
-      body: 'COGS tracks direct inputs tied to each unit sold — fabric, shipping, factory power. OPEX is structural overhead — HQ rent, exec salaries, Super Bowl ads. A sneaker brand’s COGS spikes with every pair; its marketing team salary is OPEX.',
+      body: 'The COGS-versus-OPEX split is really the variable-versus-fixed split, and it shapes how a business scales. COGS tracks costs tied directly to each unit sold — the fabric in every hoodie, the shipping on every order, the factory power per batch. Sell twice as much, and COGS roughly doubles. OPEX is the structural overhead that exists regardless of volume — headquarters rent, executive salaries, the Super Bowl ad. A sneaker brand\'s COGS spikes with every pair made, while its marketing team costs the same whether the launch sells out or flops. Businesses with low COGS per unit (like software) can scale profits explosively; high-COGS businesses grind for every margin point.',
       realWorldExample:
         'During a slowdown, firms cut OPEX first (hiring freeze). COGS only falls if they make fewer units or negotiate cheaper inputs.',
     },
@@ -33,7 +33,7 @@ export const languageFinanceLesson2: VillageLesson = {
       id: 'margins',
       emoji: '📊',
       title: 'Margins Tell the Model',
-      body: 'Gross Margin = Gross Profit ÷ Revenue. Operating Margin = EBIT ÷ Revenue. Net Margin = Net Income ÷ Revenue. Software often shows 70%+ gross margins; grocery chains may run near 25%. Compare margins inside an industry, not across random sectors.',
+      body: 'Margins convert raw profit dollars into percentages, which is what makes companies comparable. Gross Margin (Gross Profit ÷ Revenue) shows how much of each sales dollar survives the direct cost of making the product. Operating Margin (EBIT ÷ Revenue) shows what survives after running the whole company. Net Margin (Net Income ÷ Revenue) is what finally reaches owners. Context is everything: software companies often post 70%+ gross margins because copying code costs nothing, while grocery chains grind at around 25% and win on volume. Always compare margins within an industry — judging a grocer by software standards tells you nothing.',
       realWorldExample:
         'Microsoft ~70% gross margin vs Walmart ~24% — both can be great businesses with different physics.',
     },
@@ -41,7 +41,7 @@ export const languageFinanceLesson2: VillageLesson = {
       id: 'quality',
       emoji: '🔍',
       title: 'Earnings Quality',
-      body: 'High-quality earnings come from core operations and eventually show up as cash. Low-quality earnings lean on accounting tricks — aggressive revenue timing, one-time gains, or expenses buried in footnotes. Forensic accountants watch receivables growing faster than sales.',
+      body: 'Two companies can report identical net income and be in completely different health — that\'s why analysts talk about earnings "quality." High-quality earnings come from the core business doing its job, repeat reliably, and eventually show up as actual cash in the bank. Low-quality earnings lean on tricks: booking revenue aggressively early, dressing up one-time gains as if they\'ll repeat, or burying real expenses in footnotes. The classic tell that forensic accountants watch: receivables (money owed by customers) growing much faster than sales. That means "profits" are piling up as IOUs instead of cash — and IOUs sometimes never arrive.',
       realWorldExample:
         'Enron’s income statement looked strong; cash flow told the truth. Investors who read both avoided the wipeout.',
     },

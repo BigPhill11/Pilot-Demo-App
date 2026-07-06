@@ -187,13 +187,13 @@ const MIVillageMap: React.FC<MIVillageMapProps> = ({ onSelectModule, totalXp, to
         {totalXp > 0 && (
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-white text-[11px] font-bold shadow-lg"
             style={{ background: 'rgba(15,23,42,0.8)', backdropFilter: 'blur(8px)' }}>
-            ⚡ {totalXp.toLocaleString()} XP
+            {totalXp.toLocaleString()} XP
           </div>
         )}
         {totalBamboo > 0 && (
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-white text-[11px] font-bold shadow-lg"
             style={{ background: 'rgba(15,23,42,0.8)', backdropFilter: 'blur(8px)' }}>
-            🎋 {totalBamboo.toLocaleString()} Bamboo
+            {totalBamboo.toLocaleString()} Bamboo
           </div>
         )}
       </div>

@@ -20,7 +20,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'active',
         emoji: '🎯',
         title: 'Active Investing',
-        body: 'Active managers try to beat the market by picking stocks and timing trades. You pay higher expense ratios for research teams and trading desks.',
+        body: 'Active managers try to beat the market by hand-picking stocks and timing when to buy and sell. To do that, they employ research teams, analysts, and trading desks — and you pay for all of it through higher expense ratios, often 1% or more per year. The pitch sounds great: pay experts to outperform. But every trade they make is against other smart professionals, so beating the market consistently is far harder than it sounds, and the fee is charged whether they win or lose.',
         realWorldExample:
           'A mutual fund charging 1.5% per year must beat the market by more than 1.5% just to match a cheap index after fees.',
       },
@@ -28,7 +28,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'passive',
         emoji: '📊',
         title: 'Passive / Index Investing',
-        body: 'Index funds track a basket (like the S&P 500). You own the broad market, not a bet on one manager\'s skill. Fees are often under 0.10%.',
+        body: 'Index funds skip the stock-picking contest entirely. Instead of betting on one manager\'s skill, they simply buy and hold every company in a market basket, like all 500 companies in the S&P 500. You own a small slice of the whole market, so your return is the market\'s return. Because there is no expensive research team to pay, fees are often under 0.10% per year — that means more of the growth stays in your pocket instead of leaking out to Wall Street.',
         realWorldExample:
           'Vanguard S&P 500 ETFs popularized "own America Inc." for retail investors at rock-bottom cost.',
       },
@@ -36,7 +36,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'fees',
         emoji: '💸',
         title: 'Expense Ratio Cascades',
-        body: 'A 2% annual fee compounds against you every year. Over decades, fee drag can erase a huge slice of terminal wealth even if returns look similar before fees.',
+        body: 'Fees compound against you exactly the way returns compound for you. A 2% annual fee doesn\'t just take 2% once — it takes 2% of your growing balance every single year, which means it also destroys all the future growth that money would have produced. Over 30 or 40 years, the difference between a 2% fee and a 0.05% fee can quietly consume a third or more of your final wealth, even when the two funds earned identical returns before fees. Always check the expense ratio before you buy.',
         realWorldExample:
           'SEC illustrations often show how 1% extra fee can cost hundreds of thousands over a 40-year horizon.',
       },
@@ -44,7 +44,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'underperformance',
         emoji: '📉',
         title: 'The Underperformance Reality',
-        body: 'Most active funds underperform their benchmark over long periods after fees. Beating the market consistently is rare.',
+        body: 'Here is the uncomfortable data: over long stretches, the large majority of active funds fail to beat the plain index they compete against once fees are counted. A manager might win one year, but winning year after year for decades is extraordinarily rare — and you can\'t know in advance which manager will be the rare one. That is why many professionals, including famous investors like Warren Buffett, recommend low-cost index funds for most everyday investors: you guarantee yourself the market\'s return instead of gambling on picking the right picker.',
         realWorldExample:
           'SPIVA reports regularly show majority of active funds trailing indexes over 10 and 20 years.',
       },
@@ -137,7 +137,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'idiosyncratic',
         emoji: '🎯',
         title: 'Idiosyncratic (Unsystemic) Risk',
-        body: 'Risk tied to one company or sector: fraud, product flop, CEO scandal. You can dilute this by holding many names and industries.',
+        body: 'Idiosyncratic risk is danger that belongs to one specific company or industry: an accounting fraud, a failed product launch, a CEO scandal, or a new competitor eating its lunch. The good news is that this kind of risk is dilutable — if you own 500 companies instead of one, a disaster at any single firm barely dents your total. That is the core logic of diversification: you cannot predict which company will stumble, but you can build a portfolio where no single stumble can hurt you badly.',
         realWorldExample:
           'Employees with 90% net worth in company stock learned hard lessons when firms went bankrupt.',
       },
@@ -145,7 +145,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'systemic',
         emoji: '🌊',
         title: 'Systemic Risk',
-        body: 'Macro shocks hit nearly everything: recessions, global panics, inflation spikes. Diversification cushions but cannot erase systemic hits.',
+        body: 'Systemic risk is the kind you cannot diversify away because it hits nearly everything at once: recessions, global financial panics, pandemics, inflation spikes, or wars. When the whole economy catches a cold, owning 500 companies instead of one doesn\'t save you, because all 500 fall together. Diversification across different asset types — stocks plus bonds plus cash — cushions systemic shocks, but nothing erases them. Every investor accepts some systemic risk; that acceptance is exactly what the market pays you long-term returns for.',
         realWorldExample:
           '2008 hit most stocks; bonds and cash behaved differently, which is why multi-asset portfolios exist.',
       },
@@ -153,7 +153,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'stacking',
         emoji: '🥚',
         title: 'Asset Stacking',
-        body: 'Combine stocks, bonds, cash, and optionally real assets. Low correlation between buckets smooths the ride.',
+        body: 'Real diversification goes beyond owning many stocks — it means combining different asset types that don\'t all move together: stocks for growth, bonds for stability, cash for emergencies, and sometimes real assets like property. When these buckets have low correlation, a bad year for one is often a flat or good year for another, which smooths your overall ride and makes it easier to stay invested. The goal isn\'t to maximize return in the best year; it\'s to build a portfolio you can hold through the worst one.',
         realWorldExample:
           'When stocks fell in 2022, some bond funds also fell (unusual), reminding owners diversification is nuanced, not magic.',
       },
@@ -161,7 +161,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'lazy_portfolio',
         emoji: '📦',
         title: 'Simple Diversified Templates',
-        body: 'A three-fund portfolio (US stocks, international stocks, bonds) covers global equity and fixed income at low cost.',
+        body: 'You don\'t need a complicated strategy to be well diversified. A classic three-fund portfolio — one US total stock market fund, one international stock fund, and one bond fund — covers thousands of companies across the globe plus fixed income, all at rock-bottom cost. Set your target percentages, add money automatically every month, and rebalance about once a year to pull the mix back to target. This "boring" template has quietly outperformed most complex, expensive strategies over long horizons.',
         realWorldExample:
           'Bogleheads communities teach set-and-rebalance approaches for long horizons.',
       },
@@ -254,7 +254,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'compound',
         emoji: '📈',
         title: 'The Exponential Engine',
-        body: 'Compound growth reinvests returns so you earn on prior gains. Future value grows faster than linear saving because the base keeps expanding.',
+        body: 'Compound growth means your returns start earning returns of their own. Year one, your money grows. Year two, you earn growth on the original money PLUS last year\'s gains — and that snowball keeps expanding every cycle. This is why compounding is exponential, not linear: a straight savings account adds the same amount each year, but a compounding investment adds a growing amount each year because the base keeps getting bigger. Given enough time, the growth on your growth ends up dwarfing everything you originally put in.',
         realWorldExample:
           'Legend says Einstein called compound interest the eighth wonder; whether true or not, the math is powerful.',
       },
@@ -262,7 +262,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'formula',
         emoji: '🧮',
         title: 'Future Value Intuition',
-        body: 'Regular contributions plus return rate plus years drive outcomes. Small rate differences matter enormously over decades.',
+        body: 'Three levers control your future value: how much you contribute, what return rate you earn, and how many years you let it run. Of the three, time is in the exponent — which is why it punches hardest. A handy shortcut is the Rule of 72: divide 72 by your return rate to estimate how many years your money takes to double. At 7%, money doubles roughly every 10 years, so $1,000 becomes $2,000, then $4,000, then $8,000. Small differences in rate or start date turn into enormous differences over decades.',
         realWorldExample:
           '7% average return doubles roughly every 10 years in the rule of 72 approximation.',
       },
@@ -270,7 +270,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'time',
         emoji: '⏳',
         title: 'The Cost of Waiting',
-        body: 'Starting at 16 vs. 30 gives 14 extra years of compounding. Youth is a financial asset because t (time) is in the exponent.',
+        body: 'Every year you wait to start investing costs far more than the money you didn\'t deposit — it costs all the compounding that money would have done for the rest of your life. Starting at 16 instead of 30 gives you 14 extra years, and because time sits in the exponent of the growth formula, those early years are the most valuable ones you will ever have. A teenager investing $100 a month can realistically end up wealthier at 65 than someone who starts at 30 investing three times as much. Youth is a genuine financial asset; the sooner you use it, the less you\'ll need to save later.',
         realWorldExample:
           'Two siblings with the same fund but different start dates can end with wildly different balances at 65.',
       },
@@ -278,7 +278,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'consistency',
         emoji: '🔁',
         title: 'Consistency Beats Timing',
-        body: 'Automated monthly investing reduces emotion. Missing the best market days hurts, but long horizons reward steady owners.',
+        body: 'Trying to jump in and out of the market at the perfect moments sounds smart, but in practice it usually backfires — a huge share of the market\'s long-term gains come from a handful of its best days, and those often arrive right in the middle of scary stretches when timers are sitting out. Automating a fixed investment every month removes emotion from the decision entirely: you buy when prices are high, low, and everywhere between, which averages out your cost. For most people, boring consistency beats clever timing by a wide margin.',
         realWorldExample:
           '401(k) payroll deductions turn compound growth into a habit, not a willpower test.',
       },
@@ -371,7 +371,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'dividend',
         emoji: '💵',
         title: 'The Dividend Principle',
-        body: 'Mature profitable firms may return excess cash to shareholders as dividends. You receive cash per share owned.',
+        body: 'When a mature company earns more cash than it needs to run and grow the business, it can hand the extra back to its owners — that payment is a dividend. As a shareholder, you receive a set amount of cash for every share you hold, usually every three months, simply for being an owner. Nothing has to be sold; the money arrives because the business you partly own is profitable. Dividends are the most direct, tangible proof that owning a stock means owning a real claim on real profits.',
         realWorldExample:
           'Johnson & Johnson has a long history of rising dividends, attracting income-focused owners.',
       },
@@ -379,7 +379,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'drip',
         emoji: '🔁',
         title: 'DRIP Reinvestment',
-        body: 'Dividend Reinvestment Plans automatically buy more shares (sometimes fractional) with each payout, compounding ownership.',
+        body: 'A Dividend Reinvestment Plan (DRIP) takes every dividend payment and automatically uses it to buy more shares — even tiny fractional slices — instead of leaving cash in your account. Those new shares then earn their own dividends, which buy even more shares, and the ownership snowball starts rolling without you lifting a finger or adding new money. Over decades, reinvested dividends have historically accounted for a huge portion of the stock market\'s total return, which is why long-term investors almost always switch DRIP on.',
         realWorldExample:
           'Broker DRIP settings let teens reinvest $12 payouts into 0.05 shares without trading fees in some plans.',
       },
@@ -387,7 +387,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'consume',
         emoji: '🛍️',
         title: 'Cash Out vs. Reinvest',
-        body: 'Spending dividends funds lifestyle; reinvesting accelerates the ownership snowball. Both are valid depending on goals.',
+        body: 'Every dividend forces a choice: cash it out to spend, or reinvest it to grow. Neither answer is wrong — it depends entirely on your life stage and goals. A retiree might live off dividend income, using it like a paycheck the portfolio writes them. A 17-year-old with decades ahead almost always benefits more from reinvesting, because each reinvested dollar has 40+ years to compound. The key is making the choice deliberately instead of letting payouts sit idle in cash where they earn nothing.',
         realWorldExample:
           'Retirees may live on dividends; accumulators in their 20s often reinvest for growth.',
       },
@@ -395,7 +395,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'yield_trap',
         emoji: '⚠️',
         title: 'Yield Traps',
-        body: 'Ultra-high dividend yields can signal distress (price crashed). Look at payout sustainability, not yield alone.',
+        body: 'A dividend yield is the annual dividend divided by the stock price — and that math hides a trap. When a company gets into trouble and its stock price crashes, the yield suddenly looks huge, not because the dividend grew but because the price collapsed. A 15% yield usually isn\'t a gift; it\'s the market signaling it expects the payout to be cut. Before chasing a high yield, check whether earnings comfortably cover the dividend. Sustainable and growing beats spectacular and doomed every time.',
         realWorldExample:
           'A stock yielding 15% might face a cut if earnings cannot support payouts.',
       },
@@ -488,7 +488,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'equities',
         emoji: '📈',
         title: 'Equities (Stocks)',
-        body: 'Ownership in companies. Higher long-run return potential, higher short-term volatility. Main engine of growth portfolios.',
+        body: 'Equities are shares of ownership in real businesses, which makes them the growth engine of most portfolios. Over long periods, stocks have historically delivered the highest returns of the major asset classes — but the price of that growth is volatility: drops of 20%, 30%, even 50% happen and are normal parts of the journey. Stocks reward investors who can hold through the storms, which is why the money you put in equities should be money you won\'t need for years.',
         realWorldExample:
           'S&P 500 historically rewarded patient owners over decades, with scary drawdowns along the way.',
       },
@@ -496,7 +496,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'fixed_income',
         emoji: '📄',
         title: 'Fixed Income (Bonds)',
-        body: 'Loans to governments or corporations paying interest. Usually steadier than stocks, sensitive to rate changes.',
+        body: 'Bonds flip the relationship: instead of owning a piece of a company, you become its lender. You hand over money, and the government or corporation promises to pay you regular interest and return your principal at a set date. Because those payments are contractual, bonds are usually far steadier than stocks — but they aren\'t risk-free. When interest rates rise, existing bonds paying old, lower rates become less attractive and their prices fall. In a portfolio, bonds are the shock absorber: they typically dampen the swings that stocks create.',
         realWorldExample:
           'Treasury bonds are classic "flight to safety" assets during some panics.',
       },
@@ -504,7 +504,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'cash',
         emoji: '💰',
         title: 'Cash Equivalents',
-        body: 'Savings, money markets, short CDs. Low volatility but inflation can erode purchasing power if cash sits too long.',
+        body: 'Cash equivalents — savings accounts, money market funds, short-term CDs — are the calmest corner of a portfolio. Their value barely moves, they\'re instantly available, and they\'re perfect for emergency funds and money you\'ll need soon. But calm has a hidden cost: inflation. If prices rise 3% a year and your cash earns 1%, you are quietly losing 2% of purchasing power annually. Cash is essential as a safety buffer and useless as a long-term growth strategy — hold enough to sleep well, but not so much that inflation eats your future.',
         realWorldExample:
           'High-yield savings in 2024 finally paid meaningful rates after years near zero.',
       },
@@ -512,7 +512,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'tradeoff',
         emoji: '⚖️',
         title: 'Risk-Premium Tradeoff',
-        body: 'Higher expected return usually means accepting more volatility. Mix assets to match when you need the money (time horizon).',
+        body: 'Markets don\'t hand out extra return for free — higher expected growth always comes bundled with bigger swings along the way. That trade is called the risk premium, and it\'s why stocks out-earn bonds and bonds out-earn cash over time. The practical skill is matching each asset to when you need the money: cash for this year, bonds for the next few years, stocks for goals a decade or more away. Get the timeline right and volatility becomes background noise; get it wrong and you can be forced to sell your growth assets at the worst possible moment.',
         realWorldExample:
           'A 60/40 stock-bond mix is a classic moderate template for retirement savers.',
       },
@@ -605,7 +605,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'noise',
         emoji: '📰',
         title: 'Ignore Daily Noise',
-        body: 'Prices bounce on headlines, bots, and mood. Long-term owners focus on business earnings and time in market, not every tick.',
+        body: 'On any given day, stock prices move because of headlines, algorithm trades, rumors, and pure crowd mood — almost none of which changes what the underlying businesses are actually worth. Long-term owners learn to separate signal from noise: the signal is earnings, products, and competitive position measured over years; the noise is everything screaming for your attention today. Checking your portfolio every hour doesn\'t give you more control, it just gives the noise more chances to shake you out of good positions. Time in the market beats reacting to the market.',
         realWorldExample:
           'Missing the 10 best days in a decade can slash returns for traders who jumped in and out.',
       },
@@ -613,7 +613,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'loss_aversion',
         emoji: '🧠',
         title: 'Loss Aversion',
-        body: 'Losses feel about twice as painful as equivalent gains feel good. That bias pushes panic selling at the worst moment.',
+        body: 'Psychologists Kahneman and Tversky proved something brutal about human wiring: losing $100 feels roughly twice as painful as winning $100 feels good. This bias — loss aversion — is why watching your portfolio drop triggers a primal urge to sell everything and make the pain stop. The problem is that the urge peaks exactly when selling is most damaging: at the bottom, right before recoveries historically begin. Knowing the bias exists is your best defense. When you feel the panic, name it: that\'s loss aversion talking, not analysis.',
         realWorldExample:
           'Behavioral economists Kahneman and Tversky documented how pain drives irrational exits.',
       },
@@ -621,7 +621,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'paper_loss',
         emoji: '📉',
         title: 'Paper vs. Real Loss',
-        body: 'Until you sell, a drop is unrealized. Selling locks in damage. Holders who stay invested often recover in later cycles (not guaranteed, but common historically).',
+        body: 'There is a crucial difference between your portfolio being down and you actually losing money. A drop on the screen is a paper loss — unrealized, temporary, and reversible if prices recover. The moment you sell, that paper loss becomes a real, permanent one. Investors who held diversified portfolios through 2008 and 2020 watched terrifying numbers on their screens, but those who didn\'t sell recovered and went on to new highs. Recovery is never guaranteed, but history\'s clearest pattern is that panic sellers convert temporary pain into permanent damage.',
         realWorldExample:
           '2020 crash recovered quickly for diversified owners who stayed the course.',
       },
@@ -629,7 +629,7 @@ export const ownershipUnit4Lessons: VillageLesson[] = [
         id: 'discount',
         emoji: '🏷️',
         title: 'Downturns as Discount Windows',
-        body: 'Contributing during fear can lower average purchase price over decades. Patience plus plan beats reacting to red arrows.',
+        body: 'Here\'s the mental flip that separates seasoned owners from beginners: a market crash is the only time the thing you\'ve been buying for years goes on sale, yet it\'s the moment most people stop buying. If you\'re investing for decades, lower prices today mean every dollar you contribute buys more shares — shares that multiply your gains when the recovery comes. Investors who kept contributing through 2009-2012 bought at discount prices that supercharged the following decade. A written plan you follow in the storm beats brilliant instincts you abandon in one.',
         realWorldExample:
           'Dollar-cost averaging during 2009-2012 helped steady investors buy cheaper shares.',
       },

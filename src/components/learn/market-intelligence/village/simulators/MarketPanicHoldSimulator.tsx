@@ -108,7 +108,6 @@ const MarketPanicHoldSimulator: React.FC<Props> = ({ simulator, onComplete }) =>
             </>
           ) : choice === 'buy' ? (
             <>
-              <p className="text-center text-2xl">🏅</p>
               <p className="text-sm font-bold text-emerald-800 text-center">
                 Stoic Investor + Clearance Sale
               </p>
@@ -121,7 +120,6 @@ const MarketPanicHoldSimulator: React.FC<Props> = ({ simulator, onComplete }) =>
             </>
           ) : (
             <>
-              <p className="text-center text-2xl">🏅</p>
               <p className="text-sm font-bold text-emerald-800 text-center">
                 Stoic Investor
               </p>

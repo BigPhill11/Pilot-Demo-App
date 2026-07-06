@@ -21,7 +21,7 @@ export const ownershipUnit3Lessons: VillageLesson[] = [
         id: 'mvp',
         emoji: '🧪',
         title: 'Minimum Viable Product',
-        body: 'An MVP is the simplest version that lets you test real customer demand with minimal cash. Learn fast, iterate, then scale. Perfection before feedback is expensive guessing.',
+        body: 'A Minimum Viable Product (MVP) is the smallest, cheapest version of your idea that real customers can actually try — a landing page, a hand-made batch, a weekend prototype. The point isn\'t to impress anyone; it\'s to answer the only question that matters: will strangers pay for this? Launching rough and learning from real feedback beats spending a year and your savings polishing something nobody wants. Build small, measure what customers do (not what they say), improve, and repeat. Perfection before feedback is just expensive guessing.',
         realWorldExample:
           'Dropbox started with a demo video before the full product existed. They validated interest cheaply.',
       },
@@ -29,7 +29,7 @@ export const ownershipUnit3Lessons: VillageLesson[] = [
         id: 'upsides',
         emoji: '🚀',
         title: 'Upsides of Entrepreneurship',
-        body: 'Unlimited upside, full strategic control, and direct wealth creation if the business wins. You build equity in your own asset, not just a paycheck.',
+        body: 'Entrepreneurship offers something no salary can: uncapped upside. An employee\'s income is limited by their wage; a founder\'s wealth is limited only by how valuable the business becomes. You also get full strategic control — what to build, who to hire, when to pivot — and every hour of work builds equity in an asset YOU own rather than someone else\'s. If the business wins, you don\'t just earn income, you own something sellable, inheritable, and capable of producing income without you. That ownership difference is why most large fortunes trace back to founding or owning businesses.',
         realWorldExample:
           'Founders of successful brands can sell companies for millions or go public, something rare in hourly wage paths alone.',
       },
@@ -37,7 +37,7 @@ export const ownershipUnit3Lessons: VillageLesson[] = [
         id: 'downsides',
         emoji: '⚠️',
         title: 'Downsides and Failure Rates',
-        body: 'Most startups fail. Risks include running out of cash, personal liability (in some structures), irregular income, and emotional stress. Enterprise risk is real.',
+        body: 'The honest statistics: most startups fail, and the graveyard is full of smart founders with good ideas. The risks stack up fast — running out of cash before finding paying customers, personal liability if the business isn\'t structured properly, months of irregular or zero income while friends collect steady paychecks, and the emotional weight of every problem landing on your desk. None of this means don\'t start; it means start with eyes open. Smart founders size their bets so a failure bruises them without breaking them: savings runway, legal structure, and a plan B.',
         realWorldExample:
           'Restaurants have high failure rates in year one. Many close before breaking even on fixed costs.',
       },
@@ -45,7 +45,7 @@ export const ownershipUnit3Lessons: VillageLesson[] = [
         id: 'validation',
         emoji: '📊',
         title: 'Market Validation',
-        body: 'Talk to customers, test price points, and measure repeat purchases before big capex. Data beats ego.',
+        body: 'Validation is the discipline of proving demand before spending big. Talk to real potential customers — not friends who\'ll be polite — and watch what they do, not what they say. Test actual price points: "would you buy this?" means little, but "here\'s the checkout link" tells the truth. Measure repeat purchases, because one sale is curiosity while a second sale is a business. Only after those signals are strong should you commit serious money to inventory, equipment, or ads. The founder\'s hardest skill is letting data overrule ego when the market says "not this."',
         realWorldExample:
           'Food trucks test menus before signing long leases on brick-and-mortar locations.',
       },

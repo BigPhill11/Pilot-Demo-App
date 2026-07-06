@@ -9,6 +9,7 @@
  */
 
 import type { VillageLesson, VillageModuleId } from '@/types/village-lesson';
+import type { Lesson as PersonalFinanceLesson } from '@/types/personal-finance';
 import type { PhilAge, TeachBackSpec } from '@/types/teach-back';
 
 const DEFAULT_PHIL_AGE_BY_MODULE: Record<VillageModuleId, PhilAge> = {
@@ -54,6 +55,52 @@ export function getTeachBackSpec(lesson: VillageLesson): TeachBackSpec {
   const simulatorTakeaway = lesson.simulator?.endMessage;
   if (keyFacts.length < 6 && simulatorTakeaway) {
     keyFacts.push('From the simulator: ' + condense(simulatorTakeaway, FACT_MAX_CHARS - 20));
+  }
+
+  return {
+    conceptName: lesson.title,
+    keyFacts,
+    misconceptions: [],
+  };
+}
+
+/* ─── Personal-finance lessons ─── */
+
+/**
+ * Persona tier per personal-finance module: early money-basics modules get
+ * Cub Phil, mid-track modules Teen Phil, and the capstone wealth/career
+ * modules Elder Phil.
+ */
+const PF_PHIL_AGE_BY_MODULE: Record<string, PhilAge> = {
+  'income': 'cub',
+  'financial-planning': 'cub',
+  'saving': 'cub',
+  'investing': 'teen',
+  'insurance': 'teen',
+  'taxes': 'teen',
+  'credit-debt': 'teen',
+  'career-income': 'elder',
+  'wealth-fundamentals': 'elder',
+  'market-literacy': 'elder',
+};
+
+export function getPersonalFinancePhilAge(moduleId?: string): PhilAge {
+  return (moduleId && PF_PHIL_AGE_BY_MODULE[moduleId]) || 'teen';
+}
+
+/**
+ * Teach-back spec for a personal-finance lesson, grounded in the lesson's
+ * own flashcards (term + definition are exactly the facts a complete
+ * explanation should cover) plus the micro-lesson takeaway.
+ */
+export function getPersonalFinanceTeachBackSpec(lesson: PersonalFinanceLesson): TeachBackSpec {
+  const keyFacts = lesson.flashcards.slice(0, 5).map((card) => {
+    const label = `${card.term}: `;
+    return label + condense(card.definition, FACT_MAX_CHARS - label.length);
+  });
+
+  if (keyFacts.length < 6 && lesson.microLesson) {
+    keyFacts.push('Big picture: ' + condense(lesson.microLesson, FACT_MAX_CHARS - 15));
   }
 
   return {

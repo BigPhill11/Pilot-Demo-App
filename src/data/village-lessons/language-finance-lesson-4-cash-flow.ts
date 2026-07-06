@@ -16,7 +16,7 @@ export const languageFinanceLesson4: VillageLesson = {
       id: 'three_buckets',
       emoji: '🌊',
       title: 'Three Cash Buckets',
-      body: 'Operating Cash Flow (CFO): cash from core business — collecting from customers, paying workers and suppliers. Investing Cash Flow (CFI): buying or selling long-term assets and acquisitions. Financing Cash Flow (CFF): loans, stock issuance, dividends, buybacks. Net change in cash links all three.',
+      body: 'The cash flow statement sorts every dollar of cash movement into three rivers. Operating Cash Flow (CFO) is the core business at work: collecting from customers, paying workers and suppliers — the river that must eventually run positive or the company dies. Investing Cash Flow (CFI) tracks buying and selling long-term assets: negative CFI often means healthy growth spending on factories and acquisitions. Financing Cash Flow (CFF) is money moving between the company and its funders — taking loans, issuing stock, paying dividends, buying back shares. Add the three rivers together and you get the net change in cash: the truest single line in all of accounting.',
       realWorldExample:
         'Amazon once ran huge operating cash but negative investing cash while building warehouses — growth spending shows up in CFI, not as "expense" on day one.',
     },
@@ -24,7 +24,7 @@ export const languageFinanceLesson4: VillageLesson = {
       id: 'cfo_vs_income',
       emoji: '⚡',
       title: 'Why CFO ≠ Net Income',
-      body: 'Net income includes non-cash charges (depreciation, stock comp) and accrual timing (sales booked before cash arrives). CFO starts with net income and adjusts: add back depreciation, subtract rising receivables, add rising payables. Harder to fake than a single earnings line.',
+      body: 'Net income is an opinion; cash is a fact. Net income includes non-cash charges like depreciation and stock compensation, plus accrual timing — sales booked as revenue before a single dollar arrives. Operating cash flow un-spins all of it: start with net income, add back the non-cash charges, subtract receivables that grew (sales not yet collected), add payables that grew (bills not yet paid). What remains is the cash that actually moved. This reconciliation is why sophisticated investors read the cash flow statement first — a company can massage its earnings line with accounting choices, but faking actual cash movement requires outright fraud, which is much harder to hide.',
       realWorldExample:
         'Blockbuster showed profits while operating cash weakened for years — the cash flow statement predicted failure before the income statement did.',
     },
@@ -32,7 +32,7 @@ export const languageFinanceLesson4: VillageLesson = {
       id: 'divergence',
       emoji: '🔥',
       title: 'Profit vs Cash Divergence',
-      body: 'Fast growth can drain cash: build inventory nobody buys yet, let customers pay late, pour money into factories. Net income stays green while CFO goes negative. Without cash, payroll and utilities stop — operational bankruptcy.',
+      body: 'Here\'s the paradox that kills ambitious companies: growing fast burns cash. To grow, you build inventory before anyone buys it, extend credit so customers pay in 60 days, and pour money into new locations and equipment. On the income statement, everything looks glorious — revenue up, net income green. Meanwhile operating cash flow turns negative because the money is flying out today and coming back later, if ever. Payroll, rent, and utilities only accept cash, so when the bank account hits zero, the "profitable" company stops operating. This is why founders repeat the mantra: revenue is vanity, profit is sanity, cash is reality.',
       realWorldExample:
         'Small suppliers serving big retailers often wait 60–90 days for payment — profitable on paper, broke on payday without a credit line.',
     },
@@ -40,7 +40,7 @@ export const languageFinanceLesson4: VillageLesson = {
       id: 'fcf',
       emoji: '💰',
       title: 'Free Cash Flow',
-      body: 'Free Cash Flow ≈ Operating Cash Flow minus capital expenditures (capex). It is cash left after keeping the lights on and the machines running — available for debt paydown, dividends, or reinvestment. Investors watch FCF yield as a reality check on hype.',
+      body: 'Free Cash Flow (FCF) is the money that\'s truly free: Operating Cash Flow minus capital expenditures (capex) — the spending required just to keep the lights on and machines running. What survives is cash the company can deploy however it wants: pay down debt, send dividends to owners, buy back shares, or fund the next big bet. That optionality is why many professionals call FCF the most important number in finance. It\'s also the ultimate hype detector: a company with a soaring stock price and years of negative free cash flow is running on investor faith, and faith has an expiration date. Real businesses eventually mint real, free cash.',
       realWorldExample:
         'Microsoft converts a large share of revenue to free cash — one reason quality investors trust the story beyond EPS headlines.',
     },

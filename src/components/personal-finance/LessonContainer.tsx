@@ -11,6 +11,8 @@ import TimeValueSimulator from './TimeValueSimulator';
 import LessonQuiz from './LessonQuiz';
 import MiniReflection from './MiniReflection';
 import PowerMove from './PowerMove';
+import TeachPhilPanel from '@/components/teach-phil/TeachPhilPanel';
+import { getPersonalFinancePhilAge, getPersonalFinanceTeachBackSpec } from '@/lib/teach-back-spec';
 import { cn } from '@/lib/utils';
 
 /** Lessons that use the comic micro-lesson UI (roll out module-by-module). */
@@ -64,16 +66,19 @@ interface LessonContainerProps {
   lesson: Lesson;
   onComplete: (xpEarned: number, coinsEarned: number) => void;
   onBack: () => void;
+  /** Module the lesson belongs to — sets Phil's default persona tier */
+  moduleId?: string;
 }
 
-type LessonStep = 'intro' | 'micro-lesson' | 'flashcards' | 'simulator' | 'quiz' | 'reflection' | 'power-move' | 'complete';
+type LessonStep = 'intro' | 'micro-lesson' | 'flashcards' | 'simulator' | 'quiz' | 'teach-phil' | 'reflection' | 'power-move' | 'complete';
 
-const STEPS: LessonStep[] = ['intro', 'micro-lesson', 'flashcards', 'simulator', 'quiz', 'reflection', 'power-move', 'complete'];
+const STEPS: LessonStep[] = ['intro', 'micro-lesson', 'flashcards', 'simulator', 'quiz', 'teach-phil', 'reflection', 'power-move', 'complete'];
 
 const LessonContainer: React.FC<LessonContainerProps> = ({
   lesson,
   onComplete,
   onBack,
+  moduleId,
 }) => {
   const [currentStep, setCurrentStep] = useState<LessonStep>('intro');
   const [xpEarned, setXpEarned] = useState(0);
@@ -202,6 +207,21 @@ const LessonContainer: React.FC<LessonContainerProps> = ({
               const xp = score * 20;
               const coins = Math.floor(score * 2);
               handleStepComplete(xp, coins);
+              goToNextStep();
+            }}
+          />
+        );
+
+      case 'teach-phil':
+        return (
+          <TeachPhilPanel
+            lessonId={lesson.id}
+            spec={getPersonalFinanceTeachBackSpec(lesson)}
+            defaultPhilAge={getPersonalFinancePhilAge(moduleId)}
+            onComplete={(result) => {
+              // Optional step: any outcome advances; a genuine pass earns the
+              // opt-up bonus as coins (coins convert 1:1 to bamboo on award)
+              handleStepComplete(0, result.optUpBonusBamboo);
               goToNextStep();
             }}
           />

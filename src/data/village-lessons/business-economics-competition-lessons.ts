@@ -18,7 +18,7 @@ export const businessEconomicsCompetitionLessons: VillageLesson[] = [
         id: 'spectrum',
         emoji: '🎯',
         title: 'The Competition Spectrum',
-        body: 'Markets range from perfect competition (many sellers, no pricing power) to monopoly (one seller). Between: monopolistic competition (differentiated products) and oligopoly (few dominant firms). Your career and investing sit inside these structures.',
+        body: 'Every market sits somewhere on a competition spectrum, and knowing where changes everything about prices and profits. At one end is perfect competition — many sellers offering identical products (like wheat farmers), where nobody can charge extra because customers will just buy next door. At the other end is monopoly: one seller, no alternatives. Between them live monopolistic competition (many sellers with differentiated products, like restaurants) and oligopoly (a few dominant firms, like phone carriers). Your job, your favorite brands, and every stock you might buy all live inside one of these structures.',
         realWorldExample:
           "Farmers can't price corn above the market. Airlines oligopoly-watch each other. Search and social platforms have huge network moats — antitrust debates follow.",
       },
@@ -26,7 +26,7 @@ export const businessEconomicsCompetitionLessons: VillageLesson[] = [
         id: 'monopoly',
         emoji: '🏰',
         title: 'Monopoly: When One Player Rules',
-        body: 'A monopoly controls a market with high barriers to entry — patents, resources, licenses, network effects. They can price above competitive levels because alternatives are weak.',
+        body: 'A monopoly controls a market because something blocks rivals from entering — and those barriers come in flavors. Patents legally forbid copying for years. Control of scarce resources means competitors can\'t get raw materials. Licenses restrict who\'s allowed to operate. Network effects are the modern giant: every new user makes the product more valuable, so a challenger with a better app but no users still loses. With weak alternatives, monopolies can price well above competitive levels — which is why they earn fat profits and attract regulator attention in equal measure.',
         realWorldExample:
           'Local broadband often feels like a monopoly — limited providers, high bills. Underserved areas may have no fiber at all — a systemic access barrier.',
       },
@@ -34,7 +34,7 @@ export const businessEconomicsCompetitionLessons: VillageLesson[] = [
         id: 'oligopoly',
         emoji: '🤝',
         title: 'Oligopoly: The Few Who Rule',
-        body: 'Few firms dominate and watch each other. Outcomes: price wars or tacit coordination (prices stay high without formal collusion). Strategy and game theory matter here.',
+        body: 'In an oligopoly, a handful of big firms dominate and every move is made while watching the others — like a permanent chess match. Two outcomes are common. Sometimes rivals launch price wars, slashing prices to steal customers until everyone\'s profits bleed. Other times they settle into tacit coordination: without ever meeting in a room (which would be illegal collusion), they mirror each other\'s prices and keep them comfortably high. Airlines, cell carriers, and streaming services all show these patterns. Game theory — predicting how rivals respond to your move — is the core skill.',
         realWorldExample:
           'Big airlines, automakers, and banks move together on fees and rates — competition policy tries to keep consumers protected.',
       },
@@ -42,7 +42,7 @@ export const businessEconomicsCompetitionLessons: VillageLesson[] = [
         id: 'antitrust',
         emoji: '⚖️',
         title: 'Antitrust: The Rules of the Game',
-        body: 'Antitrust law blocks mergers that kill competition and punishes price-fixing. Regulators balance innovation (patents) vs. consumer harm (monopoly rent).',
+        body: 'Antitrust law is the referee of capitalism. Regulators like the FTC and DOJ block mergers that would kill competition, break up companies that abuse dominant positions, and criminally punish price-fixing conspiracies. But they walk a genuine tightrope: patents deliberately grant temporary monopolies to reward inventors, and big companies sometimes deliver real efficiencies — so the question is never just "is this company big?" but "is its size helping or harming consumers?" When you see headlines about tech giants in court, this innovation-versus-monopoly-rent balance is exactly what\'s being argued.',
         realWorldExample:
           'AT&T breakup, EU fines on big tech, suits over acquisitions — careers in law, policy, and compliance grow from these fights.',
       },

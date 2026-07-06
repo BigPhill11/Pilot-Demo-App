@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, CheckCircle2, XCircle, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Check, X, ChevronRight } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
 import type { VillageQuizQuestion } from '@/types/village-lesson';
 import { VILLAGE_QUIZ_PASS_THRESHOLD } from '@/types/village-lesson';
 
@@ -9,151 +12,196 @@ interface Props {
   onComplete: (passed: boolean, score: number, total: number) => void;
 }
 
-type Phase = 'answering' | 'feedback' | 'results';
-
 const VillageQuizStep: React.FC<Props> = ({ questions, onComplete }) => {
-  const [questionIndex, setQuestionIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [phase, setPhase] = useState<Phase>('answering');
-  const [correctCount, setCorrectCount] = useState(0);
-  const [answers, setAnswers] = useState<Array<{ questionId: string; correct: boolean }>>([]);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [answers, setAnswers] = useState<boolean[]>([]);
+  const [quizComplete, setQuizComplete] = useState(false);
 
-  const current = questions[questionIndex];
-  const isLast = questionIndex === questions.length - 1;
+  const currentQuestion = questions[currentIndex];
+  const progress = ((currentIndex + 1) / questions.length) * 100;
+  const correctCount = answers.filter(a => a).length;
 
-  const handleSelect = (optionId: string) => {
-    if (phase !== 'answering') return;
-    setSelectedId(optionId);
-    const correct = optionId === current.correctId;
-    if (correct) setCorrectCount(c => c + 1);
-    setAnswers(prev => [...prev, { questionId: current.id, correct }]);
-    setPhase('feedback');
-  };
+  const handleSubmit = () => {
+    if (selectedId === null) return;
 
-  const handleNext = () => {
-    if (isLast) {
-      setPhase('results');
-    } else {
-      setQuestionIndex(i => i + 1);
+    if (!showFeedback) {
+      setAnswers([...answers, selectedId === currentQuestion.correctId]);
+      setShowFeedback(true);
+    } else if (currentIndex < questions.length - 1) {
+      setCurrentIndex(prev => prev + 1);
       setSelectedId(null);
-      setPhase('answering');
+      setShowFeedback(false);
+    } else {
+      setQuizComplete(true);
     }
   };
 
-  const finalScore = phase === 'results' ? correctCount : correctCount;
-  const passed = finalScore / questions.length >= VILLAGE_QUIZ_PASS_THRESHOLD;
+  if (quizComplete) {
+    const score = Math.round((correctCount / questions.length) * 100);
+    const passed = correctCount / questions.length >= VILLAGE_QUIZ_PASS_THRESHOLD;
 
-  if (phase === 'results') {
     return (
-      <div className="space-y-4">
-        <div className={`p-5 rounded-2xl text-center ${passed ? 'bg-green-50 border-2 border-green-300' : 'bg-red-50 border-2 border-red-300'}`}>
-          <div className="text-4xl mb-2">{passed ? '🎉' : '📚'}</div>
-          <h3 className={`text-lg font-bold ${passed ? 'text-green-800' : 'text-red-800'}`}>
-            {passed ? 'Quiz Passed!' : 'Keep Studying'}
-          </h3>
-          <p className={`text-sm mt-1 ${passed ? 'text-green-700' : 'text-red-700'}`}>
-            {finalScore} / {questions.length} correct ({Math.round((finalScore / questions.length) * 100)}%)
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="text-center space-y-6"
+      >
+        <div className={cn(
+          'w-20 h-20 rounded-full flex items-center justify-center mx-auto',
+          passed ? 'bg-emerald-500/20' : 'bg-amber-500/20',
+        )}>
+          <Trophy className={cn('w-10 h-10', passed ? 'text-emerald-500' : 'text-amber-500')} />
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-bold mb-2">{passed ? 'Quiz Passed!' : 'Almost There'}</h2>
+          <p className="text-4xl font-bold text-primary mb-2">{score}%</p>
+          <p className="text-muted-foreground">
+            You got {correctCount} out of {questions.length} correct
           </p>
-          <p className={`text-xs mt-2 ${passed ? 'text-green-600' : 'text-red-600'}`}>
-            {passed
-              ? 'You demonstrated solid understanding of this topic.'
-              : `You need ${Math.ceil(VILLAGE_QUIZ_PASS_THRESHOLD * 100)}% to pass. Review the lesson and try again.`}
-          </p>
+          {!passed && (
+            <p className="text-sm text-muted-foreground mt-2">
+              You need {Math.ceil(VILLAGE_QUIZ_PASS_THRESHOLD * 100)}% to pass. Review the lesson and try again.
+            </p>
+          )}
         </div>
 
         {/* Answer review */}
-        <div className="space-y-2">
-          {questions.map((q, i) => {
-            const answer = answers[i];
-            return (
-              <div
-                key={q.id}
-                className={`flex items-center gap-2 p-2 rounded-lg text-xs ${
-                  answer?.correct ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
-                }`}
-              >
-                {answer?.correct
-                  ? <Check className="h-3.5 w-3.5 text-green-600 flex-shrink-0" />
-                  : <X className="h-3.5 w-3.5 text-red-600 flex-shrink-0" />}
-                <span className={answer?.correct ? 'text-green-800' : 'text-red-800'}>{q.question}</span>
-              </div>
-            );
-          })}
+        <div className="space-y-2 text-left">
+          {questions.map((q, i) => (
+            <div
+              key={q.id}
+              className={cn(
+                'flex items-center gap-2 p-3 rounded-lg text-sm',
+                answers[i] ? 'bg-emerald-500/10' : 'bg-red-500/10',
+              )}
+            >
+              {answers[i]
+                ? <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                : <XCircle className="w-4 h-4 text-red-600 flex-shrink-0" />}
+              <span className="text-muted-foreground">{q.question}</span>
+            </div>
+          ))}
         </div>
 
         <Button
-          onClick={() => onComplete(passed, finalScore, questions.length)}
-          className={`w-full ${passed ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
+          onClick={() => onComplete(passed, correctCount, questions.length)}
+          className="w-full"
         >
-          {passed ? 'Claim Rewards' : 'Back to Lesson'}
-          <ChevronRight className="ml-2 h-4 w-4" />
+          {passed ? 'Continue' : 'Back to Lesson'}
+          <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      {/* Progress */}
-      <div className="flex items-center gap-2">
-        <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-blue-500 rounded-full transition-all"
-            style={{ width: `${((questionIndex) / questions.length) * 100}%` }}
-          />
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+      {/* Header */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="font-semibold">Knowledge Check</h2>
+          <span className="text-sm text-muted-foreground">
+            {currentIndex + 1} of {questions.length}
+          </span>
         </div>
-        <span className="text-xs text-gray-500">{questionIndex + 1} / {questions.length}</span>
+        <Progress value={progress} className="h-2" />
       </div>
 
-      {/* Question */}
-      <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
-        <p className="text-sm font-semibold text-blue-900 leading-relaxed">{current.question}</p>
-      </div>
-
-      {/* Options */}
-      <div className="space-y-2">
-        {current.options.map(opt => {
-          const isSelected = selectedId === opt.id;
-          const isCorrect = opt.id === current.correctId;
-          let style = 'border-2 border-gray-200 bg-white text-gray-800 hover:border-blue-400 hover:bg-blue-50';
-
-          if (phase === 'feedback') {
-            if (isCorrect) style = 'border-2 border-green-400 bg-green-50 text-green-900';
-            else if (isSelected) style = 'border-2 border-red-400 bg-red-50 text-red-900';
-            else style = 'border-2 border-gray-200 bg-gray-50 text-gray-500 opacity-60';
-          }
-
-          return (
-            <button
-              key={opt.id}
-              onClick={() => handleSelect(opt.id)}
-              disabled={phase === 'feedback'}
-              className={`w-full text-left p-3 rounded-xl transition-all text-sm ${style}`}
-            >
-              <div className="flex items-center justify-between">
-                <span>{opt.text}</span>
-                {phase === 'feedback' && isCorrect && <Check className="h-4 w-4 text-green-600 flex-shrink-0" />}
-                {phase === 'feedback' && isSelected && !isCorrect && <X className="h-4 w-4 text-red-600 flex-shrink-0" />}
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Feedback explanation */}
-      {phase === 'feedback' && (
-        <div className="space-y-3">
-          <div className={`p-3 rounded-xl border text-sm ${selectedId === current.correctId ? 'bg-green-50 border-green-200 text-green-800' : 'bg-orange-50 border-orange-200 text-orange-800'}`}>
-            <span className="font-semibold">{selectedId === current.correctId ? '✓ Correct! ' : '✗ Not quite. '}</span>
-            {current.explanation}
-          </div>
-          <Button onClick={handleNext} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-            {isLast ? 'See Results' : 'Next Question'}
-            <ChevronRight className="ml-2 h-4 w-4" />
-          </Button>
+      {/* Score indicator */}
+      {answers.length > 0 && (
+        <div className="flex items-center gap-2">
+          {answers.map((correct, i) => (
+            <div
+              key={i}
+              className={cn('w-3 h-3 rounded-full', correct ? 'bg-emerald-500' : 'bg-red-500')}
+            />
+          ))}
+          {Array.from({ length: questions.length - answers.length }).map((_, i) => (
+            <div key={`empty-${i}`} className="w-3 h-3 rounded-full bg-muted" />
+          ))}
         </div>
       )}
-    </div>
+
+      {/* Question */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentIndex}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+        >
+          <div className="bg-card border rounded-xl p-6">
+            <h3 className="text-lg font-medium mb-4">{currentQuestion.question}</h3>
+
+            <div className="space-y-2">
+              {currentQuestion.options.map((option) => {
+                const isSelected = selectedId === option.id;
+                const isCorrect = option.id === currentQuestion.correctId;
+                const showCorrectness = showFeedback && (isSelected || isCorrect);
+
+                return (
+                  <button
+                    key={option.id}
+                    onClick={() => { if (!showFeedback) setSelectedId(option.id); }}
+                    disabled={showFeedback}
+                    className={cn(
+                      'w-full p-4 rounded-lg border-2 text-left transition-all flex items-center gap-3',
+                      !showFeedback && isSelected && 'border-primary bg-primary/5',
+                      !showFeedback && !isSelected && 'border-border hover:border-primary/50',
+                      showFeedback && isCorrect && 'border-emerald-500 bg-emerald-500/10',
+                      showFeedback && isSelected && !isCorrect && 'border-red-500 bg-red-500/10',
+                      showFeedback && !isSelected && !isCorrect && 'opacity-40',
+                    )}
+                  >
+                    <div className={cn(
+                      'w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0',
+                      !showFeedback && isSelected && 'border-primary bg-primary text-primary-foreground',
+                      !showFeedback && !isSelected && 'border-muted-foreground/30',
+                      showFeedback && isCorrect && 'border-emerald-500 bg-emerald-500 text-white',
+                      showFeedback && isSelected && !isCorrect && 'border-red-500 bg-red-500 text-white',
+                    )}>
+                      {showCorrectness && isCorrect && <CheckCircle2 className="w-4 h-4" />}
+                      {showCorrectness && isSelected && !isCorrect && <XCircle className="w-4 h-4" />}
+                    </div>
+                    <span className="text-sm">{option.text}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Explanation */}
+          {showFeedback && currentQuestion.explanation && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={cn(
+                'mt-4 p-4 rounded-lg',
+                selectedId === currentQuestion.correctId
+                  ? 'bg-emerald-500/10 border border-emerald-500/30'
+                  : 'bg-amber-500/10 border border-amber-500/30',
+              )}
+            >
+              <p className="text-sm">
+                <strong>
+                  {selectedId === currentQuestion.correctId ? 'Correct! ' : 'Not quite. '}
+                </strong>
+                {currentQuestion.explanation}
+              </p>
+            </motion.div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Submit button */}
+      <Button onClick={handleSubmit} disabled={selectedId === null} className="w-full">
+        {!showFeedback ? 'Submit Answer' : currentIndex < questions.length - 1 ? 'Next Question' : 'See Results'}
+        <ArrowRight className="w-4 h-4 ml-2" />
+      </Button>
+    </motion.div>
   );
 };
 

@@ -18,7 +18,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'scarcity',
         emoji: '⏳',
         title: 'Scarcity: Never Enough',
-        body: 'Scarcity means wants exceed resources — money, time, attention. You cannot buy everything, be everywhere, or learn every skill at once. Scarcity is not poverty alone; even wealthy people face limits. Economics is the study of how people allocate scarce resources.',
+        body: 'Scarcity is the first law of economics: human wants are unlimited, but resources — money, time, attention, energy — are not. You cannot buy everything, be everywhere, or master every skill at once, so every person, business, and government is forced to choose. Notice that scarcity is not the same as poverty: a billionaire still has only 24 hours in a day, and even the richest company must choose which projects to fund. Economics is literally the study of how people make these forced choices — which makes it a study of you, every single day.',
         realWorldExample:
           'A first paycheck splits between rent, transit, and phone — not because you are bad with money, but because income is scarce. Wealth gaps mean some families face harsher scarcity from day one.',
       },
@@ -26,7 +26,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'tradeoffs',
         emoji: '⚖️',
         title: 'Trade-offs: Picking One Path',
-        body: 'A trade-off is giving up one thing to get another. Working extra shifts earns money but costs study time and sleep. Saving more today means less spending now. Rational planning names the trade-off before you commit.',
+        body: 'Because resources are scarce, every choice is secretly a trade — you give up one thing to get another, whether you notice or not. Working extra shifts earns money but costs study time and sleep, which might cost grades, which might cost scholarship money. Saving aggressively today means less fun now; spending freely now means less freedom later. There is no option without a trade-off — only trade-offs you\'ve examined and trade-offs that ambush you later. Rational planners name the full trade before committing: "If I say yes to this, what exactly am I saying no to?"',
         realWorldExample:
           'Skipping a paid gig to study for a certification is a trade-off: short-term cash vs. long-term earning power. Career planners and budget analysts help people map these trade-offs professionally.',
       },
@@ -34,7 +34,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'opportunity-cost',
         emoji: '🎯',
         title: 'Opportunity Cost: The Road Not Taken',
-        body: 'Opportunity cost is the value of your next-best alternative — what you sacrifice when you choose. If you spend $50 on streaming, the opportunity cost might be $50 toward an emergency fund or investing. Emotional choices ignore opportunity cost; smart ones weigh it.',
+        body: 'Opportunity cost sharpens trade-off thinking into a precise tool: it\'s the value of the single next-best alternative you sacrifice when you choose. Spend $50 a month on streaming, and the opportunity cost isn\'t "everything else $50 could buy" — it\'s the best thing it could have done, maybe $50 monthly into an index fund, which could be tens of thousands of dollars by retirement. The sneaky part is that opportunity cost is invisible: the price tag shows what you pay, never what you give up. Emotional spending ignores this hidden cost; wealthy habits are built by people who see it.',
         realWorldExample:
           'Holding cash in a checking account feels safe, but opportunity cost is missing market growth over decades. Choosing debt for a want has opportunity cost: future payments that could have funded goals.',
       },
@@ -42,7 +42,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'rational-emotional',
         emoji: '🧠',
         title: 'Rational vs. Emotional Decisions',
-        body: 'Rational decision-making compares costs and benefits with clear goals. Emotional decisions react to stress, social pressure, or FOMO. Both are human — the skill is pausing to ask: what is the opportunity cost, and does this match my plan?',
+        body: 'Every financial decision comes from one of two operating systems. Rational mode compares costs and benefits against clear goals: "Does this purchase move me toward what I actually want?" Emotional mode reacts — to stress, boredom, social pressure, or FOMO — and rationalizes afterward. Neither mode is shameful; both are permanently installed in every human brain, and marketers spend billions targeting the emotional one. The winning skill isn\'t deleting emotion (impossible) — it\'s inserting a pause between impulse and action to ask two questions: what\'s the opportunity cost, and does this match my plan?',
         realWorldExample:
           'Buy-now-pay-later on impulse has high emotional pull; a budget analyst would ask what that payment replaces next month. Wealth advisors coach clients to separate panic from plan.',
       },
@@ -234,7 +234,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'demand',
         emoji: '📈',
         title: 'Demand: What Buyers Want',
-        body: 'Demand is how much people want to buy at a given price. When price falls, quantity demanded usually rises — the Law of Demand. Sales, gas spikes, and rent hikes all show demand shifting in real life.',
+        body: 'Demand is how much of something people are willing and able to buy at each possible price — and it follows a reliable pattern called the Law of Demand: when price falls, quantity demanded rises, and when price climbs, buyers back away. You already live this law. A 50%-off sale pulls you into a store you\'d normally skip. When gas spikes, people carpool, take transit, or postpone road trips. When rent jumps, people find roommates or move farther out. Businesses obsess over demand because it answers their most important question: at what price will customers actually show up?',
         realWorldExample:
           'When rent jumps in your city, you might commute farther or get a roommate — demand for housing did not disappear, but quantity demanded at that price dropped for you.',
       },
@@ -242,7 +242,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'supply',
         emoji: '🏭',
         title: 'Supply: What Sellers Offer',
-        body: 'Supply is how much producers will sell at a price. Higher prices encourage more production; shortages push prices up until supply responds or consumers adjust.',
+        body: 'Supply is the mirror image of demand: how much of something producers are willing to make and sell at each price. The logic runs opposite to buyers\' — higher prices make production more profitable, which pulls more supply into the market. When sneaker resale prices explode, more people start flipping sneakers. When a harvest fails and prices spike, farmers plant more next season. This is how shortages fix themselves: rising prices simultaneously attract new producers and push some consumers away, squeezing the gap from both sides until the market finds balance again.',
         realWorldExample:
           'Chip shortages raised car prices — supply fell while demand stayed strong. Grocery prices swing when weather or fuel costs hit farms and trucking.',
       },
@@ -250,7 +250,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'equilibrium',
         emoji: '⚖️',
         title: 'Equilibrium & Price Signals',
-        body: 'Equilibrium is where supply and demand meet — the market-clearing price. Shortages mean price is too low; surpluses mean too high. Prices signal where resources should flow.',
+        body: 'Equilibrium is the price where supply and demand shake hands — where the amount producers want to sell exactly matches what buyers want to purchase, so the market "clears." When price sits below equilibrium, buyers want more than exists: shelves empty, lines form, scalpers appear. When price sits above it, products pile up unsold until sellers cut prices. This is why prices are information, not just costs: a rising price broadcasts "we need more of this made," pulling workers, factories, and investment toward what society wants most — all without anyone in charge.',
         realWorldExample:
           'Negotiating pay uses demand for your skills vs. supply of workers. A hot job market (high demand, tight supply) pushes wages up — same logic as sneaker resale.',
       },
@@ -258,7 +258,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'investing',
         emoji: '📉',
         title: 'Supply, Demand & Markets',
-        body: 'Stock prices move with expected future supply and demand for profits. Hype can spike demand for shares beyond fundamentals; when reality catches up, prices correct.',
+        body: 'The stock market is supply and demand running at maximum speed. A share\'s price is simply where sellers and buyers currently agree — and demand for shares moves on expectations about future profits, not just today\'s reality. That creates a special hazard: hype. When a story goes viral, demand for shares can spike far beyond anything the company\'s actual earnings justify, and the price follows. But fundamentals are gravity. When reality catches up — earnings disappoint, growth slows — demand evaporates and the price corrects, often violently. Same law as sneakers and gas, just faster and with your savings attached.',
         realWorldExample:
           'Market research analysts study demand trends for products; sales & trading desks react when supply shocks hit commodities. Product pricing analysts set prices using the same curves.',
       },
@@ -450,7 +450,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'labor-market',
         emoji: '👥',
         title: 'Labor Markets',
-        body: 'Workers supply labor; employers demand it. Wages adjust where supply and demand meet. Location, industry, and barriers (networks, discrimination, licensing) shift who gets which jobs.',
+        body: 'Your paycheck is a price, and it\'s set by the same forces as everything else. Workers supply labor; employers demand it; wages settle where the two meet. Scarce skills that many employers want command high wages — that\'s why specialized nurses and software engineers out-earn jobs anyone can do on day one. But labor markets have friction that goods markets don\'t: location matters (the same skill pays differently by city), industries boom and fade, and barriers like professional licensing, personal networks, and discrimination shape who even gets to compete for which jobs. Understanding this market is step one to navigating it.',
         realWorldExample:
           'Summer job markets flood with students — supply rises, wages may flatline. Skilled trades with few graduates see the opposite.',
       },
@@ -458,7 +458,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'human-capital',
         emoji: '🎓',
         title: 'Human Capital',
-        body: 'Human capital is the knowledge, skills, health, and experience you bring to work. Education and training are investments — they cost time and money now for higher productivity later.',
+        body: 'Human capital is everything you carry into the labor market: knowledge, skills, health, habits, and experience. It\'s called capital deliberately, because it behaves like an investment asset — education and training cost time and money now in exchange for higher productivity and earnings for decades. A certification, a language, or a technical skill can raise every future paycheck you ever collect, which makes skill-building one of the highest-return investments available to a teenager. Unlike stocks, nobody can crash it, tax it away, or steal it: your human capital travels with you for life.',
         realWorldExample:
           'A finance certificate may cost $500 but raise internship odds. That ROI beats buying gear that does not increase earnings.',
       },
@@ -466,7 +466,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'productivity',
         emoji: '⚡',
         title: 'Productivity & Pay',
-        body: 'Productivity is output per hour. Employers pay more when workers create more value. Technology and tools amplify productivity — why one worker with software can serve hundreds of customers.',
+        body: 'Productivity — the value you create per hour — is the economic engine underneath wages. Employers don\'t pay for effort or time in the abstract; they pay for output, so workers who create more value per hour can command more money. Technology is the great amplifier here: one accountant with software now does what a whole room of clerks once did, and one creator with a phone can reach millions. That\'s the real reason to learn powerful tools — every tool you master multiplies what an hour of your work produces, and over a career, that multiplier is worth far more than any single raise.',
         realWorldExample:
           'Hourly vs. salary: salary can hide overtime — read the offer. Pay stubs show taxes and benefits; understanding them is personal finance basics.',
       },
@@ -474,7 +474,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'negotiate',
         emoji: '🤝',
         title: 'Invest in Yourself vs. Assets',
-        body: 'You can invest dollars in stocks or in skills. Both compound differently. Skills often beat raw cash early in life; assets matter more once income stabilizes. Systemic gaps can limit access to both — policy and community programs try to close that gap.',
+        body: 'Every dollar and hour you control can be invested in two directions: financial assets (stocks, funds) or human capital (skills, credentials, health). Both compound, but on different schedules. Early in life, skills usually win — a certification that raises your income by $10,000 a year beats what a teenager\'s savings could earn in the market, and higher income then funds bigger investing later. Once income stabilizes, financial assets take over as the main wealth engine. Be honest about the playing field too: systemic gaps in school quality, family wealth, and networks limit access to both — which is exactly what scholarships, community programs, and policy fights are trying to fix.',
         realWorldExample:
           'HR and compensation analysts benchmark wages using productivity data. Economists study whether minimum wage changes help or hurt different groups.',
       },
@@ -666,7 +666,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'interest',
         emoji: '📊',
         title: 'Interest: Price of Money',
-        body: 'Interest is the cost of borrowing or the reward for lending. APR on cards and loans tells you yearly cost. Higher risk borrowers pay higher rates — risk and return move together.',
+        body: 'Interest is the price of money itself: what you pay to borrow it, or what you earn for lending it. The universal price tag is APR — annual percentage rate — which tells you the true yearly cost of a card or loan and makes offers comparable. Rates aren\'t random: lenders price risk. A borrower with a strong repayment history looks safe and gets cheap money; a shaky history means higher rates to compensate the lender for possible loss. That\'s the deep rule of all finance showing up in your wallet: risk and return always travel together.',
         realWorldExample:
           '18% APR on a $1,000 balance grows fast if you pay minimums. Savers earn interest too — but often less than card rates, which hurts wealth building.',
       },
@@ -674,7 +674,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'good-bad-debt',
         emoji: '🏠',
         title: 'Good vs. Bad Debt',
-        body: 'Good debt may fund assets or skills that grow income (affordable education, reasonable mortgage). Bad debt funds depreciating wants with high rates. Credit scores track repayment — gates apartments and jobs in some markets.',
+        body: 'Debt is a tool, and like any tool it builds or destroys depending on what you point it at. Good debt funds things that grow your income or wealth: affordable education that raises earning power, a reasonable mortgage on an appreciating home. Bad debt funds depreciating wants at brutal rates — financing sneakers at 27% APR means paying extra for something losing value daily. Your credit score is the permanent record of how you\'ve handled it all, and it gates far more than loans: landlords check it for apartments, and some employers check it for jobs. Borrow like the future you is watching, because they are.',
         realWorldExample:
           'Predatory lending in underserved neighborhoods is a systemic barrier — higher rates for the same risk profile elsewhere.',
       },
@@ -682,7 +682,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'compound',
         emoji: '📈',
         title: 'Compound Interest',
-        body: 'Compound interest earns interest on interest — magic for savers and investors, painful for debtors. Time is the multiplier. Starting early on investing beats starting big later.',
+        body: 'Compound interest is the same force wearing two faces. For savers and investors, it\'s magic: your returns earn returns, the snowball grows, and time multiplies everything — which is why starting small at 16 routinely beats starting big at 30. For debtors, the identical math runs in reverse: unpaid credit card interest gets added to your balance, and next month you pay interest on the interest. A $1,000 balance at 24% APR, paid minimally, can take years to escape and cost multiples of the original. One force, two directions — the entire game of personal finance is getting compounding to work FOR you instead of against you.',
         realWorldExample:
           'Bond investors lend to governments/companies for steady interest. Credit analysts grade how likely borrowers are to default.',
       },
@@ -690,7 +690,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'risk-return',
         emoji: '⚠️',
         title: 'Risk, Return & Investing',
-        body: 'Higher expected returns usually mean higher risk. Stocks vs. bonds trade off volatility and yield. Loan officers and risk managers price the same trade-off on the lending side.',
+        body: 'There is no honest promise of high return with low risk — that combination is the calling card of scams. Markets pay you extra return specifically for accepting extra uncertainty: stocks out-earn bonds over decades because stockholders endure gut-wrenching swings that bondholders don\'t. The same trade-off runs the lending world from the other side — loan officers and risk managers set higher rates for riskier borrowers because some of those loans won\'t come back. Once you internalize this law, you gain a superpower: any pitch offering "guaranteed 20% returns, zero risk" instantly reveals itself as either a lie or a trap.',
         realWorldExample:
           'Skipping emergency savings to chase crypto is risk-heavy. Paying cards first is often a guaranteed "return" equal to the APR.',
       },
@@ -882,7 +882,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'incentives',
         emoji: '🎯',
         title: 'Incentives',
-        body: 'People respond to incentives — rewards and punishments, real or perceived. Cash-back, free shipping thresholds, and referral bonuses nudge behavior. Firms design incentives; governments tax or subsidize.',
+        body: 'If you want to predict behavior, look at incentives — the rewards and punishments, real or perceived, attached to each choice. People respond to them reliably, often without noticing. Cash-back cards nudge you to swipe more. "Free shipping over $35" conjures purchases you never planned. Referral bonuses turn customers into salespeople. None of this is accidental: companies employ teams to engineer these nudges, and governments play the same game at scale with taxes (discouraging things) and subsidies (encouraging them). The defense is a habit: whenever an offer feels generous, ask "what behavior is this designed to produce in me?"',
         realWorldExample:
           'Free trial → auto-bill is an incentive trap. Employers offer 401(k) match — an incentive to save that beats most nudges.',
       },
@@ -890,7 +890,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'biases',
         emoji: '🧠',
         title: 'Biases: Loss Aversion & Overconfidence',
-        body: 'Loss aversion: losses hurt more than equal gains feel good — so we hold losers too long in investing. Overconfidence: we think we predict markets or can time purchases. Anchoring: first price you see shapes "fair."',
+        body: 'Your brain ships with predictable bugs that cost money. Loss aversion: losses hurt roughly twice as much as equal gains feel good, so investors cling to losing stocks (selling would make the loss "real") while selling winners too early. Overconfidence: most people rate themselves above-average drivers, and most traders believe they can time the market — the data says almost none can. Anchoring: the first number you see rewires your sense of "fair," which is why stores show a fake $200 "original price" next to the $89 sale tag. You can\'t uninstall these biases, but naming them in the moment breaks most of their power.',
         realWorldExample:
           'Panic selling in a crash realizes losses. Overconfidence leads to concentrated bets on one stock.',
       },
@@ -898,7 +898,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'marketing',
         emoji: '📱',
         title: 'Marketing Psychology',
-        body: 'Scarcity ("only 2 left"), social proof ("trending"), and urgency ("ends tonight") push impulse buys. BNPL and one-click checkout remove friction — raising spending.',
+        body: 'Modern shopping apps are behavioral-science laboratories aimed at your wallet. "Only 2 left in stock" weaponizes scarcity. "Trending now" and five-star badges deploy social proof — if everyone\'s buying, it must be good. Countdown timers ("sale ends tonight!") manufacture urgency so you decide before thinking. Then friction-removal finishes the job: one-click checkout and buy-now-pay-later erase every natural pause where second thoughts used to live, which measurably raises spending. Once you can name each trick as it fires, the spell weakens — the countdown timer becomes a tell that someone needs you to not think this through.',
         realWorldExample:
           'Influencer ads target teens where regulation is lighter — equity issue when communities already face wealth gaps.',
       },
@@ -906,7 +906,7 @@ export const businessEconomicsMicroLessons: VillageLesson[] = [
         id: 'markets',
         emoji: '🎢',
         title: 'Emotional Investing',
-        body: 'Market bubbles form when everyone buys because prices rose — not because value did. Fear spreads faster in downturns. Behavioral economists study these patterns; UX researchers design calmer apps.',
+        body: 'Individual biases become dangerous when they synchronize across millions of people. Market bubbles form when everyone buys because prices rose — not because value did — and each new buyer\'s FOMO recruits the next, until price and reality lose contact entirely. Crashes run the same circuit in reverse, except fear spreads even faster than greed. These aren\'t freak events; they\'re what happens when human psychology meets a scoreboard, and they\'ve repeated from Dutch tulips in 1637 to meme stocks in 2021. Behavioral economists map these patterns, and some UX researchers now design apps to trigger them less — or, at worse companies, more.',
         realWorldExample:
           'Marketing analysts A/B test buttons; behavioral economists advise pensions to auto-enroll savers — fight inertia with design.',
       },

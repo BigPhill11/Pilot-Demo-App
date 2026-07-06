@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, Trophy, Zap, Activity } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, Zap } from 'lucide-react';
-import type { DecisionSimulator, OutcomeMeter } from '@/types/village-lesson';
+import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
+import type { DecisionSimulator, SimulatorChoice } from '@/types/village-lesson';
 
 interface Props {
   simulator: DecisionSimulator;
@@ -10,225 +13,251 @@ interface Props {
 
 type Phase = 'intro' | { roundIndex: number } | 'result';
 
-const METER_COLORS: Record<string, string> = {
-  green: 'bg-green-500',
-  blue: 'bg-blue-500',
-  red: 'bg-red-500',
-  yellow: 'bg-yellow-500',
-  orange: 'bg-orange-500',
-  purple: 'bg-purple-500',
-};
-
-const METER_TRACK: Record<string, string> = {
-  green: 'bg-green-100',
-  blue: 'bg-blue-100',
-  red: 'bg-red-100',
-  yellow: 'bg-yellow-100',
-  orange: 'bg-orange-100',
-  purple: 'bg-purple-100',
+const METER_FILL: Record<string, string> = {
+  green: '[&>div]:bg-emerald-500',
+  blue: '[&>div]:bg-blue-500',
+  red: '[&>div]:bg-red-500',
+  yellow: '[&>div]:bg-amber-500',
+  orange: '[&>div]:bg-orange-500',
+  purple: '[&>div]:bg-purple-500',
 };
 
 function clamp(v: number) { return Math.max(0, Math.min(100, v)); }
-
-function MeterBar({ meter, value, delta }: { meter: OutcomeMeter; value: number; delta?: number }) {
-  return (
-    <div className="space-y-1">
-      <div className="flex items-center justify-between text-xs">
-        <span className="font-medium text-gray-700">
-          {meter.emoji} {meter.label}
-        </span>
-        <div className="flex items-center gap-1">
-          {delta !== undefined && delta !== 0 && (
-            <span className={`text-[10px] font-bold ${delta > 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {delta > 0 ? '+' : ''}{delta}
-            </span>
-          )}
-          <span className="text-gray-500 text-[10px]">{Math.round(value)}%</span>
-        </div>
-      </div>
-      <div className={`h-3 rounded-full overflow-hidden ${METER_TRACK[meter.color]}`}>
-        <div
-          className={`h-full rounded-full transition-all duration-700 ease-out ${METER_COLORS[meter.color]}`}
-          style={{ width: `${value}%` }}
-        />
-      </div>
-    </div>
-  );
-}
 
 const VillageDecisionSimulator: React.FC<Props> = ({ simulator, onComplete }) => {
   const [phase, setPhase] = useState<Phase>('intro');
   const [meterValues, setMeterValues] = useState<Record<string, number>>(
     Object.fromEntries(simulator.meters.map(m => [m.id, m.initial]))
   );
+  const [selectedChoice, setSelectedChoice] = useState<SimulatorChoice | null>(null);
+  const [showOutcome, setShowOutcome] = useState(false);
   const [lastDeltas, setLastDeltas] = useState<Record<string, number>>({});
-  const [lastFeedback, setLastFeedback] = useState<string | null>(null);
-  const [choicesMade, setChoicesMade] = useState<string[]>([]);
 
-  const handleChoice = (choiceId: string) => {
-    const roundIndex = typeof phase === 'object' ? phase.roundIndex : 0;
-    const round = simulator.rounds[roundIndex];
-    const choice = round.choices.find(c => c.id === choiceId)!;
+  const roundIndex = typeof phase === 'object' ? phase.roundIndex : 0;
+  const currentRound = typeof phase === 'object' ? simulator.rounds[roundIndex] : null;
+  const isLastRound = roundIndex === simulator.rounds.length - 1;
 
-    const deltas = choice.effects;
-    setLastDeltas(deltas);
-    setLastFeedback(choice.feedback);
-    setChoicesMade(prev => [...prev, choiceId]);
+  const handleConfirmChoice = () => {
+    if (!selectedChoice) return;
+    setLastDeltas(selectedChoice.effects);
     setMeterValues(prev => {
       const next = { ...prev };
-      for (const [meterId, delta] of Object.entries(deltas)) {
+      for (const [meterId, delta] of Object.entries(selectedChoice.effects)) {
         next[meterId] = clamp((next[meterId] ?? 50) + delta);
       }
       return next;
     });
+    setShowOutcome(true);
   };
 
-  const advance = () => {
-    if (lastFeedback) {
-      const roundIndex = typeof phase === 'object' ? phase.roundIndex : 0;
-      setLastFeedback(null);
-      setLastDeltas({});
-      if (roundIndex + 1 < simulator.rounds.length) {
-        setPhase({ roundIndex: roundIndex + 1 });
-      } else {
-        setPhase('result');
-      }
-    } else if (phase === 'intro') {
-      setPhase({ roundIndex: 0 });
-    } else if (phase === 'result') {
-      onComplete();
+  const handleNextRound = () => {
+    setSelectedChoice(null);
+    setShowOutcome(false);
+    setLastDeltas({});
+    if (isLastRound) {
+      setPhase('result');
+    } else {
+      setPhase({ roundIndex: roundIndex + 1 });
     }
   };
 
-  const currentRound = typeof phase === 'object' ? simulator.rounds[phase.roundIndex] : null;
+  /* ─── Meters (status cards, personal-finance simulator style) ─── */
+  const meters = (
+    <div className={cn('grid gap-3', simulator.meters.length >= 3 ? 'grid-cols-3' : 'grid-cols-2')}>
+      {simulator.meters.map(m => {
+        const value = meterValues[m.id] ?? m.initial;
+        const delta = lastDeltas[m.id];
+        return (
+          <div key={m.id} className="bg-card border rounded-lg p-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium">{m.label}</span>
+              {showOutcome && delta !== undefined && delta !== 0 && (
+                <span className={cn(
+                  'text-[10px] font-bold',
+                  delta > 0 ? 'text-emerald-600' : 'text-red-600',
+                )}>
+                  {delta > 0 ? '+' : ''}{delta}
+                </span>
+              )}
+            </div>
+            <div className="text-xl font-bold">{Math.round(value)}%</div>
+            <Progress
+              value={value}
+              className={cn('h-1.5 mt-2', METER_FILL[m.color] ?? '[&>div]:bg-primary')}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
 
-  return (
-    <div className="space-y-4">
-      {/* Header */}
-      <div className="flex items-center gap-2">
-        <div className="p-1.5 bg-orange-100 rounded-lg">
-          <Zap className="h-4 w-4 text-orange-600" />
-        </div>
+  /* ─── Intro ─── */
+  if (phase === 'intro') {
+    return (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
         <div>
-          <h3 className="font-bold text-gray-800 text-sm">{simulator.title}</h3>
-          <p className="text-[11px] text-gray-500">Consequence Simulator</p>
+          <h2 className="font-semibold flex items-center gap-2 text-lg">
+            <Activity className="w-5 h-5 text-primary" />
+            {simulator.title}
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1">{simulator.intro}</p>
         </div>
+        <div className="bg-muted/30 rounded-xl p-5">
+          <span className="text-xs font-medium text-primary uppercase tracking-wider">The Scenario</span>
+          <p className="text-sm text-muted-foreground mt-2 leading-relaxed">{simulator.scenario}</p>
+        </div>
+        {meters}
+        <Button onClick={() => setPhase({ roundIndex: 0 })} className="w-full">
+          Start Simulation
+          <ArrowRight className="w-4 h-4 ml-2" />
+        </Button>
+      </motion.div>
+    );
+  }
+
+  /* ─── Result ─── */
+  if (phase === 'result') {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="space-y-6 text-center"
+      >
+        <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto bg-emerald-500/20">
+          <Trophy className="w-10 h-10 text-emerald-500" />
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-bold mb-2">Simulation Complete</h2>
+          <p className="text-muted-foreground text-sm">{simulator.title}</p>
+        </div>
+
+        {/* Final stats */}
+        <div className={cn('grid gap-4', simulator.meters.length >= 3 ? 'grid-cols-3' : 'grid-cols-2')}>
+          {simulator.meters.map(m => {
+            const finalValue = meterValues[m.id] ?? m.initial;
+            const change = finalValue - m.initial;
+            return (
+              <div key={m.id} className="bg-muted/30 rounded-lg p-4">
+                <div className={cn(
+                  'text-2xl font-bold',
+                  change > 0 ? 'text-emerald-500' : change < 0 ? 'text-red-500' : 'text-foreground',
+                )}>
+                  {change > 0 ? '+' : ''}{change}
+                </div>
+                <div className="text-sm text-muted-foreground">{m.label}</div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Key insight */}
+        <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 text-left">
+          <h4 className="font-medium mb-1 flex items-center gap-2">
+            <Zap className="w-4 h-4 text-primary" />
+            Key Insight
+          </h4>
+          <p className="text-sm text-muted-foreground">{simulator.endMessage}</p>
+        </div>
+
+        <Button onClick={onComplete} className="w-full">
+          Continue
+          <ArrowRight className="w-4 h-4 ml-2" />
+        </Button>
+      </motion.div>
+    );
+  }
+
+  /* ─── Round ─── */
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+      {meters}
+
+      {/* Current situation */}
+      <div className="bg-muted/30 rounded-xl p-5">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs font-medium text-primary uppercase tracking-wider">
+            Decision {roundIndex + 1} of {simulator.rounds.length}
+          </span>
+        </div>
+        <p className="text-sm leading-relaxed">{currentRound!.situation}</p>
       </div>
 
-      {/* Meters */}
-      <div className="p-3 bg-gray-50 rounded-xl border border-gray-200 space-y-2.5">
-        <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Outcome Meters</p>
-        {simulator.meters.map(m => (
-          <MeterBar
-            key={m.id}
-            meter={m}
-            value={meterValues[m.id] ?? m.initial}
-            delta={lastDeltas[m.id]}
-          />
+      {/* Choices */}
+      <div className="space-y-2">
+        {currentRound!.choices.map(choice => (
+          <motion.button
+            key={choice.id}
+            onClick={() => { if (!showOutcome) setSelectedChoice(choice); }}
+            disabled={showOutcome}
+            whileHover={!showOutcome ? { scale: 1.01 } : {}}
+            whileTap={!showOutcome ? { scale: 0.99 } : {}}
+            className={cn(
+              'w-full p-4 rounded-lg border-2 text-left transition-all',
+              selectedChoice?.id === choice.id && !showOutcome && 'border-primary bg-primary/5',
+              selectedChoice?.id !== choice.id && !showOutcome && 'border-border hover:border-primary/50',
+              showOutcome && selectedChoice?.id === choice.id && 'border-primary bg-primary/10',
+              showOutcome && selectedChoice?.id !== choice.id && 'opacity-40',
+            )}
+          >
+            <span className="font-medium text-sm">{choice.label}</span>
+            <p className="text-xs text-muted-foreground mt-0.5">{choice.description}</p>
+          </motion.button>
         ))}
       </div>
 
-      {/* Content area */}
-      {phase === 'intro' && (
-        <div className="space-y-3">
-          <div className="p-4 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border border-orange-200">
-            <p className="text-sm font-semibold text-orange-800 mb-2">{simulator.intro}</p>
-            <p className="text-sm text-orange-700 leading-relaxed">{simulator.scenario}</p>
-          </div>
-          <Button onClick={advance} className="w-full bg-orange-600 hover:bg-orange-700 text-white">
-            Start Simulation
-            <ChevronRight className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
-      )}
+      {/* Outcome feedback */}
+      <AnimatePresence>
+        {showOutcome && selectedChoice && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="bg-card border rounded-lg p-4"
+          >
+            <h4 className="font-medium mb-2 flex items-center gap-2">
+              <Zap className="w-4 h-4 text-primary" />
+              Outcome
+            </h4>
+            <p className="text-sm text-muted-foreground mb-3">{selectedChoice.feedback}</p>
 
-      {currentRound && !lastFeedback && (
-        <div className="space-y-3">
-          <div className="p-3 bg-blue-50 rounded-xl border border-blue-200">
-            <p className="text-xs text-blue-600 font-semibold mb-1">
-              Round {typeof phase === 'object' ? phase.roundIndex + 1 : 1} of {simulator.rounds.length}
-            </p>
-            <p className="text-sm text-blue-900 font-medium leading-relaxed">{currentRound.situation}</p>
-          </div>
-          <div className="space-y-2">
-            {currentRound.choices.map(choice => (
-              <button
-                key={choice.id}
-                onClick={() => handleChoice(choice.id)}
-                className="w-full text-left p-3 rounded-xl border-2 border-gray-200 hover:border-orange-400 hover:bg-orange-50 transition-all group"
-              >
-                <div className="flex items-start gap-2">
-                  <div className="w-5 h-5 rounded-full border-2 border-gray-300 group-hover:border-orange-500 flex-shrink-0 mt-0.5 transition-colors" />
-                  <div>
-                    <p className="text-sm font-semibold text-gray-800">{choice.label}</p>
-                    <p className="text-[11px] text-gray-500 mt-0.5">{choice.description}</p>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+            {/* Stat changes */}
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(selectedChoice.effects).map(([meterId, delta]) => {
+                const meter = simulator.meters.find(m => m.id === meterId);
+                if (!meter || delta === 0) return null;
+                return (
+                  <span
+                    key={meterId}
+                    className={cn(
+                      'text-xs px-2 py-1 rounded-full',
+                      delta > 0 ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600',
+                    )}
+                  >
+                    {meter.label} {delta > 0 ? '+' : ''}{delta}
+                  </span>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {lastFeedback && (
-        <div className="space-y-3">
-          <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-300">
-            <p className="text-xs font-bold text-emerald-600 mb-1.5">📊 Outcome</p>
-            <p className="text-sm text-emerald-800 leading-relaxed">{lastFeedback}</p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(lastDeltas).map(([meterId, delta]) => {
-              const meter = simulator.meters.find(m => m.id === meterId);
-              if (!meter || delta === 0) return null;
-              return (
-                <span
-                  key={meterId}
-                  className={`text-xs px-2 py-1 rounded-full font-semibold ${
-                    delta > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                  }`}
-                >
-                  {meter.emoji} {meter.label}: {delta > 0 ? '+' : ''}{delta}
-                </span>
-              );
-            })}
-          </div>
-          <Button onClick={advance} className="w-full bg-orange-600 hover:bg-orange-700 text-white">
-            {typeof phase === 'object' && phase.roundIndex + 1 < simulator.rounds.length
-              ? 'Next Round'
-              : 'See Final Results'}
-            <ChevronRight className="ml-2 h-4 w-4" />
+      {/* Action button */}
+      <div>
+        {!showOutcome ? (
+          <Button onClick={handleConfirmChoice} disabled={!selectedChoice} className="w-full">
+            Make This Choice
+            <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
-        </div>
-      )}
-
-      {phase === 'result' && (
-        <div className="space-y-3">
-          <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-300">
-            <p className="text-xs font-bold text-green-600 mb-2">🎯 Simulation Complete</p>
-            <p className="text-sm text-green-800 leading-relaxed">{simulator.endMessage}</p>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            {simulator.meters.map(m => {
-              const finalValue = meterValues[m.id] ?? m.initial;
-              const change = finalValue - m.initial;
-              return (
-                <div key={m.id} className="p-2 bg-white rounded-lg border border-gray-200 text-center">
-                  <div className="text-lg">{m.emoji}</div>
-                  <div className="text-xs font-medium text-gray-700">{m.label}</div>
-                  <div className={`text-sm font-bold ${change > 0 ? 'text-green-600' : change < 0 ? 'text-red-600' : 'text-gray-600'}`}>
-                    {change > 0 ? '+' : ''}{change} pts
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <Button onClick={advance} className="w-full bg-green-600 hover:bg-green-700 text-white">
-            Continue to Quiz
-            <ChevronRight className="ml-2 h-4 w-4" />
+        ) : (
+          <Button onClick={handleNextRound} className="w-full">
+            {isLastRound ? 'See Results' : 'Next Decision'}
+            <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </motion.div>
   );
 };
 

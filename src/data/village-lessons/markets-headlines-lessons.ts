@@ -18,7 +18,7 @@ export const marketsHeadlinesLessons: VillageLesson[] = [
         id: 'news_moves_prices',
         emoji: '📰',
         title: 'News Is Like a Game Patch',
-        body: 'Stock prices do not bounce around for no reason. They react fast when new info drops—earnings, lawsuits, product flops, or Fed decisions. Investors instantly redo the math on how much money the company might make and how risky it feels to own.',
+        body: 'Stock prices do not bounce around for no reason — they are the market\'s live estimate of a company\'s future, and they react within seconds when new information drops. An earnings surprise, a lawsuit, a product flop, or a Fed decision instantly makes thousands of investors redo the same math: how much money will this company make now, and how risky does it feel to own? A price move is that collective recalculation. When you learn to ask "what did this news change about future profits or risk?", headlines stop feeling random and start being readable.',
         realWorldExample:
           'A sneaker brand announces a hot collab. The stock jumps before the drop even hits stores because traders are betting on future sales—not yesterday\'s vibes.',
       },
@@ -26,7 +26,7 @@ export const marketsHeadlinesLessons: VillageLesson[] = [
         id: 'expectation_trap',
         emoji: '🎯',
         title: 'The Expectation Trap (Hype vs. Reality)',
-        body: 'The market does not grade the past—it grades the future. A "good" headline can still tank a stock if experts expected something even better. The move is about the gap between hype and what actually happened.',
+        body: 'Here\'s the twist that confuses every beginner: a company can announce record profits and its stock can still crash. Why? Because the market does not grade the past — it grades reality against expectations. If analysts expected 30% growth and the company delivered "only" 20%, that gap is a disappointment even though 20% is objectively great. Expectations were already baked into the price before the news dropped. The price move you see is never about whether the news was good; it\'s about whether the news beat, matched, or missed what everyone had already bet on.',
         realWorldExample:
           'Bamboo Corp reports $20M profit—sounds huge. But Wall Street expected $25M. The stock dips because the headline was good, but the surprise was bad.',
       },
@@ -34,7 +34,7 @@ export const marketsHeadlinesLessons: VillageLesson[] = [
         id: 'filings_truth',
         emoji: '📄',
         title: '10-Ks and 10-Qs: Skip the Commercial',
-        body: 'Companies file official reports with the SEC. The 10-K is the big yearly check-up (audited). The 10-Q is a shorter quarterly update. The glossy marketing is on the cover; the honest stuff—especially risk factors—lives in the boring legal text.',
+        body: 'Public companies can spin their marketing, but they cannot spin their SEC filings — lying there is a federal crime. The 10-K is the big annual check-up: audited financial statements, business strategy, and a brutally honest "Risk Factors" section where the company must confess everything that could go wrong. The 10-Q is its shorter quarterly cousin. Here\'s the pro move: skip the glossy cover pages and go straight to the boring legal text, because that\'s where the truth lives. Companies bury bad news in footnotes precisely because they know most people never read them.',
         realWorldExample:
           'A startup\'s Instagram looks perfect. In the 10-K risk section it admits: "We depend on one factory—if rent spikes, margins could collapse." That line can save your money.',
       },
@@ -42,7 +42,7 @@ export const marketsHeadlinesLessons: VillageLesson[] = [
         id: 'pr_shield',
         emoji: '🛡️',
         title: 'The PR Sentiment Shield',
-        body: 'Flashy press releases, viral CEO posts, and hype campaigns can build a "shield" so fans forgive mistakes later. Smart owners look past the vibe and track real cash—revenue, costs, and risks—not just brand love.',
+        body: 'Companies invest heavily in narrative for a reason: a beloved brand builds a forgiveness shield. When fans adore a CEO\'s viral posts and a company\'s story, they excuse missed deadlines, shrug off bad quarters, and keep buying the stock on vibes. That shield is real — and it\'s also exactly how investors get burned, because vibes don\'t pay dividends. Smart owners enjoy the story but audit the substance: is revenue actually growing? Are costs under control? What do the risk disclosures say? When narrative and numbers disagree, the numbers eventually win.',
         realWorldExample:
           'A streamer platform pushes a feel-good documentary while quietly raising prices. The shield keeps fans loyal; the signal is in the subscription numbers.',
       },
@@ -148,7 +148,7 @@ export const marketsHeadlinesLessons: VillageLesson[] = [
         id: 'signal_vs_noise',
         emoji: '🔍',
         title: 'Signal vs. Noise',
-        body: 'Signal = info that can actually change how much money a company makes (supplier gone, margins crushed, revenue restated). Noise = drama that will not matter next month (meme tweets, "worst Tuesday" headlines, influencer hot takes).',
+        body: 'Every day the financial internet produces thousands of headlines, and almost none of them matter. The filter that separates investors from gamblers is one question: does this information change how much money the company will actually make? A key supplier going bankrupt, margins getting crushed, revenue being restated — that\'s signal, because it rewires the profit machine. Meme tweets, "worst Tuesday since March" headlines, and influencer hot takes are noise: loud today, forgotten next month. Train yourself to run every headline through that filter before letting it touch your decisions.',
         realWorldExample:
           'Factory parts cost 8% more → margins shrink. That is signal. CEO posts a gym selfie → stock "pops" 0.3%. That is noise.',
       },
@@ -156,7 +156,7 @@ export const marketsHeadlinesLessons: VillageLesson[] = [
         id: 'fed_spigot',
         emoji: '🏛️',
         title: 'The Fed Controls the Money Spigot',
-        body: 'The Federal Reserve is the U.S. central bank. It raises or lowers benchmark interest rates to cool inflation or support jobs. When borrowing gets expensive, growth stocks often slide; when money is cheap, risk assets can rip higher.',
+        body: 'The Federal Reserve is the U.S. central bank, and it controls the single most powerful dial in the economy: the benchmark interest rate that every other borrowing cost builds on. Its mandate is a balancing act — raise rates to cool inflation when prices run hot, lower them to support jobs and growth when the economy stalls. That dial reaches everything: mortgages, car loans, credit cards, business expansion, and stock prices. When borrowing gets expensive, growth stocks often slide; when money is cheap, risk assets can rip higher. This is why markets hang on every word the Fed chair says.',
         realWorldExample:
           'When rates jumped in 2022–2023, mortgage payments rose and many tech stocks fell hard—even some strong companies—because future profits were worth less at higher rates.',
       },
@@ -164,7 +164,7 @@ export const marketsHeadlinesLessons: VillageLesson[] = [
         id: 'rate_seesaw',
         emoji: '⚖️',
         title: 'The Interest Rate Seesaw',
-        body: 'Rates UP → loans cost more → companies expand slower → some investors flee risky stocks for safe savings. Rates DOWN → borrowing is cheap → spending and investment can heat up → stocks often climb. It is not instant, but the direction matters.',
+        body: 'Follow the chain reaction. Rates UP: loans cost more, so companies borrow less and expand slower, consumers cut big purchases, and suddenly a safe savings account paying 5% competes with risky stocks — so some investors rotate out of equities. Rates DOWN: borrowing is cheap, spending and investment heat up, savings accounts pay nothing, and money flows back toward stocks hunting for returns. The chain isn\'t instant — rate changes take months to ripple through the economy — but the direction shapes nearly everything. When you understand this transmission, Fed headlines become a map instead of noise.',
         realWorldExample:
           'A student with a variable-rate credit card feels a Fed hike in real life. A growth company planning a new factory might delay if loan rates spike.',
       },
@@ -172,7 +172,7 @@ export const marketsHeadlinesLessons: VillageLesson[] = [
         id: 'macro_headlines',
         emoji: '📢',
         title: 'Reading Fed Headlines Without Panic',
-        body: 'Watch for words that signal tight vs. easy money: "hike," "hold," "cut," "inflation still hot," "data dependent." Markets often react to the surprise versus what was expected—not just the headline verb.',
+        body: 'Fed-watching is a vocabulary game. "Hike" means tighter money, "cut" means easier money, "hold" means wait-and-see — but the richer signals hide in phrases like "inflation remains elevated" (more hikes may come) or "data dependent" (we haven\'t decided). Here\'s the key: markets price in expectations ahead of time, so they react to the surprise, not the headline verb. A rate hike everyone predicted can cause a rally if the Fed\'s tone sounds gentler than feared; a "hold" can trigger a selloff if the statement hints at future hikes. Read the gap between expected and delivered.',
         realWorldExample:
           'Headline: "Fed holds rates." Subtext: statement drops the word "elevated" for "moderating." Bond traders read that as future cuts—and stocks rally on language, not the hold itself.',
       },
@@ -278,7 +278,7 @@ export const marketsHeadlinesLessons: VillageLesson[] = [
         id: 'greed_bubbles',
         emoji: '🫧',
         title: 'Greed Phase = Bubbles',
-        body: 'When prices only go up, FOMO kicks in. People buy because everyone else is buying—not because they read the business. Prices detach from reality until something pops the hype.',
+        body: 'Greed spirals follow a script that has repeated for centuries, from tulip bulbs to meme stocks. Prices rise, winners post screenshots, and FOMO — fear of missing out — takes the wheel. People start buying not because they studied the business but because everyone around them is getting rich and sitting out feels unbearable. Each new buyer pushes prices higher, which recruits more buyers, until price has completely detached from what the company actually earns. The spiral always ends the same way: something pops the hype, and the people who bought on vibes are the ones holding the bag.',
         realWorldExample:
           'A random app stock triples in weeks on "AI" tweets with no real revenue. Early sellers win; late FOMO buyers often eat the crash.',
       },
@@ -286,7 +286,7 @@ export const marketsHeadlinesLessons: VillageLesson[] = [
         id: 'fear_panic',
         emoji: '😱',
         title: 'Fear Phase = Panic',
-        body: 'Bad headlines hit and brains scream "sell now." Panic selling turns a temporary screen drop into a permanent loss—especially if the underlying company is still solid.',
+        body: 'Fear spirals are greed spirals in reverse, and they move even faster. A scary headline hits, prices dip, and the ancient alarm system in your brain screams "get out NOW." Selling feels like safety — but panic selling converts a temporary screen drop into a permanent, locked-in loss, and it usually happens at exactly the worst price. The critical question in the moment is: did this news actually break the business, or did it just break the mood? If the company\'s profit machine is still intact, the drop is a storm to be weathered, not a building on fire.',
         realWorldExample:
           'Markets drop 15% in a month. Headlines say "crash." Investors who sold at the bottom missed the rebound over the next year.',
       },
@@ -294,7 +294,7 @@ export const marketsHeadlinesLessons: VillageLesson[] = [
         id: 'loss_aversion',
         emoji: '🧠',
         title: 'The Brain Trap: Losses Hurt More',
-        body: 'Studies show losing $100 feels about twice as bad as gaining $100 feels good. That is why people dump stocks at the bottom—they are trying to stop the pain, not make a smart plan.',
+        body: 'Nobel Prize-winning research by Kahneman and Tversky measured something wild about human wiring: losing $100 hurts roughly twice as much as gaining $100 feels good. This asymmetry — loss aversion — explains the most expensive mistake in investing: dumping stocks at the bottom of a crash. In that moment, sellers aren\'t executing a plan; they\'re paying any price to make the pain stop. The market transfers wealth from people who react to feelings to people who follow plans. You can\'t delete the bias — it\'s wired in — but naming it when it fires gives you the pause that saves you.',
         realWorldExample:
           'Your portfolio shows red numbers. Panic says sell. A calm plan says: "Is the business broken, or is everyone just scared?"',
       },
@@ -302,7 +302,7 @@ export const marketsHeadlinesLessons: VillageLesson[] = [
         id: 'stoic_clearance',
         emoji: '🏷️',
         title: 'Crashes Can Be Clearance Sales',
-        body: 'If you believe in a company\'s long-term cash flows, lower prices can be a chance to buy more—not flee. That takes discipline when CNBC sounds like a horror movie.',
+        body: 'The stoic investor\'s edge is a mental reframe: if you genuinely believe in a company\'s long-term ability to make money, a lower price isn\'t a threat — it\'s a discount on something you already wanted to own more of. The business is the same; only the price tag changed. Warren Buffett\'s famous line captures it: "Be fearful when others are greedy, and greedy when others are fearful." Living that advice is brutally hard when financial news sounds like a horror movie, which is why the edge belongs to investors with written plans, automatic contributions, and the discipline to ignore the soundtrack.',
         realWorldExample:
           'During a broad selloff, quality brands trade cheaper. Patient owners who held—or added—often recovered faster than panic sellers.',
       },

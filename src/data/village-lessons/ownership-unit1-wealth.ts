@@ -21,7 +21,7 @@ export const ownershipUnit1Lessons: VillageLesson[] = [
         id: 'wealth_equation',
         emoji: '🧮',
         title: 'The Wealth Equation',
-        body: 'Net worth equals total assets minus total liabilities. Assets include cash, investments, and things that hold or grow value. Liabilities are debts and obligations. A high salary does not automatically mean high net worth.',
+        body: 'Net worth is the single most honest measure of wealth: everything you own (assets) minus everything you owe (liabilities). Assets include cash, investments, and property that holds or grows value; liabilities are credit card balances, loans, and every other IOU with your name on it. Notice what\'s NOT in the formula: your salary. A doctor earning $300k who spends $310k has a shrinking net worth, while a teacher who invests steadily can quietly become a millionaire. Income is how fast money flows in; net worth is how much actually stays.',
         realWorldExample:
           'Someone earning $120k with $80k in student loans, a leased luxury SUV, and no investments might have lower net worth than a teacher who invests steadily and owns their home.',
       },
@@ -29,7 +29,7 @@ export const ownershipUnit1Lessons: VillageLesson[] = [
         id: 'consumption_trap',
         emoji: '🪤',
         title: 'Consumption Traps',
-        body: 'Buy-now-pay-later plans, maxed cards, and status spending can keep net worth negative even with strong income. The trap is confusing cash flow with wealth building.',
+        body: 'The high-earner-broke trap catches more people than you\'d think. Buy-now-pay-later plans, maxed credit cards, financed cars, and status spending create a lifestyle that consumes every dollar the moment it arrives — sometimes dollars that haven\'t arrived yet. From the outside it looks like success; on a balance sheet it\'s negative net worth wearing designer clothes. The root confusion is mistaking cash flow for wealth: a big paycheck only builds wealth if some of it is converted into assets before the lifestyle eats it.',
         realWorldExample:
           'Influencers promoting "looks rich" lifestyles often rent the image. Their balance sheet may tell a very different story than their feed.',
       },
@@ -37,7 +37,7 @@ export const ownershipUnit1Lessons: VillageLesson[] = [
         id: 'depreciating',
         emoji: '📉',
         title: 'Depreciating vs. Appreciating',
-        body: 'Cars and gadgets often lose value the moment you buy them. Investments and income-producing assets can compound over time. Wealth builders prioritize appreciating buckets.',
+        body: 'Every purchase lands in one of two buckets. Depreciating assets — cars, gadgets, sneakers — start losing value the moment you buy them; a new car can shed 20% of its value in the first year alone. Appreciating assets — index funds, businesses, education that raises your earning power — tend to grow and even compound over time. Both bucket types have a place in life, but wealth builders are ruthless about the ratio: they minimize money parked in melting assets and maximize money planted in growing ones. Before big purchases, ask: which bucket is this?',
         realWorldExample:
           'A $40k car might be worth $28k two years later. The same $40k in a diversified fund could grow if left invested for a decade (with normal market risk).',
       },
@@ -45,7 +45,7 @@ export const ownershipUnit1Lessons: VillageLesson[] = [
         id: 'pf_link',
         emoji: '🎋',
         title: 'Personal Balance Sheet Habits',
-        body: 'Track assets and liabilities quarterly. Pay down high-interest debt, automate investing, and cap lifestyle inflation when income rises. That is how paychecks turn into ownership.',
+        body: 'Building net worth isn\'t a mystery — it\'s a repeatable system with four moves. First, track your assets and liabilities every quarter so you actually know your number and whether it\'s rising. Second, attack high-interest debt, because a 24% credit card outgrows almost any investment you could make. Third, automate investing so wealth-building happens before you can spend the money. Fourth, when your income rises, cap lifestyle inflation — bank the raise instead of upgrading everything. Run that loop for a decade and paychecks steadily transform into ownership.',
         realWorldExample:
           'Apps that show net worth over time help teens see progress. A small investment habit at 16 can matter more than a flashy purchase at 22.',
       },

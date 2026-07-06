@@ -17,7 +17,7 @@ export const languageFinanceLesson3: VillageLesson = {
       id: 'equation',
       emoji: '⚖️',
       title: 'Assets = Liabilities + Equity',
-      body: 'Assets are resources that create future value — cash, inventory, equipment, patents. Liabilities are obligations to outsiders — loans, unpaid bills, deferred revenue. Shareholders\' Equity is the residual claim after all debts. The equation always balances.',
+      body: 'The balance sheet is a photograph of a company\'s financial position at one instant, organized by an equation that cannot break: Assets = Liabilities + Shareholders\' Equity. Assets are resources that create future value — cash, inventory, equipment, patents. Liabilities are obligations owed to outsiders — loans, unpaid bills, deferred revenue. Shareholders\' Equity is the residual: what would be left for owners if every asset were sold and every debt paid. The equation always balances because it\'s just logic — everything the company has was funded either by borrowing it or by owners\' money. Read it and you know who really owns what.',
       realWorldExample:
         'Lehman Brothers carried extreme leverage — tiny equity slice meant a small asset drop wiped owners out. Balance sheet ratios warned fragility before headlines did.',
     },
@@ -25,7 +25,7 @@ export const languageFinanceLesson3: VillageLesson = {
       id: 'assets',
       emoji: '💎',
       title: 'What You Own',
-      body: 'Current assets convert within a year: cash, accounts receivable, inventory. Non-current assets are long-term: property, plant & equipment (PP&E), intangibles, goodwill after acquisitions. Goodwill is the premium paid above book value in a deal.',
+      body: 'Assets are sorted by how fast they turn into cash. Current assets convert within a year: cash itself, accounts receivable (money customers owe), and inventory waiting to be sold. Non-current assets are the long-term machinery of the business: property, plant & equipment (PP&E), plus intangibles like patents and brands. The strangest resident is goodwill — when one company buys another for more than its assets are technically worth, the premium gets parked on the balance sheet as goodwill. It represents things like reputation and customer loyalty, but if the acquisition sours, goodwill gets "written down" and profits take the hit years later.',
       realWorldExample:
         'Coca-Cola’s brand lives partly as intangible assets — factories matter, but so does decades of customer habit.',
     },
@@ -33,7 +33,7 @@ export const languageFinanceLesson3: VillageLesson = {
       id: 'liabilities',
       emoji: '🔗',
       title: 'What You Owe',
-      body: 'Current liabilities due within a year: payables, short-term debt, deferred revenue (cash received, service not yet delivered). Long-term liabilities include bonds and leases. Leverage can amplify returns — or amplify collapse if revenue stalls.',
+      body: 'Liabilities are sorted by the same clock as assets. Current liabilities come due within a year: supplier payables, short-term debt, and deferred revenue — cash customers already paid for services not yet delivered (yes, that\'s a debt: you owe them the service). Long-term liabilities include bonds and multi-year leases. Debt\'s double edge is called leverage: borrowing lets a company control more assets than its own money could buy, which amplifies returns when business is good — and amplifies destruction when revenue stalls, because interest payments don\'t pause for bad quarters. The balance sheet shows exactly how much amplification a company is running.',
       realWorldExample:
         'Netflix carries billions in content debt with subscription cash backing it. WeWork had debt without matching cash flow — same line items, opposite survival odds.',
     },
@@ -41,7 +41,7 @@ export const languageFinanceLesson3: VillageLesson = {
       id: 'liquidity',
       emoji: '💧',
       title: 'Liquidity: Can You Pay Tomorrow?',
-      body: 'Liquidity measures how fast assets become cash without fire-sale discounts. Cash is most liquid; factories and specialized patents are illiquid. If debts mature soon but wealth is tied in slow assets, insolvency hits despite "million-dollar" book value.',
+      body: 'Liquidity measures how quickly an asset becomes spendable cash without taking a fire-sale discount. Cash is perfectly liquid; a factory or a specialized patent might take a year to sell at fair value. Here\'s why it can be fatal: bills are always due in cash, never in factories. A company can hold a million dollars of book value, but if its debts mature this quarter and its wealth is locked in slow assets, it can\'t pay — and runs out of money while technically "rich." This mismatch, not lack of assets, is how profitable-looking companies suddenly collapse. The same logic applies to you: an emergency fund exists because your future wealth can\'t pay this month\'s rent.',
       realWorldExample:
         'Current ratio = Current Assets ÷ Current Liabilities. Below 1.0 flashes short-term danger — especially for firms serving low-income communities with thin buffers.',
     },

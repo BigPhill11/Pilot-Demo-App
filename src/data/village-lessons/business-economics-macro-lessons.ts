@@ -247,7 +247,7 @@ export const businessEconomicsMacroLessons: VillageLesson[] = [
         emoji: '💸',
         title: 'Inflation',
         body:
-          'Inflation is a general rise in prices across the economy. A little inflation (around 2% per year) is normal and can keep spending and hiring moving. High inflation hurts savers and fixed incomes because each dollar buys less. Hyperinflation (very fast price rises) can wreck trust in money.',
+          'Inflation is a general rise in prices across the whole economy — not one product getting pricier, but nearly everything drifting up together. A little inflation (around 2% per year, the Fed\'s official target) is considered healthy: it keeps spending and hiring moving, because money slowly loses value if it just sits. But high inflation is a stealth tax on everyone holding cash — savers and people on fixed incomes watch each dollar quietly shrink. At the extreme, hyperinflation (prices doubling in months or even days) destroys trust in money itself, and people flee to barter, foreign currency, or hard assets. The dose makes the poison.',
         realWorldExample:
           'US inflation hit about 9% in 2022. Groceries, rent, and gas jumped. The Fed raised rates to cool prices. In the 1970s high inflation lasted years and changed how families budgeted.',
       },
@@ -256,7 +256,7 @@ export const businessEconomicsMacroLessons: VillageLesson[] = [
         emoji: '🛒',
         title: 'Purchasing Power',
         body:
-          'Purchasing power is what your money can actually buy. If prices rise 5% but your wage rises 2%, you lost purchasing power. Raises, side income, and investing can help you stay ahead. Sitting in cash with no interest while prices rise means you are going backward in real terms.',
+          'Purchasing power is the real question hiding behind every dollar figure: not "how much money do I have?" but "what can it actually buy?" The trap is thinking in nominal numbers. If prices rise 5% this year and your wage rises 2%, you got a raise on paper and a pay cut in reality — you lost 3% of purchasing power. The same math punishes idle savings: cash earning 0% while inflation runs 4% is silently losing 4% a year, guaranteed. Staying ahead requires deliberate moves — negotiating raises that at least match inflation, building side income, and investing in assets that historically outgrow rising prices.',
         realWorldExample:
           'A $15/hour wage in 2019 might need $17+ in 2024 just to buy the same basket of goods. If your pay did not keep up, you feel poorer even with the same number on your check.',
       },
@@ -265,7 +265,7 @@ export const businessEconomicsMacroLessons: VillageLesson[] = [
         emoji: '📋',
         title: 'CPI: How We Measure It',
         body:
-          'The Consumer Price Index (CPI) tracks prices for a basket of everyday goods and services (food, housing, transport, medical care). Statisticians update the basket over time. CPI is the headline number in news stories. Core CPI excludes volatile food and energy to show underlying trends.',
+          'The Consumer Price Index (CPI) is how inflation gets measured: government statisticians track the prices of a huge basket of everyday goods and services — food, rent, transportation, medical care — and report how much the basket\'s total cost changed versus a year ago. That percentage is the inflation number in every headline. The basket gets updated over time as spending habits shift (streaming subscriptions in, DVD players out). You\'ll also hear about "Core CPI," which strips out food and energy — not because they don\'t matter, but because they swing so wildly that removing them reveals the underlying trend the Fed actually steers by.',
         realWorldExample:
           'Social Security cost-of-living adjustments often tie to CPI. Landlords and unions also watch CPI when negotiating rents or wages.',
       },
@@ -487,7 +487,7 @@ export const businessEconomicsMacroLessons: VillageLesson[] = [
         emoji: '⚡',
         title: 'Economic Shocks',
         body:
-          'Shocks are sudden hits: pandemics, wars, oil spikes, banking crises. Supply shocks raise costs. Demand shocks cut spending. Shocks can trigger or worsen recessions. Policy makers and households respond with emergency plans, stimulus, or rate cuts depending on the shock type.',
+          'Economic shocks are the sudden, unscheduled hits that knock a smoothly-running economy sideways: pandemics, wars, oil price spikes, banking crises. Economists sort them into two types because the treatment differs. Supply shocks make things harder or costlier to produce — a war disrupts oil, and suddenly everything that ships or manufactures costs more. Demand shocks make people stop spending — a scary crash makes households hoard cash and cancel purchases. Either type can trigger or deepen a recession. Governments respond with stimulus checks, rate cuts, or emergency lending depending on the shock — and households respond with their own shock absorber: the emergency fund.',
         realWorldExample:
           'Oil price spikes in the 1970s hurt growth and raised inflation. COVID shut down travel and restaurants overnight. The 2023 banking stress was a financial shock that needed quick policy response.',
       },
@@ -709,7 +709,7 @@ export const businessEconomicsMacroLessons: VillageLesson[] = [
         emoji: '🌉',
         title: 'Public Goods',
         body:
-          'Public goods are things everyone can use and one person using them does not block others (streetlights, national defense). They are hard for private markets to provide alone, so government steps in. Infrastructure and education raise productivity for the whole economy over time.',
+          'Public goods have two special properties: everyone can use them, and one person using them doesn\'t use them up for others — a streetlight lights the block whether one person or fifty walks under it. That creates the free-rider problem: since nobody can be excluded, nobody wants to be the sucker who pays, so private markets underproduce these goods no matter how valuable they are. That\'s the classic economic case for government stepping in with taxes to fund defense, roads, courts, and basic research. The payoff compounds: infrastructure and education are investments that raise the productivity of the entire economy for generations.',
         realWorldExample:
           'GPS started as a government project. Public highways let trucks move goods cheaply. Good schools raise future workers skills and wages.',
       },
@@ -913,7 +913,7 @@ export const businessEconomicsMacroLessons: VillageLesson[] = [
         emoji: '💵',
         title: 'Money Supply',
         body:
-          'Money supply is how much money circulates in the economy (cash, checking deposits, and broader measures). The Fed influences it through bank reserves, lending to banks, and buying or selling securities. More liquidity can boost spending; less can cool inflation.',
+          'The money supply is the total amount of money circulating in the economy — physical cash, checking deposits, and progressively broader measures that include savings and money market funds. It matters because money\'s value follows the same supply-and-demand logic as everything else: flood the economy with dollars chasing the same amount of goods, and prices rise; drain liquidity, and spending cools. The Fed adjusts the supply through its toolkit — setting bank reserve conditions, lending to banks, and buying or selling securities in the open market. Watching whether the Fed is adding or draining liquidity tells you which way it\'s leaning on the whole economy.',
         realWorldExample:
           'During COVID the Fed added liquidity to keep credit flowing. In 2022-2023 it shrank its balance sheet to tighten conditions and fight inflation.',
       },
@@ -922,7 +922,7 @@ export const businessEconomicsMacroLessons: VillageLesson[] = [
         emoji: '🏦',
         title: 'Central Banks',
         body:
-          'The Federal Reserve is the US central bank. It supervises banks, lends in crises, and runs monetary policy. It is independent from day-to-day politics so it can focus on stable prices and maximum employment. Other countries have their own central banks (ECB, Bank of Japan).',
+          'The Federal Reserve is the US central bank — the bank for banks — and it wears three hats. It supervises commercial banks to keep the system sound; it acts as the lender of last resort, providing emergency cash during panics so temporary fear doesn\'t become permanent collapse; and it runs monetary policy, steering interest rates toward its dual mandate of stable prices and maximum employment. Crucially, the Fed is designed to be independent from day-to-day politics, so it can make unpopular moves (like raising rates before an election) when the economy needs them. Most countries run the same model — the ECB in Europe, the Bank of Japan — because the alternative, politicians printing money for votes, has ended badly everywhere it\'s been tried.',
         realWorldExample:
           'When Silicon Valley Bank failed in 2023, the Fed acted quickly to protect deposits and calm markets. Central banks are lenders of last resort in panics.',
       },
@@ -931,7 +931,7 @@ export const businessEconomicsMacroLessons: VillageLesson[] = [
         emoji: '📉',
         title: 'Interest Rates',
         body:
-          'The Fed sets a target range for the federal funds rate (what banks charge each other overnight). That rate ripples out to savings accounts, mortgages, car loans, and corporate borrowing costs. Lower rates stimulate borrowing and spending. Higher rates slow the economy to fight inflation.',
+          'The Fed\'s main lever is deceptively small: a target range for the federal funds rate, which is just what banks charge each other for overnight loans. But that one rate is the foundation every other rate builds on, so moving it ripples outward through the entire economy — savings account yields, mortgage rates, car loans, credit card APRs, and what it costs companies to borrow and expand. Cut rates, and borrowing gets cheap: spending, hiring, and asset prices tend to heat up. Raise rates, and the opposite chain cools everything down to fight inflation. One dial in Washington quietly reprices nearly every financial decision in your life.',
         realWorldExample:
           'Mortgage rates near 7% in 2023 cooled housing compared to 3% loans in 2021. Credit card APRs rose with Fed hikes, hurting borrowers who carry balances.',
       },

@@ -11,6 +11,7 @@ import {
   Star,
   MessageCircle,
   GraduationCap,
+  Construction,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type {
@@ -345,9 +346,6 @@ const VillageModuleView: React.FC<Props> = ({ module, onBack }) => {
                   }`}
                 >
                   <div className="flex items-center gap-1">
-                    <span className="text-sm" aria-hidden>
-                      {pathway.emoji}
-                    </span>
                     <span className="text-[10px] sm:text-[11px] font-bold leading-tight truncate">
                       {pathway.label}
                     </span>
@@ -407,7 +405,7 @@ const VillageModuleView: React.FC<Props> = ({ module, onBack }) => {
               You have mastered all lessons in {module.name}.
             </p>
           </div>
-          <span className="ml-auto text-2xl">🏆</span>
+          <Trophy className="ml-auto h-6 w-6 text-amber-500" aria-hidden />
         </div>
       )}
 
@@ -448,9 +446,7 @@ const VillageModuleView: React.FC<Props> = ({ module, onBack }) => {
                 <div
                   className={`flex items-center gap-2 px-3 py-2 rounded-xl ${sectionStyle.bg} border border-gray-200/80`}
                 >
-                  <span className="text-lg" aria-hidden>
-                    {sectionStyle.emoji}
-                  </span>
+                  <BookOpen className={`h-4 w-4 ${sectionStyle.text}`} aria-hidden />
                   <h2 className={`text-sm font-bold ${sectionStyle.text}`}>
                     {lesson.section}
                   </h2>
@@ -535,7 +531,7 @@ const VillageModuleView: React.FC<Props> = ({ module, onBack }) => {
                             : 'bg-amber-50 text-amber-700'
                         }`}
                       >
-                        ⚡ +{lesson.rewards.xp} XP
+                        +{lesson.rewards.xp} XP
                       </span>
                       <span
                         className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
@@ -544,7 +540,7 @@ const VillageModuleView: React.FC<Props> = ({ module, onBack }) => {
                             : 'bg-green-50 text-green-700'
                         }`}
                       >
-                        🎋 +{lesson.rewards.bamboo}
+                        +{lesson.rewards.bamboo} bamboo
                       </span>
                       {completed && (
                         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 ml-auto">
@@ -568,7 +564,9 @@ const VillageModuleView: React.FC<Props> = ({ module, onBack }) => {
 
         {pathwayLessons.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12 text-center space-y-3">
-            <span className="text-5xl">🚧</span>
+            <div className="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center">
+              <Construction className="w-7 h-7 text-amber-600" aria-hidden />
+            </div>
             <h3 className="text-base font-bold text-gray-700">Coming Soon</h3>
             <p className="text-sm text-gray-500 max-w-xs">
               Phil is still writing lessons for this pathway. Check back soon!

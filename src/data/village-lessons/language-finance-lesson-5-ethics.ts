@@ -17,7 +17,7 @@ export const languageFinanceLesson5: VillageLesson = {
       id: 'pressure',
       emoji: '🔥',
       title: 'Why Books Get Cooked',
-      body: 'Executives face covenant tests, bonus targets, and IPO timelines. Small accounting tweaks become fraud when intent is to deceive lenders, auditors, or investors. Earnings management shades into crime when material facts are hidden.',
+      body: 'Accounting fraud rarely starts with a villain — it starts with pressure. Executives face loan covenant tests they must pass, bonus targets tied to earnings, and IPO timelines that demand a good story. Under that pressure, a "small, temporary" tweak feels harmless: shift some revenue forward, delay recognizing an expense, just until next quarter fixes everything. But next quarter needs a bigger tweak to cover the first one, and the snowball rolls. The legal line is intent: aggressive-but-disclosed judgment calls are earnings management; hiding material facts to deceive lenders, auditors, or investors is a crime that ends careers and, sometimes, companies.',
       realWorldExample:
         'WorldCom capitalized line costs to hide billions in expenses. Wirecard invented cash balances. When discovered, stocks collapsed and leaders faced prison.',
     },
@@ -25,7 +25,7 @@ export const languageFinanceLesson5: VillageLesson = {
       id: 'tools',
       emoji: '🛡️',
       title: 'Audits & Regulation',
-      body: 'External auditors sample transactions and test internal controls. The SEC requires public filings; credit rating agencies react to restatements. Sarbanes-Oxley strengthened officer accountability after early-2000s scandals.',
+      body: 'Because trillions of dollars ride on trusting the numbers, markets built layered defenses. External auditors independently sample transactions and stress-test a company\'s internal controls before signing off on its statements. The SEC forces public companies to file standardized reports and prosecutes deception. Credit rating agencies punish restatements by downgrading debt, instantly raising a liar\'s borrowing costs. And after Enron and WorldCom vaporized billions in the early 2000s, the Sarbanes-Oxley Act added teeth: CEOs and CFOs must now personally certify their financial statements, which means "I didn\'t know" is no longer a legal shield — signing falsely is itself a crime.',
       realWorldExample:
         'After a restatement, lenders cut limits and raise rates — minority communities lose access when regional banks tighten across the board.',
     },
@@ -33,7 +33,7 @@ export const languageFinanceLesson5: VillageLesson = {
       id: 'red_flags',
       emoji: '🚩',
       title: 'Spotting Reporting Risk',
-      body: 'Watch for: revenue growing faster than cash, inventory rising while sales slow, frequent "one-time" charges, related-party deals, and footnotes that move liabilities off balance sheet. Whistleblower hotlines exist because insiders see first.',
+      body: 'Fraud leaves fingerprints, and you can learn to spot them. Revenue growing much faster than cash collections suggests sales that exist only on paper. Inventory piling up while sales slow hints at products nobody wants — or costs being parked where they don\'t hit profits. "One-time" charges that somehow appear every single year are recurring costs in a costume. Related-party deals (the company doing business with the CEO\'s cousin\'s firm) invite self-dealing. Footnotes that quietly move liabilities off the balance sheet are hiding the true debt load. No single flag proves fraud, but clusters demand answers — and whistleblower hotlines exist because insiders always see the flags first.',
       realWorldExample:
         'Credit analysts downgrade firms after accounting questions — job postings for forensic accountants sometimes appear before headlines break.',
     },
@@ -41,7 +41,7 @@ export const languageFinanceLesson5: VillageLesson = {
       id: 'career',
       emoji: '⚖️',
       title: 'Careers on the Shield',
-      body: 'Auditors, compliance officers, and SEC accountants protect market trust. Ethical reporting is a career skill — not just a rulebook. Shortcuts that "help" workers today can destroy pensions and jobs when fraud unwinds.',
+      body: 'Financial integrity isn\'t an abstract virtue — it\'s a career field and a survival skill. Auditors, compliance officers, forensic accountants, and SEC examiners earn strong livings as the immune system of market trust, and demand for them grows after every scandal. But integrity matters even if you never work in finance: someday a boss may ask you to "adjust" a number, backdate a document, or stay quiet about one. Remember who fraud actually hurts when it unwinds — employees lose jobs, retirees lose pensions, and the people who "just followed instructions" share the indictment. The ability to say "no, and here\'s why" is a professional asset that compounds for life.',
       realWorldExample:
         'Internal auditors blocked fraudulent loans at regional banks during 2008 — boring job, massive systemic value.',
     },

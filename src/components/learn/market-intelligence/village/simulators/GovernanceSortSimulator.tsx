@@ -116,7 +116,6 @@ const GovernanceSortSimulator: React.FC<Props> = ({ simulator, onComplete }) => 
                     : 'border-gray-200 bg-white hover:border-violet-300'
                 )}
               >
-                <span>{b.emoji}</span>
                 {b.label}
                 {picked === b.id && b.id === scenario.correct && (
                   <Check className="h-4 w-4 ml-auto text-green-600" />
