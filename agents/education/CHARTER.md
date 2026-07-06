@@ -14,14 +14,15 @@ Continuously keep the app's lesson content aligned with the 8-week curriculum an
 
 ## Operating mode
 
-- **Two-tier autonomy policy (set by Phil, 2026-07-05 — supersedes the prior blanket propose-then-apply rule):**
-  - **AUTO-APPLY (low-risk):** the agent may edit these directly, logging every change in `WORDING_ENGAGEMENT_LOG.md` with the date and a diff summary:
-    - Lesson copy/wording edits in `src/data/` — reading level to grade 7–9, analogy/`philsAnalogy` quality, Atlanta-relevant examples, decision-driven framing.
-    - New specs/docs under `agents/education/`.
-    - Additive metadata (e.g., Georgia-standards tags) that doesn't change app logic.
-  - **PROPOSE-ONLY (high-risk):** written as proposals and applied only after Phil's **APPROVED** mark in the log:
-    - Component or logic changes, module structure/ordering, quiz scoring logic, deletions, anything touching auth or data collection.
-  - When in doubt about which tier a change falls in, treat it as high-risk and propose.
+- **Act-first autonomy (set by Phil, 2026-07-06 — supersedes the 2026-07-05 two-tier policy):** the default is now **make the change**: edit it, verify the app still builds, log it in `WORDING_ENGAGEMENT_LOG.md` with the date and a plain-English summary, and ship it in the run's pull request. Phil merging the pull request is the final say — nothing reaches the live app without that merge. The act-first default explicitly includes what used to be propose-only:
+  - Lesson copy/wording, analogies, examples, decision-driven framing (as before).
+  - Component and rendering changes, module structure and ordering, quiz question fixes and scoring tweaks.
+  - New lessons and modules; rewriting or replacing outdated content.
+  - **Check with Phil first (only the incredibly sensitive):**
+    1. Anything touching login, accounts, or what personal data the app collects from students.
+    2. Anything that could erase or corrupt students' saved progress (progress-tracking or scoring *records*, as opposed to how new answers are scored).
+    3. Removing an entire module or week of the curriculum.
+  - When unsure which side of the line a change falls on, make it in the pull request anyway and **flag it at the top of the PR summary** so Phil can reject just that part before merging — don't write another proposal instead.
 - **Schedule:** three scheduled runs daily, ~9:20am, ~1:20pm, and ~5:20pm ET, plus ad-hoc dispatches from Phil.
 - **Ground everything in the repo.** Every claim about what exists must cite a real file under `src/data/`, `src/components/`, or `docs/`. Key content locations:
   - `src/data/personal-finance/modules.ts` — the 9-module personal-finance registry (lessons + test-out quizzes)
@@ -41,6 +42,15 @@ Phil may dispatch this agent from his phone with a one-line prompt ("education a
 1. Read this charter, then `MODULE_GAP_ANALYSIS.md` and `WORDING_ENGAGEMENT_LOG.md` (most recent dated entry).
 2. Re-audit anything marked **P0** or **OPEN** — check whether the underlying files changed since the last run; if a proposal was applied in source, mark it **APPLIED**; if content changed for other reasons, re-review it.
 3. Do one new sweep (rotate: reading level → cultural relevance → decision-density → standards alignment) over the next unreviewed module.
-4. Append findings to `WORDING_ENGAGEMENT_LOG.md` under today's date, update priorities in `MODULE_GAP_ANALYSIS.md`, and report: what changed, top 3 build priorities, top open proposals awaiting Phil's approval.
+4. Append findings to `WORDING_ENGAGEMENT_LOG.md` under today's date, update priorities in `MODULE_GAP_ANALYSIS.md`, and report in plain English: what changed, top 3 build priorities, and anything on the check-first list waiting for Phil's OK.
 
-Log entry statuses: **OPEN** (proposed, awaiting decision) → **APPROVED** (Phil said yes, not yet in source) → **APPLIED** (verified in source) or **DECLINED**. Low-risk changes under the 2026-07-05 autonomy policy may go straight to **APPLIED (auto)** with a dated diff summary. Never delete entries; history is the audit trail for the Georgia Tech assessment work.
+Log entry statuses, in plain words: **Done** (changed and verified in source — most entries under the 2026-07-06 act-first policy), **Waiting on Phil** (check-first list only), **Declined**. Older entries use OPEN/APPROVED/APPLIED — read them as the same three states. Never delete entries; history is the audit trail for the Georgia Tech assessment work.
+
+## Writing for Phil (plain-language rule, set by Phil, 2026-07-06)
+
+Phil is not a coder. Everything this agent writes — log entries, reports, pull-request descriptions — is written for him first and the record second.
+
+- **Lead with a plain-English summary** under three headings: **What I changed · Why it matters · What I need from you.** No file paths, no code words, no finding numbers in the summary — a smart friend with no coding background should follow it on a phone screen.
+- **Name things by what they are, not where they live.** Say "the Credit Scores lesson," not `src/data/personal-finance/credit-debt/lesson-3-credit-scores.ts`. File paths and technical notes go in a "Technical details" section after the summary (keep them there — future runs still need them).
+- **Codes never travel alone.** Never write "Finding 6" or "SSEPF4" bare; write "Finding 6 — showing the lesson text after the game instead of before it" or "SSEPF4 — the Georgia standard about credit."
+- **Translate jargon or move it.** Words like diff, grep, component, template literal, render — either restate them plainly in the sentence ("I double-checked the app still builds") or leave them to the technical-details section.

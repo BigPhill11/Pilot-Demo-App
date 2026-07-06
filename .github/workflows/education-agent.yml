@@ -38,14 +38,20 @@ jobs:
             CURRICULUM.md, MODULE_GAP_ANALYSIS.md, WORDING_ENGAGEMENT_LOG.md,
             GA_STANDARDS_ALIGNMENT.md, ASSESSMENT_SPEC.md.
 
-            AUTONOMY POLICY:
-            - LOW-RISK (apply in this run's PR): lesson copy/wording edits in
-              src/data/ (reading level grade 7-9, analogy quality, Atlanta-relevant
-              examples, decision-driven framing), specs/docs under agents/education/,
-              additive metadata like Georgia-standards tags.
-            - HIGH-RISK (never apply without an APPROVED mark in the logs):
-              component/logic changes, module structure/ordering, quiz scoring logic,
-              deletions, anything touching auth or data collection.
+            AUTONOMY POLICY (ACT-FIRST, set by Phil 2026-07-06 — full text in
+            CHARTER.md, which controls if they ever differ):
+            - DEFAULT: MAKE THE CHANGE in this run's PR. That includes lesson
+              copy/wording (reading level grade 7-9, analogy quality,
+              Atlanta-relevant examples, decision-driven framing), component and
+              rendering changes, module structure/ordering, quiz question fixes
+              and scoring tweaks, new lessons/modules, and removing outdated
+              content. Verify the app builds; log everything.
+            - CHECK WITH PHIL FIRST (only these): anything touching login,
+              accounts, or what personal data is collected from students; anything
+              that could erase or corrupt students' saved progress records;
+              removing an entire module or curriculum week.
+            - If unsure, make the change anyway and flag it at the top of the PR
+              summary so Phil can reject that part — never just re-propose.
 
             THIS RUN:
             1. Apply any items Phil marked APPROVED in the logs; log the application.
@@ -60,12 +66,23 @@ jobs:
                cultural relevance, decision-driven framing). Append all findings,
                applied diffs, and proposals to the logs dated today.
 
+            PLAIN LANGUAGE (set by Phil 2026-07-06): Phil is not a coder. Every log
+            entry and the PR body lead with a plain-English summary (What I changed /
+            Why it matters / What I need from you) — no file paths, no bare finding
+            numbers ("Finding 6" must always carry a plain name like "Finding 6 —
+            showing the lesson text after the game instead of before it"), no
+            unexplained jargon. File paths and technical notes go in a "Technical
+            details" section after the summary.
+
             DELIVERY: create a branch named education-agent/<date>-<slug>, commit your
             changes, push it, and open ONE pull request titled
-            "Education agent: <summary> (<date>)". The PR body MUST contain:
-            - "## Changed" — what was applied
-            - "## Needs approval" — item IDs awaiting Phil's APPROVED mark, one line each
-            - "## Blocked on Phil" — open questions for Phil or Georgia Tech
+            "Education agent: <summary> (<date>)". The PR body MUST contain, in order:
+            - "## In plain English" — 3-6 sentences a non-coder can read on a phone:
+              what changed, why it matters, what you need from Phil
+            - "## Changed" — each change with a plain-English name (technical
+              details beneath it)
+            - "## Waiting on your OK" — check-first items, one plain-English line each
+            - "## I need from you" — open questions for Phil or Georgia Tech
             Merging the PR is Phil's approval of its contents. Do not merge it yourself.
           claude_args: |
             --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(git:*),Bash(npx tsc:*),Bash(npm:*),Bash(gh pr create:*),Bash(gh pr list:*),Bash(gh pr view:*),Bash(gh issue:*)"

@@ -1,6 +1,6 @@
 # Wording & Engagement Log
 
-Statuses: OPEN → APPROVED → APPLIED / DECLINED. Under the 2026-07-05 autonomy policy, low-risk copy edits may go straight to **APPLIED (auto)** with a dated diff summary. See `CHARTER.md` for process.
+Statuses, in plain words: **Done** (changed and verified — the default under the 2026-07-06 act-first policy), **Waiting on Phil** (check-first list only), **Declined**. Entries dated before 2026-07-06 use the old codes OPEN/APPROVED/APPLIED — read them as the same three states. See `CHARTER.md` for the current process.
 
 ---
 
@@ -99,3 +99,47 @@ In the Income module the analogies are genuine and memorable (bike-pedaling meta
 
 - **`GA_STANDARDS_ALIGNMENT.md`** (P0 #1) — full mapping of all modules to Georgia GSE Personal Finance and Economics (Course 45.061, SSEPF1–10; SB 220 graduation requirement effective 2024–25), sourced from the official GaDOE standards PDF. Includes coverage grades, 10-item gap list (top gap: SSEPF1b/c — HOPE scholarship/FAFSA content), and a verification queue.
 - **`ASSESSMENT_SPEC.md`** (P0 #2, started) — pre/post + confidence assessment design for the Georgia Tech measurement plan; all instrumentation hooks written as PROPOSALS (code logic = high-risk, awaiting Phil).
+
+---
+
+## 2026-07-06 — Policy change: act-first autonomy + plain-language rule (set by Phil)
+
+### In plain English
+
+**What changed:** Phil gave this agent much more authority. The default is now to make
+the change — edit it, check the app still builds, ship it in that run's pull request —
+instead of writing proposals and waiting. Only three things still need Phil's OK first:
+anything touching login, accounts, or what personal data the app collects from students;
+anything that could erase students' saved progress; and removing an entire module or
+curriculum week. Phil merging the pull request stays the final say before anything goes
+live.
+
+**Also changed:** every log entry and pull request now leads with a plain-English
+summary — what I changed, why it matters, what I need from you — with technical detail
+underneath, not mixed in.
+
+**What this unblocks right away:**
+
+- **Finding 6 — putting the lesson explanation after the game instead of before it.**
+  This was stuck as a proposal because it changes how lessons display, not just their
+  words. It's now fair game for the next run: let students make the choice first, then
+  read the principle as a debrief.
+- **Quiz question fixes with scoring tweaks** (like the earlier BATNA fix) no longer
+  need to tiptoe around which part of the change counts as "logic."
+- **Building the missing modules** flagged in the gap analysis (for example the
+  HOPE scholarship / FAFSA content Georgia's standards expect) — new lessons no longer
+  wait for a spec-then-approve round trip.
+- The **assessment instrumentation** for the Georgia Tech measurement plan can be built
+  directly, except any part that stores new personal information about students — that
+  part stays check-first.
+
+### Technical details
+
+- `agents/education/CHARTER.md`: "Two-tier autonomy policy (2026-07-05)" bullet replaced
+  with "Act-first autonomy (2026-07-06)"; added §"Writing for Phil"; pickup steps and
+  status vocabulary updated (Done / Waiting on Phil / Declined).
+- `.github/workflows/education-agent.yml`: AUTONOMY POLICY block rewritten to act-first;
+  PLAIN LANGUAGE block added; PR body template now leads with "## In plain English."
+- This log's header status line updated to the plain-word statuses. Dated entries above
+  are untouched — history stays intact for the Georgia Tech audit trail.
+- Change made on Phil's direct instruction, 2026-07-06, via Claude session.

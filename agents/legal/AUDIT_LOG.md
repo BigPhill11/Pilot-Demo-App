@@ -4,9 +4,10 @@
 > This log is the required documentation trail. It is **append-only**: new runs add dated
 > sections; nothing above the current date line is rewritten.
 
-Mode: **PROPOSE-THEN-APPLY.** No app source file was modified in this run. Every item
-below is `PROPOSED` until Phil marks it `APPROVED`; a later run applies approved items and
-appends an `APPLIED <date>` note.
+Mode: see `CHARTER.md` §"Mode of Operation" for the current autonomy policy
+(**ACT-FIRST** as of 2026-07-06 — the agent makes most changes itself; only the
+check-first list waits for Phil). Dated entries below reflect whichever mode was in
+force on their date and are never rewritten.
 
 Priorities: **P0** = blocker for APS procurement · **P1** = fix before pilot expansion ·
 **P2** = hygiene.
@@ -552,3 +553,60 @@ once they clear — no further approval needed from Phil.**
 | PC-16 | OPEN — vendor scope now Google (Gemini) + Supabase only |
 
 *End of 2026-07-05 Run 3 entry. Future runs: append below this line.*
+
+---
+
+# 2026-07-06 — Policy change of record: ACT-FIRST autonomy + plain-language rule (set by Phil)
+
+> Not legal advice. Attorney review required before reliance.
+
+## In plain English
+
+**What changed:** Phil gave this agent much more authority. Until now, most meaningful
+fixes sat in this log as proposals waiting for approval, so each run mostly repeated the
+previous one. From now on the agent makes the change itself, in that run's pull request,
+for everything except a short "incredibly sensitive" list: collecting new personal
+information from students or sending student data to a new outside company; anything
+that could delete real user data; login/signup changes that could lock people out;
+filing anything outside the app; and putting the attorney-gated privacy-policy rewrite
+live before its conditions are met. Phil merging the pull request stays the final say
+before anything reaches the live app.
+
+**Also changed:** everything this agent writes must now lead with plain English — what
+I changed, why it matters, what I need from you. Codes, file paths, and legal citations
+move to a technical-details section underneath.
+
+**What this unblocks for the next scheduled run** (these were waiting only for
+permission, and now have it):
+
+- PC-10 — fixing the Apple age rating (4+ → 12+) so it matches our 13-and-up rules
+- PC-12 — adding the microphone disclosure ("recordings never leave your device") to
+  the Privacy Policy page
+- PC-13 — removing an unused analytics package before it can ever switch on
+- PC-14 — turning off a lax security setting ("mixed content") in the Android app shell
+- PC-15 — restricting which websites are allowed to call our server functions
+
+**Still blocked — but on information only you can supply, not on permission:**
+your LLC's exact legal name, one official privacy contact email and mailing address,
+who created the panda art, and whether the code repository is private. These block
+PC-5/PC-8 (naming the company in the Terms), PC-9 (one contact address everywhere),
+PC-18 (the full policy rewrite), and the trademark filing.
+
+**Still check-first:** PC-11 — replacing the "I am 13+" checkbox with a neutral
+birth-year screen. It changes how students sign up, so it stays on the sensitive list.
+
+## Technical details
+
+- `agents/legal/CHARTER.md`: replaced §"Mode of Operation: TIERED AUTONOMY (2026-07-05)"
+  with §"Mode of Operation: ACT-FIRST AUTONOMY (2026-07-06)"; added §"Writing for Phil";
+  updated the out-of-scope line and the future-runs pickup steps to match.
+- `.github/workflows/legal-agent.yml`: AUTONOMY POLICY block rewritten to act-first;
+  PLAIN LANGUAGE block added; PR body template now leads with "## In plain English" and
+  uses "Waiting on your OK" / "I need from you" sections.
+- This log's header block updated to point at the charter for the current mode (the old
+  header hard-coded the retired 2026-07-02 propose-then-apply mode). Dated entries are
+  untouched — append-only discipline intact.
+- Change made on Phil's direct instruction, 2026-07-06, via Claude session; this entry
+  is the policy change of record.
+
+*End of 2026-07-06 entry. Future runs: append below this line.*

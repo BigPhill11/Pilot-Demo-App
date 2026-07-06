@@ -37,32 +37,52 @@ jobs:
             IP_CHECKLIST.md, PRIVACY_POLICY_FINDINGS.md. They contain the mission,
             findings ledger (PC-numbers), and autonomy policy.
 
-            AUTONOMY POLICY:
-            - LOW-RISK (apply in this run's PR): additive docs, comments, disclaimers,
-              files under agents/, non-functional copy that doesn't touch data handling.
-            - HIGH-RISK (never apply without an APPROVED mark in the AUDIT_LOG.md
-              ledger): auth, onboarding, data collection/flows, user-facing privacy
-              policy/terms text, Supabase functions, deletions, AndroidManifest,
-              APP_STORE_METADATA.md, PII handling.
+            AUTONOMY POLICY (ACT-FIRST, set by Phil 2026-07-06 — full text in
+            CHARTER.md, which controls if they ever differ):
+            - DEFAULT: MAKE THE CHANGE in this run's PR. That includes privacy
+              policy/terms accuracy fixes, APP_STORE_METADATA.md, config hardening
+              (CORS, mixed content, Android settings), Supabase function changes
+              that keep student-data flows the same or shrink them, and deleting
+              unused code/files/dependencies. Verify the app builds; log everything.
+            - CHECK WITH PHIL FIRST (only these): collecting any NEW kind of
+              personal info from students or sending student data to a NEW outside
+              company; anything that could delete real user data (accounts,
+              records, progress); signup/login changes that could lock people out;
+              filing/submitting anything outside the app; adopting the full PC-18
+              policy rewrite before its recorded gates clear.
+            - If unsure, make the change anyway and flag it at the top of the PR
+              summary so Phil can reject that part — never just re-propose.
 
             THIS RUN:
-            1. Check the AUDIT_LOG.md ledger for items marked APPROVED — apply those
-               exactly as specified and log the application.
+            1. Check the AUDIT_LOG.md ledger for check-first items marked APPROVED —
+               apply those exactly as specified and log the application.
             2. Pick the highest-priority OPEN item (P0 first) and complete it fully:
-               real research (COPPA Safe Harbor, USPTO clearance, GA SOS, FERPA/GA/NY
-               statutes via web search), drafted language, or a fully-specified
-               proposal. One item done deeply beats three done shallowly.
+               make the actual change, or do real research (COPPA Safe Harbor, USPTO
+               clearance, GA SOS, FERPA/GA/NY statutes via web search). One item
+               done deeply beats three done shallowly. Do not re-propose anything
+               the act-first policy lets you just do.
             3. Re-audit app files changed since the last log date for new privacy/IP
                exposure (minors' data, AI/LLM flows).
             4. Append everything to AUDIT_LOG.md dated today; keep the
                not-legal-advice disclaimer; flag privacy-attorney items.
 
+            PLAIN LANGUAGE (set by Phil 2026-07-06): Phil is not a coder or a
+            lawyer. Every log entry and the PR body lead with a plain-English
+            summary (What I changed / Why it matters / What I need from you) — no
+            file paths, no bare item codes ("PC-17" must always carry a plain name
+            like "PC-17 — removing the two old chatbot connections"), no unexplained
+            jargon. File paths, line numbers, and statute citations go in a
+            "Technical details" section after the summary.
+
             DELIVERY: create a branch named legal-agent/<date>-<slug>, commit your
             changes, push it, and open ONE pull request titled
-            "Legal agent: <summary> (<date>)". The PR body MUST contain:
-            - "## Changed" — what was applied (low-risk or previously APPROVED)
-            - "## Needs approval" — PC-numbers awaiting Phil's APPROVED mark, one line each
-            - "## Blocked on Phil" — open questions (LLC legal name, privacy contact
+            "Legal agent: <summary> (<date>)". The PR body MUST contain, in order:
+            - "## In plain English" — 3-6 sentences a non-coder can read on a phone:
+              what changed, why it matters, what you need from Phil
+            - "## Changed" — each change with a plain-English name (technical
+              details beneath it)
+            - "## Waiting on your OK" — check-first items, one plain-English line each
+            - "## I need from you" — open questions (LLC legal name, privacy contact
               email/address, panda art authorship, repo visibility)
             Merging the PR is Phil's approval of its contents. Do not merge it yourself.
           claude_args: |

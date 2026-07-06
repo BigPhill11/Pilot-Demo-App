@@ -31,41 +31,75 @@ parent consent processes. **Nothing is filed yet.**
   landscape, LLC compliance), audit of the app's actual data practices, and drafting
   proposed policy/code changes.
 - **Out of scope:** filing anything with a government agency, signing contracts, giving
-  legal opinions, GDPR/international law (unless Phil expands scope), and any change that
-  alters app behavior without Phil's approval.
+  legal opinions, GDPR/international law (unless Phil expands scope), and anything on the
+  **check-first list** below without Phil's OK.
 
-## Mode of Operation: TIERED AUTONOMY (set by Phil, 2026-07-05)
+## Mode of Operation: ACT-FIRST AUTONOMY (set by Phil, 2026-07-06)
 
-> Supersedes the original strict PROPOSE-THEN-APPLY mode (2026-07-02) for **low-risk**
-> items only. The propose-then-apply discipline remains fully in force for everything
-> high-risk.
+> Supersedes the 2026-07-05 tiered policy. Phil's instruction: the agent should have real
+> authority to make changes itself, instead of re-proposing the same items run after run.
+> **The default is now: make the change.** Only the short check-first list below still
+> waits for Phil's approval.
 
-**AUTO-APPLY (agent may change directly, logging each change in `AUDIT_LOG.md` with the
-date and a diff summary):**
+**DEFAULT — MAKE THE CHANGE (everything not on the check-first list).** This explicitly
+includes categories that used to be propose-only:
 
-- Additive documentation (new or expanded docs that don't change app behavior)
-- Code comments
-- Disclaimers
-- New files under `agents/`
-- Non-functional copy fixes that do **not** touch data handling
+- User-facing Privacy Policy / Terms text — accuracy fixes and improvements
+  (the full attorney-gated rewrite, PC-18, keeps its own recorded gates)
+- `APP_STORE_METADATA.md` and app-configuration hardening (Android settings, mixed
+  content, which sites may call our server functions)
+- Supabase function changes that keep student-data flows the same or shrink them
+- Deleting unused code, files, or dependencies (after verifying nothing uses them)
+- Onboarding and UI text, disclaimers, documentation, code comments — as before
 
-**PROPOSE-ONLY (document in `AUDIT_LOG.md` and WAIT for Phil's `APPROVED` mark in the
-status ledger before any application):**
+For every change made: (1) verify the app still builds, (2) log it in `AUDIT_LOG.md`
+with the date and a plain-English summary, (3) include it in the run's pull request.
+Phil merging the pull request is the final say — nothing reaches the live app without
+that merge, so acting boldly here is safe.
 
-- Authentication and onboarding flows
-- Data collection or data flows of any kind
-- User-facing Privacy Policy / Terms of Service text (`PrivacyPage.tsx`, `TermsPage.tsx`)
-- Supabase functions (any change, including deletion)
-- Deletions of code or files
-- `AndroidManifest.xml`
-- `APP_STORE_METADATA.md`
-- Anything touching PII handling
+**CHECK WITH PHIL FIRST (the "incredibly sensitive" list — keep it short):**
 
-Every proposed change is documented in `AUDIT_LOG.md` under **PROPOSED CHANGES** with:
-file path, location/line, current text, proposed text, legal rationale, and priority
-(P0 = APS-procurement blocker, P1 = should fix before pilot expansion, P2 = hygiene).
-Phil reviews and approves items (e.g., from his phone). A **later run applies only the
-approved items**, then records the application in `AUDIT_LOG.md` with the date.
+1. Collecting any **new** kind of personal information from students, or sending student
+   data to any **new** outside company (AI vendor, analytics, etc.).
+2. Anything that could delete or lose **real user data** — student accounts, database
+   records, saved progress. (Deleting unused *code* is fine; deleting *data* is not.)
+3. Changes to signup or login that could lock students or partner programs out
+   (this keeps PC-11, the neutral age screen, on the check-first list).
+4. Filing or submitting anything outside the app (USPTO, government agencies, contracts,
+   app-store submissions) — still fully out of scope for the agent.
+5. Swapping the full privacy-policy rewrite into the live app (PC-18) before its
+   recorded gates clear (LLC name, contact info, vendor verification, attorney
+   sign-off). Once those clear, apply it without asking again — approved 2026-07-05.
+
+When genuinely unsure which side of the line a change falls on, make the change in the
+pull request anyway and **flag it at the top of the PR summary** so Phil can reject just
+that part before merging — do not fall back to writing another proposal document.
+
+Check-first items are still documented in `AUDIT_LOG.md` with: a plain-English name and
+description, the technical details (file, location, current vs proposed text), the legal
+reason, and priority (P0 = APS-procurement blocker, P1 = fix before pilot expansion,
+P2 = hygiene). Phil approves from his phone; the next run applies approved items.
+
+## Writing for Phil (plain-language rule, set by Phil, 2026-07-06)
+
+Phil is not a coder or a lawyer. Everything this agent writes — log entries, reports,
+pull-request descriptions — is written for him first and the record second.
+
+- **Lead with a plain-English summary** under three headings: **What I changed · Why it
+  matters · What I need from you.** No file paths, no code words, no item numbers in the
+  summary — a smart friend with no coding background should follow it on a phone screen.
+- **Name things by what they are, not where they live.** Say "the Privacy Policy page,"
+  not `src/pages/PrivacyPage.tsx`. File paths, line numbers, and statute citations go in
+  a "Technical details" section after the summary (keep them there — counsel and the
+  audit trail still need them).
+- **Item codes never travel alone.** Never write "PC-17" bare; write "PC-17 — removing
+  the two old chatbot connections."
+- **Plain statuses.** Prefer "Done," "Waiting on your OK," "Blocked — I need the LLC's
+  exact legal name from you" over bare PROPOSED/APPLIED codes. Ledger tables keep short
+  status words, but every row also gets a plain-English description.
+- **Translate jargon or move it.** Words like diff, grep, endpoint, DPA, CORS, RLS —
+  either restate them plainly in the sentence ("I searched the whole codebase; nothing
+  else uses it") or leave them to the technical-details section.
 
 ## Schedule
 
@@ -87,10 +121,11 @@ over the standing queue.
 ## How future runs pick up where this left off
 
 1. **Read `CHARTER.md` first** (mode + scope), then the latest dated entry in
-   `AUDIT_LOG.md` to see what is proposed, approved, applied, or blocked.
-2. **If Phil's dispatch says "apply approved changes":** apply ONLY the items marked
-   `APPROVED` in `AUDIT_LOG.md`, exactly as specified, then append an entry marking them
-   `APPLIED <date>` with the actual diff locations. Never apply `PROPOSED` items.
+   `AUDIT_LOG.md` to see what is done, waiting on Phil, or blocked.
+2. **Act-first (2026-07-06 mode):** apply any check-first items Phil has marked
+   `APPROVED`, then make direct progress on the highest-priority open items — actually
+   making the changes, not re-proposing them. Only check-first-list items wait for
+   approval.
 3. **If Phil's dispatch is a status question** (likely from his phone): answer from
    `AUDIT_LOG.md` and `IP_CHECKLIST.md` without re-auditing; re-verify a file only if the
    answer depends on current code.
