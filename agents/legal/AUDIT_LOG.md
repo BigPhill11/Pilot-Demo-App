@@ -552,3 +552,133 @@ once they clear — no further approval needed from Phil.**
 | PC-16 | OPEN — vendor scope now Google (Gemini) + Supabase only |
 
 *End of 2026-07-05 Run 3 entry. Future runs: append below this line.*
+
+---
+
+# 2026-07-06 — Run 1 (scheduled) — COPPA Safe Harbor analysis (C4 / PC-18 gate d); PC-17 repo-side verified; new-file re-audit
+
+> Not legal advice. Attorney review required before reliance.
+
+## A. Ledger check + approved-item application
+
+Re-read `CHARTER.md`, `IP_CHECKLIST.md`, `PRIVACY_POLICY_FINDINGS.md`, and every prior
+`AUDIT_LOG.md` entry. **No item carries a new `APPROVED` mark this run.** Standing approvals
+from 2026-07-05 Run 3:
+
+- **PC-17 (APPROVED → APPLIED repo-side):** re-verified in the working tree this run —
+  `supabase/functions/phil-chat/` and `phil-chat-openai/` are **gone**; `config.toml` has
+  **no** `phil-chat*` entries; `grep phil-chat src/` is **clean**. ✅ Repo side confirmed.
+  **OPS items 5–6 still OUTSTANDING** (undeploy both edge functions on project
+  `qssqbpllqkorfjcxgomh`; remove/revoke `PERPLEXITY_API_KEY`) — these need Phil/someone with
+  Supabase access and cannot be done from this repo. Until then the endpoints remain
+  deployed even though the code is deleted.
+- **PC-18 (APPROVED-CONDITIONAL):** not applied — its gates are unchanged except that gate
+  (d) is advanced this run (see §B). Remaining gates: (a) operator placeholders — GA LLC
+  legal name + canonical privacy email/address (blockers #1–2); (b) PC-16 vendor
+  verification; (c) privacy-attorney sign-off; (d) Safe Harbor + NY CDPA **decisions**.
+
+No app source, Supabase function, or user-facing policy/terms text was modified this run.
+All changes are auto-apply tier (new doc under `agents/`).
+
+## B. Queue item advanced deeply: COPPA Safe Harbor program selection (gap C4 / attorney item D.3 / PC-18 gate d)
+
+Picked the highest-priority OPEN item that this run can actually move without Phil-access
+or a browser (PC-16 and PC-17 OPS are Phil-gated; USPTO expert-mode + GA SOS eCorp need an
+interactive browser). Delivered a decision-ready analysis: **`agents/legal/SAFE_HARBOR_ANALYSIS.md`**
+(NEW FILE — auto-apply, low-risk doc under `agents/`). Real web research; sources cited in
+the doc. Key conclusions:
+
+1. **F-18 (threshold, NEEDS ATTORNEY VERIFICATION):** a COPPA Safe Harbor is a COPPA-
+   compliance *mechanism*, and COPPA governs **under-13** data. For a **strict 13+** service
+   a seal is **not legally required** — it is a **procurement/strategy choice.** Therefore the
+   Safe Harbor decision is **downstream of the COPPA-posture decision** (attorney item D.1:
+   strict 13+ vs. supporting under-13 with consent). That posture call should be made first.
+2. **F-19 (roster):** there are **six** currently-active FTC-approved programs — **iKeepSafe,
+   kidSAFE, PRIVO, CARU (BBB National Programs), ESRB Privacy Certified, TrustArc** (Aristotle
+   withdrew Aug 2021). *Caveat:* the official FTC roster page returned **HTTP 403** from this
+   environment and could not be read directly; the list is from authoritative secondary
+   sources and must be confirmed on the live FTC page before being cited to APS.
+3. **Recommendation (if a seal is pursued): iKeepSafe** — it is the education-focused program
+   and bundles **COPPA Safe Harbor + FERPA + CSPC (multi-state student privacy)**, mapping
+   directly onto our FERPA gaps (F1–F3), Georgia O.C.G.A. § 20-2-660 duties (G1), and NY
+   student-privacy items (N1–N2). For a *school* buyer, a FERPA/state-student-data cert is a
+   more on-point signal than a COPPA-only seal. **kidSAFE** is the budget-tiered on-ramp;
+   **PRIVO** rises only if the posture flips to supporting under-13 (its VPC/consent depth).
+   CARU/ESRB/TrustArc are poor fits (ads/games/general).
+4. **Cost/timeline:** no program publishes fees (quote-only); the prior "~$3k–$15k+/yr" note
+   is an **unverified placeholder**. Certification is a **capstone**, not a starting point —
+   it will stall until PC-2/PC-3/PC-6/PC-7 (parental rights, FERPA school-official language,
+   full data inventory, written retention policy) land first.
+5. **2025 amendment interaction:** Safe Harbor programs now must publicly post member lists
+   (since 2025-07-21, updated 6-monthly) and file annual FTC reports (since 2025-10-22).
+   Joining means our product name becomes publicly listed — minor marketing plus + a
+   transparency commitment.
+6. **Near-term APS steer:** a **signed district DPA** (SDPC National DPA + GA exhibit,
+   attorney item D.6) is likely the higher-priority artifact for the APS timeline; position
+   any seal as a follow-on credential.
+
+**Effect on PC-18 gate (d):** the Safe Harbor decision is now *ready to be made* — options,
+fit, and a recommendation are on record. The **decision itself remains Phil's + counsel's**;
+the **NY CDPA** half of gate (d) is still open (next-run candidate). Gate (d) is therefore
+**advanced, not cleared.**
+
+## C. Re-audit of app files changed since the last log date (2026-07-05)
+
+`git log` since 2026-07-05 shows one relevant commit (`89297a5`) touching, besides the legal
+docs and the PC-17 deletions, three **education-agent lesson content** files:
+
+- `src/data/personal-finance/saving/lesson-1-why-saving-comes-before-spending.ts`
+- `src/data/personal-finance/credit-debt/lesson-3-credit-scores.ts`
+- `src/data/personal-finance/modules.ts`
+
+**F-20 (clean — no new privacy/IP exposure):** these are **static lesson content** files
+(definitions, a hypothetical budgeting simulation, quiz items). "Income" appears only as
+lesson *subject matter* (e.g., a simulated `weeklyIncome: 200`), **never** as a field that
+collects the student's or their family's actual income. **No data-collection surface, no
+new PII, no AI/LLM flow, no auth/onboarding change.** The **PPRA guardrail** (gap F4 —
+avoid the 8 protected areas, notably family income, in school-context surveys) is **not
+tripped**: this is instructional content, not a survey soliciting protected information from
+the student. Reaffirm the standing guardrail that future lesson *scenarios and any in-lesson
+prompts* must continue to avoid soliciting protected personal/family financial data.
+
+## D. APPLIED this run (auto-apply tier, low-risk)
+
+1. **`agents/legal/SAFE_HARBOR_ANALYSIS.md`** — NEW FILE. Decision-ready COPPA Safe Harbor
+   analysis (§B). ~150 lines; disclaimer retained; sources cited; every fee/eligibility
+   claim flagged NEEDS ATTORNEY VERIFICATION.
+2. **`agents/legal/AUDIT_LOG.md`** — this dated entry (append-only).
+
+No high-risk (propose-only) surface was touched.
+
+## E. Status ledger (deltas only; prior tables stand)
+
+| ID | Status this run |
+|---|---|
+| PC-16 | OPEN — vendor scope Google (Gemini) + Supabase only (unchanged) |
+| PC-17 | APPROVED → APPLIED (repo-side) **re-verified clean this run**; OPS 5–6 still OUTSTANDING |
+| PC-18 | APPROVED-CONDITIONAL — **gate (d) advanced** (Safe Harbor decision teed up; NY CDPA still open); gates (a)(b)(c) unchanged |
+| C4 (findings gap) | Safe Harbor: **analysis complete** → `SAFE_HARBOR_ANALYSIS.md`; decision pending counsel |
+
+All other PCs unchanged from 2026-07-05 Run 3.
+
+## F. Standing blockers for Phil (re-surfaced — unchanged)
+
+1. **Exact GA LLC legal name** (ecorp.sos.ga.gov) — blocks PC-5, PC-8, PC-18, TM filing.
+2. **Canonical privacy contact email + mailing address** — blocks PC-5, PC-9, PC-18.
+3. **Panda art / comic-panel authorship** (human vs AI vs contractor) — blocks copyright
+   registration strategy (IP_CHECKLIST item 3) and design-mark filing.
+4. **Repo visibility** (public/private?) — blocks creating `agents/legal/evidence/`.
+
+## G. For the privacy/TM attorney (additions this run)
+
+- **COPPA posture decision (D.1) is the gating call** for Safe Harbor — please decide strict
+  13+ vs. under-13-with-consent first; the recommendation branches off it (see
+  `SAFE_HARBOR_ANALYSIS.md` §5–§7).
+- If a seal is pursued, confirm **iKeepSafe** as the fit and whether its FERPA/CSPC scope
+  adequately covers **Georgia (O.C.G.A. § 20-2-660 et seq.)** and **NY (Ed Law 2-d / NY
+  CDPA)**, or whether separate state analysis remains.
+- Advise **seal vs. signed district DPA** priority for the APS timeline.
+- Next-run legal-agent candidate: complete the **NY CDPA (Gen. Bus. Law art. 39-FF)**
+  analysis (gap N1) to close the other half of PC-18 gate (d).
+
+*End of 2026-07-06 Run 1 entry. Future runs: append below this line.*
