@@ -64,7 +64,7 @@ Legend — **STRONG**: element is directly taught and practiced in a decision/si
 | SSEPF6b (credit-score components) | **STRONG** — payment history, utilization, inquiries, credit mix all taught + simulated; length of history lighter | `lesson-3-credit-scores.ts` (verified in full: flashcards + Build the Score simulator) |
 | SSEPF6a (credit report vs. score, how to access) | PARTIAL — score yes; accessing one's **report** not evidenced | `lesson-3-credit-scores.ts` |
 | SSEPF6c (loan application / creditworthiness → rates) | PARTIAL | boss game `the-credit-architect.ts` ("invisible to 780+"); engine `src/engine/credit.ts` (borrow-now-affects-terms-later) |
-| SSEPF6d (revolving vs. installment credit) | probable | `lesson-2-types-of-debt.ts` (productive vs. unproductive verified via audit; revolving/installment framing to verify) |
+| SSEPF6d (revolving vs. installment credit) | **GAP** (verified 2026-07-06) — `lesson-2` teaches **productive vs. consumptive** and **high- vs. low-interest** debt, not the revolving/installment distinction the element names. Credit cards and student loans appear only as *examples* inside those frames; the concept itself is never taught. Downgraded from "probable." | `lesson-2-types-of-debt.ts` (read in full 2026-07-06) |
 | SSEPF4b (APR; rates affect payments) | probable-PARTIAL | `lesson-4-paying-down-debt.ts` (avalanche/snowball, minimum vs. payoff) |
 | SSEPF6e (bankruptcy causes/consequences) | **GAP** | — |
 
@@ -76,7 +76,7 @@ Legend — **STRONG**: element is directly taught and practiced in a decision/si
 | SSEPF7b (types: auto, health, life, disability, renters, flood, property) | PARTIAL — risk transfer generalized; type-by-type comparison not evidenced | — |
 | SSEPF7d (insurability, why rates vary) | **GAP** (unverified) | — |
 | SSEPF10a/b/c (identity theft: sources, prevention, victim steps) | **STRONG** | `lesson-3-fraud-scams-identity-protection.ts`, `lesson-5-digital-security-protection-habits.ts`; Shield Builder identity-theft event |
-| SSEPF10d (investment scams: Ponzi, pump-and-dump, advance fee) | probable-PARTIAL | `lesson-3-fraud-scams-identity-protection.ts` (verify scam taxonomy) |
+| SSEPF10d (investment scams: Ponzi, pump-and-dump, advance fee) | **GAP** (verified 2026-07-06) — `lesson-3` covers consumer/phishing scams richly (fake bank email, prize-fee text, grandparent-in-jail gift-card call, breach→2FA) but has **no investment-scam content**: no Ponzi, no pump-and-dump, and advance-fee only in the prize-shipping frame, not an investment frame. Best future home: Investing or Week-8 Market Literacy. Downgraded from "probable-PARTIAL." | `lesson-3-fraud-scams-identity-protection.ts` (read in full 2026-07-06; 4-scenario "Spot the Scam" sim verified) |
 
 ### Week 7 — Investing (`personal-finance/investing/`, boss: *The Long Game*)
 | Element | Coverage | Evidence |
@@ -96,10 +96,10 @@ Legend — **STRONG**: element is directly taught and practiced in a decision/si
 ### Extension modules (beyond the 8 weeks)
 | Module | Elements | Coverage |
 |---|---|---|
-| **Taxes** (`personal-finance/taxes/`, boss: *The Tax Strategist*) | SSEPF5a (tax types) — probable-STRONG (`lesson-1-understanding-taxes.ts`, `lesson-2-income-types-taxation.ts`); SSEPF5b (progressive/regressive/proportional) — probable (verify lesson-1); SSEPF2b (complete a 1040) — **GAP** (no form-completion activity evidenced); SSEPF3d retirement accounts — PARTIAL (`lesson-4-tax-advantaged-accounts.ts`) |
+| **Taxes** (`personal-finance/taxes/`, boss: *The Tax Strategist*) | SSEPF5a (tax types) — **PARTIAL** (verified 2026-07-06, downgraded from "probable-STRONG"): income tax + payroll (Social Security/Medicare) taught strongly (`lesson-1`, `lesson-2`), capital gains taught (`lesson-2` flashcard); **sales, property, and estate taxes only named in passing** in one `lesson-1` flashcard definition, never taught. SSEPF5b (progressive/regressive/proportional) — **GAP** (verified 2026-07-06, downgraded from "probable"): a full-module grep for progressive/regressive/proportional/marginal/bracket returns **zero** matches. SSEPF2b (complete a 1040) — **GAP** (no form-completion activity evidenced); SSEPF3d retirement accounts — PARTIAL (`lesson-4-tax-advantaged-accounts.ts`). **Bonus:** `lesson-2` also strongly reinforces SSEPF2a (income types: wages, self-employment, investment, dividends, capital gains). |
 | **Career Income** (`personal-finance/career-income/`, boss: *The Career Architect*) | SSEPF8c — **STRONG** (`lesson-1-career-investment.ts` human capital, `lesson-2-market-value.ts` supply/demand for skills, `lesson-3-skills-that-pay.ts`); SSEPF8a — PARTIAL (multiplier skills: leadership/communication); SSEPF2a — PARTIAL (`lesson-5-multiple-income-streams.ts`: dividends/passive income); SSEPF8b (social-media footprint) — **GAP** |
-| **Wealth Fundamentals** (`personal-finance/wealth-fundamentals/`, boss: *The Wealth Builder*) | SSEPF1e (generational wealth) — probable-STRONG (`lesson-1-what-wealth-is.ts`); SSEPF2f (net worth) — probable (verify lesson-1); SSEPF4d reinforced (`lesson-2-systems-compounding.ts`) |
-| **Career Readiness track** (`career-readiness/`) | SSEPF8a — **STRONG** (professional habits, etiquette, interviewing); SSEPF8b — PARTIAL-probable (personal-brand module; verify social-media treatment) |
+| **Wealth Fundamentals** (`personal-finance/wealth-fundamentals/`, boss: *The Wealth Builder*) | SSEPF2f (net worth = assets − liabilities) — **STRONG** (verified 2026-07-06, upgraded from "probable"): taught in `lesson-1` microLesson, Asset/Liability flashcards, quiz item 1, and the "track your net worth monthly" powerMove. SSEPF1e (generational wealth) — **PARTIAL** (verified 2026-07-06, downgraded from "probable-STRONG"): `lesson-1` teaches asset ownership vs. income and long-term stability, but has **no explicit generational-transfer / inheritance / passing-wealth-forward content** — the element's core idea is absent. Verify `lesson-3-risk-life-stages.ts` for any life-stage/legacy treatment; otherwise this is a targeted content add. SSEPF4d reinforced (`lesson-2-systems-compounding.ts`). |
+| **Career Readiness track** (`career-readiness/`) | SSEPF8a — **STRONG** (professional habits, etiquette, interviewing); SSEPF8b (social-media footprint → employment/finances) — **GAP** (verified 2026-07-06, downgraded from "PARTIAL-probable"): the Personal Brand entry in `career-readiness/modules.ts` is a **stub** (id/title/icon/`learningPoints`) with one positive-framing bullet, "Build a consistent online presence" — no lesson content and **nothing on the footprint-as-liability angle** SSEPF8b requires (employers screening posts, permanence of the record). Tangential only: `interviewing.ts` has one "useful vs. not" sort item flagging a CEO's Instagram post. |
 
 ## 4. Coverage summary and gap list
 
@@ -115,16 +115,28 @@ Legend — **STRONG**: element is directly taught and practiced in a decision/si
 7. **SSEPF6e — bankruptcy causes/consequences.**
 8. **SSEPF7b/d — insurance type-by-type comparison; insurability/rate variation.**
 9. **SSEPF9 (entire standard) — consumer protection agencies, complaint channels, key legislation.** Closest existing content is `insurance/lesson-4-legal-basics-liability-protection.ts`; a "Know Your Rights" lesson would close it.
-10. **SSEPF8b — social-media footprint and career/finances** (quick add to Career Readiness personal-brand module).
+10. **SSEPF8b — social-media footprint and career/finances** (verified GAP 2026-07-06; Personal Brand is a stub — add footprint-as-liability content).
+11. **SSEPF5b — progressive / regressive / proportional tax structures** (verified GAP 2026-07-06). No content anywhere in the Taxes module. Natural add: a "who pays what share" mechanic in Taxes lesson-1 or a new lesson — a bracket/marginal-rate visual is highly game-able.
+12. **SSEPF6d — revolving vs. installment credit** (verified GAP 2026-07-06). Credit & Debt teaches productive/consumptive and high/low-interest instead. Add the revolving-vs-installment distinction explicitly (credit card vs. auto/student loan — both already appear as examples, so only the framing is missing).
+13. **SSEPF5a completion — sales, property, and estate taxes** (verified PARTIAL 2026-07-06). Only income/payroll/capital-gains are taught; the other tax types are named once and never developed.
+
+**Verification note (2026-07-06):** the initial 2026-07-05 mapping's "probable" grades ran **optimistic**. Reading the six queued lessons in full moved five elements *down* (SSEPF5a, SSEPF5b, SSEPF6d, SSEPF10d-investment-scams, SSEPF1e, SSEPF8b) and one *up* (SSEPF2f → STRONG). The honest coverage for the APS conversation is therefore narrower than the draft suggested — reflected in the expanded gap list above.
 
 **Non-SSEPF course domains (SSEF, SSEMI, SSEMA, SSEIN):** partially touched (opportunity cost, incentives, Fed content in Market Intelligence) — worth noting to APS as enrichment, but the app should not claim coverage of the full 45.061 economics scope.
 
 ## 5. Verification queue (upgrade "probable" → verified)
 
-Next runs should read and confirm, then update this table in place (additive standards-tag metadata in lesson files is auto-apply under the 2026-07-05 policy):
-1. `taxes/lesson-1` + `lesson-2` — SSEPF5a/b tax-type and progressivity coverage.
-2. `credit-debt/lesson-2` — revolving vs. installment framing (SSEPF6d).
-3. `insurance/lesson-3` — scam taxonomy vs. SSEPF10d list.
-4. `wealth-fundamentals/lesson-1` — net worth (SSEPF2f) and generational wealth (SSEPF1e).
-5. `career-readiness` personal-brand module — SSEPF8b.
-6. Surface this mapping in `src/data/teacher-curriculum-guide.md` (copy addition — auto-apply eligible) and consider per-lesson `gaStandards: ['SSEPF6b', ...]` metadata tags (additive metadata — auto-apply eligible; schema addition to the `Lesson` type would be PROPOSE-ONLY since it touches `src/types/`).
+Next runs should read and confirm, then update this table in place.
+
+**Cleared 2026-07-06** (all five lesson items read in full; §3 mappings updated in place with results):
+1. ✅ `taxes/lesson-1` + `lesson-2` — SSEPF5a **PARTIAL** (income/payroll/capital-gains only), SSEPF5b **GAP** (zero progressivity content). Bonus SSEPF2a reinforcement noted.
+2. ✅ `credit-debt/lesson-2` — SSEPF6d **GAP** (productive/consumptive framing, not revolving/installment).
+3. ✅ `insurance/lesson-3` — SSEPF10d **GAP** (consumer scams strong; no investment scams). SSEPF10a/b/c remain STRONG.
+4. ✅ `wealth-fundamentals/lesson-1` — SSEPF2f **STRONG** (verified); SSEPF1e **PARTIAL** (no generational-transfer content).
+5. ✅ `career-readiness` Personal Brand — SSEPF8b **GAP** (stub module).
+
+**Still open:**
+6. **Surface this mapping in `src/data/teacher-curriculum-guide.md`** — DONE 2026-07-06 (see the "Georgia standards alignment (SSEPF)" section added to the guide; copy addition, auto-apply eligible).
+7. **Per-lesson `gaStandards: ['SSEPF6b', ...]` tags** — **PROPOSE-ONLY / BLOCKED.** Verified 2026-07-06 that `src/types/personal-finance.ts` `Lesson` has no `gaStandards` field and no index signature, so adding tags to lesson objects would fail the type-check (excess-property error). Applying tags therefore requires first adding an optional `gaStandards?: string[]` to the `Lesson` (and `PersonalFinanceModule`) interface — a `src/types/` change, which is high-risk under the 2026-07-05 policy. See WORDING_ENGAGEMENT_LOG proposal **STD-TAG-1** (awaiting Phil's APPROVED).
+8. **Verify `wealth-fundamentals/lesson-3-risk-life-stages.ts`** for any generational-wealth/legacy treatment before scoping an SSEPF1e content add.
+9. **Verify `taxes/lesson-3/4/5`** for any progressivity/sales/property/estate coverage the lesson-1/2 read did not reach (grep across the module found none, but the boss game *The Tax Strategist* was not read line-by-line).
