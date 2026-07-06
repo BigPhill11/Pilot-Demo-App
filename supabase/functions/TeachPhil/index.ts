@@ -195,46 +195,64 @@ Deno.serve(async (req) => {
       '  "ready_to_pass": <true or false>\n' +
       "}";
 
-    const geminiRes = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + geminiKey,
-        },
-        body: JSON.stringify({
-          model: "gemini-2.5-flash",
-          messages: [
-            { role: "system", content: systemPrompt },
-            ...history,
-            { role: "user", content: message },
-          ],
-          temperature: 0.3,
-          max_tokens: 500,
-          response_format: { type: "json_object" },
-        }),
+    // gemini-2.5-flash is a THINKING model: it spends output tokens on internal
+    // reasoning before writing the reply. With a small max_tokens the thinking
+    // consumes the whole budget and content comes back EMPTY (worse on later
+    // turns, whose prompts are longer). So: large token budget, low reasoning
+    // effort, and one automatic retry — except on 429 (API rate limit), where
+    // retrying only burns more quota.
+    let rateLimited = false;
+    const callGemini = async () => {
+      const res = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + geminiKey,
+          },
+          body: JSON.stringify({
+            model: "gemini-2.5-flash",
+            messages: [
+              { role: "system", content: systemPrompt },
+              ...history,
+              { role: "user", content: message },
+            ],
+            temperature: 0.3,
+            max_tokens: 3000,
+            reasoning_effort: "low",
+            response_format: { type: "json_object" },
+          }),
+        }
+      );
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        console.error("TeachPhil Gemini error:", res.status, JSON.stringify(data).slice(0, 500));
+        if (res.status === 429) rateLimited = true;
+        return null;
       }
-    );
+      const choice = data?.choices?.[0];
+      const content = choice?.message?.content ?? "";
+      try {
+        return JSON.parse(content) as Record<string, unknown>;
+      } catch (_) {
+        console.error(
+          "TeachPhil unparseable model output. finish_reason:",
+          choice?.finish_reason,
+          "content:",
+          String(content).slice(0, 300),
+        );
+        return null;
+      }
+    };
 
-    const geminiData = await geminiRes.json().catch(() => ({}));
-
-    if (!geminiRes.ok) {
-      console.error("TeachPhil Gemini error:", JSON.stringify(geminiData));
+    let parsed = await callGemini();
+    if (!parsed && !rateLimited) parsed = await callGemini(); // one silent retry
+    if (!parsed) {
       return json({
-        error: "Phil got distracted for a second. Please try again in a moment.",
-      });
-    }
-
-    const content = geminiData?.choices?.[0]?.message?.content ?? "";
-
-    let parsed: Record<string, unknown>;
-    try {
-      parsed = JSON.parse(content);
-    } catch (_) {
-      console.error("TeachPhil unparseable model output:", content.slice(0, 500));
-      return json({
-        error: "Phil got confused for a second. Please try again in a moment.",
+        error: rateLimited
+          ? "Phil has been learning nonstop and needs a quick breather! Give him a minute and try again."
+          : "Phil got confused for a second. Please try again in a moment.",
       });
     }
 
