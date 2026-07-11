@@ -10,6 +10,7 @@ import RevenueGrowthCalculator from './interactive/RevenueGrowthCalculator';
 import MarginComparisonTool from './interactive/MarginComparisonTool';
 import CompanyComparisonMatrix from './interactive/CompanyComparisonMatrix';
 import { useToast } from '@/hooks/use-toast';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface EvaluationModuleProps {
   module: ModuleType;
@@ -98,7 +99,7 @@ const EvaluationModule: React.FC<EvaluationModuleProps> = ({
               </div>
               <CardTitle>{module.title}</CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
-                ⏱️ {module.estimatedTime}
+                <ThemedEmoji emoji="⏱️" className="h-[1em] w-[1em]" /> {module.estimatedTime}
               </p>
             </div>
             {quizCompleted && (
@@ -186,7 +187,7 @@ const EvaluationModule: React.FC<EvaluationModuleProps> = ({
       <Card className="border-2 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <span className="text-xl">🎮</span>
+            <span className="text-xl"><ThemedEmoji emoji="🎮" className="h-[1em] w-[1em]" /></span>
             {module.content.interactiveElement.title}
           </CardTitle>
           <p className="text-sm text-muted-foreground">

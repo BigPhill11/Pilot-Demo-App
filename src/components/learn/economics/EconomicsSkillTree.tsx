@@ -17,6 +17,7 @@ import { Lock, CheckCircle2, Play, ChevronRight } from 'lucide-react';
 import PandaLogo from '@/components/icons/PandaLogo';
 import { EconomicsUnit, EconomicsTrack, UnitStatus } from '@/types/economics-curriculum';
 import { useEconomicsProgress } from '@/hooks/useEconomicsProgress';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface EconomicsSkillTreeProps {
   units: EconomicsUnit[];
@@ -99,7 +100,7 @@ const EconomicsSkillTree: React.FC<EconomicsSkillTreeProps> = ({
                 ) : isCompleted ? (
                   <CheckCircle2 className="h-6 w-6 text-emerald-600" />
                 ) : (
-                  <span>{unit.icon}</span>
+                  <span><ThemedEmoji emoji={unit.icon} className="h-[1em] w-[1em]" /></span>
                 )}
               </div>
 
@@ -155,8 +156,8 @@ const EconomicsSkillTree: React.FC<EconomicsSkillTreeProps> = ({
                 {/* Rewards preview */}
                 {!isLocked && (
                   <div className="flex items-center gap-3 mt-2 text-xs text-green-600/60">
-                    <span>🎋 {unit.rewards.bamboo}</span>
-                    <span>⭐ {unit.rewards.xp} XP</span>
+                    <span><ThemedEmoji emoji="🎋" className="h-[1em] w-[1em]" /> {unit.rewards.bamboo}</span>
+                    <span><ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /> {unit.rewards.xp} XP</span>
                   </div>
                 )}
               </div>
@@ -221,11 +222,11 @@ const EconomicsSkillTree: React.FC<EconomicsSkillTreeProps> = ({
             </div>
             <div className="flex items-center gap-4 text-sm">
               <div className="text-center">
-                <div className="font-bold text-green-800">🎋 {totalBambooEarned}</div>
+                <div className="font-bold text-green-800"><ThemedEmoji emoji="🎋" className="h-[1em] w-[1em]" /> {totalBambooEarned}</div>
                 <div className="text-xs text-green-600/60">Bamboo</div>
               </div>
               <div className="text-center">
-                <div className="font-bold text-green-800">⭐ {totalXpEarned}</div>
+                <div className="font-bold text-green-800"><ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /> {totalXpEarned}</div>
                 <div className="text-xs text-green-600/60">XP</div>
               </div>
             </div>

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import useHeadlines from '@/hooks/useHeadlines';
 import HeadlineCard from './headlines/HeadlineCard';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 const EnhancedHeadlinesSection = () => {
   const { profile } = useAuth();
@@ -94,7 +95,7 @@ const EnhancedHeadlinesSection = () => {
             Stay updated with financial news - terms are highlighted based on your level!
           </p>
           <div className="mt-2 text-sm text-primary">
-            🐼 Current Level: {userLevel.charAt(0).toUpperCase() + userLevel.slice(1)} Phil
+            <ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /> Current Level: {userLevel.charAt(0).toUpperCase() + userLevel.slice(1)} Phil
           </div>
         </div>
         

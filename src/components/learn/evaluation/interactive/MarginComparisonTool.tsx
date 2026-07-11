@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface CompanyData {
   name: string;
@@ -102,7 +103,7 @@ const MarginComparisonTool: React.FC = () => {
       )}
 
       <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 p-4 rounded-lg text-sm">
-        <h4 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-2">💡 What This Shows:</h4>
+        <h4 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-2"><ThemedEmoji emoji="💡" className="h-[1em] w-[1em]" /> What This Shows:</h4>
         <ul className="space-y-1 text-yellow-700 dark:text-yellow-300">
           <li>• Software companies have much higher margins (70% vs 5%)</li>
           <li>• Doesn't mean software is "better" - just different business models</li>

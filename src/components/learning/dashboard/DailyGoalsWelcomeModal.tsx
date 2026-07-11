@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import PandaLogo from '@/components/icons/PandaLogo';
 import type { DailyGoal } from '@/hooks/useDailyGoals';
 import { navigateToGoal } from '@/lib/dashboardDeepLink';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface DailyGoalsWelcomeModalProps {
   open: boolean;
@@ -48,7 +49,7 @@ const DailyGoalsWelcomeModal: React.FC<DailyGoalsWelcomeModalProps> = ({
             <PandaLogo className="h-16 w-16" />
           </motion.div>
           <DialogTitle className="text-2xl font-bold">
-            Today&apos;s Trail is Ready! 🌿
+            Today&apos;s Trail is Ready! <ThemedEmoji emoji="🌿" className="h-[1em] w-[1em]" />
           </DialogTitle>
           <DialogDescription className="text-base">
             {currentStreak > 0
@@ -73,7 +74,7 @@ const DailyGoalsWelcomeModal: React.FC<DailyGoalsWelcomeModalProps> = ({
             </div>
             <div className="flex gap-2 pt-1">
               <Badge className="bg-amber-500/90 hover:bg-amber-500 text-white border-0">
-                +{primaryGoal.bambooReward} 🎋
+                +{primaryGoal.bambooReward} <ThemedEmoji emoji="🎋" className="h-[1em] w-[1em]" />
               </Badge>
               <Badge variant="secondary" className="bg-primary/10 text-primary">
                 <Sparkles className="h-3 w-3 mr-1 inline" />

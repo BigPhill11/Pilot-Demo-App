@@ -228,23 +228,6 @@ function buildEvaluationCandidate(): GoalCandidate | null {
   };
 }
 
-function buildFlashcardCandidate(): GoalCandidate {
-  const date = getTodayDateString();
-  return {
-    id: `${date}-flashcards-5`,
-    title: 'Review 5 Flashcards',
-    description: 'Quick spaced-repetition session to lock in what you learned',
-    targetTab: 'adaptive-flashcards',
-    completionType: 'flashcards',
-    completionTarget: { count: 5 },
-    bambooReward: PLATFORM_REWARDS.cardReviewed * 5,
-    xpReward: PLATFORM_REWARDS.cardReviewedXp * 5,
-    priority: 'tertiary',
-    icon: '🃏',
-    pathId: 'flashcards',
-  };
-}
-
 function buildTinderCandidate(): GoalCandidate {
   const dayOfYear = getDayOfYear();
   const challenge = TINDER_CHALLENGES[dayOfYear % TINDER_CHALLENGES.length];
@@ -341,7 +324,6 @@ export function generateDailyGoals(options: {
   const mi = buildMiCandidate();
   const econ = buildEconomicsCandidate();
   const evalCand = buildEvaluationCandidate();
-  const flashcards = buildFlashcardCandidate();
   const tinder = buildTinderCandidate();
   const streak = buildStreakCandidate(currentStreak);
   const careers = buildCareersCandidate();
@@ -356,22 +338,22 @@ export function generateDailyGoals(options: {
   let primary = byPath[recentPathId] ?? pf ?? mi ?? start;
   if (!primary) primary = start;
 
-  const secondaryPool = [mi, econ, evalCand, pf, careers, flashcards, tinder].filter(
+  const secondaryPool = [mi, econ, evalCand, pf, careers, tinder].filter(
     (c): c is GoalCandidate =>
       c !== null && c.pathId !== primary.pathId && c.id !== primary.id
   );
 
   let secondary = pickFromPool(secondaryPool, `${date}-secondary`, [primary.id]);
   if (!secondary) {
-    secondary = careers.pathId !== primary.pathId ? careers : flashcards;
+    secondary = careers.pathId !== primary.pathId ? careers : tinder;
   }
 
   let tertiary: GoalCandidate;
   if (!todayActionCompleted) {
     tertiary = streak;
   } else {
-    const tertiaryPool = [flashcards, tinder].filter((c) => c.id !== primary.id && c.id !== secondary.id);
-    tertiary = pickFromPool(tertiaryPool, `${date}-tertiary`, [primary.id, secondary.id]) ?? flashcards;
+    const tertiaryPool = [tinder].filter((c) => c.id !== primary.id && c.id !== secondary.id);
+    tertiary = pickFromPool(tertiaryPool, `${date}-tertiary`, [primary.id, secondary.id]) ?? tinder;
   }
 
   return [

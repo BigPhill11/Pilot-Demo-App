@@ -1,6 +1,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 export interface MISectionChip {
   label: string;
@@ -128,7 +129,7 @@ const MISectionHeader: React.FC<MISectionHeaderProps> = ({
                 variant="outline"
                 className={cn('text-xs', s.chip)}
               >
-                {chip.icon && <span className="mr-1">{chip.icon}</span>}
+                {chip.icon && <span className="mr-1"><ThemedEmoji emoji={chip.icon} className="h-[1em] w-[1em]" /></span>}
                 {chip.label}
               </Badge>
             ))}

@@ -4,6 +4,7 @@ import { ArrowRight, ArrowLeft, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PersonalFinanceFlashcard } from '@/types/personal-finance';
 import { cn } from '@/lib/utils';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface LessonFlashcardsProps {
   flashcards: PersonalFinanceFlashcard[];
@@ -93,7 +94,7 @@ const LessonFlashcards: React.FC<LessonFlashcardsProps> = ({ flashcards, onCompl
             {!isFlipped ? (
               /* Front - Term */
               <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
-                <span className="text-4xl mb-4">📚</span>
+                <span className="text-4xl mb-4"><ThemedEmoji emoji="📚" className="h-[1em] w-[1em]" /></span>
                 <h3 className="text-2xl font-bold mb-4">{currentCard.term}</h3>
                 <p className="text-sm text-muted-foreground">Tap to reveal definition</p>
               </div>
@@ -107,7 +108,7 @@ const LessonFlashcards: React.FC<LessonFlashcardsProps> = ({ flashcards, onCompl
 
                 <div className="mt-auto pt-4 border-t">
                   <div className="flex items-start gap-3">
-                    <span className="text-2xl">🐼</span>
+                    <span className="text-2xl"><ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /></span>
                     <div>
                       <h4 className="text-sm font-medium text-primary mb-1">Phil's Analogy</h4>
                       <p className="text-sm text-muted-foreground italic">

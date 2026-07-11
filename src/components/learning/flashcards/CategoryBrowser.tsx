@@ -18,6 +18,7 @@ import {
   FlashcardSubsection,
   CategorizedFlashcard
 } from "@/data/flashcard-categories";
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface CategoryBrowserProps {
   onSelectCards: (cards: CategorizedFlashcard[], title: string) => void;
@@ -163,7 +164,7 @@ export const CategoryBrowser = ({ onSelectCards }: CategoryBrowserProps) => {
 
       <Card className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border-blue-200 dark:border-blue-800">
         <div className="flex items-start gap-4">
-          <div className="text-3xl">💡</div>
+          <div className="text-3xl"><ThemedEmoji emoji="💡" className="h-[1em] w-[1em]" /></div>
           <div>
             <h4 className="font-bold mb-1">Study Tips</h4>
             <p className="text-sm text-muted-foreground">

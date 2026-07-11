@@ -25,6 +25,7 @@ import { useGameStore } from '@/store/useGameStore';
 import { useCreditStore } from '@/store/useCreditStore';
 import { useBaseLayoutStore } from '@/store/useBaseLayoutStore';
 import { getBuildingCollectThresholdFor, isBuildingCollectionReady } from '../systems/economy';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface BuildingInfoPanelProps {
   building: PlacedBuilding | null;
@@ -536,7 +537,7 @@ const BuildingInfoPanel: React.FC<BuildingInfoPanelProps> = ({
 
                   <div className="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-2xl">🐼</span>
+                      <span className="text-2xl"><ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /></span>
                       <h4 className="font-bold text-blue-700 dark:text-blue-400">Phil's Tip</h4>
                     </div>
                     <p className="text-gray-700 dark:text-gray-300">{getPhilTip()}</p>

@@ -25,8 +25,9 @@ import {
   TEACH_BACK_PASS_THRESHOLDS,
 } from '@/types/teach-back';
 import type { PhilAge, TeachBackSpec } from '@/types/teach-back';
-import { useTeachPhilSession } from '@/hooks/useTeachPhilSession';
+import { useTeachPhilSession, getTeachPhilPassRewardBamboo } from '@/hooks/useTeachPhilSession';
 import type { TeachPhilResult } from '@/hooks/useTeachPhilSession';
+import { Leaf } from 'lucide-react';
 
 /**
  * The optional Teach Phil teach-back panel, shared by every lesson system
@@ -276,6 +277,13 @@ const TeachPhilPanel: React.FC<Props> = ({ lessonId, spec, defaultPhilAge, onCom
           </div>
           <h3 className="text-lg font-bold mb-2">{card.title}</h3>
           <p className="text-sm text-muted-foreground leading-relaxed">{card.body}</p>
+          {phase === 'passed' && (
+            <div className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500/10 to-purple-500/10 border border-emerald-500/20">
+              <Leaf className="w-4 h-4 text-emerald-500" />
+              <span className="text-sm font-bold text-foreground">+{getTeachPhilPassRewardBamboo()}</span>
+              <span className="text-xs text-muted-foreground">bamboo · 30% of your storage</span>
+            </div>
+          )}
         </div>
         <Button onClick={finish} className="w-full h-12 text-base">
           Claim Your Reward

@@ -18,6 +18,7 @@ import {
   Zap
 } from 'lucide-react';
 import PandaLogo from '@/components/icons/PandaLogo';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface LessonCompleteStepProps {
   lessonTitle: string;
@@ -99,7 +100,7 @@ const LessonCompleteStep: React.FC<LessonCompleteStepProps> = ({
               
               <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-lg p-4 text-center border border-emerald-100">
                 <div className="flex items-center justify-center gap-2 mb-1">
-                  <span className="text-xl">🎋</span>
+                  <span className="text-xl"><ThemedEmoji emoji="🎋" className="h-[1em] w-[1em]" /></span>
                   <span className="text-2xl font-bold text-emerald-700">+{bambooEarned}</span>
                 </div>
                 <span className="text-sm text-emerald-600">Bamboo Earned</span>

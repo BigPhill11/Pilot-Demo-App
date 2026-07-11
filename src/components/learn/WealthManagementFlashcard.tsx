@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, ChevronRight, RotateCcw, CheckCircle2, Star } from 'lucide-react';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface Flashcard {
   term: string;
@@ -200,7 +201,7 @@ const WealthManagementFlashcard: React.FC<WealthManagementFlashcardProps> = ({
       {allMastered && (
         <div className="text-center p-4 bg-emerald-50 rounded-lg border border-emerald-200">
           <p className="text-emerald-800 font-medium">
-            🌟 Outstanding! You've mastered all the terms in this level.
+            <ThemedEmoji emoji="🌟" className="h-[1em] w-[1em]" /> Outstanding! You've mastered all the terms in this level.
           </p>
         </div>
       )}

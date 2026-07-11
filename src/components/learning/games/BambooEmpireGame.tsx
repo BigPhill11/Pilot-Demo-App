@@ -8,6 +8,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import PandaLogo from '@/components/icons/PandaLogo';
 import { toast } from 'sonner';
 import { useBambooEmpireProgress } from '@/hooks/useBambooEmpireProgress';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface Flashcard {
   id: string;
@@ -513,7 +514,7 @@ const BambooEmpireGame: React.FC<BambooEmpireGameProps> = ({ level }) => {
           <CardContent className="space-y-4">
             <div className="text-center">
               <div className="text-4xl mb-4">
-                {selectedAnswer === currentQuestion.definition ? '🎉' : '💪'}
+                {selectedAnswer === currentQuestion.definition ? '<ThemedEmoji emoji="🎉" className="h-[1em] w-[1em]" />' : '💪'}
               </div>
               <Card className="bg-white mb-4">
                 <CardContent className="p-4">

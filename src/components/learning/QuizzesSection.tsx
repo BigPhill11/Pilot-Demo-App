@@ -19,6 +19,7 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import QuizGame from './quizzes/QuizGame';
 import type { UnifiedFlashcard } from '@/data/unified-flashcards';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 // Personal Finance modules for topic selection
 const QUIZ_TOPICS = [
@@ -203,7 +204,7 @@ const QuizzesSection: React.FC<QuizzesSectionProps> = ({ onBack, cards }) => {
               >
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
-                    <span className="text-2xl">{topic.icon}</span>
+                    <span className="text-2xl"><ThemedEmoji emoji={topic.icon} className="h-[1em] w-[1em]" /></span>
                     <div className="flex-1 min-w-0">
                       <h5 className="font-semibold">{topic.name}</h5>
                       <p className="text-xs text-muted-foreground truncate">{topic.description}</p>
@@ -241,7 +242,7 @@ const QuizzesSection: React.FC<QuizzesSectionProps> = ({ onBack, cards }) => {
         Start Quiz
         {selectedTopic && (
           <Badge variant="secondary" className="ml-2">
-            +5 🎋 per correct
+            +5 <ThemedEmoji emoji="🎋" className="h-[1em] w-[1em]" /> per correct
           </Badge>
         )}
       </Button>

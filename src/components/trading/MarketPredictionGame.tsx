@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useMarketPredictions } from '@/hooks/useMarketPredictions';
 import { TrendingUp, TrendingDown, Minus, Target, Users, Calendar } from 'lucide-react';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 const MarketPredictionGame: React.FC = () => {
   const {
@@ -75,7 +76,7 @@ const MarketPredictionGame: React.FC = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Target className="h-5 w-5" />
-          📈 Predict the Market
+          <ThemedEmoji emoji="📈" className="h-[1em] w-[1em]" /> Predict the Market
         </CardTitle>
         <p className="text-sm text-muted-foreground">
           Where will the S&P 500 end by Friday? Share your prediction and reasoning!

@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import type { EconomicsHandsOnConfig, EconomicsHandsOnMeterDef } from '@/types/economics-curriculum';
 import { cn } from '@/lib/utils';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface EconomicsMiniSimulatorProps {
   config: EconomicsHandsOnConfig;
@@ -88,7 +89,7 @@ const EconomicsMiniSimulator: React.FC<EconomicsMiniSimulatorProps> = ({ config,
             <Card key={m.id} className="border-emerald-200 bg-white/90 shadow-sm">
               <CardContent className="p-3 pt-3">
                 <div className="text-xs text-emerald-600 flex items-center gap-1 mb-1">
-                  <span>{m.icon}</span>
+                  <span><ThemedEmoji emoji={m.icon} className="h-[1em] w-[1em]" /></span>
                   <span className="truncate">{m.label}</span>
                 </div>
                 <div className="text-lg font-bold text-emerald-900 tabular-nums">

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Shield, Clock, AlertTriangle, Sparkles } from 'lucide-react';
 import { ActiveEvent, EconomicEvent } from '../systems/EventManager';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface EventBannerProps {
   activeEvent: ActiveEvent | null;
@@ -142,7 +143,7 @@ const EventBanner: React.FC<EventBannerProps> = ({
                 className="bg-black/20 px-4 py-3"
               >
                 <div className="flex items-start gap-2">
-                  <span className="text-xl">🐼</span>
+                  <span className="text-xl"><ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /></span>
                   <div>
                     <p className="text-white/90 text-sm font-medium mb-1">Phil says:</p>
                     <p className="text-white/80 text-sm">{event.educationalDescription}</p>

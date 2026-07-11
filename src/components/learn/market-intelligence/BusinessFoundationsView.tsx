@@ -6,6 +6,7 @@ import EconomicsLessonContainer from '../economics/EconomicsLessonContainer';
 import { useBusinessFoundationsProgress } from '@/hooks/useBusinessFoundationsProgress';
 import { businessFoundationsUnits } from '@/data/market-intelligence/ap-business-foundations';
 import { EconomicsLesson, EconomicsUnit, EconomicsTrack } from '@/types/economics-curriculum';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 const TRACK: EconomicsTrack = 'business-foundations';
 
@@ -93,10 +94,10 @@ const BusinessFoundationsView: React.FC = () => {
                   {totalProgress.completed}/{totalProgress.total} units
                 </Badge>
                 <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-300">
-                  ⭐ {totalXpEarned} XP
+                  <ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /> {totalXpEarned} XP
                 </Badge>
                 <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
-                  🎋 {totalBambooEarned} Bamboo
+                  <ThemedEmoji emoji="🎋" className="h-[1em] w-[1em]" /> {totalBambooEarned} Bamboo
                 </Badge>
               </div>
             </div>
@@ -116,7 +117,7 @@ const BusinessFoundationsView: React.FC = () => {
       <Card className="border-violet-200 bg-gradient-to-br from-violet-50 to-purple-50">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-3">
-            <span className="text-2xl">🎯</span>
+            <span className="text-2xl"><ThemedEmoji emoji="🎯" className="h-[1em] w-[1em]" /></span>
             <div>
               <h3 className="text-lg font-bold text-violet-900">Practice in Company Tinder</h3>
               <p className="text-sm text-violet-700/80">

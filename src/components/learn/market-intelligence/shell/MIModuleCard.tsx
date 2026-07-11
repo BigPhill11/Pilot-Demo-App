@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Check, Clock, ChevronRight, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ModuleCardData } from '@/data/market-intelligence/catalog';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface MIModuleCardProps {
   module: ModuleCardData;
@@ -98,7 +99,7 @@ const MIModuleCard: React.FC<MIModuleCardProps> = ({
       >
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
-            <div className="text-2xl mt-0.5 shrink-0">{module.icon}</div>
+            <div className="text-2xl mt-0.5 shrink-0"><ThemedEmoji emoji={module.icon} className="h-[1em] w-[1em]" /></div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <h3 className={cn('font-semibold truncate text-sm', s.title)}>{module.title}</h3>
@@ -132,7 +133,7 @@ const MIModuleCard: React.FC<MIModuleCardProps> = ({
           <DialogContent className="max-w-md">
             <DialogHeader>
               <div className="flex items-center gap-3 mb-2">
-                <span className="text-3xl">{module.icon}</span>
+                <span className="text-3xl"><ThemedEmoji emoji={module.icon} className="h-[1em] w-[1em]" /></span>
                 <DialogTitle className="text-xl">{module.title}</DialogTitle>
               </div>
               <DialogDescription className="text-base">{module.description}</DialogDescription>

@@ -17,6 +17,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 import { toast } from 'sonner';
 import PandaLogo from '@/components/icons/PandaLogo';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 const StreakTracker: React.FC = () => {
   const { profile } = useAuth();
@@ -188,7 +189,7 @@ const StreakTracker: React.FC = () => {
             <div className="flex items-start gap-3">
               <PandaLogo className="h-8 w-8 flex-shrink-0" />
               <div>
-                <h4 className="font-semibold text-emerald-800 mb-1">Phil's Motivation 🐼</h4>
+                <h4 className="font-semibold text-emerald-800 mb-1">Phil's Motivation <ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /></h4>
                 <p className="text-sm text-emerald-700">
                   {currentStreak === 0 && "Every journey starts with a single step! Let's begin your learning adventure today."}
                   {currentStreak > 0 && currentStreak < 7 && `Great start! You're ${7 - currentStreak} days away from your first milestone!`}

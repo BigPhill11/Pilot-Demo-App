@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import type { DailyGoal } from '@/hooks/useDailyGoals';
 import { navigateToGoal } from '@/lib/dashboardDeepLink';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface DailyGoalsSectionProps {
   goals: DailyGoal[];
@@ -82,7 +83,7 @@ const DailyGoalsSection: React.FC<DailyGoalsSectionProps> = ({
                     {goal.completed ? (
                       <CheckCircle2 className="w-8 h-8 text-emerald-500 shrink-0" />
                     ) : (
-                      <span className="text-2xl shrink-0">{goal.icon}</span>
+                      <span className="text-2xl shrink-0"><ThemedEmoji emoji={goal.icon} className="h-[1em] w-[1em]" /></span>
                     )}
                     <div className="min-w-0">
                       <p
@@ -100,7 +101,7 @@ const DailyGoalsSection: React.FC<DailyGoalsSectionProps> = ({
                       variant={goal.completed ? 'default' : 'outline'}
                       className={goal.completed ? 'bg-emerald-600' : 'border-amber-400/50 text-amber-700 dark:text-amber-400'}
                     >
-                      +{goal.bambooReward} 🎋
+                      +{goal.bambooReward} <ThemedEmoji emoji="🎋" className="h-[1em] w-[1em]" />
                     </Badge>
                     <Badge variant="secondary" className="text-xs bg-primary/10 text-primary">
                       +{goal.xpReward} XP

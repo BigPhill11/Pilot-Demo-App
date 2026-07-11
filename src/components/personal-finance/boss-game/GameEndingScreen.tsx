@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { RotateCcw, Home } from 'lucide-react';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface GameEndingScreenProps {
   ending: GameEnding;
@@ -69,17 +70,17 @@ export function GameEndingScreen({ ending, meters, onReplay, onExit, playerName 
         {/* Final meters */}
         <div className="grid grid-cols-5 gap-2 mb-6">
           <div className="text-center">
-            <div className="text-xl mb-1">🪙</div>
+            <div className="text-xl mb-1"><ThemedEmoji emoji="🪙" className="h-[1em] w-[1em]" /></div>
             <div className="text-xs text-muted-foreground">Income</div>
             <div className="font-mono text-sm">{meters.income}</div>
           </div>
           <div className="text-center">
-            <div className="text-xl mb-1">⏱️</div>
+            <div className="text-xl mb-1"><ThemedEmoji emoji="⏱️" className="h-[1em] w-[1em]" /></div>
             <div className="text-xs text-muted-foreground">Value</div>
             <div className="font-mono text-sm">{meters.hourlyValue}</div>
           </div>
           <div className="text-center">
-            <div className="text-xl mb-1">⚡</div>
+            <div className="text-xl mb-1"><ThemedEmoji emoji="⚡" className="h-[1em] w-[1em]" /></div>
             <div className="text-xs text-muted-foreground">Energy</div>
             <div className="font-mono text-sm">{meters.energy}</div>
           </div>

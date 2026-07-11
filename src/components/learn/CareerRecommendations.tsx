@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Clock, Sparkles, Star, Trophy } from 'lucide-react';
 import { FinanceCareerData } from '@/data/finance-careers';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface CareerRecommendationsProps {
   recommendations: { careerId: string; score: number }[];
@@ -39,7 +40,7 @@ const CareerRecommendations: React.FC<CareerRecommendationsProps> = ({
     <div className="space-y-6">
       <div className="text-center">
         <h2 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold mb-3 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent`}>
-          Your Perfect Finance Careers! 🎉
+          Your Perfect Finance Careers! <ThemedEmoji emoji="🎉" className="h-[1em] w-[1em]" />
         </h2>
         <p className={`${isMobile ? 'text-sm' : 'text-base'} text-muted-foreground max-w-2xl mx-auto`}>
           Based on your answers, here are the careers that match your interests and personality best!
@@ -110,7 +111,7 @@ const CareerRecommendations: React.FC<CareerRecommendationsProps> = ({
 
       <div className="text-center pt-4">
         <p className={`${isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground`}>
-          💡 Click on any career to explore it in detail!
+          <ThemedEmoji emoji="💡" className="h-[1em] w-[1em]" /> Click on any career to explore it in detail!
         </p>
       </div>
     </div>

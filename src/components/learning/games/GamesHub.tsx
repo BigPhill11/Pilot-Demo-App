@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import PandaLogo from '@/components/icons/PandaLogo';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface GameStats {
   quizHighScore: number;
@@ -124,11 +125,11 @@ const GamesHub: React.FC<GamesHubProps> = ({ onSelectGame, stats }) => {
       <Card className="bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border-amber-200">
         <CardContent className="p-4">
           <div className="flex items-center justify-center gap-3 text-sm">
-            <span className="font-semibold">🎋 Earn Bamboo Coins</span>
+            <span className="font-semibold"><ThemedEmoji emoji="🎋" className="h-[1em] w-[1em]" /> Earn Bamboo Coins</span>
             <span className="text-muted-foreground">•</span>
-            <span className="font-semibold">⭐ Gain XP</span>
+            <span className="font-semibold"><ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /> Gain XP</span>
             <span className="text-muted-foreground">•</span>
-            <span className="font-semibold">🔥 Build Streaks</span>
+            <span className="font-semibold"><ThemedEmoji emoji="🔥" className="h-[1em] w-[1em]" /> Build Streaks</span>
           </div>
         </CardContent>
       </Card>

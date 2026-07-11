@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Coins, Clock, X } from 'lucide-react';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface OfflineProgressProps {
   isOpen: boolean;
@@ -51,7 +52,7 @@ const OfflineProgress: React.FC<OfflineProgressProps> = ({
                   <X className="w-5 h-5" />
                 </button>
                 
-                <div className="text-5xl mb-2">🐼</div>
+                <div className="text-5xl mb-2"><ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /></div>
                 <h2 className="text-xl font-bold">Welcome Back!</h2>
                 <p className="text-emerald-100 text-sm">Your empire has been busy</p>
               </div>

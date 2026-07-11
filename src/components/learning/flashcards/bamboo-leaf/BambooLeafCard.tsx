@@ -14,6 +14,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import type { UnifiedFlashcard } from '@/data/unified-flashcards';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface BambooLeafCardProps {
   card: UnifiedFlashcard;
@@ -163,7 +164,7 @@ const BambooLeafCard: React.FC<BambooLeafCardProps> = ({
               <div
                 className="rounded-xl p-3 text-xs leading-relaxed text-center bg-white/55 dark:bg-emerald-900/40 border-l-[3px] border-l-emerald-600 text-emerald-900 dark:text-emerald-100"
               >
-                <span className="font-bold">🐼 Phil says: </span>
+                <span className="font-bold"><ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /> Phil says: </span>
                 {card.philExample}
               </div>
             )}

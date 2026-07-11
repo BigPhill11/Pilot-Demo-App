@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Briefcase, GraduationCap, MessageSquare, Wallet } from 'lucide-react';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface MonthDecisionsProps {
   decision: MonthDecision;
@@ -66,7 +67,7 @@ export function MonthDecisions({ decision, meters, unlocks, onSelect, selectedOp
       {decision.pandaDialogue && (
         <div className="bg-background/50 rounded-lg p-3 mb-4 border border-border/30">
           <p className="text-sm italic flex items-start gap-2">
-            <span className="text-xl">🐼</span>
+            <span className="text-xl"><ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /></span>
             <span>"{decision.pandaDialogue}"</span>
           </p>
         </div>

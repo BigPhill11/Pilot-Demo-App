@@ -60,6 +60,15 @@ export const TEACH_BACK_MAX_TURNS = 5;
  */
 export const TEACH_BACK_OPT_UP_BONUS_BAMBOO_PER_TIER = 5;
 
+/**
+ * A genuine pass pays out big in bamboo: this fraction of the player's max
+ * bamboo storage capacity, so the reward scales with empire progress.
+ */
+export const TEACH_BACK_PASS_REWARD_STORAGE_FRACTION = 0.3;
+
+/** Deliberately small XP for a pass — Teach Phil pays out in bamboo, not XP */
+export const TEACH_BACK_PASS_XP = 5;
+
 /** Tier order used to compute opt-up steps */
 export const PHIL_AGE_ORDER: PhilAge[] = ['cub', 'teen', 'elder'];
 

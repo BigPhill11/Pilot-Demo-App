@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Star, Sparkles, Award } from 'lucide-react';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface PandaCelebrationProps {
   isVisible: boolean;
@@ -46,16 +47,16 @@ export const PandaCelebration: React.FC<PandaCelebrationProps> = ({
             <div className={`text-8xl transition-all duration-1000 ${
               animationPhase >= 0 ? 'animate-bounce' : 'scale-0'
             }`}>
-              🐼
+              <ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" />
             </div>
             
             {/* Floating emojis */}
             {animationPhase >= 1 && (
               <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute -top-4 -left-4 text-2xl animate-ping">🎉</div>
-                <div className="absolute -top-4 -right-4 text-2xl animate-ping" style={{ animationDelay: '0.2s' }}>✨</div>
-                <div className="absolute -bottom-4 -left-4 text-2xl animate-ping" style={{ animationDelay: '0.4s' }}>🎊</div>
-                <div className="absolute -bottom-4 -right-4 text-2xl animate-ping" style={{ animationDelay: '0.6s' }}>🌟</div>
+                <div className="absolute -top-4 -left-4 text-2xl animate-ping"><ThemedEmoji emoji="🎉" className="h-[1em] w-[1em]" /></div>
+                <div className="absolute -top-4 -right-4 text-2xl animate-ping" style={{ animationDelay: '0.2s' }}><ThemedEmoji emoji="✨" className="h-[1em] w-[1em]" /></div>
+                <div className="absolute -bottom-4 -left-4 text-2xl animate-ping" style={{ animationDelay: '0.4s' }}><ThemedEmoji emoji="🎊" className="h-[1em] w-[1em]" /></div>
+                <div className="absolute -bottom-4 -right-4 text-2xl animate-ping" style={{ animationDelay: '0.6s' }}><ThemedEmoji emoji="🌟" className="h-[1em] w-[1em]" /></div>
               </div>
             )}
           </div>
@@ -109,7 +110,7 @@ export const PandaCelebration: React.FC<PandaCelebrationProps> = ({
                   </h3>
                   {achievements.map((achievement, index) => (
                     <div key={index} className="text-sm text-yellow-700 bg-yellow-100 rounded px-3 py-1">
-                      🏆 {achievement}
+                      <ThemedEmoji emoji="🏆" className="h-[1em] w-[1em]" /> {achievement}
                     </div>
                   ))}
                 </div>
@@ -132,7 +133,7 @@ export const PandaCelebration: React.FC<PandaCelebrationProps> = ({
             onClick={onClose}
             className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-2 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
           >
-            Continue Learning! 🎯
+            Continue Learning! <ThemedEmoji emoji="🎯" className="h-[1em] w-[1em]" />
           </Button>
         </CardContent>
       </Card>

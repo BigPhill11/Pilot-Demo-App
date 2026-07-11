@@ -23,6 +23,7 @@ import EconomicsSimMeters from './EconomicsSimMeters';
 import EconomicsSimDecision from './EconomicsSimDecision';
 import { useEconomicsSim } from '@/hooks/useEconomicsSim';
 import { EconomicsSimulatorId } from '@/types/economics-sim';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface EconomicsSimulatorProps {
   simulatorId: EconomicsSimulatorId;
@@ -156,7 +157,7 @@ const EconomicsSimulator: React.FC<EconomicsSimulatorProps> = ({
           <Card className="border-gray-200 bg-white overflow-hidden">
             {/* Header */}
             <div className="bg-gradient-to-r from-blue-100 to-indigo-100 p-6 text-center">
-              <div className="text-5xl mb-4">{config.icon}</div>
+              <div className="text-5xl mb-4"><ThemedEmoji emoji={config.icon} className="h-[1em] w-[1em]" /></div>
               <h1 className="text-2xl font-bold text-gray-800 mb-2">{config.title}</h1>
               <p className="text-gray-600">{config.subtitle}</p>
             </div>
@@ -194,11 +195,11 @@ const EconomicsSimulator: React.FC<EconomicsSimulatorProps> = ({
               {/* Rewards */}
               <div className="flex items-center justify-center gap-6 py-2">
                 <div className="text-center">
-                  <div className="text-lg font-bold text-green-700">🎋 {config.rewards.bamboo}</div>
+                  <div className="text-lg font-bold text-green-700"><ThemedEmoji emoji="🎋" className="h-[1em] w-[1em]" /> {config.rewards.bamboo}</div>
                   <div className="text-xs text-gray-500">Bamboo</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-lg font-bold text-blue-700">⭐ {config.rewards.xp}</div>
+                  <div className="text-lg font-bold text-blue-700"><ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /> {config.rewards.xp}</div>
                   <div className="text-xs text-gray-500">XP</div>
                 </div>
               </div>

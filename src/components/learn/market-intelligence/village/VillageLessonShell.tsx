@@ -366,12 +366,12 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
                           <div className="text-xs text-muted-foreground font-medium">Bamboo</div>
                         </div>
                       </div>
-                      {(teachResult?.optUpBonusBamboo ?? 0) > 0 && (
+                      {(teachResult?.passRewardBamboo ?? 0) > 0 && (
                         <div className="px-4 pb-1">
                           <div className="flex items-center justify-center gap-2 p-2.5 rounded-lg bg-primary/5 border border-primary/20">
                             <GraduationCap className="w-4 h-4 text-primary" />
                             <p className="text-xs text-primary font-medium">
-                              +{teachResult!.optUpBonusBamboo} bamboo bonus for teaching a tougher Phil
+                              +{teachResult!.passRewardBamboo + teachResult!.optUpBonusBamboo} bamboo for teaching Phil (30% of your storage!)
                             </p>
                           </div>
                         </div>
@@ -401,7 +401,10 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
                 </div>
 
                 <Button
-                  onClick={() => onComplete(lesson.rewards.xp, lesson.rewards.bamboo + (teachResult?.optUpBonusBamboo ?? 0))}
+                  onClick={() => onComplete(
+                    lesson.rewards.xp + (teachResult?.passXp ?? 0),
+                    lesson.rewards.bamboo + (teachResult?.passRewardBamboo ?? 0) + (teachResult?.optUpBonusBamboo ?? 0)
+                  )}
                   className="w-full h-12 text-base"
                 >
                   Back to Village

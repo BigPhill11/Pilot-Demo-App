@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, TrendingDown, Minus, Target } from 'lucide-react';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface AnalystData {
   companyName: string;
@@ -204,7 +205,7 @@ const AnalystRatingDecoder: React.FC = () => {
                 {data.correctInterpretation}
               </p>
               <p className="text-xs text-blue-600 dark:text-blue-400 italic">
-                💡 {data.reasoning}
+                <ThemedEmoji emoji="💡" className="h-[1em] w-[1em]" /> {data.reasoning}
               </p>
             </div>
 

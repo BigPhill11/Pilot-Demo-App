@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { ChevronLeft, ChevronRight, RotateCcw, Shuffle, Lightbulb, Globe, Trophy } from 'lucide-react';
 import { getFlashcardsByDifficulty, UnifiedFlashcard } from '@/data/unified-flashcards';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 // Map old level names to new difficulty names
 const levelToDifficulty = (level: 'beginner' | 'intermediate' | 'pro'): 'beginner' | 'intermediate' | 'advanced' => {
@@ -390,7 +391,7 @@ const FlashcardDeck: React.FC<FlashcardDeckProps> = ({ level }) => {
                     variant="outline"
                     className="text-xs bg-yellow-50 border-yellow-200 hover:bg-yellow-100"
                   >
-                    📚 Still Learning
+                    <ThemedEmoji emoji="📚" className="h-[1em] w-[1em]" /> Still Learning
                   </Button>
                   <Button 
                     onClick={(e) => {
@@ -400,7 +401,7 @@ const FlashcardDeck: React.FC<FlashcardDeckProps> = ({ level }) => {
                     variant="outline"
                     className="text-xs bg-green-50 border-green-200 hover:bg-green-100"
                   >
-                    ✅ Mastered It
+                    <ThemedEmoji emoji="✅" className="h-[1em] w-[1em]" /> Mastered It
                   </Button>
                 </div>
               </div>

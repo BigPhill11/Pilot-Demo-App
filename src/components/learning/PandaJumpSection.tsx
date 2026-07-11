@@ -19,6 +19,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import PandaLogo from '@/components/icons/PandaLogo';
 import PandaJumpGame from './games/PandaJumpGame';
 import type { UnifiedFlashcard } from '@/data/unified-flashcards';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 type QuestionType = 'definitions' | 'scenarios' | 'truefalse' | 'mixed';
 
@@ -204,7 +205,7 @@ const PandaJumpSection: React.FC<PandaJumpSectionProps> = ({ onBack, cards }) =>
                 onClick={() => setSelectedType(type.id)}
                 className="flex flex-col h-auto py-3"
               >
-                <span className="text-lg mb-1">{type.icon}</span>
+                <span className="text-lg mb-1"><ThemedEmoji emoji={type.icon} className="h-[1em] w-[1em]" /></span>
                 <span className="text-xs">{type.label}</span>
               </Button>
             ))}

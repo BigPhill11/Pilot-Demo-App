@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { SimulatorGameConfig, SimulatorState, SimulatorChoice } from '@/types/personal-finance';
 import { cn } from '@/lib/utils';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface TimeValueSimulatorProps {
   config: SimulatorGameConfig;
@@ -165,7 +166,7 @@ const TimeValueSimulator: React.FC<TimeValueSimulatorProps> = ({ config, onCompl
       {/* Header */}
       <div>
         <h2 className="font-semibold flex items-center gap-2 text-lg">
-          <span className="text-xl">🎮</span>
+          <span className="text-xl"><ThemedEmoji emoji="🎮" className="h-[1em] w-[1em]" /></span>
           {config.title}
         </h2>
         <p className="text-sm text-muted-foreground mt-1">{config.description}</p>

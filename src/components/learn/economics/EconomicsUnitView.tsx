@@ -32,6 +32,7 @@ import {
 import PandaLogo from '@/components/icons/PandaLogo';
 import { EconomicsUnit, EconomicsLesson } from '@/types/economics-curriculum';
 import { useEconomicsProgress } from '@/hooks/useEconomicsProgress';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface EconomicsUnitViewProps {
   unit: EconomicsUnit;
@@ -144,8 +145,8 @@ const EconomicsUnitView: React.FC<EconomicsUnitViewProps> = ({
                 </div>
               </div>
               <div className="flex items-center gap-3 text-sm">
-                <span className="text-green-600">🎋 {unit.rewards.bamboo}</span>
-                <span className="text-green-600">⭐ {unit.rewards.xp} XP</span>
+                <span className="text-green-600"><ThemedEmoji emoji="🎋" className="h-[1em] w-[1em]" /> {unit.rewards.bamboo}</span>
+                <span className="text-green-600"><ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /> {unit.rewards.xp} XP</span>
               </div>
             </div>
           </CardContent>
@@ -283,7 +284,7 @@ const EconomicsUnitView: React.FC<EconomicsUnitViewProps> = ({
             <Card className="border-green-200">
               <CardHeader className="pb-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl">💰</span>
+                  <span className="text-xl"><ThemedEmoji emoji="💰" className="h-[1em] w-[1em]" /></span>
                   <h3 className="font-semibold text-green-800">Personal Finance Connection</h3>
                 </div>
               </CardHeader>
@@ -303,7 +304,7 @@ const EconomicsUnitView: React.FC<EconomicsUnitViewProps> = ({
             <Card className="border-green-200">
               <CardHeader className="pb-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl">📈</span>
+                  <span className="text-xl"><ThemedEmoji emoji="📈" className="h-[1em] w-[1em]" /></span>
                   <h3 className="font-semibold text-green-800">Investing Connection</h3>
                 </div>
               </CardHeader>
@@ -323,7 +324,7 @@ const EconomicsUnitView: React.FC<EconomicsUnitViewProps> = ({
             <Card className="border-green-200">
               <CardHeader className="pb-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl">🎯</span>
+                  <span className="text-xl"><ThemedEmoji emoji="🎯" className="h-[1em] w-[1em]" /></span>
                   <h3 className="font-semibold text-green-800">Core Concepts You'll Learn</h3>
                 </div>
               </CardHeader>

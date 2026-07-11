@@ -7,6 +7,7 @@ import { GameEndingScreen } from './GameEndingScreen';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ArrowLeft } from 'lucide-react';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface PandasFirstPaycheckProps {
   onComplete: (xpEarned: number, coinsEarned: number) => void;
@@ -146,7 +147,7 @@ const PandasFirstPaycheck = ({ onComplete, onBack }: PandasFirstPaycheckProps) =
             exit={{ opacity: 0, y: -20 }}
             className="bg-card border border-border rounded-xl p-6"
           >
-            <div className="text-4xl text-center mb-4">🐼</div>
+            <div className="text-4xl text-center mb-4"><ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /></div>
             <p className="text-sm leading-relaxed whitespace-pre-line text-center">
               {currentMonthData?.openingNarration}
             </p>
@@ -166,7 +167,7 @@ const PandasFirstPaycheck = ({ onComplete, onBack }: PandasFirstPaycheckProps) =
             exit={{ opacity: 0, y: -20 }}
             className="bg-card border border-border rounded-xl p-6"
           >
-            <div className="text-3xl text-center mb-3">🐼</div>
+            <div className="text-3xl text-center mb-3"><ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /></div>
             <p className="text-sm leading-relaxed text-center italic">{lastResponse}</p>
             <div className="flex justify-center mt-6">
               <Button onClick={handleContinue} className="gap-2">

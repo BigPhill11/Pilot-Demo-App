@@ -7,6 +7,7 @@ import { useMarketIntelligenceProgress } from '@/hooks/useMarketIntelligenceProg
 import { MARKET_INTELLIGENCE_CATALOG } from '@/data/market-intelligence/catalog';
 import { getLanguageOfFinanceLesson } from '@/data/market-intelligence/language-of-finance-lessons';
 import type { MILesson } from '@/types/mi-lesson';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface LanguageOfFinanceViewProps {
   initialModuleId?: string | null;
@@ -77,7 +78,7 @@ const LanguageOfFinanceView: React.FC<LanguageOfFinanceViewProps> = ({
         <div className="relative z-10 p-6 pl-8">
           <div className="flex items-start gap-4">
             <div className="p-3 rounded-lg bg-emerald-100 border border-emerald-200">
-              <span className="text-3xl">📖</span>
+              <span className="text-3xl"><ThemedEmoji emoji="📖" className="h-[1em] w-[1em]" /></span>
             </div>
             <div>
               <h2 className="text-2xl font-bold text-green-800 mb-2">Language of Finance</h2>

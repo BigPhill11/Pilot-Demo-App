@@ -5,6 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { Heart, Star, X, TrendingUp, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface TinderTutorialProps {
   isOpen: boolean;
@@ -189,7 +190,7 @@ const TinderTutorial: React.FC<TinderTutorialProps> = ({ isOpen, onComplete }) =
             exit={{ opacity: 0, y: -20 }}
             className="text-center space-y-6"
           >
-            <div className="text-6xl mb-4">🎉</div>
+            <div className="text-6xl mb-4"><ThemedEmoji emoji="🎉" className="h-[1em] w-[1em]" /></div>
             <h2 className="text-3xl font-bold">You're Ready!</h2>
             <div className="space-y-3">
               <div className="p-4 bg-primary/10 rounded-lg">

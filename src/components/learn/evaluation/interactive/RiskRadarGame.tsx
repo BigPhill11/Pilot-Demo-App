@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, CheckCircle2, XCircle, TrendingDown, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface CompanyProfile {
   name: string;
@@ -207,7 +208,7 @@ const RiskRadarGame: React.FC = () => {
           {percentage < 100 && (
             <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
               <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                💡 <strong>Learning Point:</strong> The risks you missed could have saved you from a bad investment. 
+                <ThemedEmoji emoji="💡" className="h-[1em] w-[1em]" /> <strong>Learning Point:</strong> The risks you missed could have saved you from a bad investment. 
                 Always dig deep beyond surface-level positives!
               </p>
             </div>
@@ -259,7 +260,7 @@ const RiskRadarGame: React.FC = () => {
           <div className="space-y-2">
             {company.visibleFacts.map((fact, index) => (
               <div key={index} className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-3 text-sm">
-                <p>✅ {fact}</p>
+                <p><ThemedEmoji emoji="✅" className="h-[1em] w-[1em]" /> {fact}</p>
               </div>
             ))}
           </div>

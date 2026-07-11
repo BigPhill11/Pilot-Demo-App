@@ -141,43 +141,67 @@ Deno.serve(async (req) => {
       CONTENT_CATALOG +
       '\n\nReturn ONLY valid JSON with exactly these keys:\n- "answer": your full plain-text response (no markdown symbols)\n- "needs_web": boolean, true only if the question needs live prices or today\'s news\n- "study_next": array of exactly 3 short topic strings to study next\n- "sources": array of source name strings (empty array if none)\n- "related_modules": array of 0-3 objects for modules DIRECTLY relevant to the question, each with:\n  - "id": exact module id from the catalog (e.g. "investing")\n  - "title": human-readable title (e.g. "Investing")\n  - "path": the path listed for that specific id in the catalog — use it exactly as written (e.g. "/learn?tab=personal-finance", "/career/interviewing", "/career", "/soft-skills")\n  - "reason": one short phrase max 8 words explaining relevance\n\nOnly include related_modules that genuinely match. Empty array is fine.';
 
-    const geminiRes = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + geminiKey,
-        },
-        body: JSON.stringify({
-          model: "gemini-2.5-flash",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: message },
-          ],
-          temperature: 0.3,
-          max_tokens: 1400,
-          response_format: { type: "json_object" },
-        }),
+    // gemini-2.5-flash is a THINKING model: it spends output tokens on internal
+    // reasoning before writing the reply. With a small max_tokens the thinking
+    // consumes the budget and the JSON comes back truncated (worst on the
+    // first/cold request). So: large token budget, low reasoning effort, and
+    // one automatic retry — except on 429, where retrying only burns quota.
+    // Never fall back to echoing raw model output as the answer; a truncated
+    // JSON blob in the chat is worse than a friendly error.
+    let rateLimited = false;
+    const callGemini = async (): Promise<Record<string, unknown> | null> => {
+      const res = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + geminiKey,
+          },
+          body: JSON.stringify({
+            model: "gemini-2.5-flash",
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: message },
+            ],
+            temperature: 0.3,
+            max_tokens: 3000,
+            reasoning_effort: "low",
+            response_format: { type: "json_object" },
+          }),
+        }
+      );
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        console.error("AskPhil Gemini error:", res.status, JSON.stringify(data).slice(0, 500));
+        if (res.status === 429) rateLimited = true;
+        return null;
       }
-    );
+      const choice = data?.choices?.[0];
+      const content = choice?.message?.content ?? "";
+      try {
+        const parsed = JSON.parse(content) as Record<string, unknown>;
+        if (typeof parsed.answer !== "string" || !parsed.answer.trim()) return null;
+        return parsed;
+      } catch (_) {
+        console.error(
+          "AskPhil unparseable model output. finish_reason:",
+          choice?.finish_reason,
+          "content:",
+          String(content).slice(0, 300),
+        );
+        return null;
+      }
+    };
 
-    const geminiData = await geminiRes.json().catch(() => ({}));
-
-    if (!geminiRes.ok) {
-      console.error("Gemini error:", JSON.stringify(geminiData));
+    let parsed = await callGemini();
+    if (!parsed && !rateLimited) parsed = await callGemini(); // one silent retry
+    if (!parsed) {
       return json({
-        error: "Phil couldn't think of an answer just now. Please try again in a moment.",
+        error: rateLimited
+          ? "Phil has been answering questions nonstop and needs a quick breather! Give him a minute and try again."
+          : "Phil couldn't think of an answer just now. Please try again in a moment.",
       });
-    }
-
-    const content = geminiData?.choices?.[0]?.message?.content ?? "";
-
-    let parsed: Record<string, unknown>;
-    try {
-      parsed = JSON.parse(content);
-    } catch (_) {
-      parsed = { answer: content, needs_web: false, study_next: [], sources: [], related_modules: [] };
     }
 
     if (!Array.isArray(parsed.related_modules)) {

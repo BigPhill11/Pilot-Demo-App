@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, PlayCircle, TrendingUp } from 'lucide-react';
+import { BookOpen, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -13,16 +13,10 @@ const QuickActionsRow: React.FC<QuickActionsRowProps> = ({ onNavigate }) => {
 
   const actions = [
     {
-      tab: 'adaptive-flashcards',
-      label: 'Quick Review',
-      icon: PlayCircle,
-      primary: true,
-    },
-    {
       tab: 'personal-finance',
       label: 'Continue Learning',
       icon: BookOpen,
-      primary: false,
+      primary: true,
     },
     {
       tab: 'companies',
@@ -33,7 +27,7 @@ const QuickActionsRow: React.FC<QuickActionsRowProps> = ({ onNavigate }) => {
   ];
 
   return (
-    <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-3'} gap-3`}>
+    <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2'} gap-3`}>
       {actions.map((action, index) => {
         const Icon = action.icon;
         return (

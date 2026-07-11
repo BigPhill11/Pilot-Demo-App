@@ -6,6 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface PandaTermTooltipProps {
   term: string;
@@ -33,7 +34,7 @@ const PandaTermTooltip: React.FC<PandaTermTooltipProps> = ({
         <TooltipContent className="max-w-sm bg-popover text-popover-foreground p-4 rounded-lg shadow-lg border">
           <div className="space-y-3">
             <div className="flex items-start space-x-2">
-              <div className="text-lg">🐼</div>
+              <div className="text-lg"><ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /></div>
               <div>
                 <p className="font-semibold text-primary mb-1">{term}</p>
                 <p className="text-xs leading-relaxed mb-2">{definition}</p>

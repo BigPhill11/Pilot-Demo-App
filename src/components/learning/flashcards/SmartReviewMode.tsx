@@ -9,6 +9,7 @@ import { ReviewScheduleCard } from "./ReviewScheduleCard";
 import { ReviewDashboard } from "./ReviewDashboard";
 import { getAllUnifiedFlashcards, UnifiedFlashcard } from "@/data/unified-flashcards";
 import { SM2Progress, isDueForReview, getDaysUntilReview, sortCardsByPriority } from "@/utils/spaced-repetition";
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 // Compatibility type alias
 type CategorizedFlashcard = UnifiedFlashcard;
@@ -114,7 +115,7 @@ export const SmartReviewMode = ({ allSM2Progress, onStartReview, onCardClick }: 
           {dueCards.length === 0 && (
             <Card className="p-8 text-center bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20">
               <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold mb-2">All Caught Up! 🎉</h3>
+              <h3 className="text-2xl font-bold mb-2">All Caught Up! <ThemedEmoji emoji="🎉" className="h-[1em] w-[1em]" /></h3>
               <p className="text-muted-foreground mb-4">
                 No cards are due for review right now. Great work!
               </p>

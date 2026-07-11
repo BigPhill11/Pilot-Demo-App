@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, CreditCard, Clock, AlertTriangle } from 'lucide-react';
 import { useCreditStore } from '@/store/useCreditStore';
 import { useGameStore } from '@/store/useGameStore';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface CreditCardPanelProps {
   isOpen: boolean;
@@ -238,7 +239,7 @@ const CreditCardPanel: React.FC<CreditCardPanelProps> = ({ isOpen, onClose, onPa
                 className="text-center py-2"
               >
                 <p className="text-green-600 dark:text-green-400 font-medium text-sm">
-                  ✅ Payment successful
+                  <ThemedEmoji emoji="✅" className="h-[1em] w-[1em]" /> Payment successful
                 </p>
               </motion.div>
             ) : balance > 0 ? (
@@ -298,7 +299,7 @@ const CreditCardPanel: React.FC<CreditCardPanelProps> = ({ isOpen, onClose, onPa
               </div>
             ) : (
               <p className="text-green-600 dark:text-green-400 font-medium text-sm text-center py-1">
-                🎉 No balance due
+                <ThemedEmoji emoji="🎉" className="h-[1em] w-[1em]" /> No balance due
               </p>
             )}
           </div>

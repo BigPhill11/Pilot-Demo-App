@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Zap, Target, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import confetti from 'canvas-confetti';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface PowerMoveProps {
   powerMove: string;
@@ -86,7 +87,7 @@ const PowerMove: React.FC<PowerMoveProps> = ({ powerMove, realLifeAction, onComp
         transition={{ delay: 0.6 }}
         className="flex items-start gap-3 bg-muted/30 rounded-lg p-4"
       >
-        <span className="text-2xl">🐼</span>
+        <span className="text-2xl"><ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /></span>
         <p className="text-sm text-muted-foreground italic">
           "Knowledge without action is just entertainment. Take what you learned today and use it this week."
         </p>

@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Flame, Snowflake, Trophy, Calendar } from "lucide-react";
 import { StreakData } from "@/types/flashcard-gamification";
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface StreakTrackerProps {
   streakData: StreakData;
@@ -36,7 +37,7 @@ export const StreakTracker = ({ streakData, onUseFreeze }: StreakTrackerProps) =
               <h3 className="text-2xl font-bold">{streakData.currentStreak} Day Streak</h3>
               {streakData.currentStreak >= 7 && (
                 <Badge variant="secondary" className="bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-100">
-                  🔥 On Fire!
+                  <ThemedEmoji emoji="🔥" className="h-[1em] w-[1em]" /> On Fire!
                 </Badge>
               )}
             </div>
@@ -80,7 +81,7 @@ export const StreakTracker = ({ streakData, onUseFreeze }: StreakTrackerProps) =
       {streakData.streakFreezeTokens === 0 && (
         <div className="mt-4 p-3 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800">
           <p className="text-xs text-blue-700 dark:text-blue-300">
-            💡 Earn streak freeze tokens by mastering cards. Use them to protect your streak if you miss a day!
+            <ThemedEmoji emoji="💡" className="h-[1em] w-[1em]" /> Earn streak freeze tokens by mastering cards. Use them to protect your streak if you miss a day!
           </p>
         </div>
       )}

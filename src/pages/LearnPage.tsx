@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import PersonalFinanceTab from "@/components/learn/PersonalFinanceTab";
 import LearningDashboard from "@/components/learning/LearningDashboard";
-import AdaptiveFlashcards from "@/components/learning/AdaptiveFlashcards";
 import MarketIntelligenceTab from "@/components/learn/MarketIntelligenceTab";
 import CareersInFinanceTab from "@/components/learn/CareersInFinanceTab";
 import { useDailyLogin } from "@/hooks/useDailyLogin";
@@ -16,13 +15,11 @@ import {
   Wallet,
   TrendingUp,
   Briefcase,
-  Layers,
   Menu,
 } from 'lucide-react';
 
 const TABS = [
   { value: 'interactive-hub',     label: 'Dashboard',   icon: LayoutDashboard },
-  { value: 'adaptive-flashcards', label: 'Flashcards',  icon: Layers },
   { value: 'personal-finance',    label: 'Finance',     icon: Wallet },
   { value: 'companies',           label: 'Markets',     icon: TrendingUp },
   { value: 'careers',             label: 'Careers',     icon: Briefcase },
@@ -137,10 +134,6 @@ const LearnPage = () => {
 
         <TabsContent value="interactive-hub" className="mt-0">
           <LearningDashboard onNavigateToTab={handleTabChange} />
-        </TabsContent>
-
-        <TabsContent value="adaptive-flashcards" className="mt-0">
-          <AdaptiveFlashcards />
         </TabsContent>
 
         <TabsContent value="personal-finance" className="mt-0">

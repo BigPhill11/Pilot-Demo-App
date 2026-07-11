@@ -9,6 +9,7 @@ import EnhancedCompanySwipeCard from './EnhancedCompanySwipeCard';
 import { InvestorProfile, CompanyMatch, SectorSubdivision } from '@/types/investor-profile';
 import { useCompanies } from '@/hooks/useCompanies';
 import { CompanyProfile } from '@/components/learn/CompanySwipeCard';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 type FlowStep = 'sector' | 'profile' | 'swiping' | 'matches';
 
@@ -239,7 +240,7 @@ const InvestorDiscoveryFlow: React.FC = () => {
                             {match.matchScore}% Match
                           </Badge>
                           {match.userAction === 'super_like' && (
-                            <Badge variant="secondary" className="ml-2">Super Like ❤️</Badge>
+                            <Badge variant="secondary" className="ml-2">Super Like <ThemedEmoji emoji="❤️" className="h-[1em] w-[1em]" /></Badge>
                           )}
                         </div>
                       </div>

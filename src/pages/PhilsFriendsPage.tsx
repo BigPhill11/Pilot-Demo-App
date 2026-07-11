@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import PandaLogo from '@/components/icons/PandaLogo';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 const PhilsFriendsPage: React.FC = () => {
   return (
@@ -59,7 +60,7 @@ const PhilsFriendsPage: React.FC = () => {
           I&apos;m hard at work building Phil&apos;s Friends — short, fun videos to help you
           learn money and career skills from people who&apos;ve been there. It&apos;s not
           quite ready yet, but it&apos;s coming. Thanks for your patience — it&apos;ll be
-          worth the wait! 🐼
+          worth the wait! <ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" />
         </p>
       </motion.div>
 

@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { DashboardPath } from '@/hooks/useDashboardProgress';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface LearningPathCardsProps {
   paths: DashboardPath[];
@@ -60,7 +61,7 @@ const LearningPathCards: React.FC<LearningPathCardsProps> = ({ paths, loading, o
                 >
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-3xl drop-shadow-sm">{path.icon}</span>
+                      <span className="text-3xl drop-shadow-sm"><ThemedEmoji emoji={path.icon} className="h-[1em] w-[1em]" /></span>
                       <Badge variant="outline" className="text-xs border-primary/30 text-primary">
                         {path.lessonsCompleted}/{path.totalLessons}
                       </Badge>

@@ -169,7 +169,7 @@ export function useBambooCoins() {
         }));
 
         // Show toast notification
-        toast.success(`+${coinsAwarded} 🪙 Bamboo Coins earned!`, {
+        toast.success(`+${coinsAwarded} Bamboo Coins earned!`, {
           description: `${xpEarned} XP from ${source.replace(/_/g, ' ')}`,
         });
 
@@ -218,7 +218,7 @@ export function useBambooCoins() {
         }));
 
         toast.success(`Purchased ${itemName}!`, {
-          description: `-${amount} 🪙 Bamboo Coins`,
+          description: `-${amount} Bamboo Coins`,
         });
 
         return true;

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import BossShell, { BossScoreCard } from './BossShell';
 import { usePlatformIntegration } from '@/hooks/usePlatformIntegration';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface Headline {
   text: string;
@@ -221,7 +222,7 @@ const PhilsNewsRoom: React.FC<PhilsNewsRoomProps> = ({ onComplete, onExit }) => 
         <div className="space-y-4">
           {timedOut && (
             <div className="p-3 rounded-lg bg-amber-900/30 border border-amber-600 text-center text-amber-300 text-sm">
-              ⏰ Time\'s up! You sorted {answered} of {HEADLINES.length} headlines.
+              <ThemedEmoji emoji="⏰" className="h-[1em] w-[1em]" /> Time\'s up! You sorted {answered} of {HEADLINES.length} headlines.
             </div>
           )}
           <BossScoreCard

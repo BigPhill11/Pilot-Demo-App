@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { ThumbsUp, ThumbsDown, Minus, TrendingUp, TrendingDown } from 'lucide-react';
 import { toast } from 'sonner';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface NewsHeadline {
   id: string;
@@ -132,7 +133,7 @@ const NewsSentimentAnalyzer: React.FC = () => {
           {percentage >= 75 && (
             <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-4 text-center">
               <p className="font-semibold text-green-700 dark:text-green-300">
-                🎉 Excellent work! You have a strong grasp of news sentiment analysis.
+                <ThemedEmoji emoji="🎉" className="h-[1em] w-[1em]" /> Excellent work! You have a strong grasp of news sentiment analysis.
               </p>
             </div>
           )}
@@ -243,7 +244,7 @@ const NewsSentimentAnalyzer: React.FC = () => {
             }`}>
               <p className="font-semibold mb-2">
                 {selectedSentiment === currentHeadline.correctSentiment
-                  ? '✅ Correct!'
+                  ? '<ThemedEmoji emoji="✅" className="h-[1em] w-[1em]" /> Correct!'
                   : `❌ Incorrect. The correct answer is: ${currentHeadline.correctSentiment}`
                 }
               </p>

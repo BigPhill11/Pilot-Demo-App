@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, MessageSquare, Lightbulb } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface MiniReflectionProps {
   question: string;
@@ -71,7 +72,7 @@ const MiniReflection: React.FC<MiniReflectionProps> = ({ question, followUp, onC
       </div>
 
       <div className="flex items-start gap-3 bg-muted/30 rounded-lg p-4">
-        <span className="text-2xl">🐼</span>
+        <span className="text-2xl"><ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /></span>
         <p className="text-sm text-muted-foreground italic">
           "There are no wrong answers here. Reflection helps you connect learning to your own life."
         </p>

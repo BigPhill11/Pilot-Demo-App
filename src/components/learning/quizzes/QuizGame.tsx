@@ -21,6 +21,7 @@ import { usePlatformIntegration } from '@/hooks/usePlatformIntegration';
 import { getAllUnifiedFlashcards, getFlashcardsByCategory, UnifiedFlashcard } from '@/data/unified-flashcards';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 type Difficulty = 'easy' | 'medium' | 'hard';
 
@@ -362,7 +363,7 @@ const QuizGame: React.FC<QuizGameProps> = ({ topicId, difficulty, onComplete, on
                   <span className="font-semibold text-green-600">Correct!</span>
                   {streak > 1 && (
                     <Badge variant="secondary" className="ml-auto">
-                      🔥 {streak} in a row!
+                      <ThemedEmoji emoji="🔥" className="h-[1em] w-[1em]" /> {streak} in a row!
                     </Badge>
                   )}
                 </>

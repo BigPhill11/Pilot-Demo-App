@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 export interface SurveyQuestion {
   id: string;
@@ -278,7 +279,7 @@ const CareerPreferenceSurvey: React.FC<CareerPreferenceSurveyProps> = ({ onCompl
           <div className="flex items-center gap-2 mb-4">
             <Sparkles className="h-6 w-6 text-primary animate-pulse" />
             <CardTitle className={`${isMobile ? 'text-xl' : 'text-2xl'}`}>
-              Find Your Perfect Finance Career! ✨
+              Find Your Perfect Finance Career! <ThemedEmoji emoji="✨" className="h-[1em] w-[1em]" />
             </CardTitle>
           </div>
           <CardDescription className={`${isMobile ? 'text-sm' : 'text-base'}`}>

@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { EconomicsUnit, EconomicsTrack, UnitProgress } from '@/types/economics-curriculum';
 import EconomicsUnitCard from './EconomicsUnitCard';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface EconomicsTrackSectionProps {
   track: EconomicsTrack;
@@ -86,7 +87,7 @@ const EconomicsTrackSection: React.FC<EconomicsTrackSectionProps> = ({
     <div className="space-y-4">
       <div className={`relative overflow-hidden rounded-xl bg-gradient-to-br ${config.gradient} ${config.borderColor} border shadow-sm`}>
         <div className={`flex items-center gap-2 px-4 py-2 bg-white/40 border-b ${config.borderColor}`}>
-          <span className="text-xl">{config.icon}</span>
+          <span className="text-xl"><ThemedEmoji emoji={config.icon} className="h-[1em] w-[1em]" /></span>
           <span className={`${config.textColor} font-semibold`}>{config.title}</span>
           <Badge variant="outline" className={`ml-auto text-xs ${config.badgeColor}`}>
             {completedUnits}/{trackUnits.length} units

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { LessonVisual } from '@/types/mi-lesson';
 import { cn } from '@/lib/utils';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface LessonVisualImageProps {
   visual: LessonVisual;
@@ -42,7 +43,7 @@ const LessonVisualImage: React.FC<LessonVisualImageProps> = ({
         aria-label={visual.alt}
       >
         <span className="text-4xl mb-2" aria-hidden>
-          📊
+          <ThemedEmoji emoji="📊" className="h-[1em] w-[1em]" />
         </span>
         <p className="text-xs font-medium text-emerald-900/80 px-2">{visual.alt}</p>
       </div>

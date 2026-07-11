@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ThumbsUp, ThumbsDown, Eye, TrendingUp, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface CompanyScenario {
   name: string;
@@ -304,7 +305,7 @@ const InvestmentDecisionSimulator: React.FC = () => {
               <div className="flex items-center gap-2 mb-3">
                 {isCorrect && <CheckCircle2 className="h-5 w-5 text-green-600" />}
                 <h4 className="font-bold">
-                  {isCorrect ? '✅ Correct! ' : '💡 Expert Decision: '}
+                  {isCorrect ? '<ThemedEmoji emoji="✅" className="h-[1em] w-[1em]" /> Correct! ' : '<ThemedEmoji emoji="💡" className="h-[1em] w-[1em]" /> Expert Decision: '}
                   <span className={`capitalize ${getDecisionColor(scenario.expertDecision)}`}>
                     {scenario.expertDecision}
                   </span>

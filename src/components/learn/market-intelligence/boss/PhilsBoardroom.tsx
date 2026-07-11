@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import BossShell, { BossScoreCard } from './BossShell';
 import { usePlatformIntegration } from '@/hooks/usePlatformIntegration';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface Round {
   dealBrief: string;
@@ -223,7 +224,7 @@ const PhilsBoardroom: React.FC<PhilsBoardroomProps> = ({ onComplete, onExit }) =
         {/* Conference table */}
         <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-800/50">
           <div className="flex gap-2 mb-3 justify-center text-2xl">
-            <span>🐼</span><span>🐼</span><span title="Phil">👔</span><span>🐼</span><span>🐼</span>
+            <span><ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /></span><span><ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /></span><span title="Phil">👔</span><span><ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /></span><span><ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /></span>
           </div>
           <p className="text-xs text-amber-200/70 text-center mb-2">Deal Brief</p>
           <p className="text-sm text-amber-100 leading-relaxed">{round.dealBrief}</p>
@@ -248,7 +249,7 @@ const PhilsBoardroom: React.FC<PhilsBoardroomProps> = ({ onComplete, onExit }) =
                   )}
                 >
                   {opt}
-                  {answerRevealed && i === q.correct && q.sharp === i && <span className="ml-2 text-xs text-emerald-400">⚡ Sharp</span>}
+                  {answerRevealed && i === q.correct && q.sharp === i && <span className="ml-2 text-xs text-emerald-400"><ThemedEmoji emoji="⚡" className="h-[1em] w-[1em]" /> Sharp</span>}
                 </button>
               ))}
             </div>

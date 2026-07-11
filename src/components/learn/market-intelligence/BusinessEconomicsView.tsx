@@ -14,6 +14,7 @@ const allEconomicsUnits = [...economicsUnits, ...businessCompetitionUnits];
 import { getSimulatorIdByUnitId } from '@/data/economics-simulators';
 import { EconomicsTrack, EconomicsLesson, EconomicsUnit } from '@/types/economics-curriculum';
 import { EconomicsSimulatorId } from '@/types/economics-sim';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 /**
  * Business Economics View
@@ -154,7 +155,7 @@ const BusinessEconomicsView: React.FC = () => {
         <div className="p-6">
           <div className="flex items-start gap-4">
             <div className="p-3 rounded-lg bg-emerald-100 border border-emerald-200">
-              <span className="text-3xl">📊</span>
+              <span className="text-3xl"><ThemedEmoji emoji="📊" className="h-[1em] w-[1em]" /></span>
             </div>
             <div className="flex-1">
               <h2 className="text-2xl font-bold text-green-800 mb-2">Business Economics</h2>
@@ -172,13 +173,13 @@ const BusinessEconomicsView: React.FC = () => {
                   🌍 Macro: {totalProgress.macroeconomics}/{macroUnits.length} units
                 </Badge>
                 <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-300">
-                  🏢 Biz & Comp: {totalProgress.businessesCompetition}/{bizCompUnits.length} units
+                  <ThemedEmoji emoji="🏢" className="h-[1em] w-[1em]" /> Biz & Comp: {totalProgress.businessesCompetition}/{bizCompUnits.length} units
                 </Badge>
                 <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-300">
-                  ⭐ {totalXpEarned} XP earned
+                  <ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /> {totalXpEarned} XP earned
                 </Badge>
                 <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
-                  🎋 {totalBambooEarned} Bamboo
+                  <ThemedEmoji emoji="🎋" className="h-[1em] w-[1em]" /> {totalBambooEarned} Bamboo
                 </Badge>
               </div>
             </div>
@@ -209,7 +210,7 @@ const BusinessEconomicsView: React.FC = () => {
             value="businesses-competition"
             className="data-[state=active]:bg-white data-[state=active]:text-amber-900 data-[state=active]:shadow-sm text-xs sm:text-sm py-2"
           >
-            <span className="mr-1 sm:mr-2">🏢</span>
+            <span className="mr-1 sm:mr-2"><ThemedEmoji emoji="🏢" className="h-[1em] w-[1em]" /></span>
             <span className="hidden sm:inline">Businesses & Competition</span>
             <span className="sm:hidden">Biz & Comp</span>
           </TabsTrigger>

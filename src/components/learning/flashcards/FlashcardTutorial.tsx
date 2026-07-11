@@ -16,6 +16,7 @@ import {
   Award,
   X
 } from "lucide-react";
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface FlashcardTutorialProps {
   onClose: () => void;
@@ -95,7 +96,7 @@ export const FlashcardTutorial = ({ onClose }: FlashcardTutorialProps) => {
               <h2 className="text-2xl font-bold mb-4">Card Categories</h2>
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-semibold text-lg mb-2">📊 Personal Finance</h3>
+                  <h3 className="font-semibold text-lg mb-2"><ThemedEmoji emoji="📊" className="h-[1em] w-[1em]" /> Personal Finance</h3>
                   <p className="text-sm text-muted-foreground mb-2">
                     7 subsections covering essential money management skills
                   </p>
@@ -126,7 +127,7 @@ export const FlashcardTutorial = ({ onClose }: FlashcardTutorialProps) => {
                 </div>
 
                 <div>
-                  <h3 className="font-semibold text-lg mb-2">🏢 Company Knowledge</h3>
+                  <h3 className="font-semibold text-lg mb-2"><ThemedEmoji emoji="🏢" className="h-[1em] w-[1em]" /> Company Knowledge</h3>
                   <p className="text-sm text-muted-foreground mb-2">
                     5 industries with key companies and concepts
                   </p>
@@ -161,7 +162,7 @@ export const FlashcardTutorial = ({ onClose }: FlashcardTutorialProps) => {
                 </div>
 
                 <div>
-                  <h3 className="font-semibold mb-2">Streak Freeze Tokens 🛡️</h3>
+                  <h3 className="font-semibold mb-2">Streak Freeze Tokens <ThemedEmoji emoji="🛡️" className="h-[1em] w-[1em]" /></h3>
                   <p className="text-sm text-muted-foreground mb-2">
                     Protect your streak when life gets busy. Each token saves your streak for one missed day.
                   </p>
@@ -260,9 +261,9 @@ export const FlashcardTutorial = ({ onClose }: FlashcardTutorialProps) => {
                     spaced repetition algorithm schedules your next review:
                   </p>
                   <ul className="text-sm mt-2 space-y-1">
-                    <li>• ⭐ Low confidence = Review sooner</li>
-                    <li>• ⭐⭐⭐ Medium confidence = Moderate interval</li>
-                    <li>• ⭐⭐⭐⭐⭐ High confidence = Longer interval</li>
+                    <li>• <ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /> Low confidence = Review sooner</li>
+                    <li>• <ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /><ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /><ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /> Medium confidence = Moderate interval</li>
+                    <li>• <ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /><ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /><ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /><ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /><ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /> High confidence = Longer interval</li>
                   </ul>
                 </div>
               </div>
@@ -376,9 +377,9 @@ export const FlashcardTutorial = ({ onClose }: FlashcardTutorialProps) => {
                 <div className="p-4 bg-green-50 dark:bg-green-950/20 rounded-lg">
                   <h3 className="font-semibold mb-2">Review Schedule Example</h3>
                   <div className="text-sm space-y-1">
-                    <p>Day 1: Review → 5⭐ confidence → Next review in 4 days</p>
-                    <p>Day 5: Review → 4⭐ confidence → Next review in 9 days</p>
-                    <p>Day 14: Review → 5⭐ confidence → Next review in 20 days</p>
+                    <p>Day 1: Review → 5<ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /> confidence → Next review in 4 days</p>
+                    <p>Day 5: Review → 4<ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /> confidence → Next review in 9 days</p>
+                    <p>Day 14: Review → 5<ThemedEmoji emoji="⭐" className="h-[1em] w-[1em]" /> confidence → Next review in 20 days</p>
                     <p className="text-muted-foreground italic mt-2">
                       The system adapts to your performance automatically!
                     </p>
@@ -411,7 +412,7 @@ export const FlashcardTutorial = ({ onClose }: FlashcardTutorialProps) => {
 
               <div className="space-y-4">
                 <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
-                  <h3 className="font-semibold mb-2">💡 Maximize Learning</h3>
+                  <h3 className="font-semibold mb-2"><ThemedEmoji emoji="💡" className="h-[1em] w-[1em]" /> Maximize Learning</h3>
                   <ul className="text-sm space-y-1">
                     <li>• Study at the same time each day to build a habit</li>
                     <li>• Focus on understanding, not just memorization</li>
@@ -431,7 +432,7 @@ export const FlashcardTutorial = ({ onClose }: FlashcardTutorialProps) => {
                 </div>
 
                 <div className="p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
-                  <h3 className="font-semibold mb-2">🧠 Study Strategies</h3>
+                  <h3 className="font-semibold mb-2"><ThemedEmoji emoji="🧠" className="h-[1em] w-[1em]" /> Study Strategies</h3>
                   <ul className="text-sm space-y-1">
                     <li>• Start with Regular Study to learn new concepts</li>
                     <li>• Use Smart Review to reinforce at optimal times</li>
@@ -442,7 +443,7 @@ export const FlashcardTutorial = ({ onClose }: FlashcardTutorialProps) => {
                 </div>
 
                 <div className="p-4 bg-orange-50 dark:bg-orange-950/20 rounded-lg">
-                  <h3 className="font-semibold mb-2">⚡ Quick Wins</h3>
+                  <h3 className="font-semibold mb-2"><ThemedEmoji emoji="⚡" className="h-[1em] w-[1em]" /> Quick Wins</h3>
                   <ul className="text-sm space-y-1">
                     <li>• Build a 7-day streak to earn your first freeze token source</li>
                     <li>• Focus on one category at a time to build expertise</li>
@@ -457,7 +458,7 @@ export const FlashcardTutorial = ({ onClose }: FlashcardTutorialProps) => {
 
         <div className="flex justify-center pt-4">
           <Button onClick={onClose} size="lg">
-            Start Learning! 🚀
+            Start Learning! <ThemedEmoji emoji="🚀" className="h-[1em] w-[1em]" />
           </Button>
         </div>
       </div>

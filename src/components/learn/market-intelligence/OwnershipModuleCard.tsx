@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Check, Clock, ChevronRight, Play } from 'lucide-react';
 import { ModuleCardData } from '@/data/market-intelligence/catalog';
 import { getOwnershipLesson } from '@/data/market-intelligence/ownership-lessons';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface OwnershipModuleCardProps {
   module: ModuleCardData;
@@ -50,7 +51,7 @@ const OwnershipModuleCard: React.FC<OwnershipModuleCardProps> = ({
               )}
               {module.rewards && (
                 <Badge variant="outline" className="text-xs bg-teal-50 text-teal-700 border-teal-200">
-                  +{module.rewards.bamboo} 🎋
+                  +{module.rewards.bamboo} <ThemedEmoji emoji="🎋" className="h-[1em] w-[1em]" />
                 </Badge>
               )}
             </div>

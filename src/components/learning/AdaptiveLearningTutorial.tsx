@@ -7,6 +7,7 @@ import { Brain, BookOpen, Lightbulb, Trophy, Upload, TrendingUp, X, ArrowRight, 
 import confetti from 'canvas-confetti';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface AdaptiveLearningTutorialProps {
   onComplete: () => void;
@@ -118,7 +119,7 @@ const AdaptiveLearningTutorial: React.FC<AdaptiveLearningTutorialProps> = ({ onC
               </Card>
               <Card className="border-2 border-yellow-200 bg-yellow-50">
                 <CardContent className="p-4 flex items-center gap-4">
-                  <Badge className="bg-yellow-500 text-white text-lg px-4 py-2">📚</Badge>
+                  <Badge className="bg-yellow-500 text-white text-lg px-4 py-2"><ThemedEmoji emoji="📚" className="h-[1em] w-[1em]" /></Badge>
                   <div>
                     <h3 className="font-semibold">Still Learning</h3>
                     <p className="text-sm text-muted-foreground">Card comes back later for practice</p>
@@ -127,7 +128,7 @@ const AdaptiveLearningTutorial: React.FC<AdaptiveLearningTutorialProps> = ({ onC
               </Card>
               <Card className="border-2 border-green-200 bg-green-50">
                 <CardContent className="p-4 flex items-center gap-4">
-                  <Badge className="bg-green-500 text-white text-lg px-4 py-2">✅</Badge>
+                  <Badge className="bg-green-500 text-white text-lg px-4 py-2"><ThemedEmoji emoji="✅" className="h-[1em] w-[1em]" /></Badge>
                   <div>
                     <h3 className="font-semibold">Mastered</h3>
                     <p className="text-sm text-muted-foreground">Card graduates - won't show again!</p>
@@ -253,10 +254,10 @@ const AdaptiveLearningTutorial: React.FC<AdaptiveLearningTutorialProps> = ({ onC
                       😕 Unsure
                     </Button>
                     <Button variant="outline" className="text-xs bg-yellow-50 border-yellow-200" disabled>
-                      📚 Still Learning
+                      <ThemedEmoji emoji="📚" className="h-[1em] w-[1em]" /> Still Learning
                     </Button>
                     <Button variant="outline" className="text-xs bg-green-50 border-green-200" disabled>
-                      ✅ Mastered It
+                      <ThemedEmoji emoji="✅" className="h-[1em] w-[1em]" /> Mastered It
                     </Button>
                   </div>
                 </div>
@@ -410,7 +411,7 @@ const AdaptiveLearningTutorial: React.FC<AdaptiveLearningTutorialProps> = ({ onC
               disabled={!canProceed()}
               className="bg-primary hover:bg-primary/90"
             >
-              {currentStep === totalSteps ? 'Start Learning! 🚀' : 'Next'}
+              {currentStep === totalSteps ? 'Start Learning! <ThemedEmoji emoji="🚀" className="h-[1em] w-[1em]" />' : 'Next'}
               {currentStep < totalSteps && <ArrowRight className="h-4 w-4 ml-2" />}
             </Button>
           </div>

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import PandaLogo from '@/components/icons/PandaLogo';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface JungleHeroHeaderProps {
   displayName?: string | null;
@@ -34,7 +35,7 @@ const JungleHeroHeader: React.FC<JungleHeroHeaderProps> = ({
             <h1 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-foreground`}>
               {greeting}
             </h1>
-            <p className="text-sm text-muted-foreground">Your learning trail awaits 🌿</p>
+            <p className="text-sm text-muted-foreground">Your learning trail awaits <ThemedEmoji emoji="🌿" className="h-[1em] w-[1em]" /></p>
           </div>
         </div>
         <div className={`flex flex-wrap gap-2 ${isMobile ? 'justify-center' : ''}`}>

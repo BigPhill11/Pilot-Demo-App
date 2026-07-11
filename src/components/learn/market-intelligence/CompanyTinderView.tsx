@@ -18,6 +18,7 @@ import CompanyTinderGame from '../company-tinder/CompanyTinderGame';
 import { useCompanies } from '@/hooks/useCompanies';
 import { getDailyMacroScenario, MacroScenario } from '../company-tinder/macroScenarios';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 export type TinderGameMode = 'classic' | 'macro-aware' | 'thesis-builder' | 'time-horizon' | 'challenge-run';
 
@@ -175,7 +176,7 @@ const CompanyTinderView: React.FC<CompanyTinderViewProps> = ({ compact = false }
               <TrendingUp className="h-5 w-5 text-emerald-600 shrink-0" />
               <h3 className="font-semibold text-green-800 truncate">Today's Economic Backdrop</h3>
               {compact && isMobile && (
-                <span className="text-lg ml-1">{todaysMacro.icon}</span>
+                <span className="text-lg ml-1"><ThemedEmoji emoji={todaysMacro.icon} className="h-[1em] w-[1em]" /></span>
               )}
             </div>
             <div className="flex items-center gap-1">
@@ -205,7 +206,7 @@ const CompanyTinderView: React.FC<CompanyTinderViewProps> = ({ compact = false }
         {!(compact && isMobile && macroCollapsed) && (
           <CardContent>
             <div className="flex items-center gap-3">
-              <span className="text-2xl">{todaysMacro.icon}</span>
+              <span className="text-2xl"><ThemedEmoji emoji={todaysMacro.icon} className="h-[1em] w-[1em]" /></span>
               <div>
                 <p className="font-medium text-green-800">{todaysMacro.name}</p>
                 <p className="text-sm text-green-600/80">{todaysMacro.shortDescription}</p>
@@ -250,7 +251,7 @@ const CompanyTinderView: React.FC<CompanyTinderViewProps> = ({ compact = false }
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
                 <div className={`p-2 rounded-lg bg-gradient-to-br ${mode.color} text-white shrink-0`}>
-                  {mode.icon}
+                  <ThemedEmoji emoji={mode.icon} className="h-[1em] w-[1em]" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
@@ -292,7 +293,7 @@ const MacroBanner: React.FC<{ scenario: MacroScenario }> = ({ scenario }) => {
   return (
     <div className="p-3 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200">
       <div className="flex items-center gap-3">
-        <span className="text-xl">{scenario.icon}</span>
+        <span className="text-xl"><ThemedEmoji emoji={scenario.icon} className="h-[1em] w-[1em]" /></span>
         <div className="flex-1">
           <p className="text-sm font-medium text-green-800">
             Current Backdrop: {scenario.name}

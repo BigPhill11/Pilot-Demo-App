@@ -23,6 +23,7 @@ import type { UnifiedFlashcard } from '@/data/unified-flashcards';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Check, X } from 'lucide-react';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface SwipeableFlashcardProps {
   card: UnifiedFlashcard;
@@ -268,7 +269,7 @@ const SwipeableFlashcard: React.FC<SwipeableFlashcardProps> = ({
                       <div
                         className="rounded-2xl p-4 text-sm leading-relaxed bg-white/60 dark:bg-emerald-900/40 border-l-[3px] border-l-emerald-600 text-emerald-900 dark:text-emerald-100"
                       >
-                        <span className="font-bold">🐼 Phil says: </span>
+                        <span className="font-bold"><ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /> Phil says: </span>
                         {card.philExample}
                       </div>
                     )}

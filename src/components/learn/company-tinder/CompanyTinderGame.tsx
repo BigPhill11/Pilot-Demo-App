@@ -21,6 +21,7 @@ import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 import { MacroScenario, getDailyMacroScenario, getSectorBias } from './macroScenarios';
 import { usePlatformIntegration } from '@/hooks/usePlatformIntegration';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 export type TinderGameMode = 'classic' | 'macro-aware' | 'thesis-builder' | 'time-horizon' | 'challenge-run';
 
@@ -312,7 +313,7 @@ const CompanyTinderGame: React.FC<CompanyTinderGameProps> = ({
     return (
       <Card className="text-center py-12">
         <CardContent className="space-y-6">
-          <div className="text-6xl mb-4">🎉</div>
+          <div className="text-6xl mb-4"><ThemedEmoji emoji="🎉" className="h-[1em] w-[1em]" /></div>
           <h2 className="text-3xl font-bold">All Done!</h2>
           <p className="text-lg text-muted-foreground">
             You've swiped through all {totalCompanies} companies
@@ -385,7 +386,7 @@ const CompanyTinderGame: React.FC<CompanyTinderGameProps> = ({
           <CardContent className="py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <span className="text-2xl">{challenge.icon}</span>
+                <span className="text-2xl"><ThemedEmoji emoji={challenge.icon} className="h-[1em] w-[1em]" /></span>
                 <div>
                   <p className="font-semibold text-sm">{challenge.name}</p>
                   <p className="text-xs text-muted-foreground">{challenge.description}</p>
@@ -424,7 +425,7 @@ const CompanyTinderGame: React.FC<CompanyTinderGameProps> = ({
         <Card className="bg-gradient-to-r from-emerald-950/50 to-teal-950/50 border-emerald-500/30">
           <CardContent className="py-3">
             <div className="flex items-center gap-3">
-              <span className="text-xl">{activeMacro.icon}</span>
+              <span className="text-xl"><ThemedEmoji emoji={activeMacro.icon} className="h-[1em] w-[1em]" /></span>
               <div className="flex-1">
                 <p className="text-sm font-medium text-white">{activeMacro.name}</p>
                 <p className="text-xs text-emerald-300/70">{activeMacro.shortDescription}</p>
@@ -463,7 +464,7 @@ const CompanyTinderGame: React.FC<CompanyTinderGameProps> = ({
                     }
                   }}
                 >
-                  {option.icon} {option.label}
+                  <ThemedEmoji emoji={option.icon} className="h-[1em] w-[1em]" /> {option.label}
                 </Badge>
               ))}
             </div>

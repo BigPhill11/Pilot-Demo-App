@@ -9,6 +9,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { SimulatorMeter } from '@/types/economics-sim';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface EconomicsSimMetersProps {
   meters: SimulatorMeter[];
@@ -29,7 +30,7 @@ const MeterLabel: React.FC<{ meter: SimulatorMeter; className?: string }> = ({
   className = 'text-xs font-medium text-gray-600',
 }) => (
   <span className={className} title={meter.pestelCategory}>
-    {meter.icon} {meter.label}
+    <ThemedEmoji emoji={meter.icon} className="h-[1em] w-[1em]" /> {meter.label}
     {meter.pestelCategory && (
       <span className="block text-[10px] font-normal opacity-70 mt-0.5">
         {meter.pestelCategory}

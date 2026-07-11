@@ -4,6 +4,7 @@ import { Slider } from '@/components/ui/slider';
 import { ChevronRight, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { SliderBudgetCategory, SliderBudgetScenario } from '@/types/mi-lesson';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface SliderBudgetTryProps {
   title: string;
@@ -85,7 +86,7 @@ const SliderBudgetTry: React.FC<SliderBudgetTryProps> = ({
     return (
       <div className="space-y-4">
         <div className="text-center p-6 rounded-xl bg-emerald-50 border border-emerald-200">
-          <div className="text-4xl mb-3">🎯</div>
+          <div className="text-4xl mb-3"><ThemedEmoji emoji="🎯" className="h-[1em] w-[1em]" /></div>
           <h3 className="text-lg font-bold text-green-800 mb-1">Budget Practice Done</h3>
           <p className="text-sm text-green-700/80">
             Every allocation decision is a trade-off. The goal is always matching resources to strategy.
@@ -155,7 +156,7 @@ const SliderBudgetTry: React.FC<SliderBudgetTryProps> = ({
             score === 'good' ? 'bg-blue-50 text-blue-800 border border-blue-200' :
             'bg-amber-50 text-amber-800 border border-amber-200'
           )}>
-            {score === 'great' ? <Check className="h-4 w-4 shrink-0 mt-0.5" /> : <span className="shrink-0">💡</span>}
+            {score === 'great' ? <Check className="h-4 w-4 shrink-0 mt-0.5" /> : <span className="shrink-0"><ThemedEmoji emoji="💡" className="h-[1em] w-[1em]" /></span>}
             <div>
               <p className="font-medium mb-1">
                 {score === 'great' ? 'Great allocation.' : score === 'good' ? 'Close.' : 'Room to adjust.'}

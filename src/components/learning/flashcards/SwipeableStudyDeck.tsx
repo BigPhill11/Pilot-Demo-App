@@ -29,6 +29,7 @@ import { useUnifiedStreak } from '@/hooks/useUnifiedStreak';
 import { usePlatformIntegration } from '@/hooks/usePlatformIntegration';
 import confetti from 'canvas-confetti';
 import { emitDailyGoalEvent } from '@/lib/dailyGoalEvents';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface SwipeableStudyDeckProps {
   cards: UnifiedFlashcard[];
@@ -232,7 +233,7 @@ const SwipeableStudyDeck: React.FC<SwipeableStudyDeckProps> = ({
         >
           {/* Header */}
           <div className="text-center pt-8 pb-4 px-6">
-            <div className="text-5xl mb-3">🎉</div>
+            <div className="text-5xl mb-3"><ThemedEmoji emoji="🎉" className="h-[1em] w-[1em]" /></div>
             <h2
               className="text-2xl font-bold mb-1 text-emerald-900 dark:text-emerald-100"
             >
@@ -295,7 +296,7 @@ const SwipeableStudyDeck: React.FC<SwipeableStudyDeckProps> = ({
                   <span
                     className="text-xl font-bold text-emerald-900 dark:text-emerald-100"
                   >
-                    +{totalBamboo} 🎋
+                    +{totalBamboo} <ThemedEmoji emoji="🎋" className="h-[1em] w-[1em]" />
                   </span>
                 </div>
                 {totalXp > 0 && (
@@ -316,7 +317,7 @@ const SwipeableStudyDeck: React.FC<SwipeableStudyDeckProps> = ({
                       key={msg}
                       className="bg-emerald-600 text-white text-xs"
                     >
-                      🏆 {msg}
+                      <ThemedEmoji emoji="🏆" className="h-[1em] w-[1em]" /> {msg}
                     </Badge>
                   ))}
                 </div>

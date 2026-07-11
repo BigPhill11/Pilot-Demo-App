@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Trophy } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 export interface BossShellProps {
   title: string;
@@ -85,7 +86,7 @@ export const BossScoreCard: React.FC<BossScoreCardProps> = ({
         {firstClear && (
           <div className="mt-3 p-3 rounded-lg bg-emerald-100 border border-emerald-200">
             <p className="text-emerald-800 font-medium text-sm">First clear bonus!</p>
-            <p className="text-emerald-700 text-sm">+{rewardBamboo} 🎋 +{rewardXp} XP</p>
+            <p className="text-emerald-700 text-sm">+{rewardBamboo} <ThemedEmoji emoji="🎋" className="h-[1em] w-[1em]" /> +{rewardXp} XP</p>
           </div>
         )}
       </div>

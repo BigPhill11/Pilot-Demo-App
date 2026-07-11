@@ -12,6 +12,7 @@ import { useVillageLessonProgress } from '@/hooks/useVillageLessonProgress';
 import { useUnifiedStreak } from '@/hooks/useUnifiedStreak';
 import { recordPathTouched } from '@/hooks/useDashboardProgress';
 import { consumeDashboardDeepLink } from '@/lib/dashboardDeepLink';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 /* ─── Module theme colors for building directory cards ─── */
 const CARD_THEMES: Record<string, {
@@ -91,10 +92,10 @@ const MarketIntelligenceTab: React.FC = () => {
 
         {/* Bamboo decorations */}
         <div className="absolute right-0 top-0 bottom-0 w-24 opacity-15 select-none pointer-events-none flex items-center justify-end pr-2">
-          <span className="text-[80px]">🎋</span>
+          <span className="text-[80px]"><ThemedEmoji emoji="🎋" className="h-[1em] w-[1em]" /></span>
         </div>
         <div className="absolute left-0 bottom-0 opacity-10 select-none pointer-events-none">
-          <span className="text-[60px]">🌿</span>
+          <span className="text-[60px]"><ThemedEmoji emoji="🌿" className="h-[1em] w-[1em]" /></span>
         </div>
 
         <div className="relative z-10 p-5">

@@ -16,8 +16,11 @@ import {
   TEACH_BACK_MAX_ATTEMPTS,
   TEACH_BACK_MAX_TURNS,
   TEACH_BACK_OPT_UP_BONUS_BAMBOO_PER_TIER,
+  TEACH_BACK_PASS_REWARD_STORAGE_FRACTION,
   TEACH_BACK_PASS_THRESHOLDS,
+  TEACH_BACK_PASS_XP,
 } from '@/types/teach-back';
+import { useGameStore } from '@/store/useGameStore';
 import type { PhilAge, TeachBackAssessment, TeachBackSpec } from '@/types/teach-back';
 
 export type TeachPhilOutcome =
@@ -31,8 +34,18 @@ export type TeachPhilOutcome =
 /** What the teach step hands back to the lesson shell when it's done */
 export interface TeachPhilResult {
   outcome: TeachPhilOutcome;
+  /** Big bamboo payout for a genuine pass: 30% of max storage capacity */
+  passRewardBamboo: number;
+  /** Small XP for a pass — the payout is bamboo, not XP */
+  passXp: number;
   optUpBonusBamboo: number;
   teachBacksCompleted: number | null;
+}
+
+/** 30% of the player's max bamboo storage, so the reward scales with progress */
+export function getTeachPhilPassRewardBamboo(): number {
+  const capacity = useGameStore.getState().getStorageCapacity();
+  return Math.max(1, Math.round(capacity * TEACH_BACK_PASS_REWARD_STORAGE_FRACTION));
 }
 
 export type TeachPhilPhase =
@@ -216,6 +229,8 @@ export function useTeachPhilSession({ lessonId, spec, defaultPhilAge }: TeachPhi
   /** Teach Phil is optional — students can bail at any point with no penalty */
   const buildSkipResult = useCallback((): TeachPhilResult => ({
     outcome: 'skipped-optional',
+    passRewardBamboo: 0,
+    passXp: 0,
     optUpBonusBamboo: 0,
     teachBacksCompleted: null,
   }), []);
@@ -229,8 +244,10 @@ export function useTeachPhilSession({ lessonId, spec, defaultPhilAge }: TeachPhi
       'skipped-unavailable';
     return {
       outcome,
-      // Bonus bamboo only for a genuine pass — skipped/fallback outcomes keep
+      // Rewards only for a genuine pass — skipped/fallback outcomes keep
       // the base lesson reward but earn nothing extra
+      passRewardBamboo: outcome === 'passed' ? getTeachPhilPassRewardBamboo() : 0,
+      passXp: outcome === 'passed' ? TEACH_BACK_PASS_XP : 0,
       optUpBonusBamboo: outcome === 'passed' ? optUpBonusBamboo : 0,
       teachBacksCompleted,
     };

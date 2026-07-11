@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { PersonalFinanceModule, ModuleProgress } from '@/types/personal-finance';
 import { cn } from '@/lib/utils';
 import { getBossGameForModule } from '@/data/personal-finance/boss-games';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface ModuleLessonsViewProps {
   module: PersonalFinanceModule;
@@ -225,11 +226,11 @@ const ModuleLessonsView: React.FC<ModuleLessonsViewProps> = ({
         <h3 className="font-medium mb-2">Complete all lessons to earn:</h3>
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">✨</span>
+            <span className="text-2xl"><ThemedEmoji emoji="✨" className="h-[1em] w-[1em]" /></span>
             <span className="font-bold text-primary">{module.xpReward} XP</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-2xl">🪙</span>
+            <span className="text-2xl"><ThemedEmoji emoji="🪙" className="h-[1em] w-[1em]" /></span>
             <span className="font-bold text-amber-500">{module.coinReward} coins</span>
           </div>
         </div>

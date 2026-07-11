@@ -7,6 +7,7 @@ import { GameEndingScreen } from './GameEndingScreen';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ArrowLeft } from 'lucide-react';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface CashFlowStressTestProps {
   onComplete: (xpEarned: number, coinsEarned: number) => void;
@@ -164,7 +165,7 @@ const CashFlowStressTest = ({ onComplete, onBack }: CashFlowStressTestProps) => 
             exit={{ opacity: 0, y: -20 }}
             className="bg-card border border-border rounded-xl p-6"
           >
-            <div className="text-4xl text-center mb-4">💰</div>
+            <div className="text-4xl text-center mb-4"><ThemedEmoji emoji="💰" className="h-[1em] w-[1em]" /></div>
             <p className="text-sm leading-relaxed whitespace-pre-line text-center">
               {currentMonthData?.openingNarration}
             </p>
@@ -186,7 +187,7 @@ const CashFlowStressTest = ({ onComplete, onBack }: CashFlowStressTestProps) => 
             exit={{ opacity: 0, y: -20 }}
             className="bg-card border border-border rounded-xl p-6"
           >
-            <div className="text-4xl text-center mb-4">🐼</div>
+            <div className="text-4xl text-center mb-4"><ThemedEmoji emoji="🐼" className="h-[1em] w-[1em]" /></div>
             <p className="text-sm leading-relaxed text-center italic">
               {lastResponse}
             </p>
@@ -208,7 +209,7 @@ const CashFlowStressTest = ({ onComplete, onBack }: CashFlowStressTestProps) => 
             exit={{ opacity: 0, y: -20 }}
             className="bg-card border border-border rounded-xl p-6"
           >
-            <div className="text-4xl text-center mb-4">📊</div>
+            <div className="text-4xl text-center mb-4"><ThemedEmoji emoji="📊" className="h-[1em] w-[1em]" /></div>
             <p className="text-sm leading-relaxed whitespace-pre-line text-center">
               {currentMonthData?.closingNarration}
             </p>

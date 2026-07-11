@@ -14,6 +14,7 @@ import PowerMove from './PowerMove';
 import TeachPhilPanel from '@/components/teach-phil/TeachPhilPanel';
 import { getPersonalFinancePhilAge, getPersonalFinanceTeachBackSpec } from '@/lib/teach-back-spec';
 import { cn } from '@/lib/utils';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 /** Lessons that use the comic micro-lesson UI (roll out module-by-module). */
 const COMIC_MICRO_LESSON_IDS = new Set<string>([
@@ -219,9 +220,10 @@ const LessonContainer: React.FC<LessonContainerProps> = ({
             spec={getPersonalFinanceTeachBackSpec(lesson)}
             defaultPhilAge={getPersonalFinancePhilAge(moduleId)}
             onComplete={(result) => {
-              // Optional step: any outcome advances; a genuine pass earns the
-              // opt-up bonus as coins (coins convert 1:1 to bamboo on award)
-              handleStepComplete(0, result.optUpBonusBamboo);
+              // Optional step: any outcome advances; a genuine pass pays out
+              // 30% of max bamboo storage (+ opt-up bonus) with only a little
+              // XP (coins convert 1:1 to bamboo on award)
+              handleStepComplete(result.passXp, result.passRewardBamboo + result.optUpBonusBamboo);
               goToNextStep();
             }}
           />
@@ -330,7 +332,7 @@ const LessonContainer: React.FC<LessonContainerProps> = ({
               {xpEarned} XP
             </span>
             <span className="flex items-center gap-1 text-amber-500">
-              🪙 {coinsEarned}
+              <ThemedEmoji emoji="🪙" className="h-[1em] w-[1em]" /> {coinsEarned}
             </span>
           </motion.div>
         )}

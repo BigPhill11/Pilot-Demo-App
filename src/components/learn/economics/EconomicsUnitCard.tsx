@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Check, Clock, ChevronRight, Lock, BookOpen, Sparkles, Trophy, Briefcase } from 'lucide-react';
 import { EconomicsUnit, UnitStatus, UnitProgress } from '@/types/economics-curriculum';
 import { getSimulatorByUnitId } from '@/data/economics-simulators';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface EconomicsUnitCardProps {
   unit: EconomicsUnit;
@@ -89,7 +90,7 @@ const EconomicsUnitCard: React.FC<EconomicsUnitCardProps> = ({
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
             <div className={`text-2xl mt-0.5 ${isLocked ? 'grayscale' : ''}`}>
-              {unit.icon}
+              <ThemedEmoji emoji={unit.icon} className="h-[1em] w-[1em]" />
             </div>
 
             <div className="flex-1 min-w-0">
@@ -135,7 +136,7 @@ const EconomicsUnitCard: React.FC<EconomicsUnitCardProps> = ({
         <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-3xl">{unit.icon}</span>
+              <span className="text-3xl"><ThemedEmoji emoji={unit.icon} className="h-[1em] w-[1em]" /></span>
               <div>
                 <DialogTitle className="text-xl text-green-800">{unit.title}</DialogTitle>
                 <p className="text-sm text-green-600 capitalize">{unit.track}</p>
@@ -233,7 +234,7 @@ const EconomicsUnitCard: React.FC<EconomicsUnitCardProps> = ({
               </span>
               <div className="flex items-center gap-3">
                 <span className="text-sm font-medium text-green-800">
-                  +{unit.rewards?.bamboo ?? 0} 🎋
+                  +{unit.rewards?.bamboo ?? 0} <ThemedEmoji emoji="🎋" className="h-[1em] w-[1em]" />
                 </span>
                 <span className="text-sm font-medium text-green-800">
                   +{unit.rewards?.xp ?? 0} XP

@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Check, Clock, ChevronRight, Lock, Sparkles } from 'lucide-react';
 import { usePlatformIntegration } from '@/hooks/usePlatformIntegration';
 import { ModuleCardData, HeadlineType } from '@/data/market-intelligence/catalog';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 const HEADLINE_TYPE_LABELS: Record<
   HeadlineType,
@@ -106,7 +107,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
             {/* Icon */}
-            <div className="text-2xl mt-0.5">{module.icon}</div>
+            <div className="text-2xl mt-0.5"><ThemedEmoji emoji={module.icon} className="h-[1em] w-[1em]" /></div>
 
             {/* Content */}
             <div className="flex-1 min-w-0">
@@ -155,7 +156,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
         <DialogContent className="max-w-md">
           <DialogHeader>
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-3xl">{module.icon}</span>
+              <span className="text-3xl"><ThemedEmoji emoji={module.icon} className="h-[1em] w-[1em]" /></span>
               <DialogTitle className="text-xl">{module.title}</DialogTitle>
             </div>
             <DialogDescription className="text-base">

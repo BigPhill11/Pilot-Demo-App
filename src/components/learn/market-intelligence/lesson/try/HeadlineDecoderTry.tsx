@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Check, X, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { HeadlineDecoderHeadline } from '@/types/mi-lesson';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 interface HeadlineDecoderTryProps {
   title: string;
@@ -116,7 +117,7 @@ const HeadlineDecoderTry: React.FC<HeadlineDecoderTryProps> = ({
             className="border-emerald-300 text-emerald-700 hover:bg-emerald-50"
             onClick={() => makeCall('signal')}
           >
-            📈 Signal
+            <ThemedEmoji emoji="📈" className="h-[1em] w-[1em]" /> Signal
           </Button>
           <Button
             variant="outline"

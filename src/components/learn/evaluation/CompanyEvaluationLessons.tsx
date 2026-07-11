@@ -7,6 +7,7 @@ import { evaluationLessons } from '@/data/evaluation-lessons';
 import { useEvaluationProgress } from '@/hooks/useEvaluationProgress';
 import EvaluationLessonView from './EvaluationLessonView';
 import PhilsEvaluationTip from './PhilsEvaluationTip';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 const CompanyEvaluationLessons: React.FC = () => {
   const [selectedLesson, setSelectedLesson] = useState<number | null>(null);
@@ -185,7 +186,7 @@ const CompanyEvaluationLessons: React.FC = () => {
           <CardContent className="p-6 text-center">
             <div className="space-y-2">
               <h3 className="font-semibold text-blue-900 dark:text-blue-100">
-                🎯 Complete All Lessons to Unlock Company Discovery!
+                <ThemedEmoji emoji="🎯" className="h-[1em] w-[1em]" /> Complete All Lessons to Unlock Company Discovery!
               </h3>
               <p className="text-sm text-blue-700 dark:text-blue-300">
                 Once you've mastered all 3 lessons, you'll be able to swipe through companies 

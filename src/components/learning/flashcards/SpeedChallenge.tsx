@@ -8,6 +8,7 @@ import { UnifiedFlashcard } from "@/data/unified-flashcards";
 import { SPEED_CHALLENGE_CONFIG, XP_REWARDS } from "@/types/flashcard-gamification";
 import { usePlatformIntegration } from "@/hooks/usePlatformIntegration";
 import { PLATFORM_REWARDS } from "@/config/gameConfig";
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 // Compatibility type alias
 type CategorizedFlashcard = UnifiedFlashcard;
@@ -102,7 +103,7 @@ export const SpeedChallenge = ({ cards, onComplete, onCancel }: SpeedChallengePr
         <div className="mb-6">
           <Trophy className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
           <h2 className="text-3xl font-bold mb-2">Challenge Complete!</h2>
-          <p className="text-muted-foreground">Great job lightning learner! ⚡</p>
+          <p className="text-muted-foreground">Great job lightning learner! <ThemedEmoji emoji="⚡" className="h-[1em] w-[1em]" /></p>
         </div>
 
         <div className="grid grid-cols-3 gap-4 mb-6">

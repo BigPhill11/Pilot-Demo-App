@@ -38,6 +38,7 @@ import CompanyTinderView from '@/components/learn/market-intelligence/CompanyTin
 import { useFlashcardGamification } from '@/hooks/useFlashcardGamification';
 import { getAllUnifiedFlashcards, type UnifiedFlashcard } from '@/data/unified-flashcards';
 import { getAvailableFlashcards } from '@/data/flashcards/flashcardUnlockStore';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 type CategorizedFlashcard = UnifiedFlashcard;
 type StudyMode = 'browse' | 'speed' | 'daily' | 'smart' | 'deck';
@@ -268,7 +269,7 @@ const AdaptiveFlashcards: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h2 className="text-3xl font-bold tracking-tight text-foreground mb-3">🎯 Flashcards & Games</h2>
+        <h2 className="text-3xl font-bold tracking-tight text-foreground mb-3"><ThemedEmoji emoji="🎯" className="h-[1em] w-[1em]" /> Flashcards & Games</h2>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Master financial concepts through study and play</p>
         <div className="mt-4 flex justify-center gap-4 flex-wrap">
           <Badge variant="outline" className="text-sm"><Flame className="h-3 w-3 mr-1 text-orange-500" />{currentStreak} Day Streak</Badge>

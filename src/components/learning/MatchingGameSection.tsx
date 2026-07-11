@@ -17,6 +17,7 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import MatchingGame from './matching/MatchingGame';
 import type { UnifiedFlashcard } from '@/data/unified-flashcards';
+import { ThemedEmoji } from '@/components/ui/themed-icons';
 
 type TimeBet = 30 | 60 | 90 | 120;
 type Difficulty = 'beginner' | 'intermediate' | 'pro';
@@ -132,7 +133,7 @@ const MatchingGameSection: React.FC<MatchingGameSectionProps> = ({ onBack, cards
                   onClick={() => setSelectedDifficulty(diff)}
                   className="flex-1"
                 >
-                  <span className="mr-1">{config.icon}</span>
+                  <span className="mr-1"><ThemedEmoji emoji={config.icon} className="h-[1em] w-[1em]" /></span>
                   {config.label}
                   <Badge variant="secondary" className="ml-2 text-xs">
                     {config.pairs} pairs
@@ -204,7 +205,7 @@ const MatchingGameSection: React.FC<MatchingGameSectionProps> = ({ onBack, cards
             </div>
             <div className="text-right">
               <div className="text-lg font-bold">
-                +{Math.round(25 * timeConfig[selectedTime].multiplier)} 🎋
+                +{Math.round(25 * timeConfig[selectedTime].multiplier)} <ThemedEmoji emoji="🎋" className="h-[1em] w-[1em]" />
               </div>
               <div className="text-xs text-muted-foreground">
                 Base 25 × {timeConfig[selectedTime].multiplier}x multiplier
