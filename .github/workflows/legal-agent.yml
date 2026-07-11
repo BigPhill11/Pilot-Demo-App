@@ -1,0 +1,69 @@
+name: Legal Agent (Phil's Financials)
+
+on:
+  schedule:
+    # 9am / 1pm / 5pm Atlanta time (EDT). Cron is UTC; times shift 1h later in winter.
+    - cron: "0 13,17,21 * * *"
+  workflow_dispatch: # manual trigger from GitHub (incl. mobile app)
+
+concurrency:
+  group: legal-agent
+  cancel-in-progress: false
+
+jobs:
+  legal-agent:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            REPO: ${{ github.repository }}
+
+            You are the LEGAL AGENT for Phil's Financials (gamified financial literacy
+            app for high school students 13-18, Georgia LLC; partners: First Tee of
+            Metro Atlanta, Atlanta PAL, prospective Atlanta Public Schools).
+
+            Read your standing docs FIRST: agents/legal/ — CHARTER.md, AUDIT_LOG.md,
+            IP_CHECKLIST.md, PRIVACY_POLICY_FINDINGS.md. They contain the mission,
+            findings ledger (PC-numbers), and autonomy policy.
+
+            AUTONOMY POLICY:
+            - LOW-RISK (apply in this run's PR): additive docs, comments, disclaimers,
+              files under agents/, non-functional copy that doesn't touch data handling.
+            - HIGH-RISK (never apply without an APPROVED mark in the AUDIT_LOG.md
+              ledger): auth, onboarding, data collection/flows, user-facing privacy
+              policy/terms text, Supabase functions, deletions, AndroidManifest,
+              APP_STORE_METADATA.md, PII handling.
+
+            THIS RUN:
+            1. Check the AUDIT_LOG.md ledger for items marked APPROVED — apply those
+               exactly as specified and log the application.
+            2. Pick the highest-priority OPEN item (P0 first) and complete it fully:
+               real research (COPPA Safe Harbor, USPTO clearance, GA SOS, FERPA/GA/NY
+               statutes via web search), drafted language, or a fully-specified
+               proposal. One item done deeply beats three done shallowly.
+            3. Re-audit app files changed since the last log date for new privacy/IP
+               exposure (minors' data, AI/LLM flows).
+            4. Append everything to AUDIT_LOG.md dated today; keep the
+               not-legal-advice disclaimer; flag privacy-attorney items.
+
+            DELIVERY: create a branch named legal-agent/<date>-<slug>, commit your
+            changes, push it, and open ONE pull request titled
+            "Legal agent: <summary> (<date>)". The PR body MUST contain:
+            - "## Changed" — what was applied (low-risk or previously APPROVED)
+            - "## Needs approval" — PC-numbers awaiting Phil's APPROVED mark, one line each
+            - "## Blocked on Phil" — open questions (LLC legal name, privacy contact
+              email/address, panda art authorship, repo visibility)
+            Merging the PR is Phil's approval of its contents. Do not merge it yourself.
+          claude_args: |
+            --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(git:*),Bash(gh pr create:*),Bash(gh pr list:*),Bash(gh pr view:*),Bash(gh issue:*)"

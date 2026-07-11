@@ -5,7 +5,7 @@ export const lesson3CreditScores: Lesson = {
   title: 'How Credit Scores Work and Why They Matter',
   estimatedMinutes: 12,
   moduleOverview: 'This lesson explains what a credit score is and how it is calculated. You learn why scores affect approvals and costs, and how everyday behavior shapes results over time.',
-  realityHook: 'Two people apply for the same apartment. One gets approved quickly with a low deposit. The other gets rejected or asked to pay much more upfront. The difference is not personality or effort. The difference is credit score history.',
+  realityHook: 'Two friends turn 18 the same month. One gets approved for a phone plan with no deposit. The other gets told: $400 down. Same phone. Same plan. A year later it happens again with an apartment — approval and a low deposit for one, rejection or a bigger deposit for the other. The difference is not personality or effort. It is credit history.',
   outcomePreview: 'Credit scores summarize trust • Scores affect access and cost • Behavior matters more than income • Small actions compound',
   microLesson: `A credit score is a number that summarizes how reliably you repay borrowed money. Lenders use it to decide whether to approve you and how much to charge. Higher scores usually make approval easier and borrowing cheaper.
 
@@ -18,12 +18,12 @@ Credit scores change slowly through consistent habits. There is no magic shortcu
     {
       term: 'Credit Score',
       definition: 'A credit score is a numerical summary of credit reliability based on past behavior. Lenders use scores to measure risk.',
-      philsAnalogy: 'A higher score leading to lower interest on a car loan.',
+      philsAnalogy: 'Your credit score is like your rep with teachers. Turn work in on time all semester and the sub who\'s never met you still trusts you — the score speaks before you do.',
     },
     {
       term: 'Payment History',
       definition: 'Payment history tracks whether payments are made on time. This factor has the largest impact on credit scores.',
-      philsAnalogy: 'Always paying the minimum before the due date.',
+      philsAnalogy: 'Payment history is your attendance record. One skipped day gets noticed; showing up every single time is what builds the record.',
     },
     {
       term: 'Credit Utilization',
@@ -33,7 +33,7 @@ Credit scores change slowly through consistent habits. There is no magic shortcu
     {
       term: 'Credit Inquiry',
       definition: 'A credit inquiry occurs when a lender checks your credit. Too many inquiries in a short time can lower scores.',
-      philsAnalogy: 'Applying for several cards within one month.',
+      philsAnalogy: 'Every inquiry is like asking to borrow from several friends in the same week — each one starts wondering why you need it so badly.',
     },
     {
       term: 'Credit Mix',
