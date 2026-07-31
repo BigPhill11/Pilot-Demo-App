@@ -96,7 +96,7 @@ Legend — **STRONG**: element is directly taught and practiced in a decision/si
 ### Extension modules (beyond the 8 weeks)
 | Module | Elements | Coverage |
 |---|---|---|
-| **Taxes** (`personal-finance/taxes/`, boss: *The Tax Strategist*) | SSEPF5a (tax types) — probable-STRONG (`lesson-1-understanding-taxes.ts`, `lesson-2-income-types-taxation.ts`); SSEPF5b (progressive/regressive/proportional) — probable (verify lesson-1); SSEPF2b (complete a 1040) — **GAP** (no form-completion activity evidenced); SSEPF3d retirement accounts — PARTIAL (`lesson-4-tax-advantaged-accounts.ts`) |
+| **Taxes** (`personal-finance/taxes/`, boss: *The Tax Strategist*) | SSEPF5a (tax types) — **PARTIAL** (verified 2026-07-05): income tax, payroll taxes (SS/Medicare), and capital gains taught in `lesson-1-understanding-taxes.ts` + `lesson-2-income-types-taxation.ts`; **sales, property, and estate taxes not evidenced** in lessons 1–2 → PARTIAL, not STRONG. SSEPF5b (progressive/regressive/proportional) — **GAP** (verified 2026-07-05): neither lesson 1 nor lesson 2 introduces progressive/regressive/proportional structure or bracket/marginal-rate framing; a rate-structure lesson (or an addition to lesson 1) would close it. SSEPF2b (complete a 1040) — **GAP** (no form-completion activity evidenced); SSEPF3d retirement accounts — PARTIAL (`lesson-4-tax-advantaged-accounts.ts`, not re-verified this run) |
 | **Career Income** (`personal-finance/career-income/`, boss: *The Career Architect*) | SSEPF8c — **STRONG** (`lesson-1-career-investment.ts` human capital, `lesson-2-market-value.ts` supply/demand for skills, `lesson-3-skills-that-pay.ts`); SSEPF8a — PARTIAL (multiplier skills: leadership/communication); SSEPF2a — PARTIAL (`lesson-5-multiple-income-streams.ts`: dividends/passive income); SSEPF8b (social-media footprint) — **GAP** |
 | **Wealth Fundamentals** (`personal-finance/wealth-fundamentals/`, boss: *The Wealth Builder*) | SSEPF1e (generational wealth) — probable-STRONG (`lesson-1-what-wealth-is.ts`); SSEPF2f (net worth) — probable (verify lesson-1); SSEPF4d reinforced (`lesson-2-systems-compounding.ts`) |
 | **Career Readiness track** (`career-readiness/`) | SSEPF8a — **STRONG** (professional habits, etiquette, interviewing); SSEPF8b — PARTIAL-probable (personal-brand module; verify social-media treatment) |
@@ -106,7 +106,7 @@ Legend — **STRONG**: element is directly taught and practiced in a decision/si
 **Well covered (STRONG on core elements):** SSEPF2c, SSEPF2d(savings), SSEPF3d, SSEPF4d(compounding), SSEPF6b, SSEPF7a/c, SSEPF8a/c, SSEPF10a/b/c, SSEF1d, SSEF2.
 
 **Elements with NO current coverage (roadmap candidates, roughly priority-ordered for the APS conversation):**
-1. **SSEPF1b/c — paying for post-high-school life: HOPE scholarship, FAFSA, work-study.** Highest-value gap for this audience; Georgia-specific (HOPE) and life-critical for underserved juniors/seniors. Natural fit: a "Fund Your Next Chapter" decision module.
+1. **SSEPF1b/c — paying for post-high-school life: HOPE scholarship, FAFSA, work-study.** Highest-value gap for this audience; Georgia-specific (HOPE) and life-critical for underserved juniors/seniors. **→ Full decision-driven module spec now drafted: `agents/education/SPEC_FUND_YOUR_NEXT_CHAPTER.md` (2026-07-05)** — 5 lessons + boss game, maps SSEPF1b/1c to STRONG and gives SSEPF1a/1d a second anchor. Build is PROPOSE-ONLY (awaiting Phil's APPROVED); Georgia aid figures need GAfutures.org + counselor verification before student-facing ship.
 2. **SSEPF2b — review/complete a sample federal 1040.** Could extend the Taxes module (form-as-puzzle mini-game).
 3. **SSEPF2e — reconcile a checking account / avoid overdraft fees.** Fits the Saving/Cash-Flow mechanics.
 4. **SSEPF3a/b — functions of money; compare banks, credit unions, payday lenders, title-pawn lenders.** Payday/title-pawn comparison is high-relevance in Atlanta neighborhoods.
@@ -116,13 +116,14 @@ Legend — **STRONG**: element is directly taught and practiced in a decision/si
 8. **SSEPF7b/d — insurance type-by-type comparison; insurability/rate variation.**
 9. **SSEPF9 (entire standard) — consumer protection agencies, complaint channels, key legislation.** Closest existing content is `insurance/lesson-4-legal-basics-liability-protection.ts`; a "Know Your Rights" lesson would close it.
 10. **SSEPF8b — social-media footprint and career/finances** (quick add to Career Readiness personal-brand module).
+11. **SSEPF5b — progressive / regressive / proportional tax structures** (surfaced by 2026-07-05 verification of Taxes lessons 1–2; not currently taught). Also **SSEPF5a is only PARTIAL** — sales, property, and estate taxes are absent from the Taxes module. A rate-structure/tax-types lesson (or additions to `taxes/lesson-1`) would close both.
 
 **Non-SSEPF course domains (SSEF, SSEMI, SSEMA, SSEIN):** partially touched (opportunity cost, incentives, Fed content in Market Intelligence) — worth noting to APS as enrichment, but the app should not claim coverage of the full 45.061 economics scope.
 
 ## 5. Verification queue (upgrade "probable" → verified)
 
 Next runs should read and confirm, then update this table in place (additive standards-tag metadata in lesson files is auto-apply under the 2026-07-05 policy):
-1. `taxes/lesson-1` + `lesson-2` — SSEPF5a/b tax-type and progressivity coverage.
+1. ~~`taxes/lesson-1` + `lesson-2` — SSEPF5a/b tax-type and progressivity coverage.~~ **VERIFIED 2026-07-05:** SSEPF5a → PARTIAL (income/payroll/capital-gains taught; sales/property/estate absent); SSEPF5b → GAP (no progressive/regressive/proportional framing). See §3 Taxes row and §4 gap #11. Remaining Taxes verification: `lesson-3` deductions/credits, `lesson-4` tax-advantaged accounts (SSEPF3d).
 2. `credit-debt/lesson-2` — revolving vs. installment framing (SSEPF6d).
 3. `insurance/lesson-3` — scam taxonomy vs. SSEPF10d list.
 4. `wealth-fundamentals/lesson-1` — net worth (SSEPF2f) and generational wealth (SSEPF1e).

@@ -99,3 +99,54 @@ In the Income module the analogies are genuine and memorable (bike-pedaling meta
 
 - **`GA_STANDARDS_ALIGNMENT.md`** (P0 #1) — full mapping of all modules to Georgia GSE Personal Finance and Economics (Course 45.061, SSEPF1–10; SB 220 graduation requirement effective 2024–25), sourced from the official GaDOE standards PDF. Includes coverage grades, 10-item gap list (top gap: SSEPF1b/c — HOPE scholarship/FAFSA content), and a verification queue.
 - **`ASSESSMENT_SPEC.md`** (P0 #2, started) — pre/post + confidence assessment design for the Georgia Tech measurement plan; all instrumentation hooks written as PROPOSALS (code logic = high-risk, awaiting Phil).
+
+---
+
+## 2026-07-05 (run 2) — tsc verification of prior edits; Taxes analogy fixes; SSEPF5 verification; HOPE/FAFSA module spec (P0/gap #1)
+
+**Approved items to apply this run:** none. Scanned all logs — no education item carries an **APPROVED** mark. Finding 6 (microLesson/simulator ordering) and every `ASSESSMENT_SPEC.md` instrumentation hook remain PROPOSE-ONLY awaiting Phil. Nothing high-risk applied.
+
+**Build verification (closes the 2026-07-05 run-1 open item):** ran `npx tsc --noEmit --ignoreDeprecations 6.0` (plain `npx tsc --noEmit` errors on a pre-existing `tsconfig.json` `baseUrl` deprecation, TS5101 — unrelated to lesson content). Result: **clean, zero errors** — both before and after this run's edits. The run-1 auto-applied edits (credit-debt lesson-3, saving lesson-1, modules.ts) compile fine, as expected. *(Note for a future run/Phil: the `baseUrl` deprecation in `tsconfig.json` will hard-error under TypeScript 7.0; harmless today but worth a one-line `ignoreDeprecations` fix — flagged, not touched, as it's outside education scope.)*
+
+### Re-audit — Taxes module lessons 1–2 (reading level → cultural relevance → decision framing)
+
+Rotated the sweep to the Taxes module (next in the 2026-07-02 sweep queue; also standards-verification queue item 1). Files read in full: `taxes/lesson-1-understanding-taxes.ts`, `taxes/lesson-2-income-types-taxation.ts`.
+
+- **Reading level:** GOOD. Both lessons already sit ~grade 7–8 — short sentences, concrete subjects, one idea per sentence. No reading-level fixes needed (contrast with the grade-10/11 microLessons flagged in the Income/Saving sweep).
+- **Decision framing:** ADEQUATE. Both realityHooks are concrete and lead toward a planning decision; the simulators ("Where Did It Go", "Tax the Income") present real set-aside/plan-net choices with tradeoff feedback. No copy change made; kept as-is.
+- **Cultural relevance:** THIN but not wrong — hooks use generic "job or side hustle" framing. Not edited this run (no clearly-better single-line fix that doesn't risk the meaning); logged as a candidate for a future concretize pass (e.g., first W-2 job, reselling/DJ side hustle — the same objects used in the new analogies below).
+
+### Finding 8 — Taxes `philsAnalogy` fields were restated examples, not analogies — APPLIED (auto, 2026-07-05)
+
+Same defect Finding 1 (2026-07-02) fixed in Credit & Debt, and which that entry predicted "applies wherever." All 10 `philsAnalogy` values across Taxes lessons 1–2 were bare restated examples (e.g., Tax → "Part of each paycheck going to support schools, roads, and emergency services."; Wages → "Receiving a paycheck with taxes already taken out."), wasting the field's engagement value.
+
+- **File:** `src/data/personal-finance/taxes/lesson-1-understanding-taxes.ts` (5 flashcards) — replaced Tax / Income Tax / Take Home Pay / Public Services / Tax Planning analogies with real teen mappings (team chipping in for the field & lights; school taking a cut of every fundraiser; the pizza slice left after everyone grabs theirs; shared rec-center Wi-Fi; knowing the dress code before you get dressed).
+- **File:** `src/data/personal-finance/taxes/lesson-2-income-types-taxation.ts` (5 flashcards) — replaced Wages / Payroll Taxes / Self Employment Income / Investment Income / Capital Gains analogies (paycheck that arrives pre-cut; paying into a team fund for players who get hurt or age out; getting paid in full with no cut taken → but you still owe it; fruit from a tree you planted, timing changes what you owe; reselling limited sneakers, only the profit is taxed).
+- **Verification:** apostrophe in the Public Services analogy escaped (`everyone\'s`) inside its single-quoted string; `npx tsc --noEmit --ignoreDeprecations 6.0` re-run after edits — clean. Object shapes, commas, quotes intact.
+
+### Standards verification — SSEPF5 (Taxes), verified against source
+
+Read lessons 1–2 line-by-line against SSEPF5a/b (see `GA_STANDARDS_ALIGNMENT.md` §3 Taxes row, §4 gap #11, §5 queue item 1 — all updated):
+- **SSEPF5a (tax types): downgraded probable-STRONG → PARTIAL.** Income tax, payroll (SS/Medicare), and capital gains are taught; **sales, property, and estate taxes are absent.**
+- **SSEPF5b (progressive/regressive/proportional): verified GAP.** No rate-structure or marginal/bracket framing in lessons 1–2. Added to the gap list (#11). A rate-structure lesson or an addition to `taxes/lesson-1` would close both.
+
+### New artifact — `SPEC_FUND_YOUR_NEXT_CHAPTER.md` (P0 deep item this run: standards gap #1, SSEPF1b/c)
+
+Picked the single highest-value open gap — **SSEPF1b/c: HOPE / FAFSA / paying for after high school** (`GA_STANDARDS_ALIGNMENT.md` §4 #1) — and drafted a full decision-driven module spec (doc-only, auto-apply under `agents/education/`):
+- 5-lesson blueprint in the shipped `Lesson` shape (realityHook → microLesson → flashcards with real analogies → decision-based simulator → decision-item quiz → powerMove → realLifeAction): (1) path cost/benefit shapes, (2) HOPE/Zell Miller as a "GPA bank account", (3) FAFSA/Pell/work-study/deadlines, (4) stacking aid + borrowing only the gap, (5) personal money-map synthesis; plus boss game "The Funded Next Chapter."
+- Georgia-specific and audience-critical (HOPE is state-specific free money underserved Atlanta students routinely miss on a GPA line or a FAFSA deadline). Path-neutral by design (trade / technical / military / work-then-school weighted equally with 4-year).
+- **All numeric Georgia aid figures are flagged for GAfutures.org + counselor/Georgia Tech verification before any student-facing ship** (award amounts and thresholds change yearly). Build (new lesson files, registry wiring, boss game, placement) is **PROPOSE-ONLY** — awaiting Phil's APPROVED. Closes SSEPF1b/1c → STRONG and gives SSEPF1a/1d a second anchor when built.
+
+### Still OPEN / PROPOSE-ONLY (unchanged — awaiting Phil's APPROVED)
+
+- **Finding 6** — microLesson-after-simulator ordering / trim-to-questions (rendering/structure).
+- **`ASSESSMENT_SPEC.md` P1–P5** — all pre/post instrumentation (type/data-model/component/flow/data-collection changes; P3 also needs a minors-privacy review).
+- **`SPEC_FUND_YOUR_NEXT_CHAPTER.md` build** — new module in `src/` (lesson files + `modules.ts` registry wiring + boss game + placement).
+
+### Next sweep queue (2026-07-05, run 2)
+
+1. Concretize the Taxes realityHooks with the teen frame (first W-2 job, reselling/DJ side hustle) — low-risk copy, deferred only for lack of a clean one-line edit this run.
+2. Verify `taxes/lesson-3` (deductions/credits) and `taxes/lesson-4` (SSEPF3d tax-advantaged accounts) to finish the Taxes standards row.
+3. Draft the SSEPF5b/SSEPF5a-completion lesson spec (progressive/regressive/proportional + sales/property/estate) — the newly-confirmed gap #11.
+4. Continue the standards verification queue (credit-debt lesson-2 revolving/installment; insurance lesson-3 scam taxonomy; wealth-fundamentals lesson-1 net worth).
+5. Remaining module descriptions in `modules.ts` still in textbook voice (Investing, Insurance, Taxes, Credit & Debt, Career Income) — candidate decision-stakes rewrites, same pattern as Finding 4.
