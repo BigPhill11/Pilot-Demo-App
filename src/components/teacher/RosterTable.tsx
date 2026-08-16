@@ -187,7 +187,11 @@ const RosterTable: React.FC<RosterTableProps> = ({
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Progress value={entry.avg_progress} className="h-1.5 w-16" />
+                        <Progress
+                          value={entry.avg_progress}
+                          className="h-1.5 w-16 bg-muted"
+                          indicatorClassName="bg-emerald-500"
+                        />
                         <span className="w-9 tabular-nums text-muted-foreground">
                           {entry.avg_progress}%
                         </span>

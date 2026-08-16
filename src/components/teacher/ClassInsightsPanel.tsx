@@ -10,7 +10,6 @@ import {
 } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { Lightbulb, Loader2, TrendingDown, TriangleAlert } from 'lucide-react';
 import { useClassInsights } from '@/hooks/useTeacherDashboard';
 import { moduleLabel, trackLabel } from '@/lib/teacherCurriculum';
@@ -102,13 +101,17 @@ const ClassInsightsPanel: React.FC<ClassInsightsPanelProps> = ({ classroomId }) 
               </ResponsiveContainer>
             </ChartContainer>
 
-            <div className="mt-4 space-y-2">
+            {/* The chart already shows depth of progress; this adds the
+                headcount behind each bar, which the chart cannot. */}
+            <div className="mt-5 grid gap-x-6 gap-y-1.5 border-t pt-4 sm:grid-cols-2">
               {chartData.map((row) => (
-                <div key={row.name} className="flex items-center gap-3 text-sm">
-                  <span className="w-40 shrink-0 truncate">{row.name}</span>
-                  <Progress value={row.avgProgress} className="h-1.5 flex-1" />
-                  <span className="w-32 shrink-0 text-right text-xs text-muted-foreground">
-                    {row.completed}/{row.started} finished
+                <div key={row.name} className="flex items-baseline justify-between gap-3 text-sm">
+                  <span className="min-w-0 truncate">
+                    {row.name}
+                    <span className="ml-1.5 text-xs text-muted-foreground">{row.track}</span>
+                  </span>
+                  <span className="shrink-0 whitespace-nowrap text-xs text-muted-foreground">
+                    {row.completed} of {row.started} finished
                   </span>
                 </div>
               ))}

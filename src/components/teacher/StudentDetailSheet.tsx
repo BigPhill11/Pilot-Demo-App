@@ -146,7 +146,11 @@ const StudentDetailSheet: React.FC<StudentDetailSheetProps> = ({
                             <span className="w-40 shrink-0 truncate text-sm">
                               {moduleLabel(type, mod.module_id)}
                             </span>
-                            <Progress value={mod.progress_percentage} className="h-1.5 flex-1" />
+                            <Progress
+                              value={mod.progress_percentage}
+                              className="h-1.5 flex-1 bg-muted"
+                              indicatorClassName="bg-emerald-500"
+                            />
                             <span className="w-10 shrink-0 text-right text-xs tabular-nums text-muted-foreground">
                               {mod.progress_percentage}%
                             </span>
@@ -180,7 +184,8 @@ const StudentDetailSheet: React.FC<StudentDetailSheetProps> = ({
                         </span>
                         <Progress
                           value={Math.min(100, (career.levels_completed / 7) * 100)}
-                          className="h-1.5 flex-1"
+                          className="h-1.5 flex-1 bg-muted"
+                          indicatorClassName="bg-emerald-500"
                         />
                         <span className="w-14 shrink-0 text-right text-xs text-muted-foreground">
                           {career.levels_completed}/7
