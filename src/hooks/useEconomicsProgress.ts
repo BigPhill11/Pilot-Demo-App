@@ -14,8 +14,11 @@ import {
   EconomicsTrack,
   INITIAL_ECONOMICS_PROGRESS,
 } from '@/types/economics-curriculum';
+import { economicsUnits } from '@/data/economics-curriculum';
+import { queueModuleProgressSync } from '@/lib/progressSync';
 
 const STORAGE_KEY = 'economics_curriculum_progress';
+const MODULE_TYPE = 'economics';
 
 function trackKey(track: EconomicsTrack): keyof Pick<EconomicsProgress, 'microeconomics' | 'macroeconomics' | 'businessesCompetition'> {
   if (track === 'businesses-competition') return 'businessesCompetition';
@@ -52,11 +55,43 @@ function saveProgress(state: EconomicsProgress): void {
   }
 }
 
+/**
+ * One sync entry per unit the student has touched. A unit counts as complete
+ * when its status says so; otherwise it is scored against the lesson count from
+ * the curriculum data, since the stored state only tracks completed lesson ids.
+ */
+function toSyncEntries(progress: EconomicsProgress) {
+  const units = [
+    ...(progress.microeconomics ?? []),
+    ...(progress.macroeconomics ?? []),
+    ...(progress.businessesCompetition ?? []),
+  ];
+
+  return units.map((unit) => {
+    const totalLessons = economicsUnits.find((u) => u.id === unit.unitId)?.lessons.length ?? 0;
+    const completedLessons = unit.completedLessons?.length ?? 0;
+    const percent =
+      unit.status === 'completed'
+        ? 100
+        : totalLessons > 0
+          ? Math.round((completedLessons / totalLessons) * 100)
+          : 0;
+
+    return {
+      moduleId: unit.unitId,
+      moduleType: MODULE_TYPE,
+      progressPercentage: percent,
+      detailedProgress: { status: unit.status, completedLessons, totalLessons },
+    };
+  });
+}
+
 export function useEconomicsProgress() {
   const [progress, setProgress] = useState<EconomicsProgress>(loadProgress);
 
   useEffect(() => {
     saveProgress(progress);
+    queueModuleProgressSync(toSyncEntries(progress));
   }, [progress]);
 
   /**
