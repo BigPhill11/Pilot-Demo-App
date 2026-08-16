@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import OnboardingAuthGate from './OnboardingAuthGate';
 import OnboardingInterestSurvey from './OnboardingInterestSurvey';
 import OnboardingAppTour from './OnboardingAppTour';
+import OnboardingTeacherSetup from './OnboardingTeacherSetup';
 import { isOnboardingDoneLocally, markOnboardingDoneLocally } from '@/lib/onboardingState';
 
 interface SurveyData {
@@ -13,14 +15,15 @@ interface SurveyData {
   timeCommitment: string;
 }
 
-type Phase = 'loading' | 'auth-gate' | 'survey' | 'tour' | 'complete';
+type Phase = 'loading' | 'auth-gate' | 'teacher-setup' | 'survey' | 'tour' | 'complete';
 
 // Cleared by useOnboarding.resetOnboarding() to force restart
 export const ONBOARDING_DONE_KEY = 'phils_onboarding_done';
 
 const OnboardingOrchestrator: React.FC = () => {
-  const { user, profile, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading, isTeacher, rolesLoaded } = useAuth();
   const [phase, setPhase] = useState<Phase>('loading');
+  const navigate = useNavigate();
 
   // ── Main phase resolver ──────────────────────────────────────────────────
   // Onboarding is decided from the user's PROFILE flags (per-account, stored in
@@ -39,6 +42,21 @@ const OnboardingOrchestrator: React.FC = () => {
     // Signed-in but profile hasn't loaded yet
     if (!profile) return;
 
+    // Roles decide which onboarding branch to take, so wait for them rather
+    // than briefly showing a teacher the student survey.
+    if (!rolesLoaded) return;
+
+    // Teachers take a different branch entirely: they name a classroom and get
+    // a code to hand out, and never see the student survey or app tour.
+    if (isTeacher) {
+      if (profile.teacher_setup_completed === true) {
+        setPhase('complete');
+      } else {
+        setPhase('teacher-setup');
+      }
+      return;
+    }
+
     // Onboarding is "done" for this account if EITHER the DB flag says so OR we
     // recorded completion locally for this user id. The per-account local marker
     // makes this robust even when the DB write didn't persist (un-migrated column,
@@ -55,7 +73,7 @@ const OnboardingOrchestrator: React.FC = () => {
     // the tour if the survey was already done; otherwise we begin with the survey.)
     if (profile.survey_completed === true) { setPhase('tour'); return; }
     setPhase('survey');
-  }, [authLoading, user, profile, phase]);
+  }, [authLoading, user, profile, phase, isTeacher, rolesLoaded]);
 
   // When a user signs in while on the auth gate, re-run the resolver
   useEffect(() => {
@@ -75,6 +93,26 @@ const OnboardingOrchestrator: React.FC = () => {
         }}
       />
     );
+  }
+
+  if (phase === 'teacher-setup') {
+    const handleTeacherSetupComplete = () => {
+      setPhase('complete');
+      navigate('/teach');
+      if (!user) return;
+      supabase
+        .from('profiles')
+        .update({
+          teacher_setup_completed: true,
+          onboarding_completed: true,
+          updated_at: new Date().toISOString(),
+        } as never)
+        .eq('id', user.id)
+        .then(({ error }) => {
+          if (error) console.error('Error saving teacher setup:', error);
+        });
+    };
+    return <OnboardingTeacherSetup onComplete={handleTeacherSetupComplete} />;
   }
 
   if (phase === 'survey') {
