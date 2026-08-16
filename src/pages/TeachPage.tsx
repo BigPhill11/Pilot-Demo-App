@@ -14,6 +14,9 @@ import ClassPulseHeader from '@/components/teacher/ClassPulseHeader';
 import RosterTable from '@/components/teacher/RosterTable';
 import ModuleMatrix from '@/components/teacher/ModuleMatrix';
 import CreateClassroomDialog from '@/components/teacher/CreateClassroomDialog';
+import EngagementHeatmap from '@/components/teacher/EngagementHeatmap';
+import StudentDetailSheet from '@/components/teacher/StudentDetailSheet';
+import ClassInsightsPanel from '@/components/teacher/ClassInsightsPanel';
 import { Button } from '@/components/ui/button';
 import { GraduationCap, Loader2, Plus } from 'lucide-react';
 import { summarizeClass } from '@/lib/teacherMetrics';
@@ -115,12 +118,19 @@ const TeachPage: React.FC = () => {
         )}
 
         {view === 'overview' && (
-          <ModuleMatrix
-            roster={roster}
-            cells={matrixQuery.data ?? []}
-            loading={matrixQuery.isLoading}
-            onSelectStudent={setSelectedStudentId}
-          />
+          <>
+            <EngagementHeatmap
+              classroomId={activeClassroomId ?? undefined}
+              roster={roster}
+              onSelectStudent={setSelectedStudentId}
+            />
+            <ModuleMatrix
+              roster={roster}
+              cells={matrixQuery.data ?? []}
+              loading={matrixQuery.isLoading}
+              onSelectStudent={setSelectedStudentId}
+            />
+          </>
         )}
 
         {view === 'roster' && (
@@ -131,12 +141,20 @@ const TeachPage: React.FC = () => {
             onSelectStudent={setSelectedStudentId}
           />
         )}
+
+        {view === 'insights' && <ClassInsightsPanel classroomId={activeClassroomId ?? undefined} />}
       </TeacherShell>
 
       <CreateClassroomDialog
         open={createOpen}
         onOpenChange={setCreateOpen}
         onCreated={handleCreated}
+      />
+
+      <StudentDetailSheet
+        classroomId={activeClassroomId ?? undefined}
+        studentId={selectedStudentId}
+        onClose={() => setSelectedStudentId(null)}
       />
     </>
   );
