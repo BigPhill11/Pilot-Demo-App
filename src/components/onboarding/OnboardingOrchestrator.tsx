@@ -7,6 +7,7 @@ import OnboardingInterestSurvey from './OnboardingInterestSurvey';
 import OnboardingAppTour from './OnboardingAppTour';
 import OnboardingTeacherSetup from './OnboardingTeacherSetup';
 import { isOnboardingDoneLocally, markOnboardingDoneLocally } from '@/lib/onboardingState';
+import { isTeacherPreview } from '@/dev/teacherPreview';
 
 interface SurveyData {
   goal: string;
@@ -83,6 +84,10 @@ const OnboardingOrchestrator: React.FC = () => {
   }, [user, phase]);
 
   // ── Render ───────────────────────────────────────────────────────────────
+
+  // The dev-only teacher dashboard preview has no session to gate, and the
+  // auth overlay would otherwise cover it.
+  if (isTeacherPreview()) return null;
 
   if (phase === 'auth-gate') {
     return (

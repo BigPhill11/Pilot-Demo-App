@@ -20,9 +20,13 @@ import ClassInsightsPanel from '@/components/teacher/ClassInsightsPanel';
 import { Button } from '@/components/ui/button';
 import { GraduationCap, Loader2, Plus } from 'lucide-react';
 import { summarizeClass } from '@/lib/teacherMetrics';
+import { isTeacherPreview } from '@/dev/teacherPreview';
 
 const TeachPage: React.FC = () => {
   const { user, loading, isTeacher, rolesLoaded } = useAuth();
+  // Dev-only: `/teach?preview=1` renders the dashboard against fixtures so it
+  // can be reviewed before the classroom migrations are applied anywhere.
+  const preview = isTeacherPreview();
   const queryClient = useQueryClient();
 
   const [activeClassroomId, setActiveClassroomId] = useState<string | null>(null);
@@ -48,7 +52,7 @@ const TeachPage: React.FC = () => {
   const roster = useMemo(() => rosterQuery.data ?? [], [rosterQuery.data]);
   const summary = useMemo(() => summarizeClass(roster), [roster]);
 
-  if (loading || !rolesLoaded) {
+  if (!preview && (loading || !rolesLoaded)) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -56,7 +60,7 @@ const TeachPage: React.FC = () => {
     );
   }
 
-  if (!user || !isTeacher) {
+  if (!preview && (!user || !isTeacher)) {
     return <Navigate to="/" replace />;
   }
 
@@ -109,6 +113,13 @@ const TeachPage: React.FC = () => {
         onRefresh={refresh}
         refreshing={rosterQuery.isFetching || matrixQuery.isFetching}
       >
+        {preview && (
+          <div className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-2.5 text-sm text-amber-900">
+            Preview mode — sample data, not a real classroom. Drop{' '}
+            <code className="font-mono text-xs">?preview=1</code> from the URL to use live data.
+          </div>
+        )}
+
         {activeClassroom && (
           <ClassPulseHeader
             classroom={activeClassroom}

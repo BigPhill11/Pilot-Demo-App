@@ -9,6 +9,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { isTeacherPreview, teacherPreview } from '@/dev/teacherPreview';
 import type {
   ActivityEntry,
   ClassInsights,
@@ -37,6 +38,7 @@ function num(value: unknown): number {
 }
 
 export async function listClassrooms(): Promise<TeacherClassroomSummary[]> {
+  if (isTeacherPreview()) return teacherPreview.listClassrooms();
   const rows = await callRpc<TeacherClassroomSummary[]>('teacher_list_classrooms');
   return (rows ?? []).map((r) => ({
     ...r,
@@ -58,6 +60,7 @@ export async function createClassroom(input: {
 }
 
 export async function getRoster(classroomId: string): Promise<RosterEntry[]> {
+  if (isTeacherPreview()) return teacherPreview.getRoster(classroomId);
   const rows = await callRpc<RosterEntry[]>('teacher_get_roster', { p_classroom_id: classroomId });
   return (rows ?? []).map((r) => ({
     ...r,
@@ -74,6 +77,7 @@ export async function getRoster(classroomId: string): Promise<RosterEntry[]> {
 }
 
 export async function getModuleMatrix(classroomId: string): Promise<ModuleMatrixCell[]> {
+  if (isTeacherPreview()) return teacherPreview.getModuleMatrix(classroomId);
   const rows = await callRpc<ModuleMatrixCell[]>('teacher_get_module_matrix', {
     p_classroom_id: classroomId,
   });
@@ -81,6 +85,7 @@ export async function getModuleMatrix(classroomId: string): Promise<ModuleMatrix
 }
 
 export async function getActivity(classroomId: string, days = 30): Promise<ActivityEntry[]> {
+  if (isTeacherPreview()) return teacherPreview.getActivity(classroomId, days);
   const rows = await callRpc<ActivityEntry[]>('teacher_get_activity', {
     p_classroom_id: classroomId,
     p_days: days,
@@ -92,6 +97,7 @@ export async function getStudentDetail(
   classroomId: string,
   studentId: string
 ): Promise<StudentDetail> {
+  if (isTeacherPreview()) return teacherPreview.getStudentDetail(classroomId, studentId);
   return callRpc('teacher_get_student_detail', {
     p_classroom_id: classroomId,
     p_student_id: studentId,
@@ -99,6 +105,7 @@ export async function getStudentDetail(
 }
 
 export async function getClassInsights(classroomId: string): Promise<ClassInsights> {
+  if (isTeacherPreview()) return teacherPreview.getClassInsights();
   const data = await callRpc<ClassInsights>('teacher_get_class_insights', {
     p_classroom_id: classroomId,
   });
