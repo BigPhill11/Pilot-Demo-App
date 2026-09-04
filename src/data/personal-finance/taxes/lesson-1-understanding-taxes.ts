@@ -18,27 +18,27 @@ Taxes are not punishment. Taxes are a cost of participating in an organized econ
     {
       term: 'Tax',
       definition: 'A tax is a required payment to a government used to fund public services and programs. Taxes apply to income, purchases, and ownership.',
-      philsAnalogy: 'Part of each paycheck going to support schools, roads, and emergency services.'
+      philsAnalogy: 'A tax is like everyone chipping in for a cookout. You pay in so the whole thing happens, and the food, the space, and the cleanup are covered even for the parts you personally never touch.'
     },
     {
       term: 'Income Tax',
       definition: 'Income tax is a tax placed on money earned from work, businesses, or investments. Income tax reduces take home pay.',
-      philsAnalogy: 'Seeing federal and state taxes taken out of a paycheck.'
+      philsAnalogy: 'Income tax is a slice taken off the top of the money you earn before it ever reaches your hand. You earned the whole amount, but part is removed on the way to you.'
     },
     {
       term: 'Take Home Pay',
       definition: 'Take home pay is the money you receive after taxes and deductions. Take home pay determines spending ability.',
-      philsAnalogy: 'Receiving less than your hourly wage multiplied by hours worked.'
+      philsAnalogy: 'Take home pay is the final score, not the halftime score. Gross pay is the number at the break; take home is what is on the board after taxes and deductions finish coming out.'
     },
     {
       term: 'Public Services',
       definition: 'Public services are programs funded by taxes that benefit society as a whole. These services support daily life and safety.',
-      philsAnalogy: 'Public schools, highways, and police departments.'
+      philsAnalogy: 'Public services are like the lights and Wi-Fi at the rec center. Everyone chips in through taxes so they are on and working the moment any one person needs them.'
     },
     {
       term: 'Tax Planning',
       definition: 'Tax planning is arranging finances in legal ways to reduce tax impact. Planning focuses on timing, structure, and awareness.',
-      philsAnalogy: 'Choosing saving and investing options that reduce taxable income.'
+      philsAnalogy: 'Tax planning is like knowing which routes have tolls before you leave. Same destination, all legal, but paying attention to the rules keeps more money in your pocket.'
     }
   ],
   simulatorGame: {

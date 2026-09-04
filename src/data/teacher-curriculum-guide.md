@@ -610,4 +610,33 @@ Pilot was built for the generation that will manage their finances in a more com
 
 ---
 
+## Georgia Standards Alignment (SSEPF)
+
+Georgia **SB 220** requires every student to complete at least a half-credit financial literacy course in 11th or 12th grade (beginning 2024–25). The state's course is the **Personal Finance and Economics** GSE (**Course 45.061**), whose personal-finance domain is standards **SSEPF1–SSEPF10**.
+
+**How to position Pilot:** Pilot is a **supplemental, game-based delivery vehicle** for the SSEPF (personal finance) standards — a way to teach and practice those standards through decisions, not a replacement for the full 45.061 course (which also includes micro/macro/international economics).
+
+**Where Pilot is strong (taught *and* practiced in a decision or simulator):**
+
+- **SSEPF2** income, paystubs (gross vs. net), and saving — *Active Income, Financial Planning, Savings*
+- **SSEPF3d / SSEPF4d** risk/return, diversification, and compounding — *Investing, Savings*
+- **SSEPF6b** what moves a credit score (payment history, utilization, inquiries, mix) — *Credit & Debt*
+- **SSEPF7a/c** why people insure, premiums/deductibles/asset protection — *Insurance*
+- **SSEPF8a/c** workplace skills and education-as-investment — *Career Income, Career Readiness*
+- **SSEPF10a/b/c** identity-theft sources, prevention, and victim response — *Insurance*
+
+**Known gaps (on Pilot's roadmap — name these honestly in any standards conversation):**
+
+- **SSEPF1b/c** paying for post–high-school life (HOPE scholarship, FAFSA, work-study) — highest-value gap for Georgia students
+- **SSEPF2b** completing a sample 1040 · **SSEPF2e** reconciling a checking account
+- **SSEPF3a/b** comparing banks, credit unions, payday and title-pawn lenders
+- **SSEPF5b** progressive/regressive/proportional taxes · **SSEPF5a** sales/property/estate taxes
+- **SSEPF6d** revolving vs. installment credit · **SSEPF6e** bankruptcy
+- **SSEPF9** consumer protection (agencies, complaints, legislation)
+- **SSEPF10d** investment scams (Ponzi, pump-and-dump) · **SSEPF8b** social-media footprint
+
+A full element-by-element mapping (with evidence and verification status) is maintained by the education team in `agents/education/GA_STANDARDS_ALIGNMENT.md`. *Standards codes and the SB 220 requirement should be re-verified against the current GaDOE source before being sent to a district.*
+
+---
+
 *For questions about curriculum alignment, classroom integration, or teacher support resources, contact the Pilot team.*

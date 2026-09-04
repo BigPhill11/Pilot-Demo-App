@@ -99,3 +99,56 @@ In the Income module the analogies are genuine and memorable (bike-pedaling meta
 
 - **`GA_STANDARDS_ALIGNMENT.md`** (P0 #1) — full mapping of all modules to Georgia GSE Personal Finance and Economics (Course 45.061, SSEPF1–10; SB 220 graduation requirement effective 2024–25), sourced from the official GaDOE standards PDF. Includes coverage grades, 10-item gap list (top gap: SSEPF1b/c — HOPE scholarship/FAFSA content), and a verification queue.
 - **`ASSESSMENT_SPEC.md`** (P0 #2, started) — pre/post + confidence assessment design for the Georgia Tech measurement plan; all instrumentation hooks written as PROPOSALS (code logic = high-risk, awaiting Phil).
+
+---
+
+## 2026-07-06 — Standards verification pass (P0 #1); taxes analogy fixes; re-audit of 6 lessons
+
+**Run scope:** No items were marked APPROVED in the logs, so nothing from the approval queue was applied this run. Verified the 2026-07-05 auto-applied edits are all present in source (they shipped in commit `89297a5`): saving `lesson-1` realityHook (Breeze card / "the money spent itself", line 18), credit-debt `lesson-3` teen on-ramp + 3 analogies, `modules.ts` Income/Saving descriptions + BATNA→concept test-out item. All intact.
+
+### TypeScript check (step 2)
+`npx tsc --noEmit -p tsconfig.app.json`: **73 pre-existing errors project-wide, 21 under `src/data/`, but 0 under `src/data/personal-finance/`.** All education-agent lesson content compiles clean, including this run's taxes edits (re-ran after editing: still 0 in `personal-finance/`). The pre-existing errors live in `economics-simulators/`, `economics-units/`, `market-intelligence/`, `flashcards/*.test.ts`, and three career-readiness *component* files — none are lesson copy and none were touched by any education-agent edit. Flagged for Phil/the app owner (out of education-agent scope — component/type logic is high-risk); see "Blocked on Phil."
+
+### Deep item this run — cleared the GA_STANDARDS_ALIGNMENT.md verification queue (P0 #1)
+
+Read all six queued lessons in full and updated the §3 mappings + §4 gap list + §5 queue in place. Net finding: **the 2026-07-05 "probable" grades were optimistic.** Five elements moved *down*, one *up*:
+
+| Element | Was | Now (verified 2026-07-06) | Why |
+|---|---|---|---|
+| SSEPF2f (net worth) | probable | **STRONG** ↑ | `wealth-fundamentals/lesson-1`: net worth taught in microLesson, Asset/Liability flashcards, quiz item 1, powerMove |
+| SSEPF5a (tax types) | probable-STRONG | **PARTIAL** ↓ | `taxes/lesson-1/2`: income/payroll/capital-gains only; sales/property/estate named once, never taught |
+| SSEPF5b (progressivity) | probable | **GAP** ↓ | zero progressive/regressive/proportional/marginal/bracket matches across the whole taxes module |
+| SSEPF6d (revolving vs. installment) | probable | **GAP** ↓ | `credit-debt/lesson-2` frames productive/consumptive + high/low-interest, not revolving/installment |
+| SSEPF10d (investment scams) | probable-PARTIAL | **GAP** ↓ | `insurance/lesson-3` covers consumer/phishing scams richly, but no Ponzi/pump-and-dump/investment framing |
+| SSEPF1e (generational wealth) | probable-STRONG | **PARTIAL** ↓ | `wealth-fundamentals/lesson-1` teaches ownership vs. income, no generational-transfer/inheritance content |
+| SSEPF8b (social-media footprint) | PARTIAL-probable | **GAP** ↓ | `career-readiness/modules.ts` Personal Brand is a stub (learningPoints only), no footprint-as-liability content |
+
+Gap list in `GA_STANDARDS_ALIGNMENT.md` §4 expanded with SSEPF5b, SSEPF6d, and SSEPF5a-completion as newly-confirmed gaps.
+
+### Finding 8 — Taxes `philsAnalogy` fields are restated examples, not analogies — APPLIED (auto, 2026-07-06)
+
+Same pattern Phil approved fixing in Finding 1 (credit-debt). In `src/data/personal-finance/taxes/lesson-1-understanding-taxes.ts` all five `philsAnalogy` values were bare restated examples ("Seeing federal and state taxes taken out of a paycheck."). Replaced with genuine analogies:
+
+- **Tax** → cookout everyone chips in for (you pay in so the whole thing runs, even parts you don't touch).
+- **Income Tax** → "a slice taken off the top of the money you earn before it ever reaches your hand" (accurate to withholding — deducted from earnings, not added at purchase).
+- **Take Home Pay** → "the final score, not the halftime score" (gross = halftime; take-home = after taxes/deductions).
+- **Public Services** → lights and Wi-Fi at the rec center (everyone chips in so they're on when any one person needs them).
+- **Tax Planning** → knowing which routes have tolls before you leave (same destination, all legal, keep more money).
+
+Voice matches the module's contraction-light style; string-literal only, no escapes; tsc re-checked clean.
+
+### Re-audit findings on the six lessons read (reading level / cultural relevance / decision framing)
+
+- **Finding 9 — Taxes module quizzes are recall-flavored (GIMG failure mode) — OPEN (proposal).** Both `taxes/lesson-1` and `lesson-2` quizzes test term recall via fill-in stems ("Taxes reduce income because:", "Income tax applies to:", "Capital gains apply when:") rather than a decision. Per Finding 3 and `ASSESSMENT_SPEC.md` §1.4, these should become short scenario/decision items (keeping option count + correctIndex shape). Rewriting quiz *copy* is auto-apply-eligible, but doing it well across two lessons is a focused pass — proposed as its own next-run task rather than rushed here. Note: the taxes *simulators* are good and decision-driven (lesson-1 "plan on net vs gross", lesson-2 "set aside 30%").
+- **Finding 10 — Taxes module has zero Atlanta/teen texture — OPEN (proposal).** Unlike Saving/Credit (now carrying Breeze card, phone-plan, rec-center hooks), both taxes realityHooks default to a generic "a job or side hustle." Proposed: ground lesson-1's hook in a first rec-center/retail paycheck where take-home ≠ the offer-letter number, and lesson-2's in a concrete teen mix (W-2 shift + reselling sneakers/tutoring cash + a first brokerage app). Low-risk copy; deferred to the same taxes-focused pass as Finding 9.
+- **Protect (do not "fix"):** `wealth-fundamentals/lesson-1` has the strongest `philsAnalogy` set in the app (bamboo forest / pond / seeds-into-trees) — genuine, memorable, on-theme. `credit-debt/lesson-2` and `insurance/lesson-3` simulators are model decision-driven design (real tradeoffs, non-shaming feedback) — hold them up as the template.
+
+### Proposals awaiting Phil's APPROVED (high-risk)
+
+- **STD-TAG-1 (PROPOSE-ONLY) — add `gaStandards?: string[]` to the `Lesson` (and `PersonalFinanceModule`) interface in `src/types/personal-finance.ts`** so per-lesson standards tags can be applied. Verified this run that the type has no such field and no index signature, so tagging lesson objects today would fail the type-check. The tag *values* are ready (from the verified §3 mapping); only the optional-field type change (high-risk, touches `src/types/`) blocks applying them. Additive/optional → existing content still compiles.
+- **Finding 6** (microLesson-after-simulator ordering) — still OPEN from 2026-07-02; unchanged.
+
+### Next sweep queue (2026-07-06)
+1. Taxes-focused copy pass: apply Findings 9 (quiz→decision) and 10 (Atlanta/teen hooks) across `taxes/lesson-1/2` (auto-apply copy).
+2. Read `wealth-fundamentals/lesson-3-risk-life-stages.ts` (SSEPF1e legacy check) and `taxes/lesson-3/4/5` + boss (residual SSEPF5 check) to close the two remaining §5 verification items.
+3. Draft the Week-1 (Income) 6+6 pre/post item blueprint in `ASSESSMENT_SPEC.md` v0.2 (doc-only, auto-apply) — the next P0 #2 step.
