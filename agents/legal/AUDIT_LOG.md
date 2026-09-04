@@ -552,3 +552,146 @@ once they clear — no further approval needed from Phil.**
 | PC-16 | OPEN — vendor scope now Google (Gemini) + Supabase only |
 
 *End of 2026-07-05 Run 3 entry. Future runs: append below this line.*
+
+---
+
+# 2026-07-06 — PC-16 vendor data-handling research (deep dive); iOS Info.plist re-audit (F-18); PC-19 proposed
+
+> Not legal advice. Attorney review required before reliance.
+
+## A. Ledger check + APPROVED-item application
+
+- **PC-17 (APPROVED 2026-07-05):** repo-side deletions **re-verified present today** —
+  `supabase/functions/phil-chat/` and `.../phil-chat-openai/` are gone; `supabase/config.toml`
+  has no `[functions.phil-chat*]` blocks (only the 11 live functions remain); grep for
+  `phil-chat` in `src/` and `supabase/` returns nothing outside `agents/legal/`. **No new
+  repo action needed.** OPS items **5–6 remain OUTSTANDING** (undeploy both functions on
+  project `qssqbpllqkorfjcxgomh`; remove + revoke `PERPLEXITY_API_KEY`) — these need
+  Supabase console access and are re-surfaced in §F. `OPENAI_API_KEY` correctly retained
+  (admin video pipeline, F-14).
+- **PC-18 (APPROVED-CONDITIONAL):** gates unchanged; this run **advances gate (b)** (vendor
+  verification) via §B below but cannot fully clear it (needs ops confirmation of the
+  Gemini billing tier). Gates (a) LLC name/email/address and (c) attorney sign-off remain.
+- No other items carry an `APPROVED` mark. Nothing else applied to app source this run.
+
+## B. Queue item advanced (deep dive): PC-16 — vendor data-handling verification
+
+New file **`agents/legal/VENDOR_DATA_HANDLING.md`** (auto-apply tier: additive doc under
+`agents/`). Executes PC-16 and PC-18 gate (b) with primary-source research. Key results:
+
+1. **Both** student-facing AI functions use the **Gemini Developer API**
+   (`generativelanguage.googleapis.com`, `gemini-2.5-flash`, `GEMINI_API_KEY`) —
+   `AskPhil/index.ts:145-160` and `resume-bullet-check/index.ts:80-88`. This is the
+   Developer API, **not** Vertex AI; the distinction drives the contract terms.
+2. **The decisive open fact (F-19, P0, NEEDS OPS CONFIRMATION):** is the Cloud project on
+   the **paid (Cloud Billing)** tier or the **unpaid** tier?
+   - **Unpaid** (per ai.google.dev/gemini-api/terms, verbatim): Google uses submitted
+     content + responses "to provide, improve, and develop Google products and services"
+     including ML, and "human reviewers may read, annotate, and process your API input and
+     output." → **Not acceptable** for minors 13–18 / school pilot; makes DRAFT §6's
+     "may not use your messages to train their models" **false**.
+   - **Paid**: "Google doesn't use your prompts … or responses to improve our products,"
+     and processes them under Google's data-processor DPA; no human review for improvement.
+     This is the tier the policy language assumes.
+3. **Abuse monitoring applies even on paid tier:** prompts/responses retained **55 days**
+   for Prohibited Use Policy enforcement; flagged content can be human-reviewed for safety;
+   not used to train models beyond policy-enforcement models
+   (ai.google.dev/gemini-api/docs/usage-policies). Policy text must not over-promise
+   non-retention.
+4. **Zero Data Retention (ZDR)** is available on **paid** projects by approval and clears
+   user content + identifiable metadata prior to logging (ai.google.dev/gemini-api/docs/zdr).
+   **Recommended** to request for this project — strong, cheap procurement artifact.
+5. **Supabase**: DPA published, made binding via signed PandaDoc; region-pinned residency;
+   SCCs + UK addendum; **SOC 2 Type 2**. Ops must execute/archive the DPA, capture the
+   project region (confirm US), and obtain the SOC 2 report + subprocessor list.
+
+The memo includes a decision table mapping each confirmed vendor state to the exact §6
+wording that would then be accurate, so PC-18 §6 can ship the instant ops confirms the
+tier. **PC-16 status: OPEN → RESEARCH COMPLETE, awaiting ops confirmation.**
+
+## C. Re-audit of files changed since last log date (2026-07-05)
+
+Changed since Run 3 (commit `89297a5`): the **iOS project is now in the checkout**
+(`ios/App/App/Info.plist`, `AppDelegate.swift`, `project.pbxproj`, `ci_pre_xcodebuild.sh`),
+plus education-agent lesson-copy edits and CI build-number scripting.
+
+- **F-18 (P1, NEW — corrects/closes the PC-12 iOS verification item):** `ios/App/App/Info.plist:29-30`
+  sets **`NSMicrophoneUsageDescription` = "Phil's Financials does not use your microphone."**
+  This is **inaccurate**: the interview-practice recorder calls
+  `navigator.mediaDevices.getUserMedia({ audio: true })`
+  (`src/components/career-readiness/interviewing/AudioRecorder.tsx:22`), so the app **does**
+  access the mic (on-device only; blob never uploaded — line 32-36, 119). On iOS the
+  Capacitor WebView surfaces this exact string in the system permission dialog when a
+  student taps "Record."
+  - **Risk:** (1) App Review accuracy — a purpose string that denies use while the app
+    requests the permission invites a Guideline 5.1.1 rejection; (2) user-facing
+    inaccuracy — minors see a false statement at the consent moment; (3) contradicts the
+    (good) on-device-only story we want to tell in the policy (PC-12 / DRAFT §8).
+  - The other purpose strings are **accurate and good** — camera, photo library, and
+    `NSUserTrackingUsageDescription` all correctly state the app does **not** use them / does
+    **not** track across apps. `ITSAppUsesNonExemptEncryption=false`. Only the mic string is
+    wrong. → Fix proposed as **PC-19** (§D).
+  - This resolves PC-12's pending "verify iOS `Info.plist` `NSMicrophoneUsageDescription`"
+    ops item: **verified — and it is wrong; must be corrected.**
+- **CI build-number script (`ci_pre_xcodebuild.sh`, `project.pbxproj`):** stamps a unique
+  iOS build number; no data-handling, auth, or policy surface. No privacy/IP exposure.
+- **Education-agent lesson edits** (`src/data/personal-finance/...`): content-only copy;
+  no PII, data-flow, or consent surface. Consistent with F4/PPRA guardrail (still no
+  family-income prompts). No new exposure.
+
+## D. PROPOSED CHANGE (high-risk → PROPOSE-ONLY; awaiting APPROVED)
+
+### PC-19 · P1 · Correct the iOS microphone purpose string — `ios/App/App/Info.plist:30`
+
+- **Current:** `<string>Phil's Financials does not use your microphone.</string>`
+- **Proposed:** `<string>Phil's Financials uses the microphone only for the optional interview-practice recorder. Your recording stays on your device for playback and is never uploaded to our servers.</string>`
+- **Rationale:** App Review accuracy (Apple Guideline 5.1.1 purpose-string requirement);
+  truthful just-in-time disclosure to minors at the consent moment; consistency with the
+  on-device-only design (`AudioRecorder.tsx:119`) and the mic disclosure proposed for the
+  privacy policy (PC-12 / DRAFT §8). Length is within Apple's practical limits.
+- **Classified high-risk** (native iOS manifest / permission dialog — the AndroidManifest
+  analog, which the charter lists as PROPOSE-ONLY; it is user-facing and touches a
+  data-collection consent surface). **No file changed this run.**
+- **Note:** the string change alone does not alter behavior; it makes the existing behavior
+  truthfully disclosed. Pairs naturally with PC-12 (policy §8) when that ships.
+
+## E. Status ledger deltas (supersedes prior tables for listed IDs)
+
+| ID | New status |
+|---|---|
+| PC-16 | **RESEARCH COMPLETE** (see `VENDOR_DATA_HANDLING.md`) — awaiting **ops** confirmation of Gemini paid tier + DPAs + region + ZDR; scope = Google (Gemini) + Supabase only |
+| PC-17 | APPROVED → APPLIED (repo side, re-verified 2026-07-06); **OPS items 5–6 still OUTSTANDING** |
+| PC-18 | APPROVED-CONDITIONAL — gate (b) advanced by PC-16 research; still blocked on (a) LLC name/email/address, (b) ops tier confirmation, (c) attorney sign-off, (d) Safe Harbor + NY CDPA decisions |
+| PC-12 | iOS `Info.plist` verification **DONE** — result: string is inaccurate → superseded by **PC-19**; policy §8 text still tracked under DRAFT/PC-18 |
+| **PC-19** | **PROPOSED — awaiting APPROVED** (iOS mic purpose string fix) |
+
+All other PC statuses unchanged from the 2026-07-05 Run 3 tables.
+
+## F. Standing blockers for Phil (re-surfaced)
+
+1. **Exact GA LLC legal name** (ecorp.sos.ga.gov) — blocks PC-5, PC-8, PC-18(a), TM filing.
+2. **Canonical privacy contact email + mailing address** — blocks PC-5, PC-9, PC-18(a).
+3. **Panda art / comic-panel authorship** (human vs AI vs contractor) — blocks copyright
+   strategy + design-mark filing.
+4. **Repo visibility** (public/private?) — blocks creating `agents/legal/evidence/` for the
+   DPA/SOC2/TM artifacts this memo calls for.
+5. **NEW — OPS (P0): Gemini billing tier.** Confirm the `GEMINI_API_KEY` Cloud project is on
+   the **paid** tier (screenshot billing + accept Google's data-processor DPA); this single
+   fact unblocks PC-18 §6. If it is unpaid, students' text is being used to improve Google
+   products and may be human-reviewed — treat as urgent.
+6. **OPS (P0, carried): PC-17 items 5–6** — undeploy `phil-chat` + `phil-chat-openai` on
+   project `qssqbpllqkorfjcxgomh` and remove/revoke `PERPLEXITY_API_KEY`. Repo deletion did
+   NOT undeploy them.
+
+## G. For the privacy/TM attorney (additions)
+
+- **F-19 / PC-16:** review the vendor decision table in `VENDOR_DATA_HANDLING.md` §3;
+  confirm the paid-tier + ZDR posture is sufficient for the FERPA "school official" /
+  O.C.G.A. § 20-2-661 commitments, and whether the 55-day abuse-monitoring retention needs
+  disclosure in §6.
+- **F-18 / PC-19:** confirm the corrected mic purpose string is adequate; consider whether
+  the local-only recorder needs any parental-notice treatment under COPPA for the 13+
+  posture (likely no, but flag).
+- Safe Harbor (C4) and NY CDPA (N1) decisions remain the next research gates for PC-18 (d).
+
+*End of 2026-07-06 entry. Future runs: append below this line.*
