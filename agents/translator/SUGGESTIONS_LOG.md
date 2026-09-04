@@ -8,17 +8,18 @@ One rotating suggestion goes out with each digest email. Status values:
 ## 2026-09-04 — Initial findings from the cloud-agent diagnosis
 
 **#1 — Close out the 5 stale unmerged agent branches from July**
-Status: **offered**
-`legal-agent/2026-07-05-pc16-vendor-verification`,
-`legal-agent/2026-07-06-coppa-safe-harbor`,
-`legal-agent/2026-07-06-vendor-data-handling`,
-`education-agent/2026-07-05-hope-fafsa-spec`,
-`education-agent/2026-07-06-standards-verification` all contain real,
-never-merged work (COPPA Safe Harbor analysis, HOPE/FAFSA module spec,
-standards verification, etc.) sitting on GitHub since July. Recommend: open a
-PR for each (or one combined PR) so Phil can review and merge or close them,
-rather than losing that work. Ask in the next digest: want these turned into
-PRs now?
+Status: **accepted (2026-09-04 night)** — Phil asked to finish this same
+night. Correction to the original finding: PRs already existed for all 5
+(#8, #9, #10, #11, #12) — they just never got surfaced to Phil, so nothing
+new needed creating. Confirmed all 5 still show `mergeable_state: clean`
+against current `main` as of 2026-09-04. Sent Phil a dedicated backlog digest
+email so he can review/merge them before the first scheduled 9am run.
+Heads-up for future runs: PRs #8/#10/#12 all touch
+`agents/legal/AUDIT_LOG.md` and #9/#11 both touch
+`agents/education/WORDING_ENGAGEMENT_LOG.md` — merging one may turn the
+others' mergeable_state to dirty (normal append conflict, not a bug); suggest
+merging oldest-first and expect to resolve a small conflict on the later
+ones.
 
 **#2 — Decide a real review cadence, not just "on demand"**
 Status: offered
