@@ -44,29 +44,53 @@ a different execution path (Phil's Claude session instead of a paid API key).
 
 ## Schedule
 
-On-demand only. Phil asks for a run whenever he wants one (e.g. "run the
-agents", "do a legal pass"). Nothing runs automatically in the background.
+**Daily, ~9:00 AM America/New_York** (set by Phil, 2026-09-04), via a Cowork
+scheduled task — not GitHub Actions, no separate billing. Phil can also
+ask for an extra ad-hoc run any time ("run the agents now"). Each scheduled
+firing is a brand-new session with no memory of prior runs, so it must:
+1. Re-link to Phil's computer / request access to `~/Projects/Pilot-Demo-App`.
+2. Read this charter plus `agents/legal/CHARTER.md` and
+   `agents/education/CHARTER.md` fresh (they carry all standing context).
+3. Do one pass per agent, push the branch/PR, verify it landed, send the
+   digest email, update `SUGGESTIONS_LOG.md`.
+Note: cron is UTC; 9:00 AM ET is 13:00 UTC on EDT (roughly Mar–Nov) and
+14:00 UTC on EST — check the current offset when adjusting the trigger.
 
 ## Delivery
 
-- **GitHub**: branch + PR per run, same as before. Requires GitHub push access
-  from Phil's linked computer or a repo-scoped access token — see
-  `agents/SETUP_API_KEY.md` for the superseded cloud-billing option, and ask
-  Claude directly for the current one in use.
-- **Email**: one short digest per run, sent via Gmail, format below.
+- **GitHub**: branch + PR per run, same as before. Push access comes from a
+  repo-scoped GitHub token already saved in `git remote` config inside
+  `~/Projects/Pilot-Demo-App` on Phil's linked Mac — no need to re-collect a
+  token unless that config is gone. (The `agents/SETUP_API_KEY.md` doc
+  describes the old, retired cloud-billing option — superseded.)
+- **Email**: one HTML digest per day, sent via Gmail to phillipghead@gmail.com,
+  format below.
 
-## Digest email format
+## Digest email format (HTML, not plain text)
 
-Subject: `Phil's Financials — <Legal|Education> pass, <date>`
+Subject: `Phil's Financials — daily digest, <date>`
 
-Body:
-1. **3-line plain-English digest** — what happened, in normal words, no
-   jargon. No PC-numbers, no statute names in the headline (they can appear in
-   a one-line "details" mention, not the summary).
-2. **One clear ask** — the single highest-priority item awaiting Phil's
-   `APPROVED` mark, phrased as a yes/no question with the PR link.
-3. **One workflow suggestion** — see `SUGGESTIONS_LOG.md`; rotates each run,
-   never repeats a suggestion Phil already acted on or dismissed.
+Design goals Phil asked for directly: pleasant to read (not a wall of text),
+and fast to act on — read the changes, then approve, in as few taps as
+possible. Concretely:
+
+1. **Header** — date, one-line status ("2 passes ran, 1 needs your OK").
+2. **Per agent, a compact card** (not prose paragraphs):
+   - 2-3 line plain-English summary of what changed. No PC-numbers, no
+     statute names, no jargon in this part.
+   - A bulleted list of the actual file/content changes in plain terms
+     (e.g. "Rewrote the credit-score lesson's opening example" not "Finding
+     5 applied to lesson-3-credit-scores.ts").
+   - One prominent button/link: **"Review & Merge →"** linking straight to
+     the PR's GitHub page (one more tap there merges it — Phil's phone
+     already has GitHub app notifications set up).
+3. **One workflow suggestion** at the bottom — see `SUGGESTIONS_LOG.md`;
+   rotates each day, never repeats a suggestion Phil already acted on or
+   dismissed.
+
+Keep total length short enough to read in full on a phone without scrolling
+past 1-2 screens. Use simple inline-styled HTML (tables/divs with inline
+`style=`, no external CSS) so it renders consistently in Gmail's app.
 
 ## Files in this folder
 
