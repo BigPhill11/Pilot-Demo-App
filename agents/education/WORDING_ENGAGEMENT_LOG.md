@@ -152,3 +152,26 @@ Voice matches the module's contraction-light style; string-literal only, no esca
 1. Taxes-focused copy pass: apply Findings 9 (quiz→decision) and 10 (Atlanta/teen hooks) across `taxes/lesson-1/2` (auto-apply copy).
 2. Read `wealth-fundamentals/lesson-3-risk-life-stages.ts` (SSEPF1e legacy check) and `taxes/lesson-3/4/5` + boss (residual SSEPF5 check) to close the two remaining §5 verification items.
 3. Draft the Week-1 (Income) 6+6 pre/post item blueprint in `ASSESSMENT_SPEC.md` v0.2 (doc-only, auto-apply) — the next P0 #2 step.
+
+---
+
+## 2026-09-07 — Taxes-focused copy pass (Findings 9 & 10 applied); re-audit clean
+
+**Run scope:** No items were marked APPROVED since the last entry, so nothing from the high-risk approval queue (Finding 6, STD-TAG-1) was applied this run. Re-verified the 2026-07-06 auto-applied taxes analogy edits (Finding 8) are still present in `taxes/lesson-1-understanding-taxes.ts` — intact, no drift.
+
+### Applied diffs (auto, low-risk copy under `src/data/`)
+
+1. **Finding 9 — Taxes quizzes now decision-framed, not recall.** Rewrote all 5 quiz questions in both `taxes/lesson-1-understanding-taxes.ts` and `taxes/lesson-2-income-types-taxation.ts` from term-recall stems ("Taxes reduce income because:") into short scenario/decision items (e.g., "Your check comes in $28 lower than the $180 you expected. What's the most accurate reason?"). Option count, `correctIndex`, and object shape unchanged in every item; only question/option/explanation text changed.
+2. **Finding 10 — Taxes lessons now carry Atlanta/teen texture.** Both `realityHook` fields replaced: lesson-1 now opens with a rec-center job ($12/hr, 15 hrs/week, $180 expected vs. $152 landed); lesson-2 now opens with a concrete teen income mix (retail shift + sneaker resale + a first $50 brokerage deposit). Matches the hook style already used in Saving/Credit-Debt (Breeze card, phone plan, etc.).
+
+**Verification:** brace/paren balance checked programmatically after editing (23/23 in both files, matched); `npx tsc --noEmit -p tsconfig.app.json` re-run: **0 errors under `src/data/personal-finance/`**, same as the 2026-07-06 baseline (73 pre-existing project-wide errors elsewhere, unrelated to this edit, unchanged).
+
+### Still OPEN (high-risk — awaiting Phil's APPROVED)
+
+- **Finding 6** (microLesson-after-simulator ordering) — unchanged, still OPEN since 2026-07-02.
+- **STD-TAG-1** (`gaStandards?: string[]` optional field on `Lesson`/`PersonalFinanceModule` in `src/types/personal-finance.ts`) — unchanged, still OPEN since 2026-07-05.
+
+### Next sweep queue (2026-09-07)
+1. Read `wealth-fundamentals/lesson-3-risk-life-stages.ts` and `taxes/lesson-3/4/5` + boss game (carried over from 2026-07-06 — still not done; SSEPF1e/SSEPF5 verification queue in `GA_STANDARDS_ALIGNMENT.md` §5 remains open).
+2. Draft the Week-1 (Income) 6+6 pre/post item blueprint in `ASSESSMENT_SPEC.md` v0.2 (doc-only, auto-apply) — carried over from 2026-07-06, still the next P0 #2 step.
+3. If Phil approves Finding 6 or STD-TAG-1, apply them first before starting new sweep work.

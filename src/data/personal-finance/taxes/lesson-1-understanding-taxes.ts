@@ -5,7 +5,7 @@ export const lesson1UnderstandingTaxes: Lesson = {
   title: 'Understanding Taxes and Why They Exist',
   estimatedMinutes: 10,
   moduleOverview: 'This lesson explains what taxes are and why they exist. You learn how taxes affect income, spending, and investing, and why understanding taxes helps you keep more of what you earn legally.',
-  realityHook: 'You earn money from a job or side hustle and notice part of it disappears before you receive it. You worked the same hours, but your paycheck feels smaller than expected. That missing portion is taxes, and understanding them changes how you plan money decisions.',
+  realityHook: "You land your first job at the rec center, $12 an hour, 15 hours a week, so you expect $180 in your account Friday. When the deposit hits, it's $152. Nobody shorted you; taxes did their job before the money ever reached your phone. Understanding taxes changes how you read every paycheck after this one.",
   outcomePreview: 'You will understand that taxes fund public systems, taxes reduce take home pay, different income types face different taxes, and awareness improves planning.',
   microLesson: `Taxes are required payments collected by governments to fund shared services. These services include schools, roads, public safety, and national programs. Taxes support systems that individuals cannot easily fund alone.
 
@@ -64,11 +64,11 @@ Taxes are not punishment. Taxes are a cost of participating in an organized econ
     followUp: 'Review a sample paycheck and identify where taxes reduce earnings.'
   },
   quiz: [
-    { question: 'Taxes reduce income because:', options: ['Governments waste money', 'Services need funding', 'Earnings disappear', 'Markets fail'], correctIndex: 1, explanation: 'Taxes fund public services that benefit everyone.' },
-    { question: 'Income tax applies to:', options: ['Only purchases', 'Only investments', 'Gifts only', 'Money earned'], correctIndex: 3, explanation: 'Income tax is charged on money you earn from various sources.' },
-    { question: 'Understanding taxes helps because:', options: ['It removes taxes', 'It improves planning', 'It increases income', 'It avoids work'], correctIndex: 1, explanation: 'Understanding taxes helps you plan better and avoid surprises.' },
-    { question: 'Public services are funded by:', options: ['Taxes', 'Donations', 'Businesses only', 'Banks'], correctIndex: 0, explanation: 'Taxes are the primary funding source for public services.' },
-    { question: 'Tax planning focuses on:', options: ['Breaking rules', 'Avoiding income', 'Legal reduction', 'Spending less'], correctIndex: 2, explanation: 'Tax planning uses legal strategies to reduce tax impact.' }
+    { question: "Your check comes in $28 lower than the $180 you expected. What's the most accurate reason?", options: ['The rec center miscounted your hours', 'Part of your pay funds public services before it reaches you', 'You worked fewer hours than scheduled', 'Direct deposit fees ate the difference'], correctIndex: 1, explanation: 'Taxes are withheld before the money reaches you, which is why gross pay and take-home pay are different numbers.' },
+    { question: "You tutor a neighbor's kid for cash and also get a paycheck from your retail job. Which one does income tax apply to?", options: ['Only the paycheck', 'Only the tutoring cash', 'Both, any way you earn money', "Neither, since you're a minor"], correctIndex: 2, explanation: 'Income tax applies to money you earn, no matter the source, including cash from tutoring or side work.' },
+    { question: "Before you take a job offer of '$15/hour,' knowing about taxes helps you:", options: ['Negotiate a tax-free deal', 'Estimate what will actually land in your account', 'Avoid paying taxes legally', 'Get paid in cash instead'], correctIndex: 1, explanation: 'Understanding taxes lets you plan around take-home pay instead of being surprised by it.' },
+    { question: 'Your rec center stays open, the streetlights work, and your school has textbooks. Who mostly pays for that?', options: ['Local businesses donate it all', 'Everyone who pays taxes, including working teens', 'The federal government prints the money for it', 'Ticket sales from games'], correctIndex: 1, explanation: 'Public services are funded by taxes paid by individuals and businesses, including part-time workers.' },
+    { question: "You start a small resale side hustle. What's the smartest tax move before you spend the profit?", options: ['Ignore it until next year', 'Set some aside and learn the legal ways to reduce what you owe', 'Ask a friend to hold the cash', 'Report only half the income'], correctIndex: 1, explanation: 'Tax planning means legally preparing for and reducing what you owe, not avoiding or hiding income.' }
   ],
   powerMove: 'Review a sample paycheck and identify where taxes reduce earnings.',
   realLifeAction: 'Ask an adult to explain one tax they pay and what service it supports.'
