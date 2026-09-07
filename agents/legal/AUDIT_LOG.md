@@ -695,3 +695,44 @@ All other PC statuses unchanged from the 2026-07-05 Run 3 tables.
 - Safe Harbor (C4) and NY CDPA (N1) decisions remain the next research gates for PC-18 (d).
 
 *End of 2026-07-06 entry. Future runs: append below this line.*
+
+## 2026-09-07 — Research pass: Safe Harbor (C4) and NY CDPA (N1) gates for PC-18(d)
+
+**Run scope:** No items were marked `APPROVED` in this log since the 2026-07-06 entry, so **PC-19 (iOS mic purpose-string fix) was NOT applied this run** — it remains PROPOSE-ONLY, awaiting Phil's `APPROVED` mark. Re-verified `ios/App/App/Info.plist:29-30` still reads "Phil's Financials does not use your microphone." (unchanged, still inaccurate per F-18). No other app-code files changed since the 2026-07-06 audit base (`96c46eb`), so no re-audit findings this run beyond confirming that state.
+
+Per the 2026-07-06 entry's own note ("Safe Harbor (C4) and NY CDPA (N1) decisions remain the next research gates for PC-18(d)"), this run advances both. **This is preliminary research, not legal advice — counsel must verify before any filing or policy language ships (per the folder-wide disclaimer).**
+
+### H. COPPA Safe Harbor programs (C4) — research findings
+
+- 16 C.F.R. § 312.11 lets an operator join an FTC-approved "safe harbor" self-regulatory program instead of complying with COPPA provision-by-provision directly; the program certifies the operator's practices meet or exceed COPPA and handles a lot of the compliance documentation burden.
+- As of this run, six FTC-approved Safe Harbor programs exist (FTC added a sixth recently): **kidSAFE**, **PRIVO**, **ESRB Privacy Certified**, **CARU (BBB National Programs)**, **iKeepSafe**, plus the newest addition — exact name of the sixth needs a direct pull from `ftc.gov/enforcement/coppa-safe-harbor-program` since it changed recently and press coverage names varied; **NEEDS ATTORNEY VERIFICATION** for the current exact roster and each program's fee/scope before picking one.
+- The FTC's 2025 COPPA Rule amendments also touched Safe Harbor obligations (reporting requirements to the FTC, audit cadence) — **NEEDS ATTORNEY VERIFICATION** on whether these amendments are fully in effect yet or still on a phase-in schedule, since that changes the compliance calendar Phil would be signing up for.
+- **Why this matters for Phil's Financials:** joining a Safe Harbor program is optional, not required — COPPA compliance is achievable without one. The tradeoff is a program membership fee and annual audit vs. a private attorney-reviewed self-certification. Given the app is heading toward an APS (school district) procurement process, a named Safe Harbor certification (e.g., "kidSAFE Certified") could be a fast, recognizable trust signal for district legal review — **worth a cost/benefit conversation with Brian (privacy attorney)** rather than a pure compliance necessity.
+- **Recommendation (non-binding):** treat Safe Harbor certification as a **PC-18(d) decision point for Phil + Brian**, not something the agent should pick unilaterally — cost and audit-scope tradeoffs are a business decision, not just a legal one.
+
+### I. New York Child Data Protection Act / "NY CDPA" (N1) — research findings
+
+- New York's Child Data Protection Act (General Business Law Article 45) went into effect **June 20, 2025**. The NY Attorney General has since published implementation guidance (`ag.ny.gov/child-data-protection-act-guidance`).
+- **Applies to:** any operator of a website, app, or online service with **actual knowledge** that a user is under 18 and located in New York — this is broader than COPPA's under-13 threshold and is **not limited to companies based in New York**; it turns on where the *user* is.
+- **Core requirement:** informed, **opt-in consent** (from the minor if 13-17, or a parent/guardian if under 13) before processing a covered minor's personal data for **targeted advertising** or an **algorithmic "addictive feed"** (defined around content selection driven by user-specific data), unless the processing is **"strictly necessary"** for the product/service the minor actually requested.
+- **Relevance to Phil's Financials (flag, don't assume):** the app has no advertising business model (no targeted ads), which covers the first prong cleanly. The open question is the **second prong — whether Bamboo Empire's personalized content/difficulty sequencing could be read as an "algorithmic feed"** under the statute's definition. On a plain read this looks unlikely (it's closer to adaptive-curriculum sequencing than a social content feed), but the AG's guidance defines edge cases the agent has not yet compared line-by-line against the app's actual simulator/quiz logic. **NEEDS ATTORNEY VERIFICATION** — recommend Brian review the AG guidance PDF against `src/components/learn/careers/CareerJungleMap.tsx`-style personalization logic (if any exists) before concluding "not applicable."
+- **NY exposure question (separate, factual, not legal):** the app is web-accessible nationwide with partners so far concentrated in Atlanta (First Tee of Metro Atlanta, Atlanta PAL, prospective APS) — **no known NY user base today**. This significantly lowers near-term urgency but does not eliminate it if the app is publicly reachable from New York. **Standing blocker for Phil:** confirm whether the app is intended to stay Georgia/Southeast-focused or could realistically pick up New York users (affects whether N1 is a live compliance item or a documented non-issue for now).
+
+### J. Status ledger deltas (supersedes prior tables for listed IDs)
+
+| ID | New status |
+|---|---|
+| PC-19 | Still **PROPOSED — awaiting APPROVED** (no change; not applied this run) |
+| C4 (Safe Harbor) | RESEARCH COMPLETE (this run) — see §H; recommend Phil+Brian cost/benefit conversation, not a code or policy change |
+| N1 (NY CDPA) | RESEARCH COMPLETE (this run) — see §I; low near-term exposure (no known NY users) but the "algorithmic feed" question **NEEDS ATTORNEY VERIFICATION** before treating it as closed |
+
+### K. Standing blockers for Phil (carried + one new)
+
+Blockers 1-6 from the 2026-07-06 entry are unchanged and re-surfaced (GA LLC legal name, privacy contact email/address, comic-art authorship, repo visibility, Gemini billing tier, PC-17 items 5-6). **New (7):** confirm whether Phil intends the app to expand outside Georgia/the Southeast (affects whether NY CDPA is a live item or a documented non-issue).
+
+### For the privacy/TM attorney (additions)
+
+- **C4:** confirm the current roster of FTC-approved Safe Harbor programs and whether the 2025 COPPA Rule amendments' Safe Harbor reporting changes are already in effect; advise on cost/benefit for an APS-procurement context specifically.
+- **N1:** review NY AG's Child Data Protection Act guidance against the app's actual personalization/sequencing logic to confirm the "algorithmic feed" prong doesn't apply; confirm the "actual knowledge" threshold given the app's stated 13-18 audience (the whole user base is presumptively covered-age, which is different from COPPA's under-13 "actual knowledge" fact question).
+
+*End of 2026-09-07 entry. Future runs: append below this line.*
