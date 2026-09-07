@@ -8,35 +8,39 @@ One rotating suggestion goes out with each digest email. Status values:
 ## 2026-09-04 — Initial findings from the cloud-agent diagnosis
 
 **#1 — Close out the 5 stale unmerged agent branches from July**
-Status: **accepted (2026-09-04 night)** — Phil asked to finish this same
-night. Correction to the original finding: PRs already existed for all 5
-(#8, #9, #10, #11, #12) — they just never got surfaced to Phil, so nothing
-new needed creating. Confirmed all 5 still show `mergeable_state: clean`
-against current `main` as of 2026-09-04. Sent Phil a dedicated backlog digest
-email so he can review/merge them before the first scheduled 9am run.
-Heads-up for future runs: PRs #8/#10/#12 all touch
-`agents/legal/AUDIT_LOG.md` and #9/#11 both touch
-`agents/education/WORDING_ENGAGEMENT_LOG.md` — merging one may turn the
-others' mergeable_state to dirty (normal append conflict, not a bug); suggest
-merging oldest-first and expect to resolve a small conflict on the later
-ones.
+Status: **partially accepted** — as of 2026-09-07, PRs **#11 and #12 are
+merged**; **#8, #9, and #10 are still open**. Reminder: #8 and #10 both touch
+`agents/legal/AUDIT_LOG.md` and may show merge conflicts against current
+`main` now that later legal-agent PRs have merged — expect to resolve a
+small append conflict when merging those two.
 
 **#2 — Decide a real review cadence, not just "on demand"**
-Status: offered
-Since runs are no longer automatic, the work only happens when Phil
-remembers to ask. Suggest picking a light cadence Phil actually wants (e.g.
-"remind me every Monday to run both agents") so review doesn't quietly stall
-the way the cloud version did (2 months, zero merges). Once Phil confirms a
-cadence, the translator can set it up as a scheduled reminder.
+Status: **accepted** — a daily ~9am Cowork scheduled task is now running
+this translator agent automatically (confirmed: this is a scheduled run).
+No further action needed unless Phil wants to change the time.
 
 **#3 — One merge decision per week beats reviewing every PC-number**
-Status: offered
+Status: offered (standing practice, not a one-time action)
 The legal/education charters produce detailed item-by-item ledgers
 (PC-numbers, item IDs) that are useful for audit trail but slow to read on a
-phone. Suggest the digest email keep doing the 3-line-summary-plus-one-ask
-format permanently (not just for this first run) so Phil never has to open
-the full AUDIT_LOG.md / WORDING_ENGAGEMENT_LOG.md just to decide whether to
-merge a PR.
+phone. The digest keeps using the 3-line-summary-plus-one-ask format so Phil
+never has to open the full AUDIT_LOG.md / WORDING_ENGAGEMENT_LOG.md just to
+decide whether to merge a PR.
+
+---
+
+## 2026-09-07 — New suggestion
+
+**#4 — Clear out old stale branches from Phil's Mac occasionally**
+Status: offered
+Today's run had to work around some leftover "in-progress" git files on
+Phil's computer inside the Pilot-Demo-App folder (harmless, but they made a
+couple of steps trickier than usual). Nothing was lost and no PR was
+affected, but it's worth an occasional light cleanup: if Cursor or another
+editor is left open on this repo for a long time, or a git operation gets
+interrupted (e.g. laptop sleeps mid-save), it can leave small leftover files
+behind. If a future run ever reports something got stuck, the fix is usually
+just closing any open editor on the repo and letting the next run retry.
 
 ---
 
