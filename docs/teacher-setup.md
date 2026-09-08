@@ -121,6 +121,39 @@ any of them:
 node scripts/build-teacher-sql.mjs
 ```
 
+### Lost track of where you are?
+
+Paste this into the SQL editor at any point. It reports which parts are in and
+what to do next, and it is safe to run at any time:
+
+```sql
+select
+  case when exists (
+         select 1 from pg_type t join pg_enum e on e.enumtypid = t.oid
+         where t.typname = 'app_role' and e.enumlabel = 'teacher')
+       then 'done' else 'NOT DONE' end                              as part_1_enum,
+  case when to_regclass('public.classrooms') is not null
+        and to_regclass('public.classroom_members') is not null
+        and to_regclass('public.assessment_responses') is not null
+        and (select count(*) from pg_proc p
+               join pg_namespace n on n.oid = p.pronamespace
+              where n.nspname = 'public' and p.proname like 'teacher\_%') = 11
+       then 'done' else 'NOT DONE' end                              as part_2_feature,
+  case
+    when not exists (
+      select 1 from pg_type t join pg_enum e on e.enumtypid = t.oid
+      where t.typname = 'app_role' and e.enumlabel = 'teacher')
+      then 'Run part 1 (the ALTER TYPE line), then part 2.'
+    when to_regclass('public.classrooms') is null
+      then 'Part 1 is in. Open a NEW tab and run part 2.'
+    when (select count(*) from pg_proc p
+            join pg_namespace n on n.oid = p.pronamespace
+           where n.nspname = 'public' and p.proname like 'teacher\_%') < 11
+      then 'Part 2 only partly applied. Re-run it in a new tab.'
+    else 'Database is ready. Next: merge the PR and publish the app.'
+  end                                                               as what_to_do_next;
+```
+
 ### Confirm it worked
 
 Run this in the SQL editor as a third query. Four rows come back, and the
