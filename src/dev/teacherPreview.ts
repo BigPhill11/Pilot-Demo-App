@@ -354,6 +354,61 @@ const QUESTION_BREAKDOWN: QuestionBreakdown[] = [
       },
     ],
   },
+  {
+    module_type: 'career-readiness',
+    module_id: 'interviewing',
+    lesson_id: 'prepare',
+    item_id: 'prep-t1',
+    prompt:
+      'A recruiter asks why you want to work at their firm. Which answer shows you did the research?',
+    correct_label: 'Name a specific deal or team and connect it to what you want to learn',
+    response_count: 8,
+    correct_count: 3,
+    options: [
+      {
+        label: 'Say the firm has a great reputation and culture',
+        is_correct: false,
+        count: 4,
+        students: pickers(['ben_okafor', 'darius_p', 'jonas_k', 'kira_s']),
+      },
+      {
+        label: 'Name a specific deal or team and connect it to what you want to learn',
+        is_correct: true,
+        count: 3,
+        students: pickers(['ada_l', 'elena_m', 'imani_w']),
+      },
+      {
+        label: 'Explain that you need the experience for your resume',
+        is_correct: false,
+        count: 1,
+        students: pickers(['hugo_tan']),
+      },
+    ],
+  },
+  {
+    module_type: 'personal-finance',
+    module_id: 'income',
+    lesson_id: 'income-test-out',
+    item_id: 'income-test-out#2',
+    prompt: 'Gross pay is $2,000 a month. Which figure should your budget be built on?',
+    correct_label: 'Net pay, after taxes and deductions',
+    response_count: 4,
+    correct_count: 1,
+    options: [
+      {
+        label: 'Gross pay, since that is what you earned',
+        is_correct: false,
+        count: 3,
+        students: pickers(['darius_p', 'jonas_k', 'luis_ortega']),
+      },
+      {
+        label: 'Net pay, after taxes and deductions',
+        is_correct: true,
+        count: 1,
+        students: pickers(['ada_l']),
+      },
+    ],
+  },
 ];
 
 const TEACHBACK: TeachBackOverview = {

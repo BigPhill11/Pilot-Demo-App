@@ -148,6 +148,11 @@ const MILessonContainer: React.FC<MILessonContainerProps> = ({
             requirePassToContinue
             onComplete={handleQuizComplete}
             onBack={goBack}
+            recordContext={{
+              moduleType: 'market-intelligence',
+              moduleId: lesson.moduleId,
+              lessonId: lesson.id,
+            }}
           />
         );
       case 'done':

@@ -20,11 +20,14 @@ interface Props {
   onSelectStudent?: (studentId: string) => void;
 }
 
+// The tracks that record answers, which is narrower than the matrix's columns:
+// the MI catalog is a progress surface with no graded questions of its own.
 const TRACKS = [
   { value: 'all', label: 'All tracks' },
   { value: 'personal-finance', label: 'Personal Finance' },
   { value: 'market-intelligence', label: 'Market Intelligence' },
   { value: 'economics', label: 'Economics' },
+  { value: 'career-readiness', label: 'Career Readiness' },
 ];
 
 function accuracy(row: QuestionBreakdown): number {

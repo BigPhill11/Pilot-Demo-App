@@ -10,8 +10,13 @@
 import { PERSONAL_FINANCE_MODULES, getModuleById } from '@/data/personal-finance/modules';
 import { VILLAGE_MODULES } from '@/data/village-lessons';
 import { CAREER_MODULES } from '@/data/career-readiness/modules';
+import { INTERVIEW_LESSONS } from '@/data/career-readiness/interviewing';
+import { EMAIL_LESSONS } from '@/data/career-readiness/email-etiquette';
 import { economicsUnits } from '@/data/economics-curriculum';
 import { getAllModules } from '@/data/market-intelligence/catalog';
+import { languageOfFinanceLessons } from '@/data/market-intelligence/language-of-finance-lessons';
+import { ownershipLessons } from '@/data/market-intelligence/ownership-lessons';
+import { allHeadlinesLessons } from '@/data/market-intelligence/headlines-lessons';
 
 export interface CurriculumColumn {
   moduleId: string;
@@ -140,12 +145,26 @@ function buildLessonTitles(): Map<string, string> {
     for (const lesson of getModuleById(summary.id)?.lessons ?? []) {
       titles.set(lesson.id, lesson.title);
     }
+    // Test-out answers are attributed to a synthetic lesson, since a student
+    // taking one has by definition not done the module's lessons.
+    titles.set(`${summary.id}-test-out`, `${summary.name} — test out`);
   }
   for (const module of VILLAGE_MODULES) {
     for (const lesson of module.lessons) titles.set(lesson.id, lesson.title);
   }
   for (const unit of economicsUnits) {
     for (const lesson of unit.lessons) titles.set(lesson.id, lesson.title);
+  }
+  for (const lesson of [...languageOfFinanceLessons, ...ownershipLessons, ...allHeadlinesLessons]) {
+    titles.set(lesson.id, lesson.title);
+  }
+  // Career lesson ids are bare words like 'prepare' and 'send', which say very
+  // little on their own next to lessons from other tracks.
+  for (const lesson of INTERVIEW_LESSONS) {
+    titles.set(lesson.id, `Interviewing · ${lesson.title}`);
+  }
+  for (const lesson of EMAIL_LESSONS) {
+    titles.set(lesson.id, `Email etiquette · ${lesson.title}`);
   }
   return titles;
 }
