@@ -14,8 +14,11 @@ import type {
   ActivityEntry,
   ClassInsights,
   ModuleMatrixCell,
+  QuestionBreakdown,
   RosterEntry,
   StudentDetail,
+  StudentResponse,
+  TeachBackOverview,
   TeacherClassroomSummary,
 } from '@/integrations/supabase/teacherTypes';
 
@@ -121,6 +124,67 @@ export async function getClassInsights(classroomId: string): Promise<ClassInsigh
       ...g,
       miss_count: num(g.miss_count),
       student_count: num(g.student_count),
+    })),
+  };
+}
+
+export async function getQuestionBreakdown(
+  classroomId: string,
+  moduleType?: string
+): Promise<QuestionBreakdown[]> {
+  if (isTeacherPreview()) return teacherPreview.getQuestionBreakdown(moduleType);
+  const rows = await callRpc<QuestionBreakdown[]>('teacher_get_question_breakdown', {
+    p_classroom_id: classroomId,
+    p_module_type: moduleType ?? null,
+  });
+  return (rows ?? []).map((r) => ({
+    ...r,
+    response_count: num(r.response_count),
+    correct_count: num(r.correct_count),
+    options: (r.options ?? []).map((o) => ({ ...o, count: num(o.count) })),
+  }));
+}
+
+export async function getStudentResponses(
+  classroomId: string,
+  studentId: string
+): Promise<StudentResponse[]> {
+  if (isTeacherPreview()) return teacherPreview.getStudentResponses(studentId);
+  const rows = await callRpc<StudentResponse[]>('teacher_get_student_responses', {
+    p_classroom_id: classroomId,
+    p_student_id: studentId,
+  });
+  return rows ?? [];
+}
+
+export async function getTeachBackOverview(classroomId: string): Promise<TeachBackOverview> {
+  if (isTeacherPreview()) return teacherPreview.getTeachBackOverview();
+  const data = await callRpc<TeachBackOverview>('teacher_get_teachback_overview', {
+    p_classroom_id: classroomId,
+  });
+  return {
+    summary: {
+      sessions: num(data?.summary?.sessions),
+      students_attempted: num(data?.summary?.students_attempted),
+      avg_score: num(data?.summary?.avg_score),
+      pass_rate: num(data?.summary?.pass_rate),
+    },
+    students: (data?.students ?? []).map((s) => ({
+      ...s,
+      sessions: num(s.sessions),
+      passed_sessions: num(s.passed_sessions),
+      avg_score: num(s.avg_score),
+      best_score: num(s.best_score),
+      lessons_attempted: num(s.lessons_attempted),
+      top_missed: s.top_missed ?? [],
+    })),
+    lessons: (data?.lessons ?? []).map((l) => ({
+      ...l,
+      sessions: num(l.sessions),
+      student_count: num(l.student_count),
+      avg_score: num(l.avg_score),
+      pass_rate: num(l.pass_rate),
+      top_missed: (l.top_missed ?? []).map((m) => ({ ...m, count: num(m.count) })),
     })),
   };
 }

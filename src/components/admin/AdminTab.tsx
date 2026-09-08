@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Shield } from 'lucide-react';
 import ClipProductionBoard from '@/components/phils-friends/ClipProductionBoard';
 import AccessCodeManager from '@/components/admin/AccessCodeManager';
+import TeacherAccessManager from '@/components/admin/TeacherAccessManager';
 
 const AdminTab = () => {
   return (
@@ -23,6 +24,8 @@ const AdminTab = () => {
       </Card>
 
       <AccessCodeManager />
+
+      <TeacherAccessManager />
 
       <ClipProductionBoard />
     </div>

@@ -6,18 +6,23 @@ import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import type { VillageQuizQuestion } from '@/types/village-lesson';
 import { VILLAGE_QUIZ_PASS_THRESHOLD } from '@/types/village-lesson';
+import { useQuizRecorder } from '@/hooks/useQuizRecorder';
+import type { QuizContext } from '@/lib/quizTelemetry';
 
 interface Props {
   questions: VillageQuizQuestion[];
   onComplete: (passed: boolean, score: number, total: number) => void;
+  /** Omit to skip answer recording. */
+  recordContext?: QuizContext;
 }
 
-const VillageQuizStep: React.FC<Props> = ({ questions, onComplete }) => {
+const VillageQuizStep: React.FC<Props> = ({ questions, onComplete, recordContext }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [answers, setAnswers] = useState<boolean[]>([]);
   const [quizComplete, setQuizComplete] = useState(false);
+  const recorder = useQuizRecorder(recordContext);
 
   const currentQuestion = questions[currentIndex];
   const progress = ((currentIndex + 1) / questions.length) * 100;
@@ -27,13 +32,26 @@ const VillageQuizStep: React.FC<Props> = ({ questions, onComplete }) => {
     if (selectedId === null) return;
 
     if (!showFeedback) {
-      setAnswers([...answers, selectedId === currentQuestion.correctId]);
+      const isCorrect = selectedId === currentQuestion.correctId;
+      setAnswers([...answers, isCorrect]);
       setShowFeedback(true);
+      recorder?.record({
+        itemId: currentQuestion.id,
+        itemIndex: currentIndex,
+        prompt: currentQuestion.question,
+        selectedKey: selectedId,
+        selectedLabel: currentQuestion.options.find((o) => o.id === selectedId)?.text ?? '',
+        correctKey: currentQuestion.correctId,
+        correctLabel:
+          currentQuestion.options.find((o) => o.id === currentQuestion.correctId)?.text ?? '',
+        isCorrect,
+      });
     } else if (currentIndex < questions.length - 1) {
       setCurrentIndex(prev => prev + 1);
       setSelectedId(null);
       setShowFeedback(false);
     } else {
+      recorder?.flush();
       setQuizComplete(true);
     }
   };

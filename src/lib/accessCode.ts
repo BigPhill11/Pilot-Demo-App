@@ -23,3 +23,32 @@ export async function validateAccessCode(code: string): Promise<boolean> {
   if (error) return false;
   return data === true;
 }
+
+export interface RoleRedemption {
+  granted: boolean;
+  role: string;
+  already_held: boolean;
+}
+
+/**
+ * Redeems a privileged code for an account that already exists.
+ *
+ * Roles are otherwise only ever assigned by the `handle_new_user` trigger at
+ * sign-up, which leaves a teacher who signed up with a student code — or before
+ * teacher codes existed — with no way to reach the dashboard. Throws with the
+ * server's message so the caller can show why a code was refused (wrong kind,
+ * expired, already fully used).
+ */
+export async function redeemRoleCode(code: string): Promise<RoleRedemption> {
+  const client = supabase as unknown as {
+    rpc: (
+      fn: string,
+      args: Record<string, unknown>
+    ) => Promise<{ data: unknown; error: { message: string } | null }>;
+  };
+  const { data, error } = await client.rpc('redeem_access_code_for_role', {
+    p_code: code.trim().toUpperCase(),
+  });
+  if (error) throw new Error(error.message || 'Could not redeem that code');
+  return data as RoleRedemption;
+}

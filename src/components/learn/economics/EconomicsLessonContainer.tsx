@@ -46,6 +46,7 @@ const PERFECT_BONUS_BAMBOO = 5;
 
 const EconomicsLessonContainer: React.FC<EconomicsLessonContainerProps> = ({
   lesson,
+  unitId,
   onComplete,
   onExit,
 }) => {
@@ -142,6 +143,11 @@ const EconomicsLessonContainer: React.FC<EconomicsLessonContainerProps> = ({
               requirePassToContinue
               onComplete={handleQuizComplete}
               onBack={miGoBack}
+              recordContext={{
+                moduleType: 'economics',
+                moduleId: unitId,
+                lessonId: lesson.id,
+              }}
             />
           );
         case 'done':
@@ -255,7 +261,12 @@ const EconomicsLessonContainer: React.FC<EconomicsLessonContainerProps> = ({
         );
       case 'quiz':
         return (
-          <LessonQuizStep questions={lesson.quiz} onComplete={handleQuizComplete} onBack={legacyBack} />
+          <LessonQuizStep
+            questions={lesson.quiz}
+            onComplete={handleQuizComplete}
+            onBack={legacyBack}
+            recordContext={{ moduleType: 'economics', moduleId: unitId, lessonId: lesson.id }}
+          />
         );
       case 'career-spotlight':
         return lesson.careerSpotlight ? (

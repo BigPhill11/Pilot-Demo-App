@@ -18,6 +18,7 @@ interface AuthContextType {
   isAdmin: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  refreshRoles: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -159,6 +160,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (currentUser) await fetchProfile(currentUser.id, currentUser.email ?? undefined);
   };
 
+  // Roles are otherwise only read at sign-in, so redeeming a teacher code
+  // mid-session would leave isTeacher stale until the next page load.
+  const refreshRoles = async () => {
+    const currentUser = user;
+    if (currentUser) await fetchRoles(currentUser.id);
+  };
+
   useEffect(() => {
     let mounted = true;
 
@@ -216,6 +224,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAdmin,
     signOut,
     refreshProfile,
+    refreshRoles,
   };
 
   return (

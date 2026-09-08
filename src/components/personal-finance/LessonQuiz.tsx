@@ -5,18 +5,23 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { QuizQuestion } from '@/types/personal-finance';
 import { cn } from '@/lib/utils';
+import { useQuizRecorder } from '@/hooks/useQuizRecorder';
+import type { QuizContext } from '@/lib/quizTelemetry';
 
 interface LessonQuizProps {
   questions: QuizQuestion[];
   onComplete: (correctAnswers: number) => void;
+  /** Omit to skip answer recording. */
+  recordContext?: QuizContext;
 }
 
-const LessonQuiz: React.FC<LessonQuizProps> = ({ questions, onComplete }) => {
+const LessonQuiz: React.FC<LessonQuizProps> = ({ questions, onComplete, recordContext }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [answers, setAnswers] = useState<boolean[]>([]);
   const [quizComplete, setQuizComplete] = useState(false);
+  const recorder = useQuizRecorder(recordContext);
 
   const currentQuestion = questions[currentIndex];
   const progress = ((currentIndex + 1) / questions.length) * 100;
@@ -33,12 +38,25 @@ const LessonQuiz: React.FC<LessonQuizProps> = ({ questions, onComplete }) => {
       const isCorrect = selectedAnswer === currentQuestion.correctIndex;
       setAnswers([...answers, isCorrect]);
       setShowFeedback(true);
+      // These questions have no ids of their own, so position within the lesson
+      // identifies them.
+      recorder?.record({
+        itemId: `${recordContext?.lessonId ?? 'lesson'}#${currentIndex}`,
+        itemIndex: currentIndex,
+        prompt: currentQuestion.question,
+        selectedKey: String(selectedAnswer),
+        selectedLabel: currentQuestion.options[selectedAnswer] ?? '',
+        correctKey: String(currentQuestion.correctIndex),
+        correctLabel: currentQuestion.options[currentQuestion.correctIndex] ?? '',
+        isCorrect,
+      });
     } else {
       if (currentIndex < questions.length - 1) {
         setCurrentIndex(prev => prev + 1);
         setSelectedAnswer(null);
         setShowFeedback(false);
       } else {
+        recorder?.flush();
         setQuizComplete(true);
       }
     }

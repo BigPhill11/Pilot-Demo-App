@@ -11,8 +11,11 @@ import {
   getActivity,
   getClassInsights,
   getModuleMatrix,
+  getQuestionBreakdown,
   getRoster,
   getStudentDetail,
+  getStudentResponses,
+  getTeachBackOverview,
   listClassrooms,
 } from '@/lib/teacherApi';
 
@@ -26,6 +29,11 @@ export const teacherKeys = {
   insights: (id: string) => ['teacher', 'insights', id] as const,
   student: (classroomId: string, studentId: string) =>
     ['teacher', 'student', classroomId, studentId] as const,
+  breakdown: (id: string, moduleType: string) =>
+    ['teacher', 'breakdown', id, moduleType] as const,
+  studentResponses: (classroomId: string, studentId: string) =>
+    ['teacher', 'responses', classroomId, studentId] as const,
+  teachback: (id: string) => ['teacher', 'teachback', id] as const,
 };
 
 export function useClassrooms() {
@@ -82,15 +90,43 @@ export function useStudentDetail(classroomId: string | undefined, studentId: str
   });
 }
 
+/** Scenario answers, optionally narrowed to one curriculum track. */
+export function useQuestionBreakdown(classroomId: string | undefined, moduleType?: string) {
+  return useQuery({
+    queryKey: teacherKeys.breakdown(classroomId ?? '', moduleType ?? 'all'),
+    queryFn: () => getQuestionBreakdown(classroomId as string, moduleType),
+    enabled: !!classroomId,
+    staleTime: STALE_MS,
+  });
+}
+
+/** Only fetches once a student row is actually opened. */
+export function useStudentResponses(classroomId: string | undefined, studentId: string | null) {
+  return useQuery({
+    queryKey: teacherKeys.studentResponses(classroomId ?? '', studentId ?? ''),
+    queryFn: () => getStudentResponses(classroomId as string, studentId as string),
+    enabled: !!classroomId && !!studentId,
+    staleTime: STALE_MS,
+  });
+}
+
+export function useTeachBackOverview(classroomId: string | undefined) {
+  return useQuery({
+    queryKey: teacherKeys.teachback(classroomId ?? ''),
+    queryFn: () => getTeachBackOverview(classroomId as string),
+    enabled: !!classroomId,
+    staleTime: STALE_MS,
+  });
+}
+
 /** Invalidates every view for one classroom — used by the refresh button. */
 export function useRefreshClassroom(classroomId: string | undefined) {
   const queryClient = useQueryClient();
   return () => {
     queryClient.invalidateQueries({ queryKey: teacherKeys.classrooms });
     if (!classroomId) return;
-    queryClient.invalidateQueries({ queryKey: ['teacher', 'roster', classroomId] });
-    queryClient.invalidateQueries({ queryKey: ['teacher', 'matrix', classroomId] });
-    queryClient.invalidateQueries({ queryKey: ['teacher', 'insights', classroomId] });
-    queryClient.invalidateQueries({ queryKey: ['teacher', 'activity', classroomId] });
+    for (const view of ['roster', 'matrix', 'insights', 'activity', 'breakdown', 'teachback', 'responses']) {
+      queryClient.invalidateQueries({ queryKey: ['teacher', view, classroomId] });
+    }
   };
 }

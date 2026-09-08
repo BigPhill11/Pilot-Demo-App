@@ -291,6 +291,11 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
             </div>
             <VillageQuizStep
               questions={lesson.quiz}
+              recordContext={{
+                moduleType: 'market-intelligence',
+                moduleId: lesson.moduleId,
+                lessonId: lesson.id,
+              }}
               onComplete={(passed, score, total) => {
                 setQuizPassed(passed);
                 setFinalScore({ score, total });

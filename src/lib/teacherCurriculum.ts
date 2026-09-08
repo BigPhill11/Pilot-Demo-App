@@ -7,7 +7,7 @@
  * strings in one place so the sync hooks and the dashboard cannot drift apart.
  */
 
-import { PERSONAL_FINANCE_MODULES } from '@/data/personal-finance/modules';
+import { PERSONAL_FINANCE_MODULES, getModuleById } from '@/data/personal-finance/modules';
 import { VILLAGE_MODULES } from '@/data/village-lessons';
 import { CAREER_MODULES } from '@/data/career-readiness/modules';
 import { economicsUnits } from '@/data/economics-curriculum';
@@ -122,5 +122,39 @@ export function trackLabel(moduleType: string): string {
   return (
     LABELS_BY_TYPE.get(moduleType)?.label ??
     moduleType.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+  );
+}
+
+/**
+ * Lesson titles, indexed by the lesson ids that answer and teach-back rows
+ * carry. Built once on first use rather than at module load, since only the
+ * teacher dashboard needs it and it walks every lesson in the curriculum.
+ */
+let lessonTitles: Map<string, string> | null = null;
+
+function buildLessonTitles(): Map<string, string> {
+  const titles = new Map<string, string>();
+  // PERSONAL_FINANCE_MODULES is the metadata registry and omits lessons; the
+  // assembled modules that carry them come from getModuleById.
+  for (const summary of PERSONAL_FINANCE_MODULES) {
+    for (const lesson of getModuleById(summary.id)?.lessons ?? []) {
+      titles.set(lesson.id, lesson.title);
+    }
+  }
+  for (const module of VILLAGE_MODULES) {
+    for (const lesson of module.lessons) titles.set(lesson.id, lesson.title);
+  }
+  for (const unit of economicsUnits) {
+    for (const lesson of unit.lessons) titles.set(lesson.id, lesson.title);
+  }
+  return titles;
+}
+
+/** Human title for a lesson, falling back to a tidied form of the raw id. */
+export function lessonLabel(lessonId: string): string {
+  if (!lessonTitles) lessonTitles = buildLessonTitles();
+  return (
+    lessonTitles.get(lessonId) ??
+    lessonId.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
   );
 }

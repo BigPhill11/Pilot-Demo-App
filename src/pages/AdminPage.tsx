@@ -2,13 +2,16 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import AdminTab from '@/components/admin/AdminTab';
-import { isPhilAdminEmail } from '@/lib/adminAccess';
 
 const AdminPage = () => {
-  const { user, loading } = useAuth();
+  // Gated on the admin role rather than the hardcoded owner email, so issuing
+  // teacher codes can be delegated without a code change. The email still
+  // qualifies via isAdmin, and the database enforces the same rule through
+  // is_phil_admin().
+  const { user, loading, rolesLoaded, isAdmin } = useAuth();
 
-  if (loading) return null;
-  if (!user || !isPhilAdminEmail(user.email)) {
+  if (loading || (user && !rolesLoaded)) return null;
+  if (!user || !isAdmin) {
     return <Navigate to="/" replace />;
   }
 

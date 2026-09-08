@@ -22,14 +22,16 @@ import {
   GraduationCap,
   LayoutDashboard,
   LogOut,
+  Mic,
   Plus,
   RefreshCw,
+  Target,
   Users,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { TeacherClassroomSummary } from '@/integrations/supabase/teacherTypes';
 
-export type TeacherView = 'overview' | 'roster' | 'insights';
+export type TeacherView = 'overview' | 'roster' | 'scenarios' | 'teachback' | 'insights';
 
 interface TeacherShellProps {
   classrooms: TeacherClassroomSummary[];
@@ -46,6 +48,8 @@ interface TeacherShellProps {
 const VIEWS: { id: TeacherView; label: string; icon: typeof LayoutDashboard }[] = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
   { id: 'roster', label: 'Students', icon: Users },
+  { id: 'scenarios', label: 'Scenario answers', icon: Target },
+  { id: 'teachback', label: 'Teach-backs', icon: Mic },
   { id: 'insights', label: 'Class insights', icon: BookOpen },
 ];
 

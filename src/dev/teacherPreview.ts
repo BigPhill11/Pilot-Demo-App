@@ -16,8 +16,12 @@ import type {
   ActivityEntry,
   ClassInsights,
   ModuleMatrixCell,
+  OptionPicker,
+  QuestionBreakdown,
   RosterEntry,
   StudentDetail,
+  StudentResponse,
+  TeachBackOverview,
   TeacherClassroomSummary,
 } from '@/integrations/supabase/teacherTypes';
 
@@ -231,6 +235,218 @@ function buildStudentDetail(classroomId: string, studentId: string): StudentDeta
   };
 }
 
+/** Named students so the option chips read like a real roster. */
+function pickers(names: string[]): OptionPicker[] {
+  return names.map((username) => ({ student_id: `preview-${username}`, username }));
+}
+
+const QUESTION_BREAKDOWN: QuestionBreakdown[] = [
+  {
+    module_type: 'personal-finance',
+    module_id: 'income',
+    lesson_id: 'active-income-basics',
+    item_id: 'active-income-basics#0',
+    prompt:
+      'Your first paycheck from your rec-center job is $118, not the $150 you expected. What most likely explains the difference?',
+    correct_label: 'Payroll taxes and deductions came out before you got paid',
+    response_count: 12,
+    correct_count: 3,
+    options: [
+      {
+        label: 'The employer made a mistake on your hours',
+        is_correct: false,
+        count: 6,
+        students: pickers(['ben_okafor', 'darius_p', 'hugo_tan', 'jonas_k', 'kira_s', 'luis_ortega']),
+      },
+      {
+        label: 'Payroll taxes and deductions came out before you got paid',
+        is_correct: true,
+        count: 3,
+        students: pickers(['ada_l', 'elena_m', 'imani_w']),
+      },
+      {
+        label: 'Taxes only apply once you turn 18',
+        is_correct: false,
+        count: 3,
+        students: pickers(['cleo_v', 'finn_ruiz', 'grace_nb']),
+      },
+    ],
+  },
+  {
+    module_type: 'personal-finance',
+    module_id: 'taxes',
+    lesson_id: 'taxes-2',
+    item_id: 'taxes-2#1',
+    prompt:
+      'You get a raise that moves you into the next tax bracket. What happens to the money you were already earning?',
+    correct_label: 'It is still taxed at the old, lower rate',
+    response_count: 9,
+    correct_count: 2,
+    options: [
+      {
+        label: 'All of your income is now taxed at the higher rate',
+        is_correct: false,
+        count: 5,
+        students: pickers(['ben_okafor', 'cleo_v', 'darius_p', 'grace_nb', 'kira_s']),
+      },
+      {
+        label: 'It is still taxed at the old, lower rate',
+        is_correct: true,
+        count: 2,
+        students: pickers(['ada_l', 'imani_w']),
+      },
+      {
+        label: 'You take home less than before the raise',
+        is_correct: false,
+        count: 2,
+        students: pickers(['finn_ruiz', 'hugo_tan']),
+      },
+    ],
+  },
+  {
+    module_type: 'market-intelligence',
+    module_id: 'ownership',
+    lesson_id: 'own-2-price-vs-value',
+    item_id: 'q2',
+    prompt: 'A stock you own drops 14% in a week on no company news. What is the sound move?',
+    correct_label: 'Hold, and check whether anything about the business actually changed',
+    response_count: 10,
+    correct_count: 6,
+    options: [
+      {
+        label: 'Hold, and check whether anything about the business actually changed',
+        is_correct: true,
+        count: 6,
+        students: pickers(['ada_l', 'cleo_v', 'elena_m', 'finn_ruiz', 'grace_nb', 'imani_w']),
+      },
+      {
+        label: 'Sell immediately to stop the loss',
+        is_correct: false,
+        count: 4,
+        students: pickers(['ben_okafor', 'darius_p', 'jonas_k', 'luis_ortega']),
+      },
+    ],
+  },
+  {
+    module_type: 'personal-finance',
+    module_id: 'saving',
+    lesson_id: 'saving-1',
+    item_id: 'saving-1#0',
+    prompt: 'What does "pay yourself first" mean in practice?',
+    correct_label: 'Move money to savings automatically on payday, before spending',
+    response_count: 12,
+    correct_count: 11,
+    options: [
+      {
+        label: 'Move money to savings automatically on payday, before spending',
+        is_correct: true,
+        count: 11,
+        students: pickers([
+          'ada_l', 'ben_okafor', 'cleo_v', 'elena_m', 'finn_ruiz', 'grace_nb',
+          'hugo_tan', 'imani_w', 'jonas_k', 'kira_s', 'luis_ortega',
+        ]),
+      },
+      {
+        label: 'Save whatever is left at the end of the month',
+        is_correct: false,
+        count: 1,
+        students: pickers(['darius_p']),
+      },
+    ],
+  },
+];
+
+const TEACHBACK: TeachBackOverview = {
+  summary: { sessions: 31, students_attempted: 10, avg_score: 68, pass_rate: 55 },
+  students: [
+    { student_id: 'preview-ada_l', username: 'ada_l', sessions: 6, passed_sessions: 5, avg_score: 88, best_score: 96, lessons_attempted: 5, last_at: isoDaysAgo(0), top_missed: ['How marginal tax brackets actually work'] },
+    { student_id: 'preview-imani_w', username: 'imani_w', sessions: 5, passed_sessions: 4, avg_score: 82, best_score: 93, lessons_attempted: 4, last_at: isoDaysAgo(1), top_missed: ['Why a deductible lowers your premium'] },
+    { student_id: 'preview-elena_m', username: 'elena_m', sessions: 4, passed_sessions: 2, avg_score: 71, best_score: 84, lessons_attempted: 4, last_at: isoDaysAgo(2), top_missed: ['Difference between gross and net pay', 'Compound interest over long horizons'] },
+    { student_id: 'preview-finn_ruiz', username: 'finn_ruiz', sessions: 4, passed_sessions: 2, avg_score: 66, best_score: 78, lessons_attempted: 3, last_at: isoDaysAgo(2), top_missed: ['How marginal tax brackets actually work', 'What a balance sheet records'] },
+    { student_id: 'preview-cleo_v', username: 'cleo_v', sessions: 3, passed_sessions: 1, avg_score: 61, best_score: 72, lessons_attempted: 3, last_at: isoDaysAgo(4), top_missed: ['Difference between gross and net pay'] },
+    { student_id: 'preview-ben_okafor', username: 'ben_okafor', sessions: 3, passed_sessions: 1, avg_score: 54, best_score: 70, lessons_attempted: 2, last_at: isoDaysAgo(5), top_missed: ['Difference between gross and net pay', 'How marginal tax brackets actually work'] },
+    { student_id: 'preview-grace_nb', username: 'grace_nb', sessions: 2, passed_sessions: 1, avg_score: 69, best_score: 75, lessons_attempted: 2, last_at: isoDaysAgo(6), top_missed: ['Compound interest over long horizons'] },
+    { student_id: 'preview-kira_s', username: 'kira_s', sessions: 2, passed_sessions: 0, avg_score: 44, best_score: 51, lessons_attempted: 2, last_at: isoDaysAgo(8), top_missed: ['Difference between gross and net pay', 'Why a deductible lowers your premium'] },
+    { student_id: 'preview-darius_p', username: 'darius_p', sessions: 1, passed_sessions: 0, avg_score: 38, best_score: 38, lessons_attempted: 1, last_at: isoDaysAgo(12), top_missed: ['Difference between gross and net pay'] },
+    { student_id: 'preview-jonas_k', username: 'jonas_k', sessions: 1, passed_sessions: 1, avg_score: 74, best_score: 74, lessons_attempted: 1, last_at: isoDaysAgo(9), top_missed: [] },
+    { student_id: 'preview-hugo_tan', username: 'hugo_tan', sessions: 0, passed_sessions: 0, avg_score: 0, best_score: 0, lessons_attempted: 0, last_at: null, top_missed: [] },
+    { student_id: 'preview-luis_ortega', username: 'luis_ortega', sessions: 0, passed_sessions: 0, avg_score: 0, best_score: 0, lessons_attempted: 0, last_at: null, top_missed: [] },
+  ],
+  lessons: [
+    {
+      lesson_id: 'taxes-2',
+      sessions: 7,
+      student_count: 6,
+      avg_score: 49,
+      pass_rate: 14,
+      top_missed: [
+        { fact: 'How marginal tax brackets actually work', count: 6 },
+        { fact: 'A refund means you overpaid during the year', count: 3 },
+      ],
+    },
+    {
+      lesson_id: 'active-income-basics',
+      sessions: 9,
+      student_count: 8,
+      avg_score: 62,
+      pass_rate: 44,
+      top_missed: [
+        { fact: 'Difference between gross and net pay', count: 7 },
+        { fact: 'What FICA pays for', count: 2 },
+      ],
+    },
+    {
+      lesson_id: 'own-2-price-vs-value',
+      sessions: 6,
+      student_count: 5,
+      avg_score: 73,
+      pass_rate: 67,
+      top_missed: [{ fact: 'Price and value are not the same thing', count: 3 }],
+    },
+    {
+      lesson_id: 'saving-1',
+      sessions: 9,
+      student_count: 9,
+      avg_score: 86,
+      pass_rate: 89,
+      top_missed: [{ fact: 'An emergency fund covers three months of costs', count: 2 }],
+    },
+  ],
+};
+
+const STUDENT_RESPONSES: StudentResponse[] = [
+  {
+    module_type: 'personal-finance',
+    lesson_id: 'active-income-basics',
+    item_id: 'active-income-basics#0',
+    prompt: 'Your first paycheck is $118, not the $150 you expected. What most likely explains it?',
+    selected_label: 'The employer made a mistake on your hours',
+    correct_label: 'Payroll taxes and deductions came out before you got paid',
+    is_correct: false,
+    created_at: isoDaysAgo(1),
+  },
+  {
+    module_type: 'personal-finance',
+    lesson_id: 'taxes-2',
+    item_id: 'taxes-2#1',
+    prompt: 'A raise moves you into the next bracket. What happens to income you already earned?',
+    selected_label: 'All of your income is now taxed at the higher rate',
+    correct_label: 'It is still taxed at the old, lower rate',
+    is_correct: false,
+    created_at: isoDaysAgo(3),
+  },
+  {
+    module_type: 'personal-finance',
+    lesson_id: 'saving-1',
+    item_id: 'saving-1#0',
+    prompt: 'What does "pay yourself first" mean in practice?',
+    selected_label: 'Move money to savings automatically on payday, before spending',
+    correct_label: 'Move money to savings automatically on payday, before spending',
+    is_correct: true,
+    created_at: isoDaysAgo(6),
+  },
+];
+
 export const teacherPreview = {
   listClassrooms: async (): Promise<TeacherClassroomSummary[]> => CLASSROOMS,
   getRoster: async (classroomId: string): Promise<RosterEntry[]> => buildRoster(classroomId),
@@ -241,4 +457,9 @@ export const teacherPreview = {
   getClassInsights: async (): Promise<ClassInsights> => INSIGHTS,
   getStudentDetail: async (classroomId: string, studentId: string): Promise<StudentDetail> =>
     buildStudentDetail(classroomId, studentId),
+  getQuestionBreakdown: async (moduleType?: string): Promise<QuestionBreakdown[]> =>
+    moduleType ? QUESTION_BREAKDOWN.filter((q) => q.module_type === moduleType) : QUESTION_BREAKDOWN,
+  getTeachBackOverview: async (): Promise<TeachBackOverview> => TEACHBACK,
+  getStudentResponses: async (_studentId: string): Promise<StudentResponse[]> =>
+    STUDENT_RESPONSES,
 };

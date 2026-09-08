@@ -10,6 +10,8 @@
  * These shapes must stay in step with:
  *   supabase/migrations/20260801000100_classrooms.sql
  *   supabase/migrations/20260801000200_teacher_rpcs.sql
+ *   supabase/migrations/20260802000200_assessment_responses.sql
+ *   supabase/migrations/20260802000300_teacher_teachback.sql
  */
 
 export type AppRole = 'admin' | 'user' | 'teacher';
@@ -147,4 +149,76 @@ export interface StudentDetail {
     created_at: string;
   }>;
   activity: string[];
+}
+
+/** One student who picked a given option. */
+export interface OptionPicker {
+  student_id: string;
+  username: string;
+}
+
+/** A distinct answer to a scenario, and who chose it. */
+export interface QuestionOption {
+  label: string;
+  is_correct: boolean;
+  count: number;
+  students: OptionPicker[];
+}
+
+/** Row shape returned by `teacher_get_question_breakdown(classroom, module_type)`. */
+export interface QuestionBreakdown {
+  module_type: string;
+  module_id: string | null;
+  lesson_id: string;
+  item_id: string;
+  prompt: string | null;
+  correct_label: string | null;
+  response_count: number;
+  correct_count: number;
+  options: QuestionOption[];
+}
+
+/** Row shape returned by `teacher_get_student_responses(classroom, student)`. */
+export interface StudentResponse {
+  module_type: string;
+  lesson_id: string;
+  item_id: string;
+  prompt: string | null;
+  selected_label: string | null;
+  correct_label: string | null;
+  is_correct: boolean;
+  created_at: string;
+}
+
+/** Payload returned by `teacher_get_teachback_overview(classroom)`. */
+export interface TeachBackStudent {
+  student_id: string;
+  username: string;
+  sessions: number;
+  passed_sessions: number;
+  avg_score: number;
+  best_score: number;
+  lessons_attempted: number;
+  last_at: string | null;
+  top_missed: string[];
+}
+
+export interface TeachBackLesson {
+  lesson_id: string;
+  sessions: number;
+  student_count: number;
+  avg_score: number;
+  pass_rate: number;
+  top_missed: Array<{ fact: string; count: number }>;
+}
+
+export interface TeachBackOverview {
+  summary: {
+    sessions: number;
+    students_attempted: number;
+    avg_score: number;
+    pass_rate: number;
+  };
+  students: TeachBackStudent[];
+  lessons: TeachBackLesson[];
 }

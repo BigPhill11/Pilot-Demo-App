@@ -16,9 +16,10 @@ import {
   Layers,
   Loader2,
   Sparkles,
+  Target,
   TriangleAlert,
 } from 'lucide-react';
-import { useStudentDetail } from '@/hooks/useTeacherDashboard';
+import { useStudentDetail, useStudentResponses } from '@/hooks/useTeacherDashboard';
 import { moduleLabel, trackLabel } from '@/lib/teacherCurriculum';
 import { formatLastActive } from '@/lib/teacherMetrics';
 
@@ -44,9 +45,15 @@ const StudentDetailSheet: React.FC<StudentDetailSheetProps> = ({
   onClose,
 }) => {
   const { data, isLoading, error } = useStudentDetail(classroomId, studentId);
+  const responsesQuery = useStudentResponses(classroomId, studentId);
 
   const profile = data?.profile;
   const modulesByType = groupByType(data?.modules ?? []);
+
+  const missedQuestions = React.useMemo(
+    () => (responsesQuery.data ?? []).filter((r) => !r.is_correct).slice(0, 8),
+    [responsesQuery.data]
+  );
 
   // Concepts this student failed to explain back, most frequent first. This is
   // the one signal the app has about *what* they misunderstand, not just how
@@ -121,6 +128,34 @@ const StudentDetailSheet: React.FC<StudentDetailSheetProps> = ({
                       </Badge>
                     ))}
                   </div>
+                </section>
+              </>
+            )}
+
+            {missedQuestions.length > 0 && (
+              <>
+                <Separator className="my-5" />
+                <section>
+                  <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold">
+                    <Target className="h-4 w-4 text-rose-500" />
+                    Scenarios they got wrong
+                  </h3>
+                  <p className="mb-3 text-xs text-muted-foreground">
+                    The answer this student chose, and the one they were reaching for.
+                  </p>
+                  <ul className="space-y-2">
+                    {missedQuestions.map((response) => (
+                      <li key={`${response.lesson_id}-${response.item_id}`} className="rounded-lg border p-3">
+                        <p className="text-sm">{response.prompt ?? response.item_id}</p>
+                        <p className="mt-1.5 text-xs text-rose-700">
+                          Picked: {response.selected_label ?? 'No answer'}
+                        </p>
+                        <p className="text-xs text-emerald-700">
+                          Correct: {response.correct_label ?? 'Unknown'}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
                 </section>
               </>
             )}

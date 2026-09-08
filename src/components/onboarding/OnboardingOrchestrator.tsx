@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import OnboardingAuthGate from './OnboardingAuthGate';
@@ -25,6 +25,8 @@ const OnboardingOrchestrator: React.FC = () => {
   const { user, profile, loading: authLoading, isTeacher, rolesLoaded } = useAuth();
   const [phase, setPhase] = useState<Phase>('loading');
   const navigate = useNavigate();
+  const location = useLocation();
+  const sentToDashboard = useRef(false);
 
   // ── Main phase resolver ──────────────────────────────────────────────────
   // Onboarding is decided from the user's PROFILE flags (per-account, stored in
@@ -82,6 +84,15 @@ const OnboardingOrchestrator: React.FC = () => {
       setPhase('loading');
     }
   }, [user, phase]);
+
+  // A returning teacher who lands on the app root wants the dashboard, not the
+  // student home with a Teach tab tucked into the nav. Once per session and only
+  // from the root, so "Back to app" still works and deep links are respected.
+  useEffect(() => {
+    if (phase !== 'complete' || !isTeacher || sentToDashboard.current) return;
+    sentToDashboard.current = true;
+    if (location.pathname === '/') navigate('/teach', { replace: true });
+  }, [phase, isTeacher, location.pathname, navigate]);
 
   // ── Render ───────────────────────────────────────────────────────────────
 

@@ -204,6 +204,11 @@ const LessonContainer: React.FC<LessonContainerProps> = ({
         return (
           <LessonQuiz
             questions={lesson.quiz}
+            recordContext={{
+              moduleType: 'personal-finance',
+              moduleId: moduleId ?? null,
+              lessonId: lesson.id,
+            }}
             onComplete={(score) => {
               const xp = score * 20;
               const coins = Math.floor(score * 2);

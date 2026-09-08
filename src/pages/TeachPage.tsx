@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Navigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
 import {
@@ -17,6 +16,9 @@ import CreateClassroomDialog from '@/components/teacher/CreateClassroomDialog';
 import EngagementHeatmap from '@/components/teacher/EngagementHeatmap';
 import StudentDetailSheet from '@/components/teacher/StudentDetailSheet';
 import ClassInsightsPanel from '@/components/teacher/ClassInsightsPanel';
+import ScenarioBreakdownPanel from '@/components/teacher/ScenarioBreakdownPanel';
+import TeachBackPanel from '@/components/teacher/TeachBackPanel';
+import TeacherAccessGate from '@/components/teacher/TeacherAccessGate';
 import { Button } from '@/components/ui/button';
 import { GraduationCap, Loader2, Plus } from 'lucide-react';
 import { summarizeClass } from '@/lib/teacherMetrics';
@@ -60,8 +62,15 @@ const TeachPage: React.FC = () => {
     );
   }
 
-  if (!preview && (!user || !isTeacher)) {
-    return <Navigate to="/" replace />;
+  // Signed out: the onboarding orchestrator already has the auth gate up over
+  // the top of this, and it opens in teacher mode for this route.
+  if (!preview && !user) {
+    return null;
+  }
+
+  // Signed in but not a teacher — offer the upgrade rather than bouncing them.
+  if (!preview && !isTeacher) {
+    return <TeacherAccessGate />;
   }
 
   const handleCreated = (classroomId: string) => {
@@ -149,6 +158,20 @@ const TeachPage: React.FC = () => {
             roster={roster}
             loading={rosterQuery.isLoading}
             className={activeClassroom?.name ?? 'classroom'}
+            onSelectStudent={setSelectedStudentId}
+          />
+        )}
+
+        {view === 'scenarios' && (
+          <ScenarioBreakdownPanel
+            classroomId={activeClassroomId ?? undefined}
+            onSelectStudent={setSelectedStudentId}
+          />
+        )}
+
+        {view === 'teachback' && (
+          <TeachBackPanel
+            classroomId={activeClassroomId ?? undefined}
             onSelectStudent={setSelectedStudentId}
           />
         )}

@@ -19,6 +19,9 @@ import {
   Lightbulb
 } from 'lucide-react';
 import type { EconomicsQuizQuestion } from '@/types/economics-curriculum';
+import { useQuizRecorder } from '@/hooks/useQuizRecorder';
+import type { QuizContext } from '@/lib/quizTelemetry';
+
 interface LessonQuizStepProps {
   questions: EconomicsQuizQuestion[];
   onComplete: (score: number, total: number) => void;
@@ -26,6 +29,8 @@ interface LessonQuizStepProps {
   /** Minimum fraction to pass (default 0.75 for MI lessons; economics uses 0.6) */
   passThreshold?: number;
   requirePassToContinue?: boolean;
+  /** Omit to skip answer recording. */
+  recordContext?: QuizContext;
 }
 
 interface QuestionResult {
@@ -40,12 +45,14 @@ const LessonQuizStep: React.FC<LessonQuizStepProps> = ({
   onBack,
   passThreshold = 0.6,
   requirePassToContinue = false,
+  recordContext,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [hasAnswered, setHasAnswered] = useState(false);
   const [results, setResults] = useState<QuestionResult[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const recorder = useQuizRecorder(recordContext);
 
   const currentQuestion = questions[currentIndex];
   const progress = ((currentIndex + (hasAnswered ? 1 : 0)) / questions.length) * 100;
@@ -65,6 +72,16 @@ const LessonQuizStep: React.FC<LessonQuizStepProps> = ({
       selectedIndex: selectedAnswer,
       isCorrect: selectedAnswer === currentQuestion.correctIndex,
     }]);
+    recorder?.record({
+      itemId: `${recordContext?.lessonId ?? 'lesson'}#${currentIndex}`,
+      itemIndex: currentIndex,
+      prompt: currentQuestion.question,
+      selectedKey: String(selectedAnswer),
+      selectedLabel: currentQuestion.options[selectedAnswer] ?? '',
+      correctKey: String(currentQuestion.correctIndex),
+      correctLabel: currentQuestion.options[currentQuestion.correctIndex] ?? '',
+      isCorrect: selectedAnswer === currentQuestion.correctIndex,
+    });
   };
 
   const handleNextQuestion = () => {
@@ -73,6 +90,7 @@ const LessonQuizStep: React.FC<LessonQuizStepProps> = ({
       setSelectedAnswer(null);
       setHasAnswered(false);
     } else {
+      recorder?.flush();
       setShowResults(true);
     }
   };
@@ -83,6 +101,7 @@ const LessonQuizStep: React.FC<LessonQuizStepProps> = ({
   };
 
   const handleRetry = () => {
+    recorder?.reset();
     setCurrentIndex(0);
     setSelectedAnswer(null);
     setHasAnswered(false);
