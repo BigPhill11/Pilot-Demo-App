@@ -1,22 +1,35 @@
 #!/usr/bin/env node
-// Bundles the teacher-feature migrations into two files that can be pasted into
-// the Supabase dashboard SQL editor, for projects whose migration history was
-// never tracked by the CLI.
+// Bundles the teacher-feature migrations into files that can be pasted into the
+// Supabase dashboard SQL editor, for projects whose migration history was never
+// tracked by the CLI.
 //
-// The split is not cosmetic. The editor runs a tab in one transaction, and
-// Postgres refuses to use an enum value in the transaction that added it, so
-// the enum migration has to be its own paste.
+// Two sets are produced:
+//   docs/sql/teacher-setup-part-{1,2}-*.sql  — two pastes, the normal route
+//   docs/sql/chunks/NN-*.sql                 — the same SQL in small pieces,
+//                                              for clipboards that choke on a
+//                                              1,600-line paste
+//
+// The part 1 / part 2 split is not cosmetic. The editor runs a tab in one
+// transaction, and Postgres refuses to use an enum value in the transaction
+// that added it, so the enum migration has to be its own paste. The chunks keep
+// that property for free, since each chunk is its own tab.
 //
 // Regenerate after touching any migration listed below:
 //   node scripts/build-teacher-sql.mjs
 
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const migrations = join(root, 'supabase', 'migrations');
 const outDir = join(root, 'docs', 'sql');
+const chunkDir = join(outDir, 'chunks');
+
+/** Lines per chunk, chosen to stay well under a ~170-line clipboard ceiling
+ *  once the short chunk header is added. A statement is never split, so one
+ *  chunk runs long: the biggest single function here is about 150 lines. */
+const CHUNK_TARGET_LINES = 130;
 
 const ENUM_FILE = '20260801000000_teacher_role_enum.sql';
 
@@ -57,6 +70,82 @@ const separator = (file) =>
     '',
   ].join('\n');
 
+/**
+ * Splits SQL into whole statements.
+ *
+ * A naive split on ';' would cut every function in half, since the bodies here
+ * are dollar-quoted and full of semicolons. This tracks the states in which a
+ * semicolon does not end a statement: line and block comments, single-quoted
+ * literals, and dollar-quoted bodies with or without a tag.
+ */
+function splitStatements(sql) {
+  const statements = [];
+  let start = 0;
+  let i = 0;
+
+  while (i < sql.length) {
+    const rest = sql.slice(i);
+
+    if (sql.startsWith('--', i)) {
+      const nl = sql.indexOf('\n', i);
+      i = nl === -1 ? sql.length : nl + 1;
+      continue;
+    }
+    if (sql.startsWith('/*', i)) {
+      const end = sql.indexOf('*/', i + 2);
+      i = end === -1 ? sql.length : end + 2;
+      continue;
+    }
+    if (sql[i] === "'") {
+      i += 1;
+      while (i < sql.length) {
+        if (sql[i] === "'" && sql[i + 1] === "'") i += 2;
+        else if (sql[i] === "'") { i += 1; break; }
+        else i += 1;
+      }
+      continue;
+    }
+    const dollar = /^\$[A-Za-z_]*\$/.exec(rest);
+    if (dollar) {
+      const tag = dollar[0];
+      const end = sql.indexOf(tag, i + tag.length);
+      i = end === -1 ? sql.length : end + tag.length;
+      continue;
+    }
+    if (sql[i] === ';') {
+      statements.push(sql.slice(start, i + 1));
+      start = i + 1;
+      i += 1;
+      continue;
+    }
+    i += 1;
+  }
+
+  const tail = sql.slice(start);
+  if (tail.trim()) statements.push(tail);
+  return statements.map((s) => s.replace(/^\n+/, '')).filter((s) => s.trim());
+}
+
+/** Packs statements into chunks, never splitting one across a boundary. */
+function packChunks(statements, targetLines) {
+  const chunks = [];
+  let current = [];
+  let lines = 0;
+
+  for (const statement of statements) {
+    const count = statement.split('\n').length;
+    if (current.length > 0 && lines + count > targetLines) {
+      chunks.push(current);
+      current = [];
+      lines = 0;
+    }
+    current.push(statement);
+    lines += count;
+  }
+  if (current.length > 0) chunks.push(current);
+  return chunks;
+}
+
 mkdirSync(outDir, { recursive: true });
 
 const partOne =
@@ -86,6 +175,39 @@ const partTwo =
 
 writeFileSync(join(outDir, 'teacher-setup-part-1-enum.sql'), partOne);
 writeFileSync(join(outDir, 'teacher-setup-part-2-feature.sql'), partTwo);
+
+// ── Chunks ───────────────────────────────────────────────────────────────────
+// Same SQL, cut into pieces small enough to survive a limited clipboard. The
+// enum is chunk 1 on its own, which is the transaction boundary part 2 needs.
+rmSync(chunkDir, { recursive: true, force: true });
+mkdirSync(chunkDir, { recursive: true });
+
+const restSql = REST_FILES.map((file) => read(file)).join('\n');
+const groups = [[read(ENUM_FILE)], ...packChunks(splitStatements(restSql), CHUNK_TARGET_LINES)];
+const total = groups.length;
+
+const pad = (n) => String(n).padStart(2, '0');
+
+groups.forEach((statements, index) => {
+  const number = index + 1;
+  const isFirst = number === 1;
+  const body = statements.join('\n').replace(/\s*$/, '\n');
+  // Deliberately terse: every header line is a line of someone's paste budget.
+  const header = [
+    `-- TEACHER SETUP — CHUNK ${number} OF ${total}`,
+    isFirst
+      ? '-- Paste into a new Supabase SQL editor tab and Run, then do chunk 2.'
+      : `-- Run chunk ${number - 1} first. New tab for each. Safe to re-run.`,
+    '',
+    '',
+  ].join('\n');
+  writeFileSync(join(chunkDir, `${pad(number)}-teacher-setup.sql`), header + body);
+});
+
+const longest = Math.max(
+  ...groups.map((statements) => statements.join('\n').split('\n').length)
+);
+console.log(`chunks: ${total} files, longest body ${longest} lines`);
 
 const lines = (text) => text.split('\n').length;
 console.log(`part 1: ${lines(partOne)} lines (1 migration)`);

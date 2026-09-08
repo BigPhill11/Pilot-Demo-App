@@ -49,6 +49,31 @@ of whether one went through, just run it again.
 > enum type app_role` and nothing is applied. Two tabs, in order, is all it
 > takes.
 
+### If you cannot copy the whole file
+
+Part 2 is about 1,600 lines, and some setups will not copy that much at once.
+Almost always the cause is GitHub's file viewer rather than your machine: it
+renders long files a screenful at a time, so *select all* grabs only what is on
+screen — often a hundred-odd lines.
+
+Two ways around it, in order of preference:
+
+**Use the raw file.** On the GitHub page for the file, click the **copy icon**
+in the toolbar above the code ("Copy raw file"). That copies the entire file
+regardless of length, because it never goes through the rendered view. Opening
+the `raw.githubusercontent.com` URL and pressing Ctrl-A / Cmd-A works too — the
+raw page is plain text with nothing virtualised.
+
+**Or paste it in small pieces.** `docs/sql/chunks/` holds the same SQL split into
+17 numbered files, none longer than 150 lines. Run them in numbered order,
+`01` through `17`, each in its own new query tab. Chunk 1 is the enum, so the
+transaction boundary is handled for you.
+
+The chunks are cut only between whole statements, never inside a function, and
+each one is safe to run twice — so if you lose your place, re-run the chunk you
+are unsure about and carry on. Running all 17 produces a database identical to
+the two-file route.
+
 ### Where the commands you were given actually run
 
 If you were handed this:
@@ -88,8 +113,9 @@ Filename order matters; the bundle preserves it.
 20260802000300_teacher_teachback.sql      -- teach-back proficiency
 ```
 
-The two bundle files under `docs/sql/` are generated from these, so the
-migrations stay the source of truth. After changing any of them:
+Everything under `docs/sql/` — both bundle files and the 17 chunks — is
+generated from these, so the migrations stay the source of truth. After changing
+any of them:
 
 ```bash
 node scripts/build-teacher-sql.mjs
