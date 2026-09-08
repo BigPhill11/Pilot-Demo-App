@@ -209,6 +209,52 @@ the teacher's next refresh.
 
 ---
 
+## Claiming the classes that already existed
+
+The migration turns every pre-existing student access code into a classroom and
+enrols everyone who signed up with it. Those classrooms are real, with full
+rosters — but they have **no owner**, because the database has no way to guess
+which teacher a code from six months ago belonged to. A teacher only sees
+classrooms where `teacher_id` is their own user id, so until someone is
+assigned, these are invisible to everyone.
+
+This only matters if the project already had students before the teacher feature
+existed. A brand-new project can skip it.
+
+First, see what the backfill produced:
+
+```sql
+select c.name,
+       c.join_code,
+       c.teacher_id is null as unclaimed,
+       (select count(*) from public.classroom_members m
+         where m.classroom_id = c.id and m.status = 'active') as students
+from public.classrooms c
+order by students desc;
+```
+
+Then hand each one to a teacher by email. Run this once per classroom, changing
+the code and the email:
+
+```sql
+update public.classrooms
+set teacher_id = (select id from auth.users where lower(email) = lower('teacher@school.org'))
+where join_code = 'CLASS-XS83';
+```
+
+To give every unclaimed class to one person — the usual case when the owner has
+been running all the cohorts themselves:
+
+```sql
+update public.classrooms
+set teacher_id = (select id from auth.users where lower(email) = lower('you@example.com'))
+where teacher_id is null;
+```
+
+The account you name must already exist and must hold the `teacher` role, or the
+dashboard will list the classroom and then refuse to load it. Grant the role
+first from the **Teacher Access** card in `/admin`.
+
 ## Turning an existing account into a teacher
 
 Teacher codes only work for people who have not signed up yet. For an account
