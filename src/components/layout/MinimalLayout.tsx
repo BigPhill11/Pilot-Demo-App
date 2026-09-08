@@ -17,7 +17,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useUnifiedStreak } from '@/hooks/useUnifiedStreak';
 import { useDailyTimeGoal } from '@/hooks/useDailyTimeGoal';
 import { LogOut, User, Flame, Moon, Sun, MessageCircle, BarChart2, Menu, Home, Crown, BookOpen, Briefcase, Users, Shield, GraduationCap, X } from 'lucide-react';
-import { isPhilAdminEmail } from '@/lib/adminAccess';
 interface MinimalLayoutProps {
   children: React.ReactNode;
 }
@@ -28,7 +27,8 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
     user,
     profile,
     signOut,
-    isTeacher
+    isTeacher,
+    isAdmin
   } = useAuth();
   const {
     isDark,
@@ -64,7 +64,6 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
     }
   };
   const isGuest = !user;
-  const isAdmin = isPhilAdminEmail(user?.email);
   useDailyTimeGoal({ trackActivity: true });
 
   const mobileNavItems = [

@@ -13,7 +13,6 @@ import {
 import { useAskPhilUi } from '@/contexts/AskPhilUiContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { isPhilAdminEmail } from '@/lib/adminAccess';
 import { cn } from '@/lib/utils';
 
 const NAV_TABS = [
@@ -29,9 +28,8 @@ const PageNavigationTabs: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { openAskPhil } = useAskPhilUi();
-  const { user, isTeacher } = useAuth();
+  const { isTeacher, isAdmin } = useAuth();
   const isMobile = useIsMobile();
-  const isAdmin = isPhilAdminEmail(user?.email);
 
   const extraTabs = [
     ...(isTeacher
