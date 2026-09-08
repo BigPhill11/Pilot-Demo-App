@@ -19,11 +19,65 @@ with it.
 
 ## Step 1 — Apply the migrations
 
-Nine migration files carry the teacher feature. They must run in filename order,
-because the enum value has to be committed before anything references it:
+The database does not have the teacher tables yet. Nine SQL files add them, and
+this step is what makes `/teach` work at all — until it is done, the dashboard
+404s against the API.
+
+**Do this one, it is the shortest path.** Two copy-and-paste blocks in your
+browser, no terminal, no installs:
+
+1. Open <https://supabase.com/dashboard/project/qssqbpllqkorfjcxgomh/sql/new>.
+   That is the **SQL Editor** — left sidebar, the icon labelled *SQL Editor*,
+   then **New query**. It is a text box you paste SQL into and a green **Run**
+   button.
+2. Open [`docs/sql/teacher-setup-part-1-enum.sql`](sql/teacher-setup-part-1-enum.sql)
+   in this repo. Select all of it, paste it into that box, click **Run**. It
+   finishes instantly and says *Success. No rows returned*.
+3. Click **New query** to get an *empty tab*. This matters — see the warning
+   below.
+4. Open [`docs/sql/teacher-setup-part-2-feature.sql`](sql/teacher-setup-part-2-feature.sql),
+   select all, paste, **Run**. It is long (about 1,600 lines) but takes a second
+   or two. Same *Success* message.
+
+That is the whole step. Both files are safe to run twice, so if you lose track
+of whether one went through, just run it again.
+
+> **Why two files instead of one paste?** The editor runs everything in a tab as
+> a single transaction, and Postgres refuses to *use* an enum value in the same
+> transaction that *added* it. Part 1 adds `teacher` to the role enum; part 2
+> uses it. Combined in one tab you get `unsafe use of new value "teacher" of
+> enum type app_role` and nothing is applied. Two tabs, in order, is all it
+> takes.
+
+### Where the commands you were given actually run
+
+If you were handed this:
+
+```bash
+npx supabase login
+npx supabase link --project-ref qssqbpllqkorfjcxgomh
+npx supabase db push
+```
+
+those are **terminal commands on your own computer**, run from the root of this
+repository — not something you paste into the Supabase website. There is no
+place in the Supabase dashboard to type them. `npx` is part of Node.js, and
+`db push` uploads the migration files from `supabase/migrations/` to the
+project.
+
+The CLI is the better habit long term, because it records which migrations the
+project has already seen. It has one snag on this project: the database was
+partly built by pasting SQL into the dashboard, so the remote migration history
+is incomplete, and `db push` may refuse to run or ask you to repair history
+first. If that happens, do not fight it — use the two-file paste above, which
+has exactly the same end result.
+
+### The nine files, for reference
+
+Filename order matters; the bundle preserves it.
 
 ```
-20260801000000_teacher_role_enum.sql      -- adds 'teacher' to app_role
+20260801000000_teacher_role_enum.sql      -- adds 'teacher' to app_role   (part 1)
 20260801000100_classrooms.sql             -- classrooms + classroom_members, backfill
 20260801000200_teacher_rpcs.sql           -- the dashboard's data functions
 20260801000300_sync_module_progress.sql   -- localStorage progress write-through
@@ -34,38 +88,45 @@ because the enum value has to be committed before anything references it:
 20260802000300_teacher_teachback.sql      -- teach-back proficiency
 ```
 
-### Option A — Supabase CLI (recommended)
+The two bundle files under `docs/sql/` are generated from these, so the
+migrations stay the source of truth. After changing any of them:
 
 ```bash
-npx supabase login
-npx supabase link --project-ref qssqbpllqkorfjcxgomh
-npx supabase db push
+node scripts/build-teacher-sql.mjs
 ```
-
-`db push` applies only the migrations the project has not seen yet and runs each
-file in its own transaction, which is exactly what the enum migration needs.
-
-If `db push` reports that earlier migrations are missing from the remote
-history, the project was built by applying SQL through the dashboard rather than
-the CLI. In that case use Option B rather than forcing history to match.
-
-### Option B — Dashboard SQL editor
-
-Open the SQL editor in the Supabase dashboard and run the nine files **one at a
-time, in the order listed above**, waiting for each to succeed before starting
-the next.
-
-Do not paste several files into one editor tab. `ALTER TYPE ... ADD VALUE`
-cannot be used in the same transaction that later reads the new value, so
-combining the first file with any of the others fails.
 
 ### Confirm it worked
 
+Run this in the SQL editor as a third query. Four rows come back, and the
+`ok` column should read `yes` on all of them:
+
 ```sql
-select unnest(enum_range(null::public.app_role));           -- expect admin, user, teacher
-select count(*) from public.classrooms;                      -- backfilled from existing codes
-select proname from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-  where n.nspname = 'public' and proname like 'teacher\_%';  -- expect 9 functions
+select 'role enum has teacher' as check,
+       case when 'teacher' = any (enum_range(null::public.app_role)::text[])
+            then 'yes' else 'no' end as ok
+union all
+select 'teacher functions (expect 11)',
+       case when count(*) = 11 then 'yes' else 'no: ' || count(*) end
+  from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+ where n.nspname = 'public' and p.proname like 'teacher\_%'
+union all
+select 'new tables (expect 3)',
+       case when count(*) = 3 then 'yes' else 'no: ' || count(*) end
+  from information_schema.tables
+ where table_schema = 'public'
+   and table_name in ('classrooms', 'classroom_members', 'assessment_responses')
+union all
+select 'code limit columns (expect 2)',
+       case when count(*) = 2 then 'yes' else 'no: ' || count(*) end
+  from information_schema.columns
+ where table_schema = 'public' and table_name = 'access_codes'
+   and column_name in ('expires_at', 'max_redemptions');
+```
+
+Then see how many classrooms the backfill created:
+
+```sql
+select count(*) from public.classrooms;
 ```
 
 The classrooms count is not zero on a project that already has student access
