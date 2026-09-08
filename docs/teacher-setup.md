@@ -244,6 +244,31 @@ Scenario answers and teach-backs only contain data recorded after these
 migrations are applied. Nothing before that was ever stored, so both views start
 empty and fill in as students work.
 
+### Which questions land in Scenario answers
+
+Every graded multiple-choice surface on the main learning paths records the
+option each student picked:
+
+| Surface | Shows up as |
+| --- | --- |
+| Personal finance lesson knowledge checks | Personal Finance, lesson title |
+| Personal finance test-outs | Personal Finance, "<Module> — test out" |
+| Village lesson checks | Market Intelligence, lesson title |
+| Language of Finance / Ownership / Headlines lesson checks | Market Intelligence, lesson title |
+| Economics lesson quizzes | Economics, lesson title |
+| Interviewing and email-etiquette lesson checkpoints | Career Readiness, e.g. "Interviewing · Prepare" |
+
+Deliberately not recorded: flashcard drills, the Panda Jump game, and the
+practice activities that have no single right answer. They measure effort rather
+than understanding, and mixing them in would bury the questions that actually
+diagnose a misconception.
+
+Two details worth knowing when reading the numbers. A student who changes their
+pick before moving on is recorded as having chosen the first option, because
+that is what they knew unaided. And a student who retries a quiz creates a
+second attempt, with the view showing their most recent one — so the list
+reflects what the class understands now, not what they got wrong first.
+
 ## Troubleshooting
 
 **"A valid access code is required to create an account."** The code is
