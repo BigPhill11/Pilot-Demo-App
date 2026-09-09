@@ -251,9 +251,11 @@ email and password like anyone else.
 
 ## Step 6 — The teacher creates their first class
 
-Immediately after signing up they are asked to name a class (plus optional
-school and term). Saving it generates a separate student code that looks like
-`CLASS-XS83`, which is the code they hand to their students.
+Immediately after signing up they walk a four-step onboarding: what a teacher
+account is, naming a class (plus optional school and term), the code that comes
+back, and a short tour of the dashboard. Saving the class generates a separate
+student code that looks like `CLASS-XS83`, which is the code they hand to their
+students.
 
 The two code types are easy to confuse, so it is worth being explicit with
 teachers: `TEACH-` codes are for instructors and unlock the dashboard, `CLASS-`
@@ -349,6 +351,36 @@ The dashboard lives at `/teach` and has five views:
 Scenario answers and teach-backs only contain data recorded after these
 migrations are applied. Nothing before that was ever stored, so both views start
 empty and fill in as students work.
+
+All five views work on a phone: the sidebar collapses behind the menu button,
+the views move into a scrollable strip under the header, and the roster and
+teach-back tables become card lists.
+
+### The dashboard is the whole app for a teacher
+
+A teacher account does not see the student side — no lessons, no empire, no
+career tracks. Visiting any of those paths sends them to `/teach`, and the
+sidebar offers Sign out where a student-facing account would see "Back to app".
+
+Admins are the exception. An admin counts as a teacher for access purposes but
+still needs to see what students see, so admin accounts keep both sides and get
+Teach and Admin tabs in the normal student nav.
+
+### The class report
+
+The **Report** button in the header downloads a PDF for the selected class:
+a plain-language summary, class KPIs, week-over-week sign-ins, the questions
+being missed and the wrong answer most students picked, the concepts they cannot
+explain back, what is already working, a numbered set of next steps naming the
+students and questions behind each, and the full roster.
+
+It reports improvement only where the data supports it — week-over-week sign-ins
+and the gain students make when they retry a teach-back. Module progress is
+stored as a single current value with no history, so there is no honest way to
+chart a progress trend, and the report says as much rather than inventing one.
+
+The CSV button on the Students view is unchanged and still there for gradebook
+imports.
 
 ### Which questions land in Scenario answers
 

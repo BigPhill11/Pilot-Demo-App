@@ -20,6 +20,8 @@ interface ReportDownloadButtonProps {
 }
 
 const WINDOW_DAYS = 28;
+/** Matches the dashboard hooks, so a fresh view is reused rather than refetched. */
+const STALE_MS = 60_000;
 
 /**
  * Builds the class report on demand.
@@ -42,22 +44,27 @@ const ReportDownloadButton: React.FC<ReportDownloadButtonProps> = ({ classroom }
         queryClient.fetchQuery({
           queryKey: teacherKeys.roster(id),
           queryFn: () => getRoster(id),
+          staleTime: STALE_MS,
         }),
         queryClient.fetchQuery({
           queryKey: teacherKeys.activity(id, WINDOW_DAYS),
           queryFn: () => getActivity(id, WINDOW_DAYS),
+          staleTime: STALE_MS,
         }),
         queryClient.fetchQuery({
           queryKey: teacherKeys.insights(id),
           queryFn: () => getClassInsights(id),
+          staleTime: STALE_MS,
         }),
         queryClient.fetchQuery({
           queryKey: teacherKeys.breakdown(id, 'all'),
           queryFn: () => getQuestionBreakdown(id),
+          staleTime: STALE_MS,
         }),
         queryClient.fetchQuery({
           queryKey: teacherKeys.teachback(id),
           queryFn: () => getTeachBackOverview(id),
+          staleTime: STALE_MS,
         }),
       ]);
 
