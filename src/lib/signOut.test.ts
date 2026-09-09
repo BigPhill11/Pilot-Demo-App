@@ -33,4 +33,17 @@ describe('signOutAndReturnToWelcome', () => {
     expect(redirect).toHaveBeenCalledOnce();
     consoleSpy.mockRestore();
   });
+
+  it('redirects promptly when Supabase never settles', async () => {
+    vi.useFakeTimers();
+    const redirect = vi.fn();
+    const neverSettles = () => new Promise<void>(() => undefined);
+
+    const signOut = signOutAndReturnToWelcome(neverSettles, redirect);
+    await vi.advanceTimersByTimeAsync(500);
+    await signOut;
+
+    expect(redirect).toHaveBeenCalledOnce();
+    vi.useRealTimers();
+  });
 });

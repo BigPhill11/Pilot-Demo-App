@@ -1,4 +1,5 @@
 type SignOutResult = { error?: unknown } | void;
+const SIGN_OUT_REDIRECT_DEADLINE_MS = 500;
 
 /**
  * Ends the local session and always returns to a freshly mounted welcome flow.
@@ -18,12 +19,26 @@ export async function signOutAndReturnToWelcome(
     window.location.replace(destination.toString());
   }
 ): Promise<void> {
+  const timedOut = Symbol('sign-out-timeout');
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
   try {
-    const result = await endSession();
-    if (result?.error) console.error('Error signing out:', result.error);
+    // Local sign-out normally resolves immediately. The deadline covers the
+    // observed partial state where Supabase emits SIGNED_OUT (removing the
+    // profile) but its promise never settles because the network request stalls.
+    const result = await Promise.race([
+      endSession(),
+      new Promise<typeof timedOut>((resolve) => {
+        timeoutId = setTimeout(() => resolve(timedOut), SIGN_OUT_REDIRECT_DEADLINE_MS);
+      }),
+    ]);
+    if (result !== timedOut && result?.error) {
+      console.error('Error signing out:', result.error);
+    }
   } catch (error) {
     console.error('Error signing out:', error);
   } finally {
+    if (timeoutId) clearTimeout(timeoutId);
     redirect();
   }
 }
