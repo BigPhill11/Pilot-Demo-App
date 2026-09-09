@@ -12,7 +12,6 @@ import {
   getTeachBackOverview,
 } from '@/lib/teacherApi';
 import { buildClassReport } from '@/lib/teacherReport';
-import { classReportFilename, generateClassReportPdf } from '@/lib/teacherReportPdf';
 import type { TeacherClassroomSummary } from '@/integrations/supabase/teacherTypes';
 
 interface ReportDownloadButtonProps {
@@ -67,6 +66,13 @@ const ReportDownloadButton: React.FC<ReportDownloadButtonProps> = ({ classroom }
           staleTime: STALE_MS,
         }),
       ]);
+
+      // jsPDF and its dependencies are around a third of a megabyte, and only a
+      // teacher pressing this button ever needs them, so they load on demand
+      // rather than riding along in every student's bundle.
+      const { classReportFilename, generateClassReportPdf } = await import(
+        '@/lib/teacherReportPdf'
+      );
 
       const report = buildClassReport({
         classroom,
