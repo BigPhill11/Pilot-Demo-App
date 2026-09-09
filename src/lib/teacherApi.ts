@@ -55,6 +55,7 @@ export async function createClassroom(input: {
   schoolName?: string;
   term?: string;
 }): Promise<{ id: string; join_code: string; name: string }> {
+  if (isTeacherPreview()) return teacherPreview.createClassroom(input.name);
   return callRpc('teacher_create_classroom', {
     p_name: input.name,
     p_school_name: input.schoolName ?? null,

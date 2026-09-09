@@ -31,6 +31,17 @@ export function isTeacherPreview(): boolean {
   return new URLSearchParams(window.location.search).has('preview');
 }
 
+/**
+ * `/teach?preview=onboarding` renders the teacher onboarding flow instead of
+ * the dashboard. Walking that flow otherwise needs a fresh teacher account, so
+ * it is the one part of the teacher experience that cannot be re-checked twice.
+ */
+export function isTeacherOnboardingPreview(): boolean {
+  if (!import.meta.env.DEV) return false;
+  if (typeof window === 'undefined') return false;
+  return new URLSearchParams(window.location.search).get('preview') === 'onboarding';
+}
+
 const PRIMARY_ID = 'preview-classroom-1';
 const SECOND_ID = 'preview-classroom-2';
 
@@ -504,6 +515,11 @@ const STUDENT_RESPONSES: StudentResponse[] = [
 
 export const teacherPreview = {
   listClassrooms: async (): Promise<TeacherClassroomSummary[]> => CLASSROOMS,
+  createClassroom: async (name: string) => ({
+    id: PRIMARY_ID,
+    name,
+    join_code: 'PREVIEW-1',
+  }),
   getRoster: async (classroomId: string): Promise<RosterEntry[]> => buildRoster(classroomId),
   getModuleMatrix: async (classroomId: string): Promise<ModuleMatrixCell[]> =>
     buildMatrix(classroomId),

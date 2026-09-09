@@ -4,7 +4,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import PandaLogo from '@/components/icons/PandaLogo';
-import { Check, ClipboardCopy, Loader2, School, Sparkles, Users } from 'lucide-react';
+import {
+  Check,
+  ClipboardCopy,
+  FileText,
+  GraduationCap,
+  LayoutDashboard,
+  Loader2,
+  Mic,
+  School,
+  Sparkles,
+  Target,
+  Users,
+} from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { toast } from 'sonner';
 import { createClassroom } from '@/lib/teacherApi';
@@ -14,17 +26,52 @@ interface OnboardingTeacherSetupProps {
 }
 
 const PHIL_MESSAGES = [
-  "Welcome aboard! Let's set up your first classroom.",
-  'Here is the code your students will use. Share it and you are done.',
+  "Welcome aboard! I'll get your class running in about a minute.",
+  "First things first — what are we calling your class?",
+  'Here is the code your students will use. Share it and they are in.',
+  'Last thing: here is what you can see once they start working.',
+];
+
+const TOTAL_STEPS = PHIL_MESSAGES.length;
+
+/** What the dashboard gives a teacher, in the order they will meet it. */
+const DASHBOARD_TOUR = [
+  {
+    icon: LayoutDashboard,
+    title: 'Overview',
+    body: 'Who is showing up, how often, and how far through each module they are.',
+  },
+  {
+    icon: Users,
+    title: 'Students',
+    body: 'One row per student. Tap any of them for their full picture.',
+  },
+  {
+    icon: Target,
+    title: 'Scenario answers',
+    body: 'Not just which questions were missed — which wrong answer they picked, so you can see the misconception behind it.',
+  },
+  {
+    icon: Mic,
+    title: 'Teach-backs',
+    body: 'How well each student explains a concept back in their own words, and the points they leave out.',
+  },
+  {
+    icon: FileText,
+    title: 'Class report',
+    body: 'A PDF you can download any time: progress, usage, what to reteach, and what is working.',
+  },
 ];
 
 /**
- * The teacher branch of onboarding. Teachers skip the student interest survey
- * and app tour entirely — neither applies to them — and instead name a
- * classroom and collect the code their students sign up with.
+ * The teacher branch of onboarding.
+ *
+ * Teachers skip the student interest survey and app tour — neither applies to
+ * them — but they get the same shape of welcome: Phil talking them through a
+ * short numbered flow, ending on what they will actually see day to day.
  */
 const OnboardingTeacherSetup: React.FC<OnboardingTeacherSetupProps> = ({ onComplete }) => {
-  const [step, setStep] = useState<0 | 1>(0);
+  const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
   const [className, setClassName] = useState('');
   const [schoolName, setSchoolName] = useState('');
   const [term, setTerm] = useState('');
@@ -45,7 +92,7 @@ const OnboardingTeacherSetup: React.FC<OnboardingTeacherSetupProps> = ({ onCompl
         term: term.trim() || undefined,
       });
       setJoinCode(result.join_code);
-      setStep(1);
+      setStep(2);
       confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
     } catch (err) {
       toast.error(
@@ -55,6 +102,8 @@ const OnboardingTeacherSetup: React.FC<OnboardingTeacherSetupProps> = ({ onCompl
       setCreating(false);
     }
   };
+
+  const percentComplete = Math.round(((step + 1) / TOTAL_STEPS) * 100);
 
   const handleCopy = async () => {
     try {
@@ -83,13 +132,15 @@ const OnboardingTeacherSetup: React.FC<OnboardingTeacherSetupProps> = ({ onCompl
           </motion.div>
           <div className="flex-1">
             <div className="flex justify-between text-sm text-muted-foreground mb-1.5">
-              <span>Step {step + 1} of 2</span>
-              <span>{step === 0 ? '50%' : '100%'}</span>
+              <span>
+                Step {step + 1} of {TOTAL_STEPS}
+              </span>
+              <span>{percentComplete}%</span>
             </div>
             <div className="h-2 bg-muted rounded-full overflow-hidden">
               <motion.div
                 className="h-full bg-primary rounded-full"
-                animate={{ width: step === 0 ? '50%' : '100%' }}
+                animate={{ width: `${percentComplete}%` }}
                 transition={{ duration: 0.3 }}
               />
             </div>
@@ -114,6 +165,49 @@ const OnboardingTeacherSetup: React.FC<OnboardingTeacherSetupProps> = ({ onCompl
         <div className="mx-auto w-full max-w-lg">
           <AnimatePresence mode="wait">
             {step === 0 ? (
+              <motion.div
+                key="welcome"
+                initial={{ x: 24, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -24, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="space-y-5"
+              >
+                <div className="rounded-2xl border-2 border-primary/30 bg-primary/5 p-5">
+                  <div className="mb-3 flex items-center gap-2 text-primary">
+                    <GraduationCap className="h-5 w-5" />
+                    <h2 className="font-semibold">You are set up as a teacher</h2>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Your account opens straight to a dashboard instead of the student app. You
+                    will not be working through lessons — you will be watching a class work
+                    through them.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border-2 border-border bg-card p-5">
+                  <h3 className="mb-3 text-sm font-semibold">Three things to know</h3>
+                  <ol className="space-y-3 text-sm text-muted-foreground">
+                    {[
+                      'You create a class and get a code. Students who sign up with it land on your roster automatically.',
+                      'Everything they do in the app rolls up for you — progress, how often they open it, and the questions they miss.',
+                      'Nothing appears retroactively. The dashboard fills in from the moment your students start.',
+                    ].map((line, index) => (
+                      <li key={line} className="flex gap-3">
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/15 text-[11px] font-bold text-primary">
+                          {index + 1}
+                        </span>
+                        {line}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+
+                <Button size="lg" className="w-full" onClick={() => setStep(1)}>
+                  Set up my class
+                </Button>
+              </motion.div>
+            ) : step === 1 ? (
               <motion.form
                 key="setup"
                 onSubmit={handleCreate}
@@ -171,23 +265,34 @@ const OnboardingTeacherSetup: React.FC<OnboardingTeacherSetupProps> = ({ onCompl
                   </p>
                 </div>
 
-                <Button
-                  type="submit"
-                  size="lg"
-                  className="w-full"
-                  disabled={creating || !className.trim()}
-                >
-                  {creating ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Creating…
-                    </>
-                  ) : (
-                    'Create classroom'
-                  )}
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="lg"
+                    className="shrink-0"
+                    onClick={() => setStep(0)}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="flex-1"
+                    disabled={creating || !className.trim()}
+                  >
+                    {creating ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Creating…
+                      </>
+                    ) : (
+                      'Create classroom'
+                    )}
+                  </Button>
+                </div>
               </motion.form>
-            ) : (
+            ) : step === 2 ? (
               <motion.div
                 key="share"
                 initial={{ x: 24, opacity: 0 }}
@@ -241,6 +346,39 @@ const OnboardingTeacherSetup: React.FC<OnboardingTeacherSetupProps> = ({ onCompl
                       They appear on your roster automatically — no approval needed.
                     </li>
                   </ol>
+                </div>
+
+                <Button size="lg" className="w-full" onClick={() => setStep(3)}>
+                  Next
+                </Button>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="tour"
+                initial={{ x: 24, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -24, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="space-y-5"
+              >
+                <div className="space-y-2.5">
+                  {DASHBOARD_TOUR.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <div
+                        key={item.title}
+                        className="flex gap-3 rounded-2xl border-2 border-border bg-card p-4"
+                      >
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                          <Icon className="h-4 w-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold">{item.title}</p>
+                          <p className="mt-0.5 text-sm text-muted-foreground">{item.body}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 <Button size="lg" className="w-full" onClick={onComplete}>

@@ -22,13 +22,15 @@ import TeacherAccessGate from '@/components/teacher/TeacherAccessGate';
 import { Button } from '@/components/ui/button';
 import { GraduationCap, Loader2, Plus } from 'lucide-react';
 import { summarizeClass } from '@/lib/teacherMetrics';
-import { isTeacherPreview } from '@/dev/teacherPreview';
+import OnboardingTeacherSetup from '@/components/onboarding/OnboardingTeacherSetup';
+import { isTeacherOnboardingPreview, isTeacherPreview } from '@/dev/teacherPreview';
 
 const TeachPage: React.FC = () => {
   const { user, loading, isTeacher, rolesLoaded } = useAuth();
   // Dev-only: `/teach?preview=1` renders the dashboard against fixtures so it
   // can be reviewed before the classroom migrations are applied anywhere.
   const preview = isTeacherPreview();
+  const onboardingPreview = isTeacherOnboardingPreview();
   const queryClient = useQueryClient();
 
   const [activeClassroomId, setActiveClassroomId] = useState<string | null>(null);
@@ -53,6 +55,16 @@ const TeachPage: React.FC = () => {
 
   const roster = useMemo(() => rosterQuery.data ?? [], [rosterQuery.data]);
   const summary = useMemo(() => summarizeClass(roster), [roster]);
+
+  if (onboardingPreview) {
+    return (
+      <OnboardingTeacherSetup
+        onComplete={() => {
+          window.location.search = '?preview=1';
+        }}
+      />
+    );
+  }
 
   if (!preview && (loading || !rolesLoaded)) {
     return (
