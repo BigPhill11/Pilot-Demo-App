@@ -10,6 +10,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getActivity,
   getClassInsights,
+  getLearningMomentum,
   getModuleMatrix,
   getQuestionBreakdown,
   getRoster,
@@ -34,6 +35,7 @@ export const teacherKeys = {
   studentResponses: (classroomId: string, studentId: string) =>
     ['teacher', 'responses', classroomId, studentId] as const,
   teachback: (id: string) => ['teacher', 'teachback', id] as const,
+  momentum: (id: string) => ['teacher', 'momentum', id] as const,
 };
 
 export function useClassrooms() {
@@ -119,13 +121,22 @@ export function useTeachBackOverview(classroomId: string | undefined) {
   });
 }
 
+export function useLearningMomentum(classroomId: string | undefined) {
+  return useQuery({
+    queryKey: teacherKeys.momentum(classroomId ?? ''),
+    queryFn: () => getLearningMomentum(classroomId as string),
+    enabled: !!classroomId,
+    staleTime: STALE_MS,
+  });
+}
+
 /** Invalidates every view for one classroom — used by the refresh button. */
 export function useRefreshClassroom(classroomId: string | undefined) {
   const queryClient = useQueryClient();
   return () => {
     queryClient.invalidateQueries({ queryKey: teacherKeys.classrooms });
     if (!classroomId) return;
-    for (const view of ['roster', 'matrix', 'insights', 'activity', 'breakdown', 'teachback', 'responses']) {
+    for (const view of ['roster', 'matrix', 'insights', 'activity', 'breakdown', 'teachback', 'responses', 'momentum']) {
       queryClient.invalidateQueries({ queryKey: ['teacher', view, classroomId] });
     }
   };

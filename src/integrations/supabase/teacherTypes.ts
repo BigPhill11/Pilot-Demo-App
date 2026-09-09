@@ -222,3 +222,28 @@ export interface TeachBackOverview {
   students: TeachBackStudent[];
   lessons: TeachBackLesson[];
 }
+
+/** One rolling seven-day window returned by teacher_get_learning_momentum. */
+export interface LearningMomentumWeek {
+  starts_on: string;
+  ends_on: string;
+  /** Evidence-weighted score from 0–100, or null when nobody qualified. */
+  score: number | null;
+  students: number;
+  assessment_items: number;
+  teachbacks: number;
+}
+
+/**
+ * A class learning trend based on paired students, not a change in whoever
+ * happened to use the app during each week.
+ */
+export interface LearningMomentum {
+  metric_name: 'Learning Momentum';
+  minimum_paired_students: number;
+  current_score: number | null;
+  paired_students: number;
+  /** Percentage-point change; null until enough students have both weeks. */
+  week_over_week_change: number | null;
+  weeks: LearningMomentumWeek[];
+}

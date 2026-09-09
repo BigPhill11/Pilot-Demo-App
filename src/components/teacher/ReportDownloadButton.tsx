@@ -7,6 +7,7 @@ import { teacherKeys } from '@/hooks/useTeacherDashboard';
 import {
   getActivity,
   getClassInsights,
+  getLearningMomentum,
   getQuestionBreakdown,
   getRoster,
   getTeachBackOverview,
@@ -39,7 +40,7 @@ const ReportDownloadButton: React.FC<ReportDownloadButtonProps> = ({ classroom }
 
     try {
       const id = classroom.id;
-      const [roster, activity, insights, questions, teachBack] = await Promise.all([
+      const [roster, activity, insights, questions, teachBack, momentum] = await Promise.all([
         queryClient.fetchQuery({
           queryKey: teacherKeys.roster(id),
           queryFn: () => getRoster(id),
@@ -65,6 +66,11 @@ const ReportDownloadButton: React.FC<ReportDownloadButtonProps> = ({ classroom }
           queryFn: () => getTeachBackOverview(id),
           staleTime: STALE_MS,
         }),
+        queryClient.fetchQuery({
+          queryKey: teacherKeys.momentum(id),
+          queryFn: () => getLearningMomentum(id),
+          staleTime: STALE_MS,
+        }),
       ]);
 
       // jsPDF and its dependencies are around a third of a megabyte, and only a
@@ -81,6 +87,7 @@ const ReportDownloadButton: React.FC<ReportDownloadButtonProps> = ({ classroom }
         insights,
         questions,
         teachBack,
+        momentum,
         windowDays: WINDOW_DAYS,
       });
 
@@ -112,6 +119,7 @@ const ReportDownloadButton: React.FC<ReportDownloadButtonProps> = ({ classroom }
       disabled={!classroom || busy}
       className="shrink-0 px-2 sm:px-3"
       aria-label="Download the class report as a PDF"
+      data-tutorial="teacher-report"
     >
       {busy ? (
         <Loader2 className="h-4 w-4 animate-spin sm:mr-1.5" />
