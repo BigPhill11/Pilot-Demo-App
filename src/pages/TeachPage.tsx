@@ -19,6 +19,7 @@ import ClassInsightsPanel from '@/components/teacher/ClassInsightsPanel';
 import ScenarioBreakdownPanel from '@/components/teacher/ScenarioBreakdownPanel';
 import TeachBackPanel from '@/components/teacher/TeachBackPanel';
 import TeacherAccessGate from '@/components/teacher/TeacherAccessGate';
+import ReportDownloadButton from '@/components/teacher/ReportDownloadButton';
 import { Button } from '@/components/ui/button';
 import { GraduationCap, Loader2, Plus } from 'lucide-react';
 import { summarizeClass } from '@/lib/teacherMetrics';
@@ -133,6 +134,7 @@ const TeachPage: React.FC = () => {
         onChangeView={setView}
         onRefresh={refresh}
         refreshing={rosterQuery.isFetching || matrixQuery.isFetching}
+        actions={<ReportDownloadButton classroom={activeClassroom} />}
       >
         {preview && (
           <div className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-2.5 text-sm text-amber-900">
