@@ -1,4 +1,4 @@
--- TEACHER SETUP — CHUNK 4 OF 17
+-- TEACHER SETUP — CHUNK 4 OF 19
 -- Run chunk 3 first. New tab for each. Safe to re-run.
 
 -- ── Roster with headline metrics per student ─────────────────────────────────

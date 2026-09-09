@@ -1,4 +1,4 @@
--- TEACHER SETUP — CHUNK 6 OF 17
+-- TEACHER SETUP — CHUNK 6 OF 19
 -- Run chunk 5 first. New tab for each. Safe to re-run.
 
 -- ── One student, everything ──────────────────────────────────────────────────

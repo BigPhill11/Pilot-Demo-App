@@ -1,4 +1,4 @@
--- TEACHER SETUP — CHUNK 11 OF 17
+-- TEACHER SETUP — CHUNK 11 OF 19
 -- Run chunk 10 first. New tab for each. Safe to re-run.
 
 -- Ways to become a teacher other than "sign up with a teacher code".

@@ -1,4 +1,4 @@
--- TEACHER SETUP — CHUNK 10 OF 17
+-- TEACHER SETUP — CHUNK 10 OF 19
 -- Run chunk 9 first. New tab for each. Safe to re-run.
 
 -- ============================================================

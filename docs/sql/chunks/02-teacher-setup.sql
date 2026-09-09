@@ -1,4 +1,4 @@
--- TEACHER SETUP — CHUNK 2 OF 17
+-- TEACHER SETUP — CHUNK 2 OF 19
 -- Run chunk 1 first. New tab for each. Safe to re-run.
 
 -- Classrooms: the teacher-facing grouping built on top of the existing
