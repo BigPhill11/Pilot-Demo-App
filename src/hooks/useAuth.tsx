@@ -152,6 +152,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.removeItem('phils_onboarding_done');
       localStorage.removeItem('bamboo_empire_tutorial_v2_completed');
       await supabase.auth.signOut();
+      // A hard navigation deliberately remounts App: the branded splash plays
+      // again, then the onboarding auth gate becomes the sign-in screen. It
+      // also makes every sign-out button behave identically regardless of the
+      // route it was pressed from.
+      window.location.replace('/');
     } catch (error) {
       console.error('Error signing out:', error);
     }

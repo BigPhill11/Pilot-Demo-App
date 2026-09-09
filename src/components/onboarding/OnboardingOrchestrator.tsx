@@ -85,6 +85,16 @@ const OnboardingOrchestrator: React.FC = () => {
     }
   }, [user, phase]);
 
+  // Also recover when a session ends outside useAuth's normal sign-out button
+  // (account deletion, expiry, or another tab). Without this, a completed
+  // orchestrator stayed in "complete" and left the signed-out app exposed
+  // without its sign-in overlay.
+  useEffect(() => {
+    if (authLoading || user || phase === 'auth-gate' || phase === 'loading') return;
+    setPhase('auth-gate');
+    if (location.pathname !== '/') navigate('/', { replace: true });
+  }, [authLoading, location.pathname, navigate, phase, user]);
+
   // A returning teacher who lands on the app root wants the dashboard, not the
   // student home with a Teach tab tucked into the nav. Once per session and only
   // from the root, so "Back to app" still works and deep links are respected.
