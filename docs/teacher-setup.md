@@ -19,7 +19,7 @@ with it.
 
 ## Step 1 — Apply the migrations
 
-The database does not have the teacher tables yet. Nine SQL files add them, and
+The database does not have the teacher tables yet. Ten SQL files add them, and
 this step is what makes `/teach` work at all — until it is done, the dashboard
 404s against the API.
 
@@ -36,7 +36,7 @@ browser, no terminal, no installs:
 3. Click **New query** to get an *empty tab*. This matters — see the warning
    below.
 4. Open [`docs/sql/teacher-setup-part-2-feature.sql`](sql/teacher-setup-part-2-feature.sql),
-   select all, paste, **Run**. It is long (about 1,600 lines) but takes a second
+   select all, paste, **Run**. It is long (about 1,700 lines) but takes a second
    or two. Same *Success* message.
 
 That is the whole step. Both files are safe to run twice, so if you lose track
@@ -51,7 +51,7 @@ of whether one went through, just run it again.
 
 ### If you cannot copy the whole file
 
-Part 2 is about 1,600 lines, and some setups will not copy that much at once.
+Part 2 is about 1,700 lines, and some setups will not copy that much at once.
 Almost always the cause is GitHub's file viewer rather than your machine: it
 renders long files a screenful at a time, so *select all* grabs only what is on
 screen — often a hundred-odd lines.
@@ -97,7 +97,7 @@ is incomplete, and `db push` may refuse to run or ask you to repair history
 first. If that happens, do not fight it — use the two-file paste above, which
 has exactly the same end result.
 
-### The nine files, for reference
+### The ten files, for reference
 
 Filename order matters; the bundle preserves it.
 
@@ -111,6 +111,7 @@ Filename order matters; the bundle preserves it.
 20260802000100_teacher_role_grant.sql     -- upgrade an existing account
 20260802000200_assessment_responses.sql   -- scenario answer capture
 20260802000300_teacher_teachback.sql      -- teach-back proficiency
+20260803000000_module_progress_test_scores.sql  -- pre/post columns some projects lack
 ```
 
 Everything under `docs/sql/` — both bundle files and the 17 chunks — is
@@ -398,3 +399,16 @@ roster. Check which code an account used with
 
 **Everything 404s from the app.** The migrations have not been applied to this
 project. Re-run step 1 and confirm with the verification queries.
+
+**"column mp.pre_test_score does not exist"** when opening a student or Class
+insights. `module_progress` was created twice in this repo's history, and on
+projects where the older definition landed first the test-score columns were
+never added. Fixed by `20260803000000_module_progress_test_scores.sql`; if you
+applied the bundle before that file existed, run this once:
+
+```sql
+alter table public.module_progress
+  add column if not exists pre_test_score integer,
+  add column if not exists post_test_score integer,
+  add column if not exists improvement_percentage integer;
+```

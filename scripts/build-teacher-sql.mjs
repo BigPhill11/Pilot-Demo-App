@@ -42,6 +42,7 @@ const REST_FILES = [
   '20260802000100_teacher_role_grant.sql',
   '20260802000200_assessment_responses.sql',
   '20260802000300_teacher_teachback.sql',
+  '20260803000000_module_progress_test_scores.sql',
 ];
 
 const banner = (title, body) =>
