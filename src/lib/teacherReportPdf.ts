@@ -87,14 +87,23 @@ class ReportDoc {
    */
   sectionTitle(title: string, subtitle?: string, minSpace = 0) {
     this.ensure(Math.max(subtitle ? 62 : 44, minSpace));
-    this.setFill(BRAND.green);
-    this.doc.roundedRect(PAGE.margin, this.y, 4, 16, 2, 2, 'F');
-
+    this.setText(BRAND.green);
+    this.doc.setFont('helvetica', 'bold');
+    this.doc.setFontSize(7.5);
+    this.doc.text('TEACHER FIELD NOTES', PAGE.margin, this.y);
+    this.y += 15;
     this.setText(BRAND.deep);
     this.doc.setFont('helvetica', 'bold');
-    this.doc.setFontSize(14);
-    this.doc.text(title, PAGE.margin + 14, this.y + 13);
-    this.y += 24;
+    this.doc.setFontSize(18);
+    this.doc.text(title, PAGE.margin, this.y);
+    this.y += 10;
+    this.setStroke(BRAND.green);
+    this.doc.setLineWidth(1.5);
+    this.doc.line(PAGE.margin, this.y, PAGE.margin + 42, this.y);
+    this.setStroke(BRAND.line);
+    this.doc.setLineWidth(0.5);
+    this.doc.line(PAGE.margin + 48, this.y, PAGE.width - PAGE.margin, this.y);
+    this.y += 16;
 
     if (subtitle) {
       this.setText(BRAND.muted);
@@ -121,23 +130,20 @@ class ReportDoc {
     this.y += lines.length * (size + 3) + (options.gap ?? 8);
   }
 
-  /** A tinted callout box; returns nothing but advances the cursor. */
+  /** Editorial pull quote with a leaf-green rule, deliberately not a card. */
   calloutBox(text: string, tone: 'green' | 'amber') {
-    const fill = tone === 'green' ? BRAND.wash : BRAND.amberWash;
     const edge = tone === 'green' ? BRAND.mist : BRAND.amber;
     this.doc.setFont('helvetica', 'normal');
-    this.doc.setFontSize(10);
-    const lines = this.doc.splitTextToSize(text, CONTENT_WIDTH - 28);
-    const height = lines.length * 13 + 24;
+    this.doc.setFontSize(13);
+    const lines = this.doc.splitTextToSize(text, CONTENT_WIDTH - 36);
+    const height = lines.length * 17 + 8;
 
     this.ensure(height + 10);
-    this.setFill(fill);
     this.setStroke(edge);
-    this.doc.setLineWidth(0.8);
-    this.doc.roundedRect(PAGE.margin, this.y, CONTENT_WIDTH, height, 8, 8, 'FD');
-
+    this.doc.setLineWidth(4);
+    this.doc.line(PAGE.margin, this.y - 4, PAGE.margin, this.y + height - 8);
     this.setText(BRAND.ink);
-    this.doc.text(lines, PAGE.margin + 14, this.y + 17);
+    this.doc.text(lines, PAGE.margin + 20, this.y + 10);
     this.y += height + 14;
   }
 }
@@ -211,35 +217,104 @@ function drawKpiRow(rd: ReportDoc, report: ClassReport) {
     { label: 'Need attention', value: String(report.headline.needsAttention) },
   ];
 
-  const gap = 10;
-  const cardWidth = (CONTENT_WIDTH - gap * (items.length - 1)) / items.length;
-  const cardHeight = 58;
+  const itemWidth = CONTENT_WIDTH / items.length;
+  const bandHeight = 64;
 
-  rd.ensure(cardHeight + 16);
+  rd.ensure(bandHeight + 16);
+  rd.setStroke(BRAND.line);
+  doc.setLineWidth(0.8);
+  doc.line(PAGE.margin, rd.y, PAGE.width - PAGE.margin, rd.y);
 
   items.forEach((item, index) => {
-    const x = PAGE.margin + index * (cardWidth + gap);
+    const x = PAGE.margin + index * itemWidth;
     const attention = item.label === 'Need attention' && report.headline.needsAttention > 0;
-
-    rd.setFill(attention ? BRAND.amberWash : BRAND.wash);
-    rd.setStroke(attention ? BRAND.amber : BRAND.mist);
-    doc.setLineWidth(0.8);
-    doc.roundedRect(x, rd.y, cardWidth, cardHeight, 7, 7, 'FD');
+    if (index > 0) doc.line(x, rd.y + 10, x, rd.y + bandHeight - 10);
 
     rd.setText(attention ? [146, 64, 14] : BRAND.deep);
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(19);
-    doc.text(item.value, x + cardWidth / 2, rd.y + 27, { align: 'center' });
+    doc.setFontSize(22);
+    doc.text(item.value, x + itemWidth / 2, rd.y + 29, { align: 'center' });
 
     rd.setText(BRAND.muted);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7.6);
-    doc.text(doc.splitTextToSize(item.label, cardWidth - 8), x + cardWidth / 2, rd.y + 42, {
+    doc.text(doc.splitTextToSize(item.label, itemWidth - 8), x + itemWidth / 2, rd.y + 46, {
       align: 'center',
     });
   });
 
-  rd.y += cardHeight + 20;
+  doc.line(PAGE.margin, rd.y + bandHeight, PAGE.width - PAGE.margin, rd.y + bandHeight);
+  rd.y += bandHeight + 24;
+}
+
+function drawLearningTrend(rd: ReportDoc, report: ClassReport) {
+  const { doc } = rd;
+  const weeks = report.learning.weeks;
+  if (weeks.length === 0 || weeks.every((week) => week.score === null)) {
+    rd.paragraph(report.learning.summary, { color: BRAND.muted });
+    return;
+  }
+
+  const chartHeight = 116;
+  const chartTop = rd.y + 8;
+  const chartBottom = chartTop + chartHeight;
+  const left = PAGE.margin + 28;
+  const width = CONTENT_WIDTH - 36;
+  rd.ensure(chartHeight + 70);
+
+  [0, 50, 100].forEach((tick) => {
+    const y = chartBottom - (tick / 100) * chartHeight;
+    rd.setStroke(BRAND.line);
+    doc.setLineWidth(0.5);
+    doc.line(left, y, left + width, y);
+    rd.setText(BRAND.muted);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.text(String(tick), left - 8, y + 2, { align: 'right' });
+  });
+
+  const points = weeks.map((week, index) => ({
+    x: left + (weeks.length === 1 ? width / 2 : (index / (weeks.length - 1)) * width),
+    y: week.score === null ? null : chartBottom - (week.score / 100) * chartHeight,
+    week,
+  }));
+
+  rd.setStroke(BRAND.green);
+  doc.setLineWidth(2.5);
+  for (let index = 1; index < points.length; index += 1) {
+    const previous = points[index - 1];
+    const current = points[index];
+    if (previous.y !== null && current.y !== null) {
+      doc.line(previous.x, previous.y, current.x, current.y);
+    }
+  }
+
+  points.forEach(({ x, y, week }, index) => {
+    if (y === null) return;
+    rd.setFill(index === points.length - 1 ? BRAND.deep : BRAND.white);
+    rd.setStroke(BRAND.green);
+    doc.setLineWidth(2);
+    doc.circle(x, y, index === points.length - 1 ? 5 : 4, 'FD');
+    rd.setText(BRAND.muted);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.text(
+      new Date(`${week.ends_on}T00:00:00`).toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+      }),
+      x,
+      chartBottom + 14,
+      { align: 'center' }
+    );
+  });
+
+  rd.y = chartBottom + 30;
+  rd.paragraph(report.learning.summary);
+  rd.paragraph(
+    `Score: 70% scenario accuracy + 30% Ask Phil teach-back understanding, calculated once per student. The change uses ${report.learning.pairedStudents} students with evidence in both weeks.`,
+    { size: 8.5, color: BRAND.muted }
+  );
 }
 
 function drawUsageChart(rd: ReportDoc, report: ClassReport) {
@@ -299,12 +374,14 @@ function tableTheme(startY: number) {
       overflow: 'linebreak' as const,
     },
     headStyles: {
-      fillColor: BRAND.deep,
-      textColor: BRAND.white,
+      fillColor: BRAND.white,
+      textColor: BRAND.deep,
       fontStyle: 'bold' as const,
       fontSize: 8.5,
+      lineColor: BRAND.green,
+      lineWidth: { bottom: 1.5 },
     },
-    alternateRowStyles: { fillColor: BRAND.wash },
+    alternateRowStyles: { fillColor: [248, 250, 252] as RGB },
   };
 }
 
@@ -347,6 +424,13 @@ export async function renderClassReportDoc(
   rd.calloutBox(report.synopsis, 'green');
 
   drawKpiRow(rd, report);
+
+  rd.sectionTitle(
+    'Learning Momentum',
+    'A paired week-over-week measure of whether the same students are demonstrating more understanding.',
+    210
+  );
+  drawLearningTrend(rd, report);
 
   rd.sectionTitle(
     'How often the class is using the app',
@@ -526,27 +610,24 @@ export async function renderClassReportDoc(
 
       rd.ensure(height + 12);
 
-      rd.setFill(BRAND.wash);
-      rd.setStroke(BRAND.mist);
-      doc.setLineWidth(0.8);
-      doc.roundedRect(PAGE.margin, rd.y, CONTENT_WIDTH, height, 8, 8, 'FD');
-
-      rd.setFill(BRAND.green);
-      doc.circle(PAGE.margin + 22, rd.y + 22, 11, 'F');
-      rd.setText(BRAND.white);
+      rd.setText(BRAND.green);
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(11);
-      doc.text(String(index + 1), PAGE.margin + 22, rd.y + 26, { align: 'center' });
+      doc.setFontSize(22);
+      doc.text(String(index + 1).padStart(2, '0'), PAGE.margin, rd.y + 22);
 
       rd.setText(BRAND.deep);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(11);
-      doc.text(titleLines, PAGE.margin + 42, rd.y + 22);
+      doc.text(titleLines, PAGE.margin + 48, rd.y + 14);
 
       rd.setText(BRAND.ink);
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(9.5);
-      doc.text(bodyLines, PAGE.margin + 42, rd.y + 22 + titleLines.length * 14);
+      doc.text(bodyLines, PAGE.margin + 48, rd.y + 14 + titleLines.length * 14);
+
+      rd.setStroke(BRAND.line);
+      doc.setLineWidth(0.6);
+      doc.line(PAGE.margin + 48, rd.y + height, PAGE.width - PAGE.margin, rd.y + height);
 
       rd.y += height + 12;
     });
