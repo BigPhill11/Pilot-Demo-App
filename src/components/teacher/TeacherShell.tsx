@@ -20,6 +20,7 @@ import PandaLogo from '@/components/icons/PandaLogo';
 import {
   BookOpen,
   GraduationCap,
+  HelpCircle,
   LayoutDashboard,
   LogOut,
   Mic,
@@ -42,6 +43,7 @@ interface TeacherShellProps {
   view: TeacherView;
   onChangeView: (view: TeacherView) => void;
   onRefresh: () => void;
+  onReplayTutorial: () => void;
   refreshing?: boolean;
   /** Header slot, used for the report download. */
   actions?: React.ReactNode;
@@ -71,6 +73,7 @@ const TeacherShell: React.FC<TeacherShellProps> = ({
   view,
   onChangeView,
   onRefresh,
+  onReplayTutorial,
   refreshing,
   actions,
   children,
@@ -93,7 +96,7 @@ const TeacherShell: React.FC<TeacherShellProps> = ({
         </SidebarHeader>
 
         <SidebarContent>
-          <SidebarGroup>
+          <SidebarGroup data-tutorial="teacher-classes">
             <SidebarGroupLabel>Classes</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -134,6 +137,7 @@ const TeacherShell: React.FC<TeacherShellProps> = ({
                         isActive={view === item.id}
                         onClick={() => onChangeView(item.id)}
                         tooltip={item.label}
+                        data-tutorial={`teacher-view-${item.id}`}
                       >
                         <Icon />
                         <span>{item.label}</span>
@@ -148,6 +152,12 @@ const TeacherShell: React.FC<TeacherShellProps> = ({
 
         <SidebarFooter>
           <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={onReplayTutorial} tooltip="Replay dashboard tutorial">
+                <HelpCircle />
+                <span>Replay tutorial</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
             <SidebarMenuItem>
               {/* A teacher account has no student app to go back to, so the
                   same slot signs them out instead. */}
@@ -189,6 +199,15 @@ const TeacherShell: React.FC<TeacherShellProps> = ({
             {actions}
             <Button
               variant="ghost"
+              size="icon"
+              onClick={onReplayTutorial}
+              className="shrink-0 md:hidden"
+              aria-label="Replay dashboard tutorial"
+            >
+              <HelpCircle className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
               size="sm"
               onClick={onRefresh}
               disabled={refreshing}
@@ -212,6 +231,7 @@ const TeacherShell: React.FC<TeacherShellProps> = ({
                     type="button"
                     onClick={() => onChangeView(item.id)}
                     aria-current={active ? 'page' : undefined}
+                    data-tutorial={`teacher-view-${item.id}`}
                     className={cn(
                       'flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition-colors',
                       active
