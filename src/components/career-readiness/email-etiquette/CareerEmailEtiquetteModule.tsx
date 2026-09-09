@@ -441,6 +441,12 @@ const CareerEmailEtiquetteModule: React.FC = () => {
                       },
                     })
                   }
+                  recordContext={{
+                    moduleType: 'career-readiness',
+                    moduleId: 'email-etiquette',
+                    lessonId: currentLessonId,
+                    instrument: 'checkpoint',
+                  }}
                   onPass={handleTestPass}
                 />
               )}

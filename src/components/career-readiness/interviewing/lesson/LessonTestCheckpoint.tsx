@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, ClipboardCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import type { InterviewLessonConfig } from '@/data/career-readiness/interviewing';
+import type { InterviewLessonConfig, LessonTestItem } from '@/data/career-readiness/interviewing';
+import { useQuizRecorder } from '@/hooks/useQuizRecorder';
+import type { QuizContext } from '@/lib/quizTelemetry';
 
 interface LessonTestCheckpointProps {
   lesson: InterviewLessonConfig;
@@ -11,6 +13,8 @@ interface LessonTestCheckpointProps {
   onResult: (itemId: string, optionId: string) => void;
   onReset: () => void;
   onPass: () => void;
+  /** Omit to skip answer recording. */
+  recordContext?: QuizContext;
 }
 
 const LessonTestCheckpoint: React.FC<LessonTestCheckpointProps> = ({
@@ -19,11 +23,43 @@ const LessonTestCheckpoint: React.FC<LessonTestCheckpointProps> = ({
   onResult,
   onReset,
   onPass,
+  recordContext,
 }) => {
   const { test } = lesson;
   const [itemIndex, setItemIndex] = useState(0);
   const item = test.items[itemIndex];
   const chosen = item ? results[item.id] : undefined;
+  const recorder = useQuizRecorder(recordContext);
+  const recorded = useRef(new Set<string>());
+
+  const handleSelect = (testItem: LessonTestItem, optionId: string) => {
+    onResult(testItem.id, optionId);
+    // Nothing stops a student changing their pick before moving on, and the
+    // first one is what they actually knew, so later clicks are not recorded.
+    if (recorded.current.has(testItem.id)) return;
+    recorded.current.add(testItem.id);
+    const picked = testItem.options.find((o) => o.id === optionId);
+    const answer = testItem.options.find((o) => o.isCorrect);
+    recorder?.record({
+      itemId: testItem.id,
+      itemIndex,
+      prompt: testItem.prompt,
+      selectedKey: optionId,
+      selectedLabel: picked?.label ?? '',
+      correctKey: answer?.id ?? '',
+      correctLabel: answer?.label ?? '',
+      isCorrect: !!picked?.isCorrect,
+    });
+  };
+
+  const handleRetry = () => {
+    setItemIndex(0);
+    onReset();
+    // Retries are separate attempts, otherwise the second set of answers
+    // collides with the first and the improvement is lost.
+    recorder?.reset();
+    recorded.current.clear();
+  };
 
   const correctCount = test.items.filter((t) => {
     const pick = results[t.id];
@@ -43,7 +79,9 @@ const LessonTestCheckpoint: React.FC<LessonTestCheckpointProps> = ({
   };
 
   const handleFinish = () => {
-    if (passed) onPass();
+    if (!passed) return;
+    recorder?.flush();
+    onPass();
   };
 
   return (
@@ -88,7 +126,7 @@ const LessonTestCheckpoint: React.FC<LessonTestCheckpointProps> = ({
               <button
                 key={opt.id}
                 type="button"
-                onClick={() => onResult(item.id, opt.id)}
+                onClick={() => handleSelect(item, opt.id)}
                 className={`w-full text-left p-3 rounded-xl border-2 transition-all ${
                   chosen === opt.id
                     ? opt.isCorrect
@@ -141,10 +179,7 @@ const LessonTestCheckpoint: React.FC<LessonTestCheckpointProps> = ({
           <Button
             className="w-full bg-emerald-800 hover:bg-emerald-900"
             disabled={!passed}
-            onClick={passed ? handleFinish : () => {
-              setItemIndex(0);
-              onReset();
-            }}
+            onClick={passed ? handleFinish : handleRetry}
           >
             {passed ? 'Complete lesson' : 'Retry checkpoint'}
           </Button>

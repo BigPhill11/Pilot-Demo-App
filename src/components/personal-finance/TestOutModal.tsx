@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { getModuleById, PERSONAL_FINANCE_MODULES } from '@/data/personal-finance/modules';
 import { cn } from '@/lib/utils';
+import { useQuizRecorder } from '@/hooks/useQuizRecorder';
 
 interface TestOutModalProps {
   moduleId: string;
@@ -31,6 +32,15 @@ const TestOutModal: React.FC<TestOutModalProps> = ({
   const totalQuestions = questions.length;
   const passingScore = 85;
 
+  // Unlike the lesson quizzes, this modal owns its own context: it is only ever
+  // personal finance, and it knows the module it is testing out of.
+  const recorder = useQuizRecorder({
+    moduleType: 'personal-finance',
+    moduleId,
+    lessonId: `${moduleId}-test-out`,
+    instrument: 'test_out',
+  });
+
   const handleAnswerSelect = (index: number) => {
     if (showFeedback) return;
     setSelectedAnswer(index);
@@ -39,11 +49,23 @@ const TestOutModal: React.FC<TestOutModalProps> = ({
   const handleNext = () => {
     if (selectedAnswer === null) return;
 
-    const isCorrect = selectedAnswer === questions[currentQuestion].correctIndex;
+    const question = questions[currentQuestion];
+    const isCorrect = selectedAnswer === question.correctIndex;
     
     if (!showFeedback) {
       setShowFeedback(true);
       setAnswers([...answers, isCorrect]);
+      // Test-out questions carry no ids, so position identifies them.
+      recorder?.record({
+        itemId: `${moduleId}-test-out#${currentQuestion}`,
+        itemIndex: currentQuestion,
+        prompt: question.question,
+        selectedKey: String(selectedAnswer),
+        selectedLabel: question.options[selectedAnswer] ?? '',
+        correctKey: String(question.correctIndex),
+        correctLabel: question.options[question.correctIndex] ?? '',
+        isCorrect,
+      });
       return;
     }
 
@@ -52,6 +74,7 @@ const TestOutModal: React.FC<TestOutModalProps> = ({
       setSelectedAnswer(null);
       setShowFeedback(false);
     } else {
+      recorder?.flush();
       setShowResult(true);
     }
   };

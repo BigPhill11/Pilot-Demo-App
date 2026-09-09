@@ -39,8 +39,10 @@ import {
   notifyProgressUpdated,
   scopedStorageKey,
 } from '@/lib/userScopedStorage';
+import { queueModuleProgressSync } from '@/lib/progressSync';
 
 const STORAGE_KEY = 'career_readiness_progress';
+const MODULE_TYPE = 'career-readiness';
 
 const defaultState: CareerReadinessProgressState = {
   modules: {},
@@ -116,6 +118,16 @@ export function useCareerReadinessProgress() {
 
   useEffect(() => {
     saveProgress(progress);
+    queueModuleProgressSync(
+      CAREER_MODULES.map((mod) => ({
+        moduleId: mod.id,
+        moduleType: MODULE_TYPE,
+        progressPercentage: progress.modules[mod.id] ?? 0,
+        detailedProgress: {
+          badgeEarned: progress.badgesEarned.includes(mod.badgeId),
+        },
+      }))
+    );
   }, [progress]);
 
   const moduleProgress = useMemo(() => {

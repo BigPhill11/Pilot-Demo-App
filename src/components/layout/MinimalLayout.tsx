@@ -16,8 +16,7 @@ import { usePersonalDashboard } from '@/contexts/PersonalDashboardContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useUnifiedStreak } from '@/hooks/useUnifiedStreak';
 import { useDailyTimeGoal } from '@/hooks/useDailyTimeGoal';
-import { LogOut, User, Flame, Moon, Sun, MessageCircle, BarChart2, Menu, Home, Crown, BookOpen, Briefcase, Users, Shield, X } from 'lucide-react';
-import { isPhilAdminEmail } from '@/lib/adminAccess';
+import { LogOut, User, Flame, Moon, Sun, MessageCircle, BarChart2, Menu, Home, Crown, BookOpen, Briefcase, Users, Shield, GraduationCap, X } from 'lucide-react';
 interface MinimalLayoutProps {
   children: React.ReactNode;
 }
@@ -27,7 +26,9 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
   const {
     user,
     profile,
-    signOut
+    signOut,
+    isTeacher,
+    isAdmin
   } = useAuth();
   const {
     isDark,
@@ -63,7 +64,6 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
     }
   };
   const isGuest = !user;
-  const isAdmin = isPhilAdminEmail(user?.email);
   useDailyTimeGoal({ trackActivity: true });
 
   const mobileNavItems = [
@@ -72,6 +72,7 @@ const MinimalLayout: React.FC<MinimalLayoutProps> = ({
     { label: 'Learn', path: '/learn', icon: BookOpen },
     { label: 'Career', path: '/career', icon: Briefcase },
     { label: 'Friends', path: '/phils-friends', icon: Users },
+    ...(isTeacher ? [{ label: 'Teach', path: '/teach', icon: GraduationCap }] : []),
     ...(isAdmin ? [{ label: 'Admin', path: '/admin', icon: Shield }] : []),
   ];
 

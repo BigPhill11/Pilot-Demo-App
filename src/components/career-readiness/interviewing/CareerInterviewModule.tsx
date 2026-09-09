@@ -440,6 +440,12 @@ const CareerInterviewModule: React.FC = () => {
                       },
                     })
                   }
+                  recordContext={{
+                    moduleType: 'career-readiness',
+                    moduleId: 'interviewing',
+                    lessonId: currentLessonId,
+                    instrument: 'checkpoint',
+                  }}
                   onPass={handleTestPass}
                 />
               )}

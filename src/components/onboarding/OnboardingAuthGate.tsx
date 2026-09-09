@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Eye, EyeOff, Loader2, Mail, Lock, KeyRound } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Mail, Lock, KeyRound, GraduationCap, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Capacitor } from '@capacitor/core';
@@ -17,7 +17,19 @@ interface OnboardingAuthGateProps {
   onSignedIn: () => void;
 }
 
+/** Teachers and students share one Supabase auth; only the framing and the kind
+ *  of code differ. Arriving at /teach signed out opens this in teacher mode. */
+type Audience = 'student' | 'teacher';
+
 const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) => {
+  const location = useLocation();
+  const [audience, setAudience] = useState<Audience>(() =>
+    location.pathname.startsWith('/teach') ||
+    new URLSearchParams(location.search).has('teacher')
+      ? 'teacher'
+      : 'student'
+  );
+  const isTeacherMode = audience === 'teacher';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
@@ -137,7 +149,14 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) =
       <div className="flex flex-col items-center pt-12 pb-6 px-4 shrink-0">
         <PandaLogo className="w-20 h-20 rounded-2xl shadow-2xl mb-4" />
         <h1 className="text-white text-3xl font-bold tracking-tight text-center">Phil's Financials</h1>
-        <p className="text-green-200 text-sm mt-1 text-center">Learn. Earn. Grow.</p>
+        {isTeacherMode ? (
+          <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-amber-400/20 px-3 py-1 text-xs font-semibold text-amber-100 ring-1 ring-amber-300/40">
+            <GraduationCap className="h-3.5 w-3.5" />
+            Teacher access
+          </span>
+        ) : (
+          <p className="text-green-200 text-sm mt-1 text-center">Learn. Earn. Grow.</p>
+        )}
       </div>
 
       {/* Auth card */}
@@ -175,7 +194,7 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) =
                 <div className="relative">
                   <KeyRound className="absolute left-3 top-3 h-4 w-4 text-white/60" />
                   <Input
-                    placeholder="Access code"
+                    placeholder={isTeacherMode ? 'Teacher code (TEACH-XXXX)' : 'Access code'}
                     value={accessCode}
                     onChange={(e) => setAccessCode(e.target.value)}
                     className="pl-9 bg-white/20 border-white/30 text-white placeholder:text-white/50 focus:bg-white/30 uppercase"
@@ -183,6 +202,13 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) =
                     required
                   />
                 </div>
+                {isTeacherMode && (
+                  <p className="text-[11px] leading-snug text-amber-100/80">
+                    A teacher code unlocks the classroom dashboard. It is not the same as the
+                    class code you hand to students — you will generate one of those after
+                    signing up.
+                  </p>
+                )}
                 <Input
                   placeholder="Username (optional)"
                   value={username}
@@ -297,9 +323,30 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) =
           </Tabs>
         </div>
 
-        <p className="text-[11px] text-white/40 text-center max-w-[260px] mx-auto mt-6">
-          You&apos;ll need an access code to create an account. Don&apos;t have one? Ask the
-          person who invited you.
+        {/* Teachers land here from /teach or from this switch. Same auth either
+            way — the role comes from the code, not from a separate account type. */}
+        <button
+          type="button"
+          onClick={() => setAudience(isTeacherMode ? 'student' : 'teacher')}
+          className="mx-auto mt-5 flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-semibold text-white transition hover:bg-white/20"
+        >
+          {isTeacherMode ? (
+            <>
+              <ArrowLeft className="h-3.5 w-3.5" />
+              I&apos;m a student
+            </>
+          ) : (
+            <>
+              <GraduationCap className="h-3.5 w-3.5" />
+              I&apos;m a teacher
+            </>
+          )}
+        </button>
+
+        <p className="text-[11px] text-white/40 text-center max-w-[280px] mx-auto mt-5">
+          {isTeacherMode
+            ? 'Already have a teacher account? Sign in above — no code needed after the first time.'
+            : "You'll need an access code to create an account. Don't have one? Ask the person who invited you."}
         </p>
       </div>
     </div>
