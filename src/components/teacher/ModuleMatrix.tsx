@@ -95,7 +95,7 @@ const ModuleMatrix: React.FC<ModuleMatrixProps> = ({
           The matrix fills in as students join and start modules.
         </p>
       ) : (
-        <div className="overflow-x-auto p-4">
+        <div className="overflow-x-auto p-3 sm:p-4">
           <table className="w-full border-separate border-spacing-1">
             <thead>
               <tr>
@@ -118,7 +118,7 @@ const ModuleMatrix: React.FC<ModuleMatrixProps> = ({
                     <button
                       type="button"
                       onClick={() => onSelectStudent(student.student_id)}
-                      className="max-w-[10rem] truncate text-left text-sm hover:text-primary hover:underline"
+                      className="max-w-[6.5rem] truncate text-left text-xs hover:text-primary hover:underline sm:max-w-[10rem] sm:text-sm"
                     >
                       {student.username ?? 'Unnamed'}
                     </button>

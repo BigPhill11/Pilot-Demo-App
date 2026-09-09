@@ -91,7 +91,7 @@ const EngagementHeatmap: React.FC<EngagementHeatmapProps> = ({
           Activity appears once students join the class.
         </p>
       ) : (
-        <div className="overflow-x-auto p-4">
+        <div className="overflow-x-auto p-3 sm:p-4">
           <table className="border-separate border-spacing-[3px]">
             <thead>
               <tr>
@@ -113,7 +113,7 @@ const EngagementHeatmap: React.FC<EngagementHeatmapProps> = ({
                     <button
                       type="button"
                       onClick={() => onSelectStudent(student.student_id)}
-                      className="max-w-[10rem] truncate text-left text-xs hover:text-primary hover:underline"
+                      className="max-w-[6.5rem] truncate text-left text-xs hover:text-primary hover:underline sm:max-w-[10rem]"
                     >
                       {student.username ?? 'Unnamed'}
                     </button>

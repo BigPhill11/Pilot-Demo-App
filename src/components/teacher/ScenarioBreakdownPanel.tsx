@@ -54,7 +54,7 @@ const ScenarioBreakdownPanel: React.FC<Props> = ({ classroomId, onSelectStudent 
 
   return (
     <Card>
-      <CardHeader className="pb-3">
+      <CardHeader className="p-4 pb-3 sm:p-6 sm:pb-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <CardTitle className="flex items-center gap-2 text-base">
@@ -67,7 +67,7 @@ const ScenarioBreakdownPanel: React.FC<Props> = ({ classroomId, onSelectStudent 
             </p>
           </div>
           <Select value={track} onValueChange={setTrack}>
-            <SelectTrigger className="w-[190px]">
+            <SelectTrigger className="w-full sm:w-[190px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -81,7 +81,7 @@ const ScenarioBreakdownPanel: React.FC<Props> = ({ classroomId, onSelectStudent 
         </div>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
         {query.isLoading ? (
           <div className="flex items-center justify-center py-10 text-muted-foreground">
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -119,11 +119,11 @@ const ScenarioBreakdownPanel: React.FC<Props> = ({ classroomId, onSelectStudent 
                     <button
                       type="button"
                       onClick={() => setExpanded(isOpen ? null : key)}
-                      className="flex w-full items-start gap-3 p-4 text-left hover:bg-muted/40"
+                      className="flex w-full items-start gap-2.5 p-3 text-left hover:bg-muted/40 sm:gap-3 sm:p-4"
                     >
                       <div
                         className={cn(
-                          'mt-0.5 flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-lg text-xs font-bold',
+                          'mt-0.5 flex h-9 w-9 shrink-0 flex-col items-center justify-center rounded-lg text-[11px] font-bold sm:h-11 sm:w-11 sm:text-xs',
                           pct >= 80
                             ? 'bg-emerald-100 text-emerald-800'
                             : pct >= 50
@@ -165,7 +165,7 @@ const ScenarioBreakdownPanel: React.FC<Props> = ({ classroomId, onSelectStudent 
                     </button>
 
                     {isOpen && (
-                      <div className="space-y-2 border-t bg-muted/20 p-4">
+                      <div className="space-y-2 border-t bg-muted/20 p-3 sm:p-4">
                         {row.options.map((option) => {
                           const share =
                             row.response_count === 0

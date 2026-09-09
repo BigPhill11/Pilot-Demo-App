@@ -41,6 +41,7 @@ const ClassPulseHeader: React.FC<ClassPulseHeaderProps> = ({ classroom, summary,
       key: 'students',
       icon: Users,
       label: 'Students',
+      shortLabel: 'Students',
       value: summary.studentCount,
       tone: 'from-emerald-500/10 to-primary/5 border-emerald-500/20 text-emerald-600',
     },
@@ -48,6 +49,7 @@ const ClassPulseHeader: React.FC<ClassPulseHeaderProps> = ({ classroom, summary,
       key: 'active',
       icon: TrendingUp,
       label: 'Active this week',
+      shortLabel: 'Active',
       value: summary.activeLast7,
       tone: 'from-sky-500/10 to-sky-400/5 border-sky-500/20 text-sky-600',
     },
@@ -55,6 +57,7 @@ const ClassPulseHeader: React.FC<ClassPulseHeaderProps> = ({ classroom, summary,
       key: 'modules',
       icon: Layers,
       label: 'Avg modules done',
+      shortLabel: 'Modules',
       value: summary.avgModulesCompleted,
       tone: 'from-violet-500/10 to-violet-400/5 border-violet-500/20 text-violet-600',
     },
@@ -62,6 +65,7 @@ const ClassPulseHeader: React.FC<ClassPulseHeaderProps> = ({ classroom, summary,
       key: 'streak',
       icon: Flame,
       label: 'Avg streak',
+      shortLabel: 'Streak',
       value: summary.avgStreak,
       tone: 'from-orange-500/10 to-amber-400/5 border-orange-400/30 text-orange-500',
     },
@@ -69,6 +73,7 @@ const ClassPulseHeader: React.FC<ClassPulseHeaderProps> = ({ classroom, summary,
       key: 'attention',
       icon: TriangleAlert,
       label: 'Need attention',
+      shortLabel: 'Attention',
       value: summary.needsAttention,
       tone: 'from-rose-500/10 to-rose-400/5 border-rose-400/30 text-rose-500',
     },
@@ -76,21 +81,22 @@ const ClassPulseHeader: React.FC<ClassPulseHeaderProps> = ({ classroom, summary,
       key: 'xp',
       icon: Sparkles,
       label: 'Class XP',
+      shortLabel: 'XP',
       value: summary.totalXp.toLocaleString(),
       tone: 'from-amber-500/10 to-yellow-400/5 border-amber-400/30 text-amber-500',
     },
   ];
 
   return (
-    <section className="space-y-5">
-      <div className="relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-600 to-emerald-800 p-6 text-white">
+    <section className="space-y-4 sm:space-y-5">
+      <div className="relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-600 to-emerald-800 p-4 text-white sm:p-6">
         {/* Soft decorative wash, same treatment as the student hero. */}
         <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10" />
         <div className="pointer-events-none absolute -bottom-20 right-24 h-40 w-40 rounded-full bg-white/5" />
 
-        <div className="relative flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+        <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-5">
           <div className="min-w-0">
-            <div className="mb-2 flex flex-wrap items-center gap-2">
+            <div className="mb-2 flex flex-wrap items-center gap-1.5 sm:gap-2">
               {classroom.school_name && (
                 <Badge className="border-white/25 bg-white/15 text-white hover:bg-white/20">
                   {classroom.school_name}
@@ -105,21 +111,31 @@ const ClassPulseHeader: React.FC<ClassPulseHeaderProps> = ({ classroom, summary,
                 <Badge className="border-white/25 bg-white/15 text-white">Archived</Badge>
               )}
             </div>
-            <h1 className="truncate text-2xl font-bold md:text-3xl">{classroom.name}</h1>
-            <p className="mt-1 text-sm text-white/70">
+            <h1 className="break-words text-xl font-bold sm:truncate sm:text-2xl md:text-3xl">
+              {classroom.name}
+            </h1>
+            <p className="mt-1 text-xs text-white/70 sm:text-sm">
               {summary.studentCount === 0
                 ? 'No students yet — share the code below to get started.'
                 : `${summary.activeLast7} of ${summary.studentCount} students active in the last 7 days`}
             </p>
           </div>
 
-          <div className="shrink-0 rounded-xl border border-white/20 bg-white/10 p-4 text-center backdrop-blur-sm">
-            <p className="mb-1 text-xs uppercase tracking-wide text-white/60">Class code</p>
-            <p className="font-mono text-2xl font-bold tracking-[0.15em]">{classroom.join_code}</p>
+          {/* Side by side on a phone, where a tall centered card would push the
+              stat tiles below the fold. */}
+          <div className="flex shrink-0 items-center gap-3 rounded-xl border border-white/20 bg-white/10 p-3 backdrop-blur-sm sm:block sm:p-4 sm:text-center">
+            <div className="min-w-0 flex-1">
+              <p className="mb-0.5 text-[11px] uppercase tracking-wide text-white/60 sm:mb-1 sm:text-xs">
+                Class code
+              </p>
+              <p className="break-all font-mono text-xl font-bold tracking-[0.12em] sm:text-2xl sm:tracking-[0.15em]">
+                {classroom.join_code}
+              </p>
+            </div>
             <Button
               size="sm"
               variant="secondary"
-              className="mt-3 w-full bg-white/90 text-emerald-900 hover:bg-white"
+              className="shrink-0 bg-white/90 text-emerald-900 hover:bg-white sm:mt-3 sm:w-full"
               onClick={handleCopy}
             >
               {copied ? (
@@ -138,7 +154,9 @@ const ClassPulseHeader: React.FC<ClassPulseHeaderProps> = ({ classroom, summary,
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      {/* Three across on a phone rather than two: six tiles in two rows keeps
+          the roster in reach without scrolling past a wall of numbers. */}
+      <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:grid-cols-6">
         {tiles.map((tile, index) => {
           const Icon = tile.icon;
           return (
@@ -148,15 +166,23 @@ const ClassPulseHeader: React.FC<ClassPulseHeaderProps> = ({ classroom, summary,
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05, duration: 0.25 }}
               className={cn(
-                'rounded-xl border bg-gradient-to-br p-4 text-center',
+                'rounded-xl border bg-gradient-to-br p-2.5 text-center sm:p-4',
                 tile.tone.replace(/text-\S+/, '')
               )}
             >
-              <Icon className={cn('mx-auto mb-2 h-5 w-5', tile.tone.match(/text-\S+/)?.[0])} />
-              <div className="text-2xl font-bold text-foreground">
+              <Icon
+                className={cn(
+                  'mx-auto mb-1 h-4 w-4 sm:mb-2 sm:h-5 sm:w-5',
+                  tile.tone.match(/text-\S+/)?.[0]
+                )}
+              />
+              <div className="text-lg font-bold leading-tight text-foreground sm:text-2xl">
                 {loading ? '—' : tile.value}
               </div>
-              <div className="mt-0.5 text-xs text-muted-foreground">{tile.label}</div>
+              <div className="mt-0.5 text-[10px] leading-tight text-muted-foreground sm:text-xs">
+                <span className="sm:hidden">{tile.shortLabel}</span>
+                <span className="hidden sm:inline">{tile.label}</span>
+              </div>
             </motion.div>
           );
         })}

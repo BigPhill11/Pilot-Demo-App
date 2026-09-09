@@ -29,6 +29,7 @@ import {
   Users,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
 import type { TeacherClassroomSummary } from '@/integrations/supabase/teacherTypes';
 
 export type TeacherView = 'overview' | 'roster' | 'scenarios' | 'teachback' | 'insights';
@@ -42,6 +43,8 @@ interface TeacherShellProps {
   onChangeView: (view: TeacherView) => void;
   onRefresh: () => void;
   refreshing?: boolean;
+  /** Header slot, used for the report download. */
+  actions?: React.ReactNode;
   children: React.ReactNode;
 }
 
@@ -54,11 +57,11 @@ const VIEWS: { id: TeacherView; label: string; icon: typeof LayoutDashboard }[] 
 ];
 
 /**
- * Desktop-first shell for the teacher dashboard.
+ * Shell for the teacher dashboard.
  *
- * This is the app's only surface built for a laptop rather than a phone, so it
- * uses the sidebar layout instead of MinimalLayout's mobile header. On small
- * screens the sidebar collapses into a sheet via SidebarTrigger.
+ * Laptops get the sidebar; on a phone it collapses into a sheet behind
+ * SidebarTrigger, and the views move into a scrollable strip under the header
+ * so switching between them stays one tap rather than open-sheet-then-tap.
  */
 const TeacherShell: React.FC<TeacherShellProps> = ({
   classrooms,
@@ -69,9 +72,11 @@ const TeacherShell: React.FC<TeacherShellProps> = ({
   onChangeView,
   onRefresh,
   refreshing,
+  actions,
   children,
 }) => {
   const navigate = useNavigate();
+  const { isTeacherOnly, signOut } = useAuth();
   const activeClassroom = classrooms.find((c) => c.id === activeClassroomId);
 
   return (
@@ -144,30 +149,86 @@ const TeacherShell: React.FC<TeacherShellProps> = ({
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton onClick={() => navigate('/')} tooltip="Back to the app">
-                <LogOut />
-                <span>Back to app</span>
-              </SidebarMenuButton>
+              {/* A teacher account has no student app to go back to, so the
+                  same slot signs them out instead. */}
+              {isTeacherOnly ? (
+                <SidebarMenuButton onClick={() => signOut()} tooltip="Sign out">
+                  <LogOut />
+                  <span>Sign out</span>
+                </SidebarMenuButton>
+              ) : (
+                <SidebarMenuButton onClick={() => navigate('/')} tooltip="Back to the app">
+                  <LogOut />
+                  <span>Back to app</span>
+                </SidebarMenuButton>
+              )}
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
 
-      <SidebarInset>
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b bg-background/95 px-4 backdrop-blur">
-          <SidebarTrigger />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">
-              {activeClassroom?.name ?? 'Teacher dashboard'}
-            </p>
+      <SidebarInset className="min-w-0">
+        <header className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur">
+          <div
+            className="flex h-14 items-center gap-2 px-3 sm:px-4"
+            style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+          >
+            <SidebarTrigger className="shrink-0" />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium">
+                {activeClassroom?.name ?? 'Teacher dashboard'}
+              </p>
+              {activeClassroom && (
+                <p className="truncate text-[11px] text-muted-foreground sm:hidden">
+                  {activeClassroom.student_count}{' '}
+                  {activeClassroom.student_count === 1 ? 'student' : 'students'} ·{' '}
+                  {activeClassroom.join_code}
+                </p>
+              )}
+            </div>
+            {actions}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onRefresh}
+              disabled={refreshing}
+              className="shrink-0 px-2 sm:px-3"
+              aria-label="Refresh"
+            >
+              <RefreshCw className={cn('h-4 w-4', refreshing && 'animate-spin')} />
+              <span className="ml-1.5 hidden sm:inline">Refresh</span>
+            </Button>
           </div>
-          <Button variant="ghost" size="sm" onClick={onRefresh} disabled={refreshing}>
-            <RefreshCw className={cn('h-4 w-4', refreshing && 'animate-spin')} />
-            <span className="ml-1.5 hidden sm:inline">Refresh</span>
-          </Button>
+
+          {/* Phones do not get the sidebar, so the views live here instead. */}
+          <div className="-mx-px overflow-x-auto pb-2 md:hidden">
+            <div className="flex w-max gap-1.5 px-3">
+              {VIEWS.map((item) => {
+                const Icon = item.icon;
+                const active = view === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => onChangeView(item.id)}
+                    aria-current={active ? 'page' : undefined}
+                    className={cn(
+                      'flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition-colors',
+                      active
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-border bg-card text-muted-foreground'
+                    )}
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                    {item.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </header>
 
-        <main className="flex-1 space-y-6 p-4 md:p-6">{children}</main>
+        <main className="min-w-0 flex-1 space-y-4 p-3 sm:space-y-6 sm:p-4 md:p-6">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

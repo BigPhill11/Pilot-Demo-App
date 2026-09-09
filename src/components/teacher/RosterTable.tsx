@@ -11,7 +11,22 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { ArrowDown, ArrowUp, ChevronsUpDown, Download, Search, Users } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  ArrowDown,
+  ArrowUp,
+  ChevronRight,
+  ChevronsUpDown,
+  Download,
+  Search,
+  Users,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { RosterEntry } from '@/integrations/supabase/teacherTypes';
 import {
@@ -102,7 +117,7 @@ const RosterTable: React.FC<RosterTableProps> = ({
           <span className="text-sm text-muted-foreground">({roster.length})</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="relative">
+          <div className="relative flex-1 sm:flex-initial">
             <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Find a student"
@@ -111,9 +126,41 @@ const RosterTable: React.FC<RosterTableProps> = ({
               className="w-full pl-8 sm:w-56"
             />
           </div>
-          <Button variant="outline" size="sm" onClick={handleExport} disabled={visible.length === 0}>
-            <Download className="mr-1.5 h-4 w-4" />
-            CSV
+
+          {/* Sorting lives in the column headers on desktop; the card list has
+              no headers to click, so it gets an explicit control. */}
+          <Select value={sortKey} onValueChange={(v) => toggleSort(v as SortKey)}>
+            <SelectTrigger className="w-32 shrink-0 px-2 text-xs md:hidden" aria-label="Sort students by">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {COLUMNS.map((col) => (
+                <SelectItem key={col.key} value={col.key}>
+                  {col.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button
+            variant="outline"
+            size="icon"
+            className="shrink-0 md:hidden"
+            onClick={() => setAscending((prev) => !prev)}
+            aria-label={ascending ? 'Sort descending' : 'Sort ascending'}
+          >
+            {ascending ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExport}
+            disabled={visible.length === 0}
+            className="shrink-0 px-2 md:px-3"
+            aria-label="Download roster as CSV"
+          >
+            <Download className="h-4 w-4 md:mr-1.5" />
+            <span className="hidden md:inline">CSV</span>
           </Button>
         </div>
       </div>
@@ -133,8 +180,55 @@ const RosterTable: React.FC<RosterTableProps> = ({
           No student matches “{search}”.
         </p>
       ) : (
-        <div className="overflow-x-auto">
-          <Table>
+        <>
+          {/* Phones get a card per student. Seven columns of numbers do not
+              survive a 390px viewport, and the roster is the one view a teacher
+              is most likely to open mid-class on a phone. */}
+          <ul className="divide-y md:hidden">
+            {visible.map((entry) => {
+              const status = STATUS_META[studentStatus(entry)];
+              return (
+                <li key={entry.student_id}>
+                  <button
+                    type="button"
+                    onClick={() => onSelectStudent(entry.student_id)}
+                    className="flex w-full items-start gap-3 p-3 text-left active:bg-muted/50"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="truncate font-medium">{entry.username ?? 'Unnamed'}</p>
+                        <Badge
+                          variant="outline"
+                          className={cn('shrink-0 px-1.5 py-0 text-[10px]', status.className)}
+                        >
+                          {status.label}
+                        </Badge>
+                      </div>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {formatLastActive(entry.last_login_date)} · {entry.modules_completed}{' '}
+                        {entry.modules_completed === 1 ? 'module' : 'modules'} ·{' '}
+                        {entry.current_streak}-day streak
+                      </p>
+                      <div className="mt-2 flex items-center gap-2">
+                        <Progress
+                          value={entry.avg_progress}
+                          className="h-1.5 flex-1 bg-muted"
+                          indicatorClassName="bg-emerald-500"
+                        />
+                        <span className="w-9 shrink-0 text-right text-xs tabular-nums text-muted-foreground">
+                          {entry.avg_progress}%
+                        </span>
+                      </div>
+                    </div>
+                    <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground" />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="hidden overflow-x-auto md:block">
+            <Table>
             <TableHeader>
               <TableRow>
                 {COLUMNS.map((col) => (
@@ -209,8 +303,9 @@ const RosterTable: React.FC<RosterTableProps> = ({
                 );
               })}
             </TableBody>
-          </Table>
-        </div>
+            </Table>
+          </div>
+        </>
       )}
     </section>
   );

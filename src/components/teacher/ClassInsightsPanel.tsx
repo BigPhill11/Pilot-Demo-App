@@ -11,6 +11,7 @@ import {
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { Badge } from '@/components/ui/badge';
 import { Lightbulb, Loader2, TrendingDown, TriangleAlert } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { useClassInsights } from '@/hooks/useTeacherDashboard';
 import { moduleLabel, trackLabel } from '@/lib/teacherCurriculum';
 
@@ -31,6 +32,7 @@ function barColor(percent: number): string {
 
 const ClassInsightsPanel: React.FC<ClassInsightsPanelProps> = ({ classroomId }) => {
   const { data, isLoading } = useClassInsights(classroomId);
+  const isMobile = useIsMobile();
 
   // Weakest modules first — a teacher opens this view to find what to reteach,
   // not to admire what already landed.
@@ -78,18 +80,27 @@ const ClassInsightsPanel: React.FC<ClassInsightsPanelProps> = ({ classroomId }) 
             <p className="mb-4 text-sm text-muted-foreground">
               Average progress across every student who has started each module, lowest first.
             </p>
-            <ChartContainer config={chartConfig} className="h-[320px] w-full">
+            <ChartContainer
+              config={chartConfig}
+              className="h-[280px] w-full sm:h-[320px]"
+            >
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData} layout="vertical" margin={{ left: 12, right: 24 }}>
+                <BarChart
+                  data={chartData}
+                  layout="vertical"
+                  margin={{ left: isMobile ? 0 : 12, right: isMobile ? 8 : 24 }}
+                >
                   <CartesianGrid horizontal={false} strokeDasharray="3 3" />
                   <XAxis type="number" domain={[0, 100]} unit="%" tickLine={false} axisLine={false} />
                   <YAxis
                     type="category"
                     dataKey="name"
-                    width={140}
+                    // Long module names would eat a phone's entire width, so the
+                    // label column shrinks and the list below carries the detail.
+                    width={isMobile ? 78 : 140}
                     tickLine={false}
                     axisLine={false}
-                    tick={{ fontSize: 11 }}
+                    tick={{ fontSize: isMobile ? 9 : 11 }}
                   />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Bar dataKey="avgProgress" radius={4}>
@@ -103,7 +114,7 @@ const ClassInsightsPanel: React.FC<ClassInsightsPanelProps> = ({ classroomId }) 
 
             {/* The chart already shows depth of progress; this adds the
                 headcount behind each bar, which the chart cannot. */}
-            <div className="mt-5 grid gap-x-6 gap-y-1.5 border-t pt-4 sm:grid-cols-2">
+            <div className="mt-5 grid gap-x-6 gap-y-2 border-t pt-4 sm:grid-cols-2">
               {chartData.map((row) => (
                 <div key={row.name} className="flex items-baseline justify-between gap-3 text-sm">
                   <span className="min-w-0 truncate">

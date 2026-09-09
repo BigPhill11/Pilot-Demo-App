@@ -70,7 +70,7 @@ const StudentDetailSheet: React.FC<StudentDetailSheetProps> = ({
 
   return (
     <Sheet open={!!studentId} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
+      <SheetContent className="w-full overflow-y-auto p-4 sm:max-w-xl sm:p-6">
         {isLoading ? (
           <div className="flex h-full items-center justify-center">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -178,7 +178,7 @@ const StudentDetailSheet: React.FC<StudentDetailSheetProps> = ({
                       <div className="space-y-2">
                         {modules.map((mod) => (
                           <div key={`${type}-${mod.module_id}`} className="flex items-center gap-3">
-                            <span className="w-40 shrink-0 truncate text-sm">
+                            <span className="w-24 shrink-0 truncate text-xs sm:w-40 sm:text-sm">
                               {moduleLabel(type, mod.module_id)}
                             </span>
                             <Progress
@@ -214,7 +214,7 @@ const StudentDetailSheet: React.FC<StudentDetailSheetProps> = ({
                   <div className="space-y-2">
                     {data.careers.map((career) => (
                       <div key={career.career_id} className="flex items-center gap-3">
-                        <span className="w-40 shrink-0 truncate text-sm capitalize">
+                        <span className="w-24 shrink-0 truncate text-xs capitalize sm:w-40 sm:text-sm">
                           {career.career_id.replace(/-/g, ' ')}
                         </span>
                         <Progress

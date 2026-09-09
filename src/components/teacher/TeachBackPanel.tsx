@@ -61,7 +61,7 @@ const TeachBackPanel: React.FC<Props> = ({ classroomId, onSelectStudent }) => {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader className="pb-3">
+        <CardHeader className="p-4 pb-3 sm:p-6 sm:pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
             <Mic className="h-4 w-4 text-primary" />
             Teaching concepts back
@@ -72,7 +72,7 @@ const TeachBackPanel: React.FC<Props> = ({ classroomId, onSelectStudent }) => {
             collects.
           </p>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
           {!summary || summary.sessions === 0 ? (
             <div className="rounded-xl border border-dashed py-10 text-center">
               <p className="text-sm font-medium">No teach-backs yet</p>
@@ -90,7 +90,7 @@ const TeachBackPanel: React.FC<Props> = ({ classroomId, onSelectStudent }) => {
                 { label: 'Passed', value: `${summary.pass_rate}%` },
               ].map((kpi) => (
                 <div key={kpi.label} className="rounded-xl border bg-muted/30 p-3 text-center">
-                  <p className="text-2xl font-bold">{kpi.value}</p>
+                  <p className="text-xl font-bold sm:text-2xl">{kpi.value}</p>
                   <p className="text-xs text-muted-foreground">{kpi.label}</p>
                 </div>
               ))}
@@ -105,7 +105,59 @@ const TeachBackPanel: React.FC<Props> = ({ classroomId, onSelectStudent }) => {
             <CardTitle className="text-base">By student</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="overflow-x-auto">
+            {/* Six columns do not fit a phone; the same fields stack instead. */}
+            <ul className="divide-y md:hidden">
+              {attempted.map((student) => (
+                <li key={student.student_id}>
+                  <button
+                    type="button"
+                    onClick={() => onSelectStudent?.(student.student_id)}
+                    className="w-full px-4 py-3 text-left active:bg-muted/50"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="min-w-0 flex-1 truncate font-medium">
+                        {student.username}
+                      </span>
+                      <span
+                        className={cn(
+                          'shrink-0 rounded-md px-2 py-0.5 text-xs font-semibold',
+                          scoreTone(student.avg_score)
+                        )}
+                      >
+                        {student.avg_score}%
+                      </span>
+                    </div>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Passed {student.passed_sessions} of {student.sessions} ·{' '}
+                      {student.lessons_attempted}{' '}
+                      {student.lessons_attempted === 1 ? 'lesson' : 'lessons'} ·{' '}
+                      {relativeDay(student.last_at)}
+                    </p>
+                    {student.top_missed.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {student.top_missed.slice(0, 2).map((fact) => (
+                          <Badge
+                            key={fact}
+                            variant="outline"
+                            className="max-w-full truncate text-[11px] font-normal"
+                            title={fact}
+                          >
+                            {fact}
+                          </Badge>
+                        ))}
+                        {student.top_missed.length > 2 && (
+                          <span className="text-[11px] text-muted-foreground">
+                            +{student.top_missed.length - 2}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            <div className="hidden overflow-x-auto md:block">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-y bg-muted/40 text-left text-xs uppercase tracking-wide text-muted-foreground">
@@ -194,10 +246,10 @@ const TeachBackPanel: React.FC<Props> = ({ classroomId, onSelectStudent }) => {
               students leave out most often.
             </p>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
             <ul className="space-y-3">
               {lessons.map((lesson) => (
-                <li key={lesson.lesson_id} className="rounded-xl border p-4">
+                <li key={lesson.lesson_id} className="rounded-xl border p-3 sm:p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="text-sm font-medium">{lessonLabel(lesson.lesson_id)}</p>
                     <div className="flex items-center gap-2">
