@@ -11,7 +11,7 @@ import { ProgressProvider } from "@/contexts/ProgressContext";
 import { AskPhilUiProvider } from "@/contexts/AskPhilUiContext";
 import { PersonalDashboardProvider } from "@/contexts/PersonalDashboardContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import MinimalLayout from "@/components/layout/MinimalLayout";
+import StudentArea from "@/components/StudentArea";
 import GameStateInitializer from "@/components/game/GameStateInitializer";
 
 class ErrorBoundary extends React.Component<
@@ -102,15 +102,14 @@ function App() {
                       <Route path="/teach" element={<TeachPage />} />
                     </Route>
 
-                    {/* Everything else lives behind auth + the app layout. */}
+                    {/* Everything else lives behind auth + the app layout, and
+                        is closed to teacher accounts (see StudentArea). */}
                     <Route
                       element={
                         <>
                           <OnboardingOrchestrator />
                           <ProtectedRoute>
-                            <MinimalLayout>
-                              <Outlet />
-                            </MinimalLayout>
+                            <StudentArea />
                           </ProtectedRoute>
                         </>
                       }

@@ -15,6 +15,8 @@ interface AuthContextType {
   /** False until roles have loaded, so callers never gate on a half-loaded state. */
   rolesLoaded: boolean;
   isTeacher: boolean;
+  /** Teacher role without admin: sees the dashboard instead of the student app. */
+  isTeacherOnly: boolean;
   isAdmin: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -212,6 +214,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // the is_phil_admin() check the database uses.
   const isAdmin = roles.includes('admin') || isPhilAdminEmail(user?.email);
   const isTeacher = roles.includes('teacher') || isAdmin;
+  // The dashboard is the whole app for a teacher, so the student routes are
+  // closed to them. Admins are teachers by the rule above but still need to see
+  // what students see, so they keep both sides.
+  const isTeacherOnly = isTeacher && !isAdmin;
 
   const value: AuthContextType = {
     user,
@@ -221,6 +227,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     roles,
     rolesLoaded,
     isTeacher,
+    isTeacherOnly,
     isAdmin,
     signOut,
     refreshProfile,
