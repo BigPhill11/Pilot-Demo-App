@@ -21,6 +21,10 @@ interface OnboardingAuthGateProps {
  *  of code differ. Arriving at /teach signed out opens this in teacher mode. */
 type Audience = 'student' | 'teacher';
 
+function errorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error && error.message ? error.message : fallback;
+}
+
 const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) => {
   const location = useLocation();
   const [audience, setAudience] = useState<Audience>(() =>
@@ -86,8 +90,8 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) =
           toast.success('Account created! Check your email to confirm, then sign in.');
         }
       }
-    } catch (err: any) {
-      toast.error(err.message || 'Sign up failed');
+    } catch (err: unknown) {
+      toast.error(errorMessage(err, 'Sign up failed'));
     } finally {
       setLoading(false);
     }
@@ -105,8 +109,8 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) =
       });
       if (error) throw error;
       toast.success(`Password reset email sent to ${email.trim()}. Check your inbox.`);
-    } catch (err: any) {
-      toast.error(err.message || 'Could not send reset email');
+    } catch (err: unknown) {
+      toast.error(errorMessage(err, 'Could not send reset email'));
     } finally {
       setLoading(false);
     }
@@ -133,8 +137,8 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) =
       }
       toast.success('Welcome back!');
       onSignedIn();
-    } catch (err: any) {
-      toast.error(err.message || 'Sign in failed');
+    } catch (err: unknown) {
+      toast.error(errorMessage(err, 'Sign in failed'));
     } finally {
       setLoading(false);
     }
