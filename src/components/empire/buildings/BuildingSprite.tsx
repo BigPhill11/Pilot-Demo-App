@@ -65,11 +65,10 @@ const BuildingSprite: React.FC<BuildingSpriteProps> = ({
   hiRes = false,
   onClick,
 }) => {
+  const pointerDown = useRef<{ x: number; y: number } | null>(null);
   const def = BUILDING_DEFINITIONS[type];
   if (!def) return null;
   const { screenX: finalX, screenY: finalY } = gridToScreen(gridX, gridY);
-
-  const pointerDown = useRef<{ x: number; y: number } | null>(null);
 
   const tryTap = (clientX: number, clientY: number) => {
     const start = pointerDown.current;

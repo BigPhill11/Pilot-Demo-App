@@ -99,7 +99,7 @@ export const useFlashcardGamification = (userId: string = 'default') => {
       } else if (lastDate < yesterdayStr) {
         // Streak broken - check for freeze token
         if (data.streakFreezeTokens > 0) {
-          useStreakFreeze();
+          consumeStreakFreeze();
         } else {
           resetStreak();
         }
@@ -127,7 +127,7 @@ export const useFlashcardGamification = (userId: string = 'default') => {
     localStorage.setItem(STORAGE_KEYS.STREAK, JSON.stringify(updated));
   };
 
-  const useStreakFreeze = () => {
+  const consumeStreakFreeze = () => {
     const updated = {
       ...streakData,
       streakFreezeTokens: streakData.streakFreezeTokens - 1,
@@ -312,7 +312,7 @@ export const useFlashcardGamification = (userId: string = 'default') => {
     recordCardReview,
     startSession,
     endSession,
-    useStreakFreeze,
+    useStreakFreeze: consumeStreakFreeze,
     getMasteryForCard,
     updateStreak,
     getDueCardsForReview,

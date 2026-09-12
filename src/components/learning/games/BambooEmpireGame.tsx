@@ -119,7 +119,7 @@ const BambooEmpireGame: React.FC<BambooEmpireGameProps> = ({ level }) => {
     toast.success("Game reset! Phil starts his adventure anew!");
   };
 
-  const usePowerUp = async (powerUpId: string) => {
+  const activatePowerUp = async (powerUpId: string) => {
     const owned = gameState.powerUps[powerUpId] || 0;
     if (owned <= 0) return;
 
@@ -351,7 +351,7 @@ const BambooEmpireGame: React.FC<BambooEmpireGameProps> = ({ level }) => {
                     key={powerUp.id}
                     variant="outline"
                     size="sm"
-                    onClick={() => usePowerUp(powerUp.id)}
+                    onClick={() => activatePowerUp(powerUp.id)}
                     disabled={owned <= 0}
                     className="flex items-center gap-1"
                   >

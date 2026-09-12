@@ -1,14 +1,18 @@
 import { useUnifiedProgress, ModuleProgress } from '@/hooks/useUnifiedProgress';
 
+const useSevenLevelProgress = (moduleType: string, courseId: string) => [
+  useUnifiedProgress({ moduleId: 'level_1', moduleType, courseId }),
+  useUnifiedProgress({ moduleId: 'level_2', moduleType, courseId }),
+  useUnifiedProgress({ moduleId: 'level_3', moduleType, courseId }),
+  useUnifiedProgress({ moduleId: 'level_4', moduleType, courseId }),
+  useUnifiedProgress({ moduleId: 'level_5', moduleType, courseId }),
+  useUnifiedProgress({ moduleId: 'level_6', moduleType, courseId }),
+  useUnifiedProgress({ moduleId: 'level_7', moduleType, courseId }),
+];
+
 // Legacy adapter for consulting progress
 export const useConsultingProgressAdapter = () => {
-  const levelHooks = Array.from({ length: 7 }, (_, i) => 
-    useUnifiedProgress({
-      moduleId: `level_${i + 1}`,
-      moduleType: 'consulting',
-      courseId: 'management-consulting'
-    })
-  );
+  const levelHooks = useSevenLevelProgress('consulting', 'management-consulting');
 
   const moduleProgress = levelHooks.reduce((acc, hook, index) => {
     if (hook.progress) {
@@ -119,13 +123,7 @@ export const useConsultingProgressAdapter = () => {
 
 // Legacy adapter for VC progress - similar structure to consulting
 export const useVCProgressAdapter = () => {
-  const levelHooks = Array.from({ length: 7 }, (_, i) => 
-    useUnifiedProgress({
-      moduleId: `level_${i + 1}`,
-      moduleType: 'venture_capital',
-      courseId: 'venture-capital'
-    })
-  );
+  const levelHooks = useSevenLevelProgress('venture_capital', 'venture-capital');
 
   // Transform to match the legacy format
   const moduleProgress = levelHooks
@@ -160,7 +158,8 @@ export const useVCProgressAdapter = () => {
     const gamesWeight = 40;
 
     const overviewScore = updatedProgress.overviewCompleted ? overviewWeight : 0;
-    const termsScore = (updatedProgress.termsProgress?.completionPercentage || 0 / 100) * termsWeight;
+    const termsScore =
+      ((updatedProgress.termsProgress?.completionPercentage || 0) / 100) * termsWeight;
     
     const gameKeys = Object.keys(updatedProgress.miniGamesProgress || {});
     const completedGames = gameKeys.filter(key => updatedProgress.miniGamesProgress[key].completed).length;
