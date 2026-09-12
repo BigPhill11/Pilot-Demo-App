@@ -8,8 +8,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAllModules, ModuleCardData } from '@/data/market-intelligence/catalog';
 import { emitDailyGoalEvent } from '@/lib/dailyGoalEvents';
+import { queueModuleProgressSync } from '@/lib/progressSync';
 
 const STORAGE_KEY = 'market_intelligence_progress';
+// Distinct from the village lessons' 'market-intelligence' so the two never
+// collide on a shared section id.
+const MODULE_TYPE = 'market-intelligence-catalog';
 
 interface ModuleProgressData {
   completed: boolean;
@@ -61,6 +65,14 @@ export function useMarketIntelligenceProgress() {
   // Save progress whenever it changes
   useEffect(() => {
     saveProgress(progress);
+    queueModuleProgressSync(
+      getAllModules().map((m) => ({
+        moduleId: m.id,
+        moduleType: MODULE_TYPE,
+        progressPercentage: progress.modules[m.id]?.completed ? 100 : 0,
+        detailedProgress: { sectionId: m.sectionId },
+      }))
+    );
   }, [progress]);
 
   /**

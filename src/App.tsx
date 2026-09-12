@@ -56,6 +56,7 @@ import CareerResumePage from "./pages/CareerResumePage";
 import PhilsFriendsPage from "./pages/PhilsFriendsPage";
 import ProfilePage from "./pages/ProfilePage";
 import AdminPage from "./pages/AdminPage";
+import TeachPage from "./pages/TeachPage";
 import SplashScreen from "@/components/onboarding/SplashScreen";
 import OnboardingOrchestrator from "@/components/onboarding/OnboardingOrchestrator";
 
@@ -84,6 +85,22 @@ function App() {
                         Apple requires a publicly accessible Privacy Policy URL. */}
                     <Route path="/privacy" element={<PrivacyPage />} />
                     <Route path="/terms" element={<TermsPage />} />
+
+                    {/* The teacher dashboard is desktop-first and brings its own
+                        sidebar shell, so it skips MinimalLayout's mobile chrome
+                        while still sitting behind auth and onboarding. */}
+                    <Route
+                      element={
+                        <>
+                          <OnboardingOrchestrator />
+                          <ProtectedRoute>
+                            <Outlet />
+                          </ProtectedRoute>
+                        </>
+                      }
+                    >
+                      <Route path="/teach" element={<TeachPage />} />
+                    </Route>
 
                     {/* Everything else lives behind auth + the app layout. */}
                     <Route

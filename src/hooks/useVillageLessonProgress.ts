@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { VillageModuleId } from '@/types/village-lesson';
+import { VILLAGE_MODULES } from '@/data/village-lessons';
+import { queueModuleProgressSync } from '@/lib/progressSync';
 import {
   migrateLegacyStorageKey,
   notifyProgressUpdated,
@@ -7,6 +9,8 @@ import {
 } from '@/lib/userScopedStorage';
 
 const STORAGE_KEY_BASE = 'village_lesson_progress_v1';
+/** Matches the module_type written by the teacher dashboard's matrix columns. */
+const MODULE_TYPE = 'market-intelligence';
 
 export interface LessonRecord {
   completedAt: string;
@@ -39,11 +43,28 @@ function save(state: VillageLessonProgressState) {
   }
 }
 
+/**
+ * Per-module completion derived from the lesson IDs each module actually owns,
+ * rather than the ID-prefix heuristic getModuleProgress uses for display.
+ */
+function toSyncEntries(state: VillageLessonProgressState) {
+  return VILLAGE_MODULES.filter((m) => m.lessons.length > 0).map((m) => {
+    const completed = m.lessons.filter((l) => !!state.completedLessons[l.id]).length;
+    return {
+      moduleId: m.id,
+      moduleType: MODULE_TYPE,
+      progressPercentage: Math.round((completed / m.lessons.length) * 100),
+      detailedProgress: { completedLessons: completed, totalLessons: m.lessons.length },
+    };
+  });
+}
+
 export function useVillageLessonProgress() {
   const [state, setState] = useState<VillageLessonProgressState>(load);
 
   useEffect(() => {
     save(state);
+    queueModuleProgressSync(toSyncEntries(state));
   }, [state]);
 
   const isLessonCompleted = useCallback(

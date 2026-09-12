@@ -1,6 +1,15 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Crown, MessageCircle, Home, BookOpen, Briefcase, Users, Shield } from 'lucide-react';
+import {
+  Crown,
+  MessageCircle,
+  Home,
+  BookOpen,
+  Briefcase,
+  Users,
+  Shield,
+  GraduationCap,
+} from 'lucide-react';
 import { useAskPhilUi } from '@/contexts/AskPhilUiContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -20,15 +29,21 @@ const PageNavigationTabs: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { openAskPhil } = useAskPhilUi();
-  const { user } = useAuth();
+  const { user, isTeacher } = useAuth();
   const isMobile = useIsMobile();
   const isAdmin = isPhilAdminEmail(user?.email);
-  const tabs = isAdmin
-    ? [
-        ...NAV_TABS.slice(0, 5),
-        { value: 'admin', label: 'Admin', icon: Shield, action: 'navigate', path: '/admin', tutorialId: 'app-nav-admin' },
-        NAV_TABS[5],
-      ]
+
+  const extraTabs = [
+    ...(isTeacher
+      ? [{ value: 'teach', label: 'Teach', icon: GraduationCap, action: 'navigate', path: '/teach', tutorialId: 'app-nav-teach' }]
+      : []),
+    ...(isAdmin
+      ? [{ value: 'admin', label: 'Admin', icon: Shield, action: 'navigate', path: '/admin', tutorialId: 'app-nav-admin' }]
+      : []),
+  ];
+
+  const tabs = extraTabs.length > 0
+    ? [...NAV_TABS.slice(0, 5), ...extraTabs, NAV_TABS[5]]
     : NAV_TABS;
 
   const getCurrentTab = () => {
@@ -36,6 +51,7 @@ const PageNavigationTabs: React.FC = () => {
     if (location.pathname === '/career' || location.pathname.startsWith('/career/')) return 'career';
     if (location.pathname === '/phils-friends') return 'phils-friends';
     if (location.pathname === '/admin') return 'admin';
+    if (location.pathname === '/teach') return 'teach';
     if (location.pathname === '/empire') return 'empire';
     if (location.pathname === '/') return 'home';
     return 'home';

@@ -3,10 +3,27 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { KeyRound, Plus, Loader2, RefreshCw, Users, ChevronDown } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  KeyRound,
+  Plus,
+  Loader2,
+  RefreshCw,
+  Users,
+  ChevronDown,
+  GraduationCap,
+} from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+
+type GrantsRole = 'user' | 'teacher';
 
 interface AccessCodeRow {
   id: string;
@@ -15,6 +32,7 @@ interface AccessCodeRow {
   is_active: boolean;
   redeemed_count: number;
   created_at: string;
+  grants_role: GrantsRole | null;
 }
 
 interface CodeUserRow {
@@ -26,13 +44,13 @@ interface CodeUserRow {
 // access_codes is newer than the generated Supabase types — use a loose client here.
 const db = supabase as any;
 
-function randomCode(): string {
+function randomCode(role: GrantsRole): string {
   const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // no easily-confused chars
   let suffix = '';
   for (let i = 0; i < 4; i++) {
     suffix += chars[Math.floor(Math.random() * chars.length)];
   }
-  return `PHIL-${suffix}`;
+  return `${role === 'teacher' ? 'TEACH' : 'PHIL'}-${suffix}`;
 }
 
 const AccessCodeManager: React.FC = () => {
@@ -42,6 +60,7 @@ const AccessCodeManager: React.FC = () => {
   const [creating, setCreating] = useState(false);
   const [newCode, setNewCode] = useState('');
   const [newLabel, setNewLabel] = useState('');
+  const [newRole, setNewRole] = useState<GrantsRole>('user');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [usersByCode, setUsersByCode] = useState<Record<string, CodeUserRow[]>>({});
   const [loadingUsersId, setLoadingUsersId] = useState<string | null>(null);
@@ -86,11 +105,12 @@ const AccessCodeManager: React.FC = () => {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    const code = (newCode.trim() || randomCode()).toUpperCase();
+    const code = (newCode.trim() || randomCode(newRole)).toUpperCase();
     setCreating(true);
     const { error } = await db.from('access_codes').insert({
       code,
       label: newLabel.trim() || null,
+      grants_role: newRole,
       created_by: user?.id ?? null,
     });
     setCreating(false);
@@ -101,9 +121,14 @@ const AccessCodeManager: React.FC = () => {
       );
       return;
     }
-    toast.success(`Code ${code} created`);
+    toast.success(
+      newRole === 'teacher'
+        ? `Teacher code ${code} created`
+        : `Code ${code} created`
+    );
     setNewCode('');
     setNewLabel('');
+    setNewRole('user');
     loadCodes();
   };
 
@@ -141,7 +166,7 @@ const AccessCodeManager: React.FC = () => {
         </p>
 
         {/* Create */}
-        <form onSubmit={handleCreate} className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+        <form onSubmit={handleCreate} className="grid gap-2 sm:grid-cols-[1fr_1fr_auto_auto]">
           <Input
             placeholder="Code (blank = auto)"
             value={newCode}
@@ -154,6 +179,15 @@ const AccessCodeManager: React.FC = () => {
             value={newLabel}
             onChange={(e) => setNewLabel(e.target.value)}
           />
+          <Select value={newRole} onValueChange={(v) => setNewRole(v as GrantsRole)}>
+            <SelectTrigger className="sm:w-[150px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="user">Student code</SelectItem>
+              <SelectItem value="teacher">Teacher code</SelectItem>
+            </SelectContent>
+          </Select>
           <Button
             type="submit"
             className="bg-emerald-800 hover:bg-emerald-900"
@@ -169,6 +203,17 @@ const AccessCodeManager: React.FC = () => {
             )}
           </Button>
         </form>
+
+        {newRole === 'teacher' && (
+          <div className="flex gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+            <GraduationCap className="h-4 w-4 shrink-0" />
+            <p>
+              A teacher code grants the teacher role at sign-up and unlocks the classroom
+              dashboard. Send it only to instructors — anyone who redeems it can see student
+              progress for the classes they create.
+            </p>
+          </div>
+        )}
 
         {/* List */}
         <div className="space-y-2">
@@ -188,6 +233,12 @@ const AccessCodeManager: React.FC = () => {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="font-mono font-bold tracking-wide">{row.code}</span>
+                        {row.grants_role === 'teacher' && (
+                          <Badge className="bg-amber-100 text-amber-900 border-amber-200">
+                            <GraduationCap className="h-3 w-3 mr-1" />
+                            Teacher
+                          </Badge>
+                        )}
                         {row.is_active ? (
                           <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">
                             Active
