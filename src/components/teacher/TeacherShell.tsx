@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 import {
   Sidebar,
   SidebarContent,
@@ -67,7 +67,7 @@ const TeacherShell: React.FC<TeacherShellProps> = ({
   refreshing,
   children,
 }) => {
-  const navigate = useNavigate();
+  const { signOut } = useAuth();
   const activeClassroom = classrooms.find((c) => c.id === activeClassroomId);
 
   return (
@@ -140,9 +140,9 @@ const TeacherShell: React.FC<TeacherShellProps> = ({
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton onClick={() => navigate('/')} tooltip="Back to the app">
+              <SidebarMenuButton onClick={signOut} tooltip="Sign out">
                 <LogOut />
-                <span>Back to app</span>
+                <span>Sign out</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import OnboardingAuthGate from './OnboardingAuthGate';
@@ -22,9 +22,10 @@ type Phase = 'loading' | 'auth-gate' | 'teacher-setup' | 'survey' | 'tour' | 'co
 export const ONBOARDING_DONE_KEY = 'phils_onboarding_done';
 
 const OnboardingOrchestrator: React.FC = () => {
-  const { user, profile, loading: authLoading, isTeacher, rolesLoaded } = useAuth();
+  const { user, profile, loading: authLoading, isTeacher, isAdmin, rolesLoaded } = useAuth();
   const [phase, setPhase] = useState<Phase>('loading');
   const navigate = useNavigate();
+  const location = useLocation();
 
   // ── Main phase resolver ──────────────────────────────────────────────────
   // Onboarding is decided from the user's PROFILE flags (per-account, stored in
@@ -82,6 +83,24 @@ const OnboardingOrchestrator: React.FC = () => {
       setPhase('loading');
     }
   }, [user, phase]);
+
+  // When the session goes away (sign-out elsewhere, token expiry), fall back
+  // to the auth gate immediately instead of leaving the app signed-out but
+  // still rendered — previously this required a manual page refresh.
+  useEffect(() => {
+    if (!authLoading && !user && phase !== 'auth-gate' && phase !== 'loading') {
+      setPhase('loading');
+    }
+  }, [authLoading, user, phase]);
+
+  // Teachers only ever use the teacher dashboard, so any student route sends
+  // them to /teach. The admin account is exempt — it can browse everything.
+  useEffect(() => {
+    if (phase !== 'complete') return;
+    if (!isTeacher || isAdmin) return;
+    if (location.pathname.startsWith('/teach')) return;
+    navigate('/teach', { replace: true });
+  }, [phase, isTeacher, isAdmin, location.pathname, navigate]);
 
   // ── Render ───────────────────────────────────────────────────────────────
 

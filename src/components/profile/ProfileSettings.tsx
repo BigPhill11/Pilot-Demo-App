@@ -25,7 +25,6 @@ import { useOnboarding } from '@/hooks/useOnboarding';
 import { useGuestMode } from '@/hooks/useGuestMode';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import AuthModal from '@/components/auth/AuthModal';
 
 interface ProfileSettingsProps {
   isGuest?: boolean;
@@ -36,7 +35,6 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ isGuest = false }) =>
   const { resetTour, resetOnboarding } = useOnboarding();
   const { updateGuestData } = useGuestMode();
   const [isOpen, setIsOpen] = useState(false);
-  const [authOpen, setAuthOpen] = useState(false);
 
   const handleRestartTour = async () => {
     if (isGuest) {
@@ -76,7 +74,9 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ isGuest = false }) =>
             <div className="space-y-3 py-2">
               <Button
                 className="w-full flex items-center justify-center space-x-2"
-                onClick={() => { setIsOpen(false); setAuthOpen(true); }}
+                // The onboarding gate at the root is the only sign-in surface;
+                // the old in-app AuthModal was removed.
+                onClick={() => { setIsOpen(false); window.location.assign('/'); }}
               >
                 <LogIn className="h-4 w-4" />
                 <span>Sign In / Create Account</span>
@@ -93,8 +93,6 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ isGuest = false }) =>
             </div>
           </DialogContent>
         </Dialog>
-
-        <AuthModal open={authOpen} onOpenChange={setAuthOpen} />
       </>
     );
   }

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Eye, EyeOff, Loader2, Mail, Lock, KeyRound } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Mail, Lock, KeyRound, GraduationCap, School } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Capacitor } from '@capacitor/core';
@@ -27,27 +27,41 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) =
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState<'signup' | 'signin'>('signup');
   const [pendingEmail, setPendingEmail] = useState<string | null>(null);
+  // Students join with the code their teacher hands out; teachers sign up
+  // self-serve with no code at all — the server grants the teacher role from
+  // the signup_role metadata (see the teacher_self_signup migration).
+  const [role, setRole] = useState<'student' | 'teacher'>('student');
 
   const redirectTo = Capacitor.isNativePlatform() ? undefined : `${window.location.origin}/`;
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!ageConfirmed) { toast.error('Please confirm you are 13 years or older'); return; }
-    if (!accessCode.trim()) { toast.error('Enter the access code you were given'); return; }
+    const isTeacherSignup = role === 'teacher';
+    if (!isTeacherSignup && !accessCode.trim()) {
+      toast.error('Enter the class code your teacher gave you');
+      return;
+    }
     setLoading(true);
     try {
-      const normalizedCode = accessCode.trim().toUpperCase();
-      const codeValid = await validateAccessCode(normalizedCode);
-      if (!codeValid) {
-        toast.error("That access code isn't valid. Check it and try again.");
-        return;
+      const normalizedCode = isTeacherSignup ? '' : accessCode.trim().toUpperCase();
+      if (!isTeacherSignup) {
+        const codeValid = await validateAccessCode(normalizedCode);
+        if (!codeValid) {
+          toast.error("That class code isn't valid. Check it and try again.");
+          return;
+        }
       }
       const { data, error } = await supabase.auth.signUp({
         email, password,
         options: {
           emailRedirectTo: redirectTo,
-          // access_code is also enforced server-side by the handle_new_user trigger.
-          data: { username: username || email.split('@')[0], access_code: normalizedCode },
+          // access_code / signup_role are also enforced server-side by the
+          // handle_new_user trigger: students must present a valid code, and
+          // teacher signups get the teacher role with no code at all.
+          data: isTeacherSignup
+            ? { username: username || email.split('@')[0], signup_role: 'teacher' }
+            : { username: username || email.split('@')[0], access_code: normalizedCode },
         },
       });
       if (error) throw error;
@@ -56,7 +70,7 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) =
           id: data.user.id, email,
           username: username || email.split('@')[0],
           age_confirmed: true,
-          signup_access_code: normalizedCode,
+          signup_access_code: isTeacherSignup ? null : normalizedCode,
           placement_track: 'personal-finance',
           app_tour_completed: false,
           survey_completed: false,
@@ -172,17 +186,52 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) =
             {/* ── Sign Up ── */}
             <TabsContent value="signup" className="p-4 space-y-3">
               <form onSubmit={handleSignUp} className="space-y-3">
-                <div className="relative">
-                  <KeyRound className="absolute left-3 top-3 h-4 w-4 text-white/60" />
-                  <Input
-                    placeholder="Access code"
-                    value={accessCode}
-                    onChange={(e) => setAccessCode(e.target.value)}
-                    className="pl-9 bg-white/20 border-white/30 text-white placeholder:text-white/50 focus:bg-white/30 uppercase"
-                    autoCapitalize="characters"
-                    required
-                  />
+                {/* Who is signing up? Students redeem a teacher's class code;
+                    teachers create an account directly and get codes to hand out. */}
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setRole('student')}
+                    className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-semibold transition-colors ${
+                      role === 'student'
+                        ? 'bg-white text-green-800 border-white'
+                        : 'bg-white/10 text-white/70 border-white/30 hover:bg-white/20'
+                    }`}
+                  >
+                    <GraduationCap className="h-4 w-4" />
+                    I'm a Student
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setRole('teacher')}
+                    className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-semibold transition-colors ${
+                      role === 'teacher'
+                        ? 'bg-white text-green-800 border-white'
+                        : 'bg-white/10 text-white/70 border-white/30 hover:bg-white/20'
+                    }`}
+                  >
+                    <School className="h-4 w-4" />
+                    I'm a Teacher
+                  </button>
                 </div>
+                {role === 'student' ? (
+                  <div className="relative">
+                    <KeyRound className="absolute left-3 top-3 h-4 w-4 text-white/60" />
+                    <Input
+                      placeholder="Class code from your teacher"
+                      value={accessCode}
+                      onChange={(e) => setAccessCode(e.target.value)}
+                      className="pl-9 bg-white/20 border-white/30 text-white placeholder:text-white/50 focus:bg-white/30 uppercase"
+                      autoCapitalize="characters"
+                      required
+                    />
+                  </div>
+                ) : (
+                  <p className="rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-xs text-white/80 leading-snug">
+                    No code needed. You'll create your classroom right after signing up and get a
+                    class code to share with your students.
+                  </p>
+                )}
                 <Input
                   placeholder="Username (optional)"
                   value={username}
@@ -298,8 +347,8 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) =
         </div>
 
         <p className="text-[11px] text-white/40 text-center max-w-[260px] mx-auto mt-6">
-          You&apos;ll need an access code to create an account. Don&apos;t have one? Ask the
-          person who invited you.
+          Students need the class code their teacher shared. Teachers can sign up
+          directly — no code required.
         </p>
       </div>
     </div>

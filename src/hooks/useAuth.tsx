@@ -151,6 +151,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       await supabase.auth.signOut();
     } catch (error) {
       console.error('Error signing out:', error);
+    } finally {
+      // Full reload back to the root: every in-memory cache (React Query, game
+      // state, contexts) is dropped, and the app restarts at the splash screen
+      // followed by the sign up / sign in gate — no manual refresh needed.
+      window.location.assign('/');
     }
   };
 
