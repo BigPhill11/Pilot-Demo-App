@@ -138,6 +138,17 @@ const INPUT: ReportInput = {
   classroom: CLASSROOM,
   roster: ROSTER,
   activity: ACTIVITY,
+  momentum: {
+    metric_name: 'Learning Momentum',
+    minimum_paired_students: 3,
+    current_score: 72,
+    paired_students: 3,
+    week_over_week_change: 5.5,
+    weeks: [
+      { starts_on: daysAgo(13), ends_on: daysAgo(7), score: 66.5, students: 3, assessment_items: 14, teachbacks: 2 },
+      { starts_on: daysAgo(6), ends_on: daysAgo(0), score: 72, students: 3, assessment_items: 18, teachbacks: 3 },
+    ],
+  },
   insights: {
     modules: [
       {
@@ -193,6 +204,13 @@ describe('buildClassReport', () => {
     const report = buildClassReport(INPUT);
     expect(report.usage.trend).toBe('up');
     expect(report.usage.weeks.at(-1)?.signIns).toBe(5);
+  });
+
+  it('reports paired learning improvement separately from usage', () => {
+    const report = buildClassReport(INPUT);
+    expect(report.learning.trend).toBe('improving');
+    expect(report.learning.weekOverWeekChange).toBe(5.5);
+    expect(report.learning.summary).toContain('same 3 students');
   });
 
   it('turns the weakest question into a specific action', () => {

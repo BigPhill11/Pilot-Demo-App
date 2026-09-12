@@ -1,4 +1,4 @@
--- TEACHER SETUP — CHUNK 7 OF 17
+-- TEACHER SETUP — CHUNK 7 OF 19
 -- Run chunk 6 first. New tab for each. Safe to re-run.
 
 -- ── Where the class as a whole is struggling ─────────────────────────────────

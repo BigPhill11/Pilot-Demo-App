@@ -13,6 +13,7 @@ import { isTeacherPreview, teacherPreview } from '@/dev/teacherPreview';
 import type {
   ActivityEntry,
   ClassInsights,
+  LearningMomentum,
   ModuleMatrixCell,
   QuestionBreakdown,
   RosterEntry,
@@ -95,6 +96,32 @@ export async function getActivity(classroomId: string, days = 30): Promise<Activ
     p_days: days,
   });
   return rows ?? [];
+}
+
+export async function getLearningMomentum(
+  classroomId: string,
+  weeks = 6
+): Promise<LearningMomentum> {
+  if (isTeacherPreview()) return teacherPreview.getLearningMomentum();
+  const data = await callRpc<LearningMomentum>('teacher_get_learning_momentum', {
+    p_classroom_id: classroomId,
+    p_weeks: weeks,
+  });
+  return {
+    metric_name: 'Learning Momentum',
+    minimum_paired_students: num(data?.minimum_paired_students),
+    current_score: data?.current_score === null ? null : num(data?.current_score),
+    paired_students: num(data?.paired_students),
+    week_over_week_change:
+      data?.week_over_week_change === null ? null : num(data?.week_over_week_change),
+    weeks: (data?.weeks ?? []).map((week) => ({
+      ...week,
+      score: week.score === null ? null : num(week.score),
+      students: num(week.students),
+      assessment_items: num(week.assessment_items),
+      teachbacks: num(week.teachbacks),
+    })),
+  };
 }
 
 export async function getStudentDetail(

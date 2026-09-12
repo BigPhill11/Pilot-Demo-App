@@ -5,6 +5,7 @@ import {
   teacherKeys,
   useClassrooms,
   useModuleMatrix,
+  useLearningMomentum,
   useRefreshClassroom,
   useRoster,
 } from '@/hooks/useTeacherDashboard';
@@ -20,14 +21,21 @@ import ScenarioBreakdownPanel from '@/components/teacher/ScenarioBreakdownPanel'
 import TeachBackPanel from '@/components/teacher/TeachBackPanel';
 import TeacherAccessGate from '@/components/teacher/TeacherAccessGate';
 import ReportDownloadButton from '@/components/teacher/ReportDownloadButton';
+import TeacherDashboardTour from '@/components/teacher/TeacherDashboardTour';
+import LearningMomentumPanel from '@/components/teacher/LearningMomentumPanel';
 import { Button } from '@/components/ui/button';
 import { GraduationCap, Loader2, Plus } from 'lucide-react';
 import { summarizeClass } from '@/lib/teacherMetrics';
 import OnboardingTeacherSetup from '@/components/onboarding/OnboardingTeacherSetup';
 import { isTeacherOnboardingPreview, isTeacherPreview } from '@/dev/teacherPreview';
+import { supabase } from '@/integrations/supabase/client';
+import {
+  hasCompletedTeacherTour,
+  markTeacherTourCompleted,
+} from '@/lib/teacherTourState';
 
 const TeachPage: React.FC = () => {
-  const { user, loading, isTeacher, rolesLoaded } = useAuth();
+  const { user, profile, loading, isTeacher, rolesLoaded } = useAuth();
   // Dev-only: `/teach?preview=1` renders the dashboard against fixtures so it
   // can be reviewed before the classroom migrations are applied anywhere.
   const preview = isTeacherPreview();
@@ -38,6 +46,8 @@ const TeachPage: React.FC = () => {
   const [view, setView] = useState<TeacherView>('overview');
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
+  const [tourOpen, setTourOpen] = useState(false);
+  const [tourResolved, setTourResolved] = useState(false);
 
   const classroomsQuery = useClassrooms();
   const classrooms = useMemo(() => classroomsQuery.data ?? [], [classroomsQuery.data]);
@@ -52,10 +62,41 @@ const TeachPage: React.FC = () => {
   const activeClassroom = classrooms.find((c) => c.id === activeClassroomId);
   const rosterQuery = useRoster(activeClassroomId ?? undefined);
   const matrixQuery = useModuleMatrix(activeClassroomId ?? undefined);
+  const momentumQuery = useLearningMomentum(activeClassroomId ?? undefined);
   const refresh = useRefreshClassroom(activeClassroomId ?? undefined);
 
   const roster = useMemo(() => rosterQuery.data ?? [], [rosterQuery.data]);
   const summary = useMemo(() => summarizeClass(roster), [roster]);
+
+  // The setup flow ends on the real dashboard, where a short spotlight tour
+  // teaches the controls in context. Completion is kept both per-device and in
+  // the profile so a teacher does not repeat it on another device.
+  useEffect(() => {
+    if (tourResolved || preview || !user || !profile || !activeClassroomId) return;
+    setTourResolved(true);
+    if (
+      profile.teacher_dashboard_tour_completed !== true &&
+      !hasCompletedTeacherTour(user.id)
+    ) {
+      setTourOpen(true);
+    }
+  }, [activeClassroomId, preview, profile, tourResolved, user]);
+
+  const completeTour = () => {
+    setTourOpen(false);
+    markTeacherTourCompleted(user?.id);
+    if (!user) return;
+    supabase
+      .from('profiles')
+      .update({
+        teacher_dashboard_tour_completed: true,
+        updated_at: new Date().toISOString(),
+      } as never)
+      .eq('id', user.id)
+      .then(({ error }) => {
+        if (error) console.error('Error saving teacher dashboard tour:', error);
+      });
+  };
 
   if (onboardingPreview) {
     return (
@@ -133,6 +174,7 @@ const TeachPage: React.FC = () => {
         view={view}
         onChangeView={setView}
         onRefresh={refresh}
+        onReplayTutorial={() => setTourOpen(true)}
         refreshing={rosterQuery.isFetching || matrixQuery.isFetching}
         actions={<ReportDownloadButton classroom={activeClassroom} />}
       >
@@ -153,6 +195,10 @@ const TeachPage: React.FC = () => {
 
         {view === 'overview' && (
           <>
+            <LearningMomentumPanel
+              momentum={momentumQuery.data}
+              loading={momentumQuery.isLoading}
+            />
             <EngagementHeatmap
               classroomId={activeClassroomId ?? undefined}
               roster={roster}
@@ -203,6 +249,12 @@ const TeachPage: React.FC = () => {
         classroomId={activeClassroomId ?? undefined}
         studentId={selectedStudentId}
         onClose={() => setSelectedStudentId(null)}
+      />
+
+      <TeacherDashboardTour
+        open={tourOpen}
+        onComplete={completeTour}
+        onChangeView={setView}
       />
     </>
   );

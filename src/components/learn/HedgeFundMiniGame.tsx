@@ -149,48 +149,6 @@ const HedgeFundMiniGame: React.FC<HedgeFundMiniGameProps> = ({ game, levelId }) 
           ]
         };
       }
-    } else if (levelId === 3) {
-      if (game.name === "Fee Calculator") {
-        return {
-          questions: [
-            {
-              prompt: "Fund has $100M assets, earns $20M profit. Calculate '2 and 20' fees:",
-              options: ["$2M management + $4M performance = $6M total", "$4M management + $2M performance = $6M total", "$20M management + $4M performance = $24M total", "$2M management + $20M performance = $22M total"],
-              correct: "$2M management + $4M performance = $6M total",
-              explanation: "Management fee: 2% of $100M = $2M. Performance fee: 20% of $20M profit = $4M. Total = $6M."
-            },
-            {
-              prompt: "Fund has $500M assets, loses $50M. What fees are charged?",
-              options: ["$10M management fee only", "$10M performance fee only", "No fees charged", "$60M total fees"],
-              correct: "$10M management fee only",
-              explanation: "Management fees (2% of assets = $10M) are charged regardless of performance. No performance fees on losses."
-            },
-            {
-              prompt: "Fund charges '3 and 30' on $200M with $40M profit. Total fees?",
-              options: ["$6M + $12M = $18M", "$40M + $12M = $52M", "$6M + $40M = $46M", "$3M + $30M = $33M"],
-              correct: "$6M + $12M = $18M",
-              explanation: "Management: 3% of $200M = $6M. Performance: 30% of $40M = $12M. Total = $18M."
-            }
-          ]
-        };
-      } else if (game.name === "Investor Match") {
-        return {
-          questions: [
-            {
-              prompt: "Which investor CAN invest in hedge funds?",
-              options: ["College student with $5,000", "Teacher with $50,000 401k", "University endowment with $1B", "Retail investor with $100,000"],
-              correct: "University endowment with $1B",
-              explanation: "University endowments are institutional investors with sufficient assets and sophistication to invest in hedge funds."
-            },
-            {
-              prompt: "Why can't most retail investors access hedge funds?",
-              options: ["Hedge funds don't want their money", "Minimum investments too high + accreditation requirements", "Government forbids all retail investment", "Hedge funds only invest in bonds"],
-              correct: "Minimum investments too high + accreditation requirements",
-              explanation: "Hedge funds require high minimums (often $1M+) and investors must be 'accredited' with sufficient wealth/income."
-            }
-          ]
-        };
-      }
     } else if (levelId === 4) {
       if (game.name === "Risk Match-Up") {
         return {

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Eye, EyeOff, Loader2, Mail, Lock, KeyRound, GraduationCap, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Mail, Lock, KeyRound, GraduationCap, UserRound } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Capacitor } from '@capacitor/core';
@@ -20,6 +20,10 @@ interface OnboardingAuthGateProps {
 /** Teachers and students share one Supabase auth; only the framing and the kind
  *  of code differ. Arriving at /teach signed out opens this in teacher mode. */
 type Audience = 'student' | 'teacher';
+
+function errorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error && error.message ? error.message : fallback;
+}
 
 const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) => {
   const location = useLocation();
@@ -86,8 +90,8 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) =
           toast.success('Account created! Check your email to confirm, then sign in.');
         }
       }
-    } catch (err: any) {
-      toast.error(err.message || 'Sign up failed');
+    } catch (err: unknown) {
+      toast.error(errorMessage(err, 'Sign up failed'));
     } finally {
       setLoading(false);
     }
@@ -105,8 +109,8 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) =
       });
       if (error) throw error;
       toast.success(`Password reset email sent to ${email.trim()}. Check your inbox.`);
-    } catch (err: any) {
-      toast.error(err.message || 'Could not send reset email');
+    } catch (err: unknown) {
+      toast.error(errorMessage(err, 'Could not send reset email'));
     } finally {
       setLoading(false);
     }
@@ -133,8 +137,8 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) =
       }
       toast.success('Welcome back!');
       onSignedIn();
-    } catch (err: any) {
-      toast.error(err.message || 'Sign in failed');
+    } catch (err: unknown) {
+      toast.error(errorMessage(err, 'Sign in failed'));
     } finally {
       setLoading(false);
     }
@@ -161,6 +165,40 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) =
 
       {/* Auth card */}
       <div className="flex-1 flex flex-col justify-start px-4 pb-6">
+        <div className="mx-auto mb-4 w-full max-w-md">
+          <p className="mb-2 text-center text-xs font-semibold uppercase tracking-wider text-green-100">
+            Choose your account type
+          </p>
+          <div className="grid grid-cols-2 gap-2 rounded-2xl border border-white/20 bg-black/10 p-1.5">
+            <button
+              type="button"
+              onClick={() => setAudience('student')}
+              aria-pressed={!isTeacherMode}
+              className={`flex min-h-12 items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition ${
+                !isTeacherMode
+                  ? 'bg-white text-green-900 shadow-lg'
+                  : 'text-white/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <UserRound className="h-4 w-4" />
+              I&apos;m a student
+            </button>
+            <button
+              type="button"
+              onClick={() => setAudience('teacher')}
+              aria-pressed={isTeacherMode}
+              className={`flex min-h-12 items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition ${
+                isTeacherMode
+                  ? 'bg-amber-300 text-amber-950 shadow-lg'
+                  : 'text-white/80 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <GraduationCap className="h-4 w-4" />
+              I&apos;m a teacher
+            </button>
+          </div>
+        </div>
+
         {pendingEmail && (
           <div className="w-full max-w-md mx-auto mb-3 rounded-xl bg-white/95 p-3 text-center shadow-lg">
             <p className="text-sm font-semibold text-emerald-900">Check your email</p>
@@ -322,26 +360,6 @@ const OnboardingAuthGate: React.FC<OnboardingAuthGateProps> = ({ onSignedIn }) =
 
           </Tabs>
         </div>
-
-        {/* Teachers land here from /teach or from this switch. Same auth either
-            way — the role comes from the code, not from a separate account type. */}
-        <button
-          type="button"
-          onClick={() => setAudience(isTeacherMode ? 'student' : 'teacher')}
-          className="mx-auto mt-5 flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-semibold text-white transition hover:bg-white/20"
-        >
-          {isTeacherMode ? (
-            <>
-              <ArrowLeft className="h-3.5 w-3.5" />
-              I&apos;m a student
-            </>
-          ) : (
-            <>
-              <GraduationCap className="h-3.5 w-3.5" />
-              I&apos;m a teacher
-            </>
-          )}
-        </button>
 
         <p className="text-[11px] text-white/40 text-center max-w-[280px] mx-auto mt-5">
           {isTeacherMode

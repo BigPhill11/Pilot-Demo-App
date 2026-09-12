@@ -1,4 +1,4 @@
--- TEACHER SETUP — CHUNK 1 OF 17
+-- TEACHER SETUP — CHUNK 1 OF 19
 -- Paste into a new Supabase SQL editor tab and Run, then do chunk 2.
 
 -- Add the 'teacher' value to the app_role enum.

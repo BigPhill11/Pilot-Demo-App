@@ -1,4 +1,4 @@
--- TEACHER SETUP — CHUNK 5 OF 17
+-- TEACHER SETUP — CHUNK 5 OF 19
 -- Run chunk 4 first. New tab for each. Safe to re-run.
 
 -- ── Login activity for the engagement heatmap ────────────────────────────────

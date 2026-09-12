@@ -1,4 +1,4 @@
--- TEACHER SETUP — CHUNK 9 OF 17
+-- TEACHER SETUP — CHUNK 9 OF 19
 -- Run chunk 8 first. New tab for each. Safe to re-run.
 
 CREATE OR REPLACE FUNCTION public.handle_new_user()

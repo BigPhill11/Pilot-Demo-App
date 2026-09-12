@@ -246,7 +246,7 @@ const PandaJumpGame: React.FC<PandaJumpGameProps> = ({
     generateQuestion(flashcards);
   };
 
-  const usePowerUp = (type: keyof PowerUpInventory) => {
+  const activatePowerUp = (type: keyof PowerUpInventory) => {
     if (powerUps[type] <= 0 || isGameOver) return;
     
     setPowerUps(prev => ({ ...prev, [type]: prev[type] - 1 }));
@@ -424,7 +424,7 @@ const PandaJumpGame: React.FC<PandaJumpGameProps> = ({
           variant="outline"
           size="sm"
           disabled={powerUps.shield <= 0}
-          onClick={() => usePowerUp('shield')}
+          onClick={() => activatePowerUp('shield')}
           className="flex items-center gap-1"
         >
           <Shield className="h-4 w-4 text-yellow-600" />
@@ -434,7 +434,7 @@ const PandaJumpGame: React.FC<PandaJumpGameProps> = ({
           variant="outline"
           size="sm"
           disabled={powerUps.doubleJump <= 0}
-          onClick={() => usePowerUp('doubleJump')}
+          onClick={() => activatePowerUp('doubleJump')}
           className="flex items-center gap-1"
         >
           <Zap className="h-4 w-4 text-blue-600" />
@@ -444,7 +444,7 @@ const PandaJumpGame: React.FC<PandaJumpGameProps> = ({
           variant="outline"
           size="sm"
           disabled={powerUps.bambooBoost <= 0}
-          onClick={() => usePowerUp('bambooBoost')}
+          onClick={() => activatePowerUp('bambooBoost')}
           className="flex items-center gap-1"
         >
           <Rocket className="h-4 w-4 text-green-600" />

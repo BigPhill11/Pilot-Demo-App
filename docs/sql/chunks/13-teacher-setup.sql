@@ -1,4 +1,4 @@
--- TEACHER SETUP — CHUNK 13 OF 17
+-- TEACHER SETUP — CHUNK 13 OF 19
 -- Run chunk 12 first. New tab for each. Safe to re-run.
 
 -- Teachers never read this table directly; they go through the SECURITY

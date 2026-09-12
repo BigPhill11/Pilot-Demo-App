@@ -13,6 +13,9 @@ jobs:
   build-ios:
     runs-on: macos-15
     timeout-minutes: 60
+    env:
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
 
     steps:
       - name: Checkout
@@ -28,7 +31,10 @@ jobs:
         run: npm ci
 
       - name: Build web app
-        run: npm run build
+        run: |
+          [ -n "${VITE_SUPABASE_URL:-}" ] || { echo "Missing repository variable VITE_SUPABASE_URL"; exit 1; }
+          [ -n "${VITE_SUPABASE_PUBLISHABLE_KEY:-}" ] || { echo "Missing repository variable VITE_SUPABASE_PUBLISHABLE_KEY"; exit 1; }
+          npm run build
 
       - name: Install CocoaPods
         run: sudo gem install cocoapods

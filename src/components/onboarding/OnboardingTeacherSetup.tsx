@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import PandaLogo from '@/components/icons/PandaLogo';
 import {
   Check,
+  BarChart3,
   ClipboardCopy,
   FileText,
   GraduationCap,
@@ -36,6 +37,11 @@ const TOTAL_STEPS = PHIL_MESSAGES.length;
 
 /** What the dashboard gives a teacher, in the order they will meet it. */
 const DASHBOARD_TOUR = [
+  {
+    icon: BarChart3,
+    title: 'Learning Momentum',
+    body: 'Whether the same students are demonstrating more understanding week over week.',
+  },
   {
     icon: LayoutDashboard,
     title: 'Overview',
@@ -382,7 +388,7 @@ const OnboardingTeacherSetup: React.FC<OnboardingTeacherSetupProps> = ({ onCompl
                 </div>
 
                 <Button size="lg" className="w-full" onClick={onComplete}>
-                  Go to my dashboard
+                  Go to my dashboard tutorial
                 </Button>
               </motion.div>
             )}

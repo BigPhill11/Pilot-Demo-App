@@ -1,4 +1,4 @@
--- TEACHER SETUP — CHUNK 3 OF 17
+-- TEACHER SETUP — CHUNK 3 OF 19
 -- Run chunk 2 first. New tab for each. Safe to re-run.
 
 -- ── 7) Keep the roster in sync as new students sign up ───────────────────────

@@ -10,6 +10,7 @@
 import type {
   ActivityEntry,
   ClassInsights,
+  LearningMomentum,
   QuestionBreakdown,
   RosterEntry,
   TeachBackOverview,
@@ -78,6 +79,15 @@ export interface ClassReport {
     needsAttention: number;
     totalXp: number;
   };
+  learning: {
+    score: number | null;
+    weekOverWeekChange: number | null;
+    pairedStudents: number;
+    minimumPairedStudents: number;
+    trend: 'improving' | 'steady' | 'declining' | 'unknown';
+    summary: string;
+    weeks: LearningMomentum['weeks'];
+  };
   usage: {
     weeks: ReportWeek[];
     avgDaysActive: number;
@@ -131,6 +141,7 @@ export interface ReportInput {
   insights: ClassInsights | null;
   questions: QuestionBreakdown[];
   teachBack: TeachBackOverview | null;
+  momentum: LearningMomentum;
   windowDays?: number;
   now?: Date;
 }
@@ -241,7 +252,7 @@ function describeTrend(weeks: ReportWeek[], students: number): {
 }
 
 function buildSynopsis(report: Omit<ClassReport, 'actions' | 'synopsis'>): string {
-  const { headline, usage, mastery, struggles } = report;
+  const { headline, learning, usage, mastery, struggles } = report;
 
   if (headline.students === 0) {
     return 'No students have joined this class yet. Share the join code and this report fills in as soon as they start.';
@@ -251,6 +262,10 @@ function buildSynopsis(report: Omit<ClassReport, 'actions' | 'synopsis'>): strin
   parts.push(
     `${headline.activeLast7} of ${headline.students} students used the app in the last 7 days, averaging ${usage.avgDaysActive} active days each over the last month and ${headline.avgModulesCompleted} modules completed.`
   );
+
+  if (learning.trend !== 'unknown') {
+    parts.push(learning.summary);
+  }
 
   if (usage.trend !== 'unknown') {
     parts.push(usage.summary);
@@ -279,6 +294,13 @@ function buildSynopsis(report: Omit<ClassReport, 'actions' | 'synopsis'>): strin
 function buildActions(report: Omit<ClassReport, 'actions' | 'synopsis'>): ReportAction[] {
   const actions: ReportAction[] = [];
   const { struggles, usage, mastery, headline, strengths } = report;
+
+  if (report.learning.trend === 'declining') {
+    actions.push({
+      title: 'Pause and revisit last week’s sticking points',
+      detail: `${report.learning.summary} Use the question and teach-back sections below to choose one concept for a short whole-class reset.`,
+    });
+  }
 
   // Hardest question first: it is the most specific thing a teacher can act on.
   const worst = struggles.questions[0];
@@ -355,6 +377,7 @@ export function buildClassReport(input: ReportInput): ClassReport {
     insights,
     questions,
     teachBack,
+    momentum,
     windowDays = 28,
     now = new Date(),
   } = input;
@@ -367,6 +390,24 @@ export function buildClassReport(input: ReportInput): ClassReport {
 
   const weeks = buildWeeks(activity, windowDays, now);
   const { trend, summary: trendSummary } = describeTrend(weeks, roster.length);
+
+  const learningChange = momentum.week_over_week_change;
+  const learningTrend =
+    learningChange === null
+      ? 'unknown'
+      : learningChange >= 3
+        ? 'improving'
+        : learningChange <= -3
+          ? 'declining'
+          : 'steady';
+  const learningSummary =
+    learningChange === null
+      ? `Learning Momentum needs at least ${momentum.minimum_paired_students} students with graded work in both weeks; ${momentum.paired_students} qualify right now.`
+      : learningTrend === 'improving'
+        ? `Learning Momentum rose ${learningChange} points week over week among the same ${momentum.paired_students} students.`
+        : learningTrend === 'declining'
+          ? `Learning Momentum fell ${Math.abs(learningChange)} points week over week among the same ${momentum.paired_students} students.`
+          : `Learning Momentum held steady at ${learningChange > 0 ? '+' : ''}${learningChange} points week over week among the same ${momentum.paired_students} students.`;
 
   const dormant = roster
     .filter((r) => {
@@ -504,6 +545,15 @@ export function buildClassReport(input: ReportInput): ClassReport {
       avgStreak: summary.avgStreak,
       needsAttention: summary.needsAttention,
       totalXp: summary.totalXp,
+    },
+    learning: {
+      score: momentum.current_score,
+      weekOverWeekChange: learningChange,
+      pairedStudents: momentum.paired_students,
+      minimumPairedStudents: momentum.minimum_paired_students,
+      trend: learningTrend,
+      summary: learningSummary,
+      weeks: momentum.weeks,
     },
     usage: {
       weeks,

@@ -19,7 +19,7 @@ with it.
 
 ## Step 1 — Apply the migrations
 
-The database does not have the teacher tables yet. Ten SQL files add them, and
+The database does not have the teacher tables yet. Twelve SQL files add them, and
 this step is what makes `/teach` work at all — until it is done, the dashboard
 404s against the API.
 
@@ -36,7 +36,7 @@ browser, no terminal, no installs:
 3. Click **New query** to get an *empty tab*. This matters — see the warning
    below.
 4. Open [`docs/sql/teacher-setup-part-2-feature.sql`](sql/teacher-setup-part-2-feature.sql),
-   select all, paste, **Run**. It is long (about 1,700 lines) but takes a second
+   select all, paste, **Run**. It is long (about 1,850 lines) but takes a second
    or two. Same *Success* message.
 
 That is the whole step. Both files are safe to run twice, so if you lose track
@@ -51,7 +51,7 @@ of whether one went through, just run it again.
 
 ### If you cannot copy the whole file
 
-Part 2 is about 1,700 lines, and some setups will not copy that much at once.
+Part 2 is about 1,850 lines, and some setups will not copy that much at once.
 Almost always the cause is GitHub's file viewer rather than your machine: it
 renders long files a screenful at a time, so *select all* grabs only what is on
 screen — often a hundred-odd lines.
@@ -65,13 +65,13 @@ the `raw.githubusercontent.com` URL and pressing Ctrl-A / Cmd-A works too — th
 raw page is plain text with nothing virtualised.
 
 **Or paste it in small pieces.** `docs/sql/chunks/` holds the same SQL split into
-17 numbered files, none longer than 150 lines. Run them in numbered order,
-`01` through `17`, each in its own new query tab. Chunk 1 is the enum, so the
+19 numbered files, none longer than 150 lines. Run them in numbered order,
+`01` through `19`, each in its own new query tab. Chunk 1 is the enum, so the
 transaction boundary is handled for you.
 
 The chunks are cut only between whole statements, never inside a function, and
 each one is safe to run twice — so if you lose your place, re-run the chunk you
-are unsure about and carry on. Running all 17 produces a database identical to
+are unsure about and carry on. Running all 19 produces a database identical to
 the two-file route.
 
 ### Where the commands you were given actually run
@@ -97,7 +97,7 @@ is incomplete, and `db push` may refuse to run or ask you to repair history
 first. If that happens, do not fight it — use the two-file paste above, which
 has exactly the same end result.
 
-### The ten files, for reference
+### The twelve files, for reference
 
 Filename order matters; the bundle preserves it.
 
@@ -112,9 +112,11 @@ Filename order matters; the bundle preserves it.
 20260802000200_assessment_responses.sql   -- scenario answer capture
 20260802000300_teacher_teachback.sql      -- teach-back proficiency
 20260803000000_module_progress_test_scores.sql  -- pre/post columns some projects lack
+20260909030744_teacher_learning_momentum.sql    -- paired weekly learning trend
+20260909030809_teacher_dashboard_tour_state.sql -- teacher tutorial completion
 ```
 
-Everything under `docs/sql/` — both bundle files and the 17 chunks — is
+Everything under `docs/sql/` — both bundle files and the 19 chunks — is
 generated from these, so the migrations stay the source of truth. After changing
 any of them:
 
@@ -138,7 +140,7 @@ select
         and to_regclass('public.assessment_responses') is not null
         and (select count(*) from pg_proc p
                join pg_namespace n on n.oid = p.pronamespace
-              where n.nspname = 'public' and p.proname like 'teacher\_%') = 11
+              where n.nspname = 'public' and p.proname like 'teacher\_%') = 12
        then 'done' else 'NOT DONE' end                              as part_2_feature,
   case
     when not exists (
@@ -149,7 +151,7 @@ select
       then 'Part 1 is in. Open a NEW tab and run part 2.'
     when (select count(*) from pg_proc p
             join pg_namespace n on n.oid = p.pronamespace
-           where n.nspname = 'public' and p.proname like 'teacher\_%') < 11
+           where n.nspname = 'public' and p.proname like 'teacher\_%') < 12
       then 'Part 2 only partly applied. Re-run it in a new tab.'
     else 'Database is ready. Next: merge the PR and publish the app.'
   end                                                               as what_to_do_next;
@@ -165,8 +167,8 @@ select 'role enum has teacher' as check,
        case when 'teacher' = any (enum_range(null::public.app_role)::text[])
             then 'yes' else 'no' end as ok
 union all
-select 'teacher functions (expect 11)',
-       case when count(*) = 11 then 'yes' else 'no: ' || count(*) end
+select 'teacher functions (expect 12)',
+       case when count(*) = 12 then 'yes' else 'no: ' || count(*) end
   from pg_proc p join pg_namespace n on n.oid = p.pronamespace
  where n.nspname = 'public' and p.proname like 'teacher\_%'
 union all
@@ -337,7 +339,8 @@ without losing any of their progress.
 
 The dashboard lives at `/teach` and has five views:
 
-- **Overview** — class KPIs, daily activity heatmap, module completion matrix.
+- **Overview** — Learning Momentum, class KPIs, daily activity heatmap, module
+  completion matrix.
 - **Students** — sortable roster with status, streaks, progress, CSV export.
 - **Scenario answers** — every question the class has answered, hardest first,
   showing which option each student picked. Expanding a question shows the
@@ -356,6 +359,11 @@ All five views work on a phone: the sidebar collapses behind the menu button,
 the views move into a scrollable strip under the header, and the roster and
 teach-back tables become card lists.
 
+The first time a teacher reaches a populated dashboard, Phil opens a short
+spotlight tutorial over the real controls. **Replay tutorial** in the desktop
+sidebar—or the question-mark button in the phone header—starts it again without
+resetting the classroom.
+
 ### The dashboard is the whole app for a teacher
 
 A teacher account does not see the student side — no lessons, no empire, no
@@ -368,16 +376,36 @@ Teach and Admin tabs in the normal student nav.
 
 ### The class report
 
-The **Report** button in the header downloads a PDF for the selected class:
-a plain-language summary, class KPIs, week-over-week sign-ins, the questions
+The **Report** button in the header downloads an editorial-style PDF for the
+selected class: a plain-language summary, class KPIs, Learning Momentum,
+week-over-week sign-ins, the questions
 being missed and the wrong answer most students picked, the concepts they cannot
 explain back, what is already working, a numbered set of next steps naming the
 students and questions behind each, and the full roster.
 
-It reports improvement only where the data supports it — week-over-week sign-ins
-and the gain students make when they retry a teach-back. Module progress is
-stored as a single current value with no history, so there is no honest way to
-chart a progress trend, and the report says as much rather than inventing one.
+### Learning Momentum
+
+Learning Momentum answers a narrower and more useful question than login
+frequency: **are the same students demonstrating more understanding than they
+did in the prior seven days?**
+
+For each student and rolling seven-day window, it combines scenario accuracy
+(70%) with Ask Phil teach-back understanding (30%). If only one kind of evidence
+exists, that score stands alone. A student needs at least three scenario answers
+or one teach-back to count, and every qualifying student carries equal weight
+regardless of how many quizzes they took.
+
+The week-over-week change is paired: it compares only students with enough
+evidence in both windows. Until at least three students qualify, the dashboard
+says **Gathering evidence** instead of publishing a volatile number. A movement
+of less than three points is **steady**; three points or more is improving, and
+minus three or lower is declining.
+
+This is a demonstrated-learning trend, not a claim that every lesson has equal
+difficulty. Module progress is still stored as one current value with no history,
+so it is deliberately excluded. Usage remains its own chart so a teacher can
+tell the difference between “they opened the app more” and “their graded work
+improved.”
 
 The CSV button on the Students view is unchanged and still there for gradebook
 imports.

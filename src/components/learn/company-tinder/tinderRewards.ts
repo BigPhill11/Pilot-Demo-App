@@ -32,7 +32,8 @@ export function readSuperLikesRemaining(): number {
     if (!raw) return SUPER_LIKES_PER_DAY;
     const parsed = JSON.parse(raw) as { date?: string; remaining?: number };
     if (parsed.date !== today) return SUPER_LIKES_PER_DAY;
-    return Math.max(0, Number(parsed.remaining) ?? 0);
+    const remaining = Number(parsed.remaining);
+    return Math.max(0, Number.isFinite(remaining) ? remaining : 0);
   } catch {
     return SUPER_LIKES_PER_DAY;
   }

@@ -15,6 +15,7 @@
 import type {
   ActivityEntry,
   ClassInsights,
+  LearningMomentum,
   ModuleMatrixCell,
   OptionPicker,
   QuestionBreakdown,
@@ -513,6 +514,22 @@ const STUDENT_RESPONSES: StudentResponse[] = [
   },
 ];
 
+const LEARNING_MOMENTUM: LearningMomentum = {
+  metric_name: 'Learning Momentum',
+  minimum_paired_students: 3,
+  current_score: 74,
+  paired_students: 8,
+  week_over_week_change: 6.4,
+  weeks: [
+    { starts_on: dateDaysAgo(41), ends_on: dateDaysAgo(35), score: 57, students: 5, assessment_items: 34, teachbacks: 3 },
+    { starts_on: dateDaysAgo(34), ends_on: dateDaysAgo(28), score: 59, students: 7, assessment_items: 48, teachbacks: 4 },
+    { starts_on: dateDaysAgo(27), ends_on: dateDaysAgo(21), score: 62, students: 8, assessment_items: 59, teachbacks: 5 },
+    { starts_on: dateDaysAgo(20), ends_on: dateDaysAgo(14), score: 64, students: 9, assessment_items: 71, teachbacks: 6 },
+    { starts_on: dateDaysAgo(13), ends_on: dateDaysAgo(7), score: 68, students: 9, assessment_items: 76, teachbacks: 7 },
+    { starts_on: dateDaysAgo(6), ends_on: dateDaysAgo(0), score: 74, students: 10, assessment_items: 83, teachbacks: 8 },
+  ],
+};
+
 export const teacherPreview = {
   listClassrooms: async (): Promise<TeacherClassroomSummary[]> => CLASSROOMS,
   createClassroom: async (name: string) => ({
@@ -525,6 +542,7 @@ export const teacherPreview = {
     buildMatrix(classroomId),
   getActivity: async (classroomId: string, days: number): Promise<ActivityEntry[]> =>
     buildActivity(classroomId, days),
+  getLearningMomentum: async (): Promise<LearningMomentum> => LEARNING_MOMENTUM,
   getClassInsights: async (): Promise<ClassInsights> => INSIGHTS,
   getStudentDetail: async (classroomId: string, studentId: string): Promise<StudentDetail> =>
     buildStudentDetail(classroomId, studentId),

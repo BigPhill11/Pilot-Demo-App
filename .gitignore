@@ -25,3 +25,8 @@ dist-ssr
 
 # secrets
 .env
+.env.*
+!.env.example
+
+# Supabase CLI generated link and version state
+supabase/.temp/
