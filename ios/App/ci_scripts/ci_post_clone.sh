@@ -53,10 +53,10 @@ echo "▸ Installing JavaScript dependencies with npm ci…"
 cd "$REPO_ROOT"
 npm ci
 
-# 4. Build the web app (produces dist/). Vite reads VITE_* values from the Xcode
-#    Cloud environment, falling back to the committed .env.production defaults so the
-#    archive is functional even if those env vars are not configured in App Store
-#    Connect.
+# 4. Build the web app (produces dist/). Production env files are intentionally
+#    not committed, so Xcode Cloud must provide both public browser variables.
+: "${VITE_SUPABASE_URL:?Set VITE_SUPABASE_URL in Xcode Cloud environment variables}"
+: "${VITE_SUPABASE_PUBLISHABLE_KEY:?Set VITE_SUPABASE_PUBLISHABLE_KEY in Xcode Cloud environment variables}"
 echo "▸ Building web assets with npm run build…"
 npm run build
 
