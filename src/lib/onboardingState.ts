@@ -43,3 +43,30 @@ export const clearOnboardingDoneLocally = (userId: string | undefined | null): v
     /* ignore */
   }
 };
+
+// ── Teacher dashboard tour ───────────────────────────────────────────────────
+// Same per-account localStorage pattern as above, but for the Phil-guided tour
+// of the teacher dashboard. Kept separate from the student tour flag because
+// existing teacher accounts were backfilled with app_tour_completed=true, which
+// would otherwise hide the teacher tour from everyone who signed up before it
+// shipped.
+
+const TEACHER_TOUR_PREFIX = 'phils_teacher_tour_done_v1:';
+
+export const isTeacherTourDone = (userId: string | undefined | null): boolean => {
+  if (!userId) return false;
+  try {
+    return localStorage.getItem(`${TEACHER_TOUR_PREFIX}${userId}`) === 'true';
+  } catch {
+    return false;
+  }
+};
+
+export const markTeacherTourDone = (userId: string | undefined | null): void => {
+  if (!userId) return;
+  try {
+    localStorage.setItem(`${TEACHER_TOUR_PREFIX}${userId}`, 'true');
+  } catch {
+    /* localStorage unavailable — the tour will simply show again next launch */
+  }
+};

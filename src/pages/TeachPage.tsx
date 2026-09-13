@@ -10,6 +10,8 @@ import {
   useRoster,
 } from '@/hooks/useTeacherDashboard';
 import TeacherShell, { type TeacherView } from '@/components/teacher/TeacherShell';
+import TeacherPandaTour from '@/components/teacher/TeacherPandaTour';
+import { isTeacherTourDone, markTeacherTourDone } from '@/lib/onboardingState';
 import ClassPulseHeader from '@/components/teacher/ClassPulseHeader';
 import RosterTable from '@/components/teacher/RosterTable';
 import ModuleMatrix from '@/components/teacher/ModuleMatrix';
@@ -51,6 +53,16 @@ const TeachPage: React.FC = () => {
 
   const roster = useMemo(() => rosterQuery.data ?? [], [rosterQuery.data]);
   const summary = useMemo(() => summarizeClass(roster), [roster]);
+
+  // Phil-guided dashboard tour, shown once per account (per device) the first
+  // time the teacher lands on a dashboard that has at least one class.
+  const tourUserId = preview ? 'preview' : user?.id;
+  const [showTour, setShowTour] = useState(false);
+  useEffect(() => {
+    if (classroomsQuery.isLoading || classrooms.length === 0) return;
+    if (!tourUserId || isTeacherTourDone(tourUserId)) return;
+    setShowTour(true);
+  }, [classroomsQuery.isLoading, classrooms.length, tourUserId]);
 
   if (!preview && (loading || !rolesLoaded)) {
     return (
@@ -167,6 +179,16 @@ const TeachPage: React.FC = () => {
         studentId={selectedStudentId}
         onClose={() => setSelectedStudentId(null)}
       />
+
+      {showTour && (
+        <TeacherPandaTour
+          onShowView={setView}
+          onComplete={() => {
+            markTeacherTourDone(tourUserId);
+            setShowTour(false);
+          }}
+        />
+      )}
     </>
   );
 };
