@@ -558,13 +558,17 @@ export const useBaseLayoutStore = create<BaseLayoutStore>()(
     }),
     {
       name: 'bamboo-empire-layout',
-      version: 4,
+      version: 5,
       storage: createJSONStorage(() => createUserScopedPersistStorage()),
-      migrate: (persistedState) => {
+      migrate: (persistedState, version) => {
         const stateRecord = (persistedState || {}) as Record<string, unknown>;
         return {
           ...stateRecord,
-          buildings: normalizePersistedBuildings(stateRecord.buildings),
+          // Version 4 already contains normalized footprints. Preserve every
+          // record exactly during this terrain-only migration.
+          buildings: version >= 4 && Array.isArray(stateRecord.buildings)
+            ? stateRecord.buildings
+            : normalizePersistedBuildings(stateRecord.buildings),
           defenses: Array.isArray(stateRecord.defenses) ? stateRecord.defenses : [],
         };
       },

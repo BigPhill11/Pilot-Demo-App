@@ -105,7 +105,7 @@ const EmpireCanvasInner: React.FC = () => {
   const [pendingCreditPurchase, setPendingCreditPurchase] = useState<BuildingType | null>(null);
   const [constructionProgressMap, setConstructionProgressMap] = useState<Record<string, number>>({});
   const [dojoCooldowns, setDojoCooldowns] = useState<Record<string, number>>({});
-  const [hiRes, setHiRes] = useState(false);
+  const [hiRes, setHiRes] = useState(() => window.devicePixelRatio > 1);
   const lastHoverRef = useRef(0);
   const timedWorkBootstrappedRef = useRef(false);
 
@@ -196,7 +196,7 @@ const EmpireCanvasInner: React.FC = () => {
       const match = el.style.transform.match(/scale\(([^)]+)\)/);
       const zoom = match ? parseFloat(match[1]) : 1;
       setHiRes((prev) => {
-        const next = zoom >= 1.2;
+        const next = window.devicePixelRatio > 1 || zoom >= 1;
         return prev !== next ? next : prev;
       });
     });
@@ -658,6 +658,7 @@ const EmpireCanvasInner: React.FC = () => {
             </defs>
 
             <IsometricGrid
+              hiRes={hiRes}
               selectedTile={selectedTile}
               onTileClick={handleTileClick}
               onTileHover={handleTileHover}

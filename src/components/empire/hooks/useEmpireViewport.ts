@@ -1,19 +1,10 @@
 import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 
-const MIN_ZOOM = 0.72;
-const MAX_ZOOM = 2.35;
+export const MIN_ZOOM = 0.72;
+export const MAX_ZOOM = 6;
 const WHEEL_ZOOM_FACTOR = 0.0012;
-const PAN_RANGE = 320;
 const INERTIA_FRICTION = 0.92;
 const INERTIA_MIN_SPEED = 0.15;
-
-function clampPan(p: { x: number; y: number }, z: number) {
-  const m = PAN_RANGE * z;
-  return {
-    x: Math.max(-m, Math.min(m, p.x)),
-    y: Math.max(-m, Math.min(m, p.y)),
-  };
-}
 
 function isEmpireBuildingTarget(target: EventTarget | null): boolean {
   if (!(target instanceof Element)) return false;
@@ -28,10 +19,25 @@ export function useEmpireViewport() {
   const transformRef = useRef<HTMLDivElement>(null);
   const wheelRef = useRef<HTMLDivElement>(null);
 
+  const clampPan = useCallback((p: { x: number; y: number }, z: number) => {
+    const element = transformRef.current;
+    const svg = element?.querySelector('svg');
+    if (!element || !svg) return p;
+    const box = svg.viewBox.baseVal;
+    const fittedScale = Math.min(element.clientWidth / box.width, element.clientHeight / box.height);
+    const maxX = box.width * fittedScale * z / 2;
+    const maxY = box.height * fittedScale * z / 2;
+    return {
+      x: Math.max(-maxX, Math.min(maxX, p.x)),
+      y: Math.max(-maxY, Math.min(maxY, p.y)),
+    };
+  }, []);
+
   const panRef = useRef({ x: 0, y: 0 });
   const zoomRef = useRef(1);
   const velocityRef = useRef({ x: 0, y: 0 });
   const inertiaFrameRef = useRef<number | null>(null);
+  const transformFrameRef = useRef<number | null>(null);
 
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const pinchRef = useRef<{
@@ -63,17 +69,24 @@ export function useEmpireViewport() {
   const applyTransform = useCallback(() => {
     const el = transformRef.current;
     if (!el) return;
-    const { x, y } = panRef.current;
-    const z = zoomRef.current;
-    el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${z})`;
-    el.style.transformOrigin = 'center center';
+    if (transformFrameRef.current !== null) return;
+    transformFrameRef.current = requestAnimationFrame(() => {
+      transformFrameRef.current = null;
+      const { x, y } = panRef.current;
+      const z = zoomRef.current;
+      el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${z})`;
+      el.style.transformOrigin = 'center center';
+      el.dispatchEvent(new Event('empire-viewport'));
+    });
   }, []);
 
   const applyTransformRef = useRef(applyTransform);
   applyTransformRef.current = applyTransform;
 
   const startInertia = useCallback(() => {
+    const velocity = { ...velocityRef.current };
     stopInertia();
+    velocityRef.current = velocity;
     const tick = () => {
       const v = velocityRef.current;
       if (Math.abs(v.x) < INERTIA_MIN_SPEED && Math.abs(v.y) < INERTIA_MIN_SPEED) {
@@ -89,20 +102,27 @@ export function useEmpireViewport() {
       inertiaFrameRef.current = requestAnimationFrame(tick);
     };
     inertiaFrameRef.current = requestAnimationFrame(tick);
-  }, [stopInertia]);
+  }, [stopInertia, clampPan]);
 
   useLayoutEffect(() => {
     applyTransform();
-  }, [applyTransform]);
+    const observer = new ResizeObserver(() => {
+      panRef.current = clampPan(panRef.current, zoomRef.current);
+      applyTransform();
+    });
+    if (wheelRef.current) observer.observe(wheelRef.current);
+    return () => observer.disconnect();
+  }, [applyTransform, clampPan]);
 
   const zoomAtPoint = useCallback((nextZ: number, clientX: number, clientY: number) => {
     const prevZ = zoomRef.current;
     if (nextZ === prevZ) return;
     const inner = transformRef.current;
     if (!inner) return;
-    const rect = inner.getBoundingClientRect();
-    const ox = rect.left + rect.width / 2;
-    const oy = rect.top + rect.height / 2;
+    const rect = wheelRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const ox = rect.left + rect.width / 2 + panRef.current.x;
+    const oy = rect.top + rect.height / 2 + panRef.current.y;
     const dx = clientX - ox;
     const dy = clientY - oy;
     const s = nextZ / prevZ;
@@ -112,7 +132,7 @@ export function useEmpireViewport() {
     );
     zoomRef.current = nextZ;
     applyTransform();
-  }, [applyTransform]);
+  }, [applyTransform, clampPan]);
 
   const ensureWindowListeners = useCallback(() => {
     if (windowActiveRef.current) return;
@@ -130,6 +150,10 @@ export function useEmpireViewport() {
         const midY = (pts[0].y + pts[1].y) / 2;
         const ratio = dist / pinchRef.current.dist;
         const nz = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, pinchRef.current.zoom * ratio));
+        panRef.current = clampPan({
+          x: panRef.current.x + midX - pinchRef.current.midX,
+          y: panRef.current.y + midY - pinchRef.current.midY,
+        }, nz);
         zoomAtPoint(nz, midX, midY);
         pinchRef.current = {
           dist,
@@ -206,11 +230,13 @@ export function useEmpireViewport() {
       windowActiveRef.current = false;
       removeWindowListenersRef.current = null;
     };
-  }, [startInertia, zoomAtPoint]);
+  }, [startInertia, zoomAtPoint, clampPan]);
 
   useEffect(
     () => () => {
       stopInertia();
+      if (transformFrameRef.current !== null) cancelAnimationFrame(transformFrameRef.current);
+      transformFrameRef.current = null;
       removeWindowListenersRef.current?.();
       pointers.current.clear();
       pinchRef.current = null;
@@ -227,7 +253,9 @@ export function useEmpireViewport() {
       e.preventDefault();
       stopInertia();
       const prevZ = zoomRef.current;
-      const factor = Math.exp(-e.deltaY * WHEEL_ZOOM_FACTOR);
+      const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? el.clientHeight : 1;
+      const delta = Math.max(-80, Math.min(80, e.deltaY * unit));
+      const factor = Math.exp(-delta * WHEEL_ZOOM_FACTOR);
       const nextZ = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, prevZ * factor));
       zoomAtPoint(nextZ, e.clientX, e.clientY);
     };

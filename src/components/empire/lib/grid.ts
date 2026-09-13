@@ -2,7 +2,7 @@ import { type BuildingSize, type GridPosition, type PlacedBuilding } from '../bu
 
 export type TerrainType = 'grass' | 'water' | 'pathway' | 'bamboo_forest';
 
-export const GRID_SIZE = 20;
+export const GRID_SIZE = 32;
 export const TILE_WIDTH = 64;
 export const TILE_HEIGHT = 32;
 export const PLAYABLE_BORDER = 2;
@@ -30,27 +30,59 @@ export const getBuildingRenderOrder = (building: PlacedBuilding): number => {
   return x + y + building.size.width + building.size.height;
 };
 
+/** All grass from the shipped 20x20 map stays grass to protect saved bases. */
+export const isLegacyGrassTile = (x: number, y: number): boolean =>
+  x >= 2 && y >= 2 && x <= 17 && y <= 17 &&
+  x !== 10 && y !== 10 && !(x >= 15 && y >= 15);
+
+const trail: ReadonlyArray<readonly [number, number]> = [
+  [19, 3], [20, 7], [19, 11], [20, 15], [22, 18], [23, 22], [22, 26], [24, 29],
+];
+const branch: ReadonlyArray<readonly [number, number]> = [
+  [22, 18], [25, 17], [28, 18], [30, 20],
+];
+
+const distanceToTrail = (
+  x: number,
+  y: number,
+  nodes: ReadonlyArray<readonly [number, number]>,
+): number => {
+  let distance = Infinity;
+  for (let index = 1; index < nodes.length; index++) {
+    const [ax, ay] = nodes[index - 1];
+    const [bx, by] = nodes[index];
+    const dx = bx - ax;
+    const dy = by - ay;
+    const t = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy)));
+    distance = Math.min(distance, Math.hypot(x - ax - t * dx, y - ay - t * dy));
+  }
+  return distance;
+};
+
 export const getTerrainType = (x: number, y: number): TerrainType => {
-  if (x < 0 || y < 0 || x >= GRID_SIZE || y >= GRID_SIZE) {
+  if (isLegacyGrassTile(x, y)) return 'grass';
+  if (x < 0 || y < 0 || x >= GRID_SIZE || y >= GRID_SIZE) return 'bamboo_forest';
+
+  const edge = Math.min(x, y, GRID_SIZE - 1 - x, GRID_SIZE - 1 - y);
+  const groveDepth = 0.5 + 0.85 * (1 + Math.sin(x * 0.43 + y * 0.29));
+  if (
+    edge < groveDepth ||
+    Math.hypot((x - 7) / 2.8, (y - 27) / 2.1) < 1 ||
+    Math.hypot((x - 28) / 2.1, (y - 6) / 3.2) < 1
+  ) {
     return 'bamboo_forest';
   }
 
-  if (x === 0 || y === 0 || x === GRID_SIZE - 1 || y === GRID_SIZE - 1) {
-    return 'bamboo_forest';
-  }
-
-  if (x === 1 || y === 1 || x === GRID_SIZE - 2 || y === GRID_SIZE - 2) {
-    return 'bamboo_forest';
-  }
-
-  if (x >= 15 && x <= 17 && y >= 15 && y <= 17) {
+  if (
+    Math.hypot((x - 16.4) / 1.8, (y - 16.8) / 2.4) < 1 ||
+    Math.hypot((x - 16.9) / 2.7, (y - 19.3) / 1.9) < 1
+  ) {
     return 'water';
   }
 
-  if (x === Math.floor(GRID_SIZE / 2) || y === Math.floor(GRID_SIZE / 2)) {
+  if (Math.min(distanceToTrail(x, y, trail), distanceToTrail(x, y, branch)) < 0.72) {
     return 'pathway';
   }
-
   return 'grass';
 };
 

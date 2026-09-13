@@ -41,7 +41,7 @@ describe('empire grid helpers', () => {
   it('rejects invalid terrain placements such as water tiles', () => {
     const canPlaceOnWater = canPlaceBuildingAt({
       buildings: [],
-      position: { x: 15, y: 15 },
+      position: { x: 16, y: 17 },
       size: BUILDING_DEFINITIONS.storage.size,
     });
 
@@ -51,7 +51,7 @@ describe('empire grid helpers', () => {
   it('maps grid coordinates into the shared fixed screen space', () => {
     const anchor = gridToScreen(2, 8);
 
-    expect(anchor).toEqual({ screenX: 448, screenY: 160 });
+    expect(anchor).toEqual({ screenX: 832, screenY: 160 });
   });
 
   it('rejects placements that overlap an existing building footprint', () => {

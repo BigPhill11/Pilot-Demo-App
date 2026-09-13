@@ -1,5 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import Tile from './Tile';
+import { empireGroveImageSrc } from '../lib/empire-terrain-assets';
+import { useVisibleTerrain } from '../hooks/useVisibleTerrain';
 import { useBaseLayoutStore } from '@/store/useBaseLayoutStore';
 import {
   GRID_SIZE,
@@ -9,6 +11,7 @@ import {
   getTerrainType,
   gridToScreen,
   isTileWithinFootprint,
+  isPlacementWithinBounds,
   type TerrainType,
 } from '../lib/grid';
 
@@ -22,6 +25,7 @@ export {
 } from '../lib/grid';
 
 interface IsometricGridProps {
+  hiRes?: boolean;
   selectedTile: { x: number; y: number } | null;
   onTileClick: (x: number, y: number, terrain: TerrainType) => void;
   onTileHover: (x: number, y: number) => void;
@@ -36,6 +40,7 @@ interface IsometricGridProps {
 }
 
 const IsometricGrid: React.FC<IsometricGridProps> = ({
+  hiRes = false,
   selectedTile,
   onTileClick,
   onTileHover,
@@ -43,6 +48,7 @@ const IsometricGrid: React.FC<IsometricGridProps> = ({
   highlightBuildableTiles = false,
   ghostBuilding,
 }) => {
+  const { groupRef, bounds } = useVisibleTerrain();
   const buildings = useBaseLayoutStore((state) => state.buildings);
   
   // Generate terrain map once
@@ -53,7 +59,8 @@ const IsometricGrid: React.FC<IsometricGridProps> = ({
   
   // Check if a tile is buildable
   const isTileBuildable = useCallback((x: number, y: number): boolean => {
-    return getTerrainType(x, y) === 'grass' && !occupiedTiles.has(`${x},${y}`);
+    return isPlacementWithinBounds({ x, y }, { width: 1, height: 1 }) &&
+      getTerrainType(x, y) === 'grass' && !occupiedTiles.has(`${x},${y}`);
   }, [occupiedTiles]);
   
   // Check if tile is part of ghost building placement
@@ -75,6 +82,9 @@ const IsometricGrid: React.FC<IsometricGridProps> = ({
     
     for (let y = 0; y < GRID_SIZE; y++) {
       for (let x = 0; x < GRID_SIZE; x++) {
+        const { screenX, screenY } = gridToScreen(x, y);
+        if (bounds && (screenX + 32 < bounds.left || screenX - 32 > bounds.right ||
+          screenY + 16 < bounds.top || screenY - 104 > bounds.bottom)) continue;
         tiles.push({
           x,
           y,
@@ -88,9 +98,9 @@ const IsometricGrid: React.FC<IsometricGridProps> = ({
     
     // Sort by render order for proper depth
     return tiles.sort((a, b) => a.renderOrder - b.renderOrder);
-  }, [terrainMap, occupiedTiles, isTileBuildable]);
+  }, [terrainMap, occupiedTiles, isTileBuildable, bounds]);
   return (
-    <g>
+    <g ref={groupRef} data-terrain-layer>
       {/* Render tiles */}
       {sortedTiles.map(({ x, y, terrain, isOccupied, isBuildable }) => {
         const { screenX, screenY } = gridToScreen(x, y);
@@ -103,6 +113,7 @@ const IsometricGrid: React.FC<IsometricGridProps> = ({
         return (
           <Tile
             key={`${x}-${y}`}
+            hiRes={hiRes}
             x={x}
             y={y}
             screenX={screenX}
@@ -118,6 +129,20 @@ const IsometricGrid: React.FC<IsometricGridProps> = ({
           />
         );
       })}
+      <g pointerEvents="none">
+        {sortedTiles.filter((tile) =>
+          tile.terrain === 'bamboo_forest' &&
+          ((Math.imul(tile.x + 5, 73) ^ Math.imul(tile.y + 9, 151)) >>> 0) % 5 < 3,
+        ).map(({ x, y }) => {
+          const { screenX, screenY } = gridToScreen(x, y);
+          const seed = (Math.imul(x + 3, 97) ^ Math.imul(y + 7, 193)) >>> 0;
+          const width = 55 + seed % 16;
+          const height = width * 1.625;
+          return <image key={`grove-${x}-${y}`} href={empireGroveImageSrc(x, y, hiRes)}
+            x={screenX - width / 2 + (seed % 9) - 4} y={screenY - height + 8}
+            width={width} height={height} />;
+        })}
+      </g>
     </g>
   );
 };

@@ -2,8 +2,6 @@ import type { LucideIcon } from 'lucide-react';
 import { Coins, Zap, Hammer, Sparkles, TrendingDown, ArrowUp, CreditCard } from 'lucide-react';
 
 export const TUTORIAL_STORAGE_KEY = 'bamboo_empire_tutorial_v2_completed';
-/** @deprecated No longer used — users may place on any buildable grass tile */
-export const TUTORIAL_PLACE_TILE = { x: 10, y: 10 };
 export const TUTORIAL_GRANT_COINS = 150;
 export const TUTORIAL_GRANT_XP = 50;
 export const TUTORIAL_SEEDED_COLLECTION = 12;
