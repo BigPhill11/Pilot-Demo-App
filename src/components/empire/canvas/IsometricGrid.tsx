@@ -95,6 +95,23 @@ const IsometricGrid: React.FC<IsometricGridProps> = ({
         });
       }
     }
+
+    // Mobile browsers occasionally report transient viewport measurements while
+    // pinch-zooming. Never let a culling calculation remove the entire ground.
+    if (bounds && tiles.length === 0) {
+      for (let y = 0; y < GRID_SIZE; y++) {
+        for (let x = 0; x < GRID_SIZE; x++) {
+          tiles.push({
+            x,
+            y,
+            terrain: terrainMap[y][x],
+            renderOrder: getRenderOrder(x, y),
+            isOccupied: occupiedTiles.has(`${x},${y}`),
+            isBuildable: isTileBuildable(x, y),
+          });
+        }
+      }
+    }
     
     // Sort by render order for proper depth
     return tiles.sort((a, b) => a.renderOrder - b.renderOrder);

@@ -76,7 +76,9 @@ export function useEmpireViewport() {
       const z = zoomRef.current;
       el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${z})`;
       el.style.transformOrigin = 'center center';
-      el.dispatchEvent(new Event('empire-viewport'));
+      el.dispatchEvent(new CustomEvent('empire-viewport', {
+        detail: { panX: x, panY: y, zoom: z },
+      }));
     });
   }, []);
 
