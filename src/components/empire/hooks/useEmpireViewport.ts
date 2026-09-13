@@ -11,19 +11,60 @@ function isEmpireBuildingTarget(target: EventTarget | null): boolean {
   return Boolean(target.closest('[data-empire-building]'));
 }
 
+interface ViewBoxRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+function parseViewBox(viewBox: string): ViewBoxRect {
+  const [x, y, width, height] = viewBox.trim().split(/\s+/).map(Number);
+  return { x, y, width, height };
+}
+
+export function calculateCameraViewBox(
+  base: ViewBoxRect,
+  viewportWidth: number,
+  viewportHeight: number,
+  pan: { x: number; y: number },
+  zoom: number,
+): ViewBoxRect | null {
+  if (
+    viewportWidth <= 0 || viewportHeight <= 0 ||
+    base.width <= 0 || base.height <= 0 || zoom <= 0 ||
+    ![base.x, base.y, base.width, base.height, pan.x, pan.y, zoom].every(Number.isFinite)
+  ) return null;
+
+  const fittedScale = Math.min(viewportWidth / base.width, viewportHeight / base.height);
+  if (!Number.isFinite(fittedScale) || fittedScale <= 0) return null;
+
+  const width = base.width / zoom;
+  const height = base.height / zoom;
+  const centerX = base.x + base.width / 2 - pan.x / (fittedScale * zoom);
+  const centerY = base.y + base.height / 2 - pan.y / (fittedScale * zoom);
+  return { x: centerX - width / 2, y: centerY - height / 2, width, height };
+}
+
 /**
- * Pan/zoom for the empire SVG via wrapper transform. Inertial pan, pinch-at-centroid,
- * exponential wheel zoom. Skips pan when pointer starts on a building.
+ * Pan/zoom for the empire SVG via its viewBox. Updating the vector camera keeps
+ * Safari rendering image assets at their source resolution instead of scaling a
+ * cached bitmap of the entire scene.
  */
-export function useEmpireViewport() {
+export function useEmpireViewport(baseViewBox: string) {
   const transformRef = useRef<HTMLDivElement>(null);
   const wheelRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const baseViewBoxRef = useRef(parseViewBox(baseViewBox));
+
+  useEffect(() => {
+    baseViewBoxRef.current = parseViewBox(baseViewBox);
+  }, [baseViewBox]);
 
   const clampPan = useCallback((p: { x: number; y: number }, z: number) => {
     const element = transformRef.current;
-    const svg = element?.querySelector('svg');
-    if (!element || !svg) return p;
-    const box = svg.viewBox.baseVal;
+    if (!element) return p;
+    const box = baseViewBoxRef.current;
     const fittedScale = Math.min(element.clientWidth / box.width, element.clientHeight / box.height);
     const maxX = box.width * fittedScale * z / 2;
     const maxY = box.height * fittedScale * z / 2;
@@ -68,14 +109,23 @@ export function useEmpireViewport() {
 
   const applyTransform = useCallback(() => {
     const el = transformRef.current;
-    if (!el) return;
+    const svg = svgRef.current;
+    const viewport = wheelRef.current;
+    if (!el || !svg || !viewport) return;
     if (transformFrameRef.current !== null) return;
     transformFrameRef.current = requestAnimationFrame(() => {
       transformFrameRef.current = null;
       const { x, y } = panRef.current;
       const z = zoomRef.current;
-      el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${z})`;
-      el.style.transformOrigin = 'center center';
+      const camera = calculateCameraViewBox(
+        baseViewBoxRef.current,
+        viewport.clientWidth,
+        viewport.clientHeight,
+        { x, y },
+        z,
+      );
+      if (!camera) return;
+      svg.setAttribute('viewBox', `${camera.x} ${camera.y} ${camera.width} ${camera.height}`);
       el.dispatchEvent(new CustomEvent('empire-viewport', {
         detail: { panX: x, panY: y, zoom: z },
       }));
@@ -123,13 +173,16 @@ export function useEmpireViewport() {
     if (!inner) return;
     const rect = wheelRef.current?.getBoundingClientRect();
     if (!rect) return;
-    const ox = rect.left + rect.width / 2 + panRef.current.x;
-    const oy = rect.top + rect.height / 2 + panRef.current.y;
+    const ox = rect.left + rect.width / 2;
+    const oy = rect.top + rect.height / 2;
     const dx = clientX - ox;
     const dy = clientY - oy;
     const s = nextZ / prevZ;
     panRef.current = clampPan(
-      { x: panRef.current.x + dx - dx * s, y: panRef.current.y + dy - dy * s },
+      {
+        x: panRef.current.x * s + dx - dx * s,
+        y: panRef.current.y * s + dy - dy * s,
+      },
       nextZ,
     );
     zoomRef.current = nextZ;
@@ -313,6 +366,7 @@ export function useEmpireViewport() {
   return {
     transformRef,
     wheelRef,
+    svgRef,
     onPointerDownCapture,
     zoomIn,
     zoomOut,

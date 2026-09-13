@@ -105,7 +105,7 @@ const EmpireCanvasInner: React.FC = () => {
   const [pendingCreditPurchase, setPendingCreditPurchase] = useState<BuildingType | null>(null);
   const [constructionProgressMap, setConstructionProgressMap] = useState<Record<string, number>>({});
   const [dojoCooldowns, setDojoCooldowns] = useState<Record<string, number>>({});
-  const [hiRes, setHiRes] = useState(() => window.devicePixelRatio > 1);
+  const hiRes = true;
   const lastHoverRef = useRef(0);
   const timedWorkBootstrappedRef = useRef(false);
 
@@ -187,22 +187,7 @@ const EmpireCanvasInner: React.FC = () => {
     productivityFactor,
   });
 
-  const viewport = useEmpireViewport();
-
-  useEffect(() => {
-    const el = viewport.transformRef.current;
-    if (!el) return;
-    const observer = new MutationObserver(() => {
-      const match = el.style.transform.match(/scale\(([^)]+)\)/);
-      const zoom = match ? parseFloat(match[1]) : 1;
-      setHiRes((prev) => {
-        const next = window.devicePixelRatio > 1 || zoom >= 1;
-        return prev !== next ? next : prev;
-      });
-    });
-    observer.observe(el, { attributes: true, attributeFilter: ['style'] });
-    return () => observer.disconnect();
-  }, [viewport.transformRef]);
+  const viewport = useEmpireViewport(viewBox);
 
   const handleStepEnter = useCallback(
     (step: EmpireTutorialStep) => {
@@ -628,10 +613,10 @@ const EmpireCanvasInner: React.FC = () => {
       <div ref={viewport.wheelRef} className="absolute inset-0 touch-none">
         <div
           ref={viewport.transformRef}
-          className="h-full w-full touch-none will-change-transform"
-          style={{ contain: 'layout paint' }}
+          className="h-full w-full touch-none"
         >
           <svg
+            ref={viewport.svgRef}
             className="block h-full w-full"
             viewBox={viewBox}
             preserveAspectRatio="xMidYMid meet"
