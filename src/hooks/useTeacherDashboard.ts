@@ -26,6 +26,9 @@ export const teacherKeys = {
   insights: (id: string) => ['teacher', 'insights', id] as const,
   student: (classroomId: string, studentId: string) =>
     ['teacher', 'student', classroomId, studentId] as const,
+  breakdown: (id: string, moduleType: string) =>
+    ['teacher', 'breakdown', id, moduleType] as const,
+  teachback: (id: string) => ['teacher', 'teachback', id] as const,
 };
 
 export function useClassrooms() {

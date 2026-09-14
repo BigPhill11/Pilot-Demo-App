@@ -161,6 +161,7 @@ const TeachPage: React.FC = () => {
             roster={roster}
             loading={rosterQuery.isLoading}
             className={activeClassroom?.name ?? 'classroom'}
+            classroom={activeClassroom}
             onSelectStudent={setSelectedStudentId}
           />
         )}

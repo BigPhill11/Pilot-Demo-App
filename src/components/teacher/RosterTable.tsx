@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { ArrowDown, ArrowUp, ChevronsUpDown, Download, Search, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { RosterEntry } from '@/integrations/supabase/teacherTypes';
+import type { RosterEntry, TeacherClassroomSummary } from '@/integrations/supabase/teacherTypes';
 import {
   STATUS_META,
   downloadCsv,
@@ -21,6 +21,7 @@ import {
   rosterToCsv,
   studentStatus,
 } from '@/lib/teacherMetrics';
+import ReportDownloadButton from './ReportDownloadButton';
 
 type SortKey =
   | 'username'
@@ -34,6 +35,7 @@ interface RosterTableProps {
   roster: RosterEntry[];
   loading?: boolean;
   className: string;
+  classroom: TeacherClassroomSummary | undefined;
   onSelectStudent: (studentId: string) => void;
 }
 
@@ -50,6 +52,7 @@ const RosterTable: React.FC<RosterTableProps> = ({
   roster,
   loading,
   className,
+  classroom,
   onSelectStudent,
 }) => {
   const [sortKey, setSortKey] = useState<SortKey>('username');
@@ -115,6 +118,7 @@ const RosterTable: React.FC<RosterTableProps> = ({
             <Download className="mr-1.5 h-4 w-4" />
             CSV
           </Button>
+          <ReportDownloadButton classroom={classroom} />
         </div>
       </div>
 
