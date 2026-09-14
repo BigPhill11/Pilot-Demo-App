@@ -251,7 +251,7 @@ const CompanyTinderView: React.FC<CompanyTinderViewProps> = ({ compact = false }
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
                 <div className={`p-2 rounded-lg bg-gradient-to-br ${mode.color} text-white shrink-0`}>
-                  <ThemedEmoji emoji={mode.icon} className="h-[1em] w-[1em]" />
+                  {mode.icon}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
