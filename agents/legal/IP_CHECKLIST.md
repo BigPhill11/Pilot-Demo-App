@@ -5,7 +5,7 @@
 > attorney, offered guidance on the June 9, 2026 call).
 
 Status key: `NOT STARTED` · `IN PROGRESS` · `BLOCKED (needs Phil/counsel)` · `FILED` · `DONE`
-Last updated: **2026-07-05**. Open risk from the plan: **nothing is filed yet** while an
+Last updated: **2026-09-20** (patent landscape search added; see AUDIT_LOG.md). Open risk from the plan: **nothing is filed yet** while an
 APS partnership is actively being pursued.
 
 ---
@@ -77,7 +77,11 @@ still pending) · **Owner:** Phil (with trademark counsel — Brian can advise)
 
 ## 2. Patent landscape — "gamified financial decisions → virtual kingdom" (Bamboo Empire)
 
-**Status:** NOT STARTED · **Owner:** Legal agent can draft the search; counsel interprets
+**Status:** IN PROGRESS (initial Google Patents + CPC-code search run 2026-09-20 — see
+AUDIT_LOG.md same date for the five closest references found; none match the specific
+persistent-virtual-kingdom-tied-to-a-financial-literacy-curriculum combination, but this is
+landscape awareness, not a freedom-to-operate clearance opinion) · **Owner:** Legal agent
+can draft the search; counsel interprets
 
 - [ ] **Google Patents search:** https://patents.google.com — suggested queries:
       - `("financial literacy" OR "financial education") AND (game OR gamified) AND ("virtual world" OR "virtual city" OR kingdom OR empire)`
