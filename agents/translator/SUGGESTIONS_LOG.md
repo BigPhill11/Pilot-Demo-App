@@ -76,6 +76,28 @@ Claude session to do it for you — either one creates a safety net.
 
 ---
 
+## 2026-09-20 — Second run same day (no new digest sent)
+
+This scheduled run fired again on 2026-09-20 at 13:16 UTC, about 8.5 hours
+after the morning's run (04:44-04:49 UTC) already did a full legal + education
+pass, opened PR #22 (legal) and PR #23 (education), and sent the daily digest
+email. Nothing changed in that window — no merges, no new approvals from
+Phil, no new commits to `main`. Re-running the research passes now would have
+just produced near-duplicate findings on top of #22/#23, and a second digest
+email the same day would be noise, so this run skipped both and only added
+this note.
+
+**#7 — Check for a duplicate same-day firing before starting a full pass**
+Status: offered
+If a future run finds a same-day commit already tagged with today's date at
+the top of this log (or an already-sent digest email for today's date), skip
+straight to verification (has anything changed since that run?) instead of
+re-doing the legal/education passes and sending a second email. Only do a
+second full pass same day if there's something genuinely new to work from
+(e.g. Phil merged a PR or left new instructions).
+
+---
+
 *Next run: check whether Phil acted on offered suggestions above before
 adding new ones. Mark accepted/dismissed based on what actually happened, not
 what was recommended.*
