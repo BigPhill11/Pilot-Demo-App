@@ -152,3 +152,56 @@ Voice matches the module's contraction-light style; string-literal only, no esca
 1. Taxes-focused copy pass: apply Findings 9 (quiz→decision) and 10 (Atlanta/teen hooks) across `taxes/lesson-1/2` (auto-apply copy).
 2. Read `wealth-fundamentals/lesson-3-risk-life-stages.ts` (SSEPF1e legacy check) and `taxes/lesson-3/4/5` + boss (residual SSEPF5 check) to close the two remaining §5 verification items.
 3. Draft the Week-1 (Income) 6+6 pre/post item blueprint in `ASSESSMENT_SPEC.md` v0.2 (doc-only, auto-apply) — the next P0 #2 step.
+
+---
+
+## 2026-09-20 — Closed out the standards-verification queue (SSEPF1e, SSEPF5a/b residual check)
+
+**Run scope:** No items marked `APPROVED` in this log, so nothing from the propose-only
+queue was applied this run. Verified the 2026-07-06 auto-applied taxes analogies
+(`lesson-1-understanding-taxes.ts` `philsAnalogy` fields) are still present in source.
+
+**Advanced the 2026-07-06 sweep queue's item 2:** read the two remaining files the
+July 6 pass flagged but hadn't reached yet — `wealth-fundamentals/lesson-3-risk-life-stages.ts`
+and `taxes/lesson-3-deductions-credits.ts` / `lesson-4-tax-advantaged-accounts.ts` /
+`lesson-5-tax-planning-mindset.ts` plus the boss game `the-tax-strategist.ts` — to close
+out `GA_STANDARDS_ALIGNMENT.md`'s verification queue items 8 and 9 (now renumbered 6 and 7).
+
+**Findings (both confirm prior "probable" gaps as final, no upgrade):**
+
+- **SSEPF1e (generational wealth) — GAP confirmed.** `lesson-3-risk-life-stages.ts` is a
+  well-built lesson (life-stage risk analogies using the bamboo-forest-season theme, a
+  3-stage age-25/40/55 simulator) but it's about *investment risk changing with age*, not
+  wealth transfer. No inheritance, estate, or passing-wealth-forward content anywhere in
+  the Wealth Fundamentals module. This closes the "verify lesson-3" open item from
+  2026-07-06 — it's a genuine content gap, not something the existing lessons already cover.
+- **SSEPF5b (progressive/regressive/proportional tax) — GAP confirmed.** Read all three
+  remaining taxes lessons plus the boss game line-by-line (the 2026-07-06 pass only grepped
+  the whole module). "Bracket" appears twice in the boss game as flavor text ("You are in a
+  higher tax bracket now... every deduction matters more") but the actual mechanic — how a
+  bracket or marginal rate works — is never taught.
+- **SSEPF5a completion (sales/property/estate tax) — GAP confirmed.** None of lessons 3-5
+  or the boss game mention sales, property, or estate taxes; only income/payroll/capital
+  gains are taught (consistent with the lesson-1/2 finding from 2026-07-06).
+
+**`GA_STANDARDS_ALIGNMENT.md` updated:** §3 taxes and wealth-fundamentals rows now say
+"confirmed final 2026-09-20" instead of "verify lesson-3" / grep-only; §5 verification
+queue items 8-9 moved to "Cleared 2026-09-20"; all 6 originally-queued verification items
+are now cleared. Doc-only update, auto-apply tier.
+
+### Next sweep queue (2026-09-20)
+
+1. **Content gaps now ready to scope as real lessons** (research is done, nothing left to
+   verify): a short "how tax brackets actually work" addition to the Taxes module
+   (marginal-rate visual — highly game-able per the existing gap-list note), and a
+   generational-wealth beat for Wealth Fundamentals (could fit as a short addition to
+   `lesson-1` or a new `lesson-4`). Both are lesson-copy-level additions (auto-apply
+   eligible) once scoped — logged here as OPEN so a future run can draft the actual text.
+2. **Draft the Week-1 (Income) 6+6 pre/post assessment item blueprint in
+   `ASSESSMENT_SPEC.md` v0.2** (doc-only, auto-apply) — carried over from 2026-07-06,
+   still not started; the next P0 #2 step for the Georgia Tech measurement plan.
+3. Reminder: the 2026-09-07 taxes-focused copy pass (Findings 9 & 10 — quiz-to-decision
+   rewrite, Atlanta/teen hooks for the taxes module) is sitting in an unmerged PR and
+   hasn't reached this log yet. Once merged, re-verify those specific findings in source.
+
+*End of 2026-09-20 entry. Future runs: append below this line.*
