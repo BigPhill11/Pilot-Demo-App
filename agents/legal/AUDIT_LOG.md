@@ -695,3 +695,100 @@ All other PC statuses unchanged from the 2026-07-05 Run 3 tables.
 - Safe Harbor (C4) and NY CDPA (N1) decisions remain the next research gates for PC-18 (d).
 
 *End of 2026-07-06 entry. Future runs: append below this line.*
+
+---
+
+# 2026-09-20 — PC-19 verified applied; patent landscape search (Bamboo Empire mechanic)
+
+> Not legal advice. Attorney review required before reliance.
+
+## A. Ledger check + re-verification
+
+- **PC-19 (iOS microphone purpose string, proposed 2026-07-06):** re-checked
+  `ios/App/App/Info.plist` today. The string has since been corrected in source (it now
+  reads: "Phil's Financials uses the microphone only when you tap Record in the interview
+  practice feature, so it can capture your spoken answer to a practice interview question
+  and transcribe it into text for feedback... Audio is not used for any other purpose.").
+  This is accurate to `AudioRecorder.tsx`'s on-device behavior and resolves the App Review
+  / truthful-disclosure risk flagged in F-18. **PC-19: PROPOSED → APPLIED (verified in
+  source 2026-09-20).** No repo action needed this run.
+- No items are marked `APPROVED` in the ledger below, so nothing else was applied to app
+  source this run.
+- **Standing blockers (F: LLC legal name, privacy contact/address, panda-art authorship,
+  repo visibility, Gemini billing tier, PC-17 ops items 5-6) all remain OPEN** — these need
+  Phil or ops, not research, and are re-surfaced in §D unchanged.
+- **Note for Phil:** two earlier research passes are still sitting as open, unmerged pull
+  requests and have not reached this file yet: the Safe Harbor / NY Child Data Protection
+  Act research (opened 2026-09-07) and a parallel education-agent taxes pass. Merging those
+  is a Phil action, not something this run can do — flagged again in today's digest email.
+
+## B. Queue item advanced: IP Checklist §2 — Patent landscape search (Bamboo Empire mechanic)
+
+This item was still **NOT STARTED** in `IP_CHECKLIST.md` and is one the legal agent can
+draft itself (per the checklist's own note: "owner: legal agent can draft the search;
+counsel interprets"). Ran the searches suggested in the checklist plus CPC-code sweeps.
+
+**Closest references found (none are an exact match to "gamified financial decisions
+that grow a persistent virtual kingdom/city"):**
+
+1. **US20140356818A1 — "System and method for teaching children financial literacy"**
+   (filed 2014-05-30, inventor Jessica Elgin, **abandoned** 2017 for failure to respond to
+   an office action — i.e. **not an enforceable patent today**). Four separate mini-games
+   (Money/Budget/Investing/Business) using physical tokens and simple digital tools;
+   no persistent virtual world tied to the games.
+2. **US20100248192 ("Simulated Interactive Financial Education Game"**, filed 2009-03-30,
+   inventors Thompson & Edwards). A 6-week compressed-time simulation of paychecks, bills,
+   and debt with a scoring system. Confirmed **no virtual city/kingdom/world component** —
+   paper-or-basic-computer-interface only.
+3. **US8790183B2 — "Arcade in a virtual world with reward"** and **US7690990B2 /
+   US7645194B2 — "Financial institutions and instruments in a virtual environment"**
+   (all older, general-purpose virtual-world patents, not education-specific; these
+   describe banks/arcades placed inside a virtual world platform, not a game whose core
+   loop is a financial-literacy curriculum).
+4. **US6106300A / EP1204959A1 / WO2001006480A1 — "Game for teaching fundamental aspects
+   of personal finance, investing and accounting to children"** (filed ~1999-2000,
+   applicant Fundex/related). Board-game-style financial literacy game; predates mobile/
+   virtual-world implementations, no kingdom/city-growth mechanic.
+5. **US20190164453A1 — "Virtual stock market environment"** — investing-only simulation,
+   no broader financial-literacy curriculum or kingdom-building loop.
+
+**Assessment (non-legal, for counsel to confirm):** the specific combination Bamboo Empire
+uses — a persistent, growing virtual kingdom that visually reflects the player's real
+financial-literacy decisions across a multi-week curriculum, for a teen audience — does
+not appear to match any patent or published application found in this search. The nearest
+neighbors are either (a) abandoned/not enforceable, (b) missing the virtual-world/kingdom
+element entirely, or (c) missing the financial-literacy-curriculum element entirely. This
+is a landscape-awareness result, not a freedom-to-operate clearance opinion — counsel
+should confirm before Phil relies on it for a provisional-patent decision.
+
+**IP_CHECKLIST.md §2 updated:** status changed from `NOT STARTED` to `IN PROGRESS` with
+the five references above and today's date; the §101 (Alice) abstract-idea caution from
+the checklist still applies and is unchanged — this search does not resolve that question.
+
+## C. Re-audit of files changed since last log date (2026-07-06)
+
+Reviewed `git log` on `main` between the last-audited commit and today's `HEAD`
+(`196693c`). Changes since then are: a teacher dashboard feature set (classrooms, teacher
+login, scenario answers/teach-backs, mobile-friendly layout, onboarding tour, PDF/CSV
+report export), a "Company Tinder" crash fix, a sidebar theme-variable fix, and the
+iOS mic-string correction covered in §A. None of the teacher-dashboard changes touch
+authentication flows in a way that adds new data collection beyond what a teacher already
+had access to (student progress/report data already flows to teachers under the existing
+design); no new PII fields, no new third-party vendor calls, and no changes to
+`PrivacyPage.tsx` / `TermsPage.tsx` / `AndroidManifest.xml` / Supabase functions were
+found in this range. **No new PROPOSED items from this re-audit.**
+
+## D. Standing blockers for Phil (unchanged, re-surfaced)
+
+1. Exact GA LLC legal name (ecorp.sos.ga.gov).
+2. Canonical privacy contact email + mailing address.
+3. Panda art / comic-panel authorship (human vs AI vs contractor).
+4. Repo visibility (public/private?).
+5. OPS (P0): confirm Gemini Cloud project billing tier (paid vs unpaid) + DPA + region + ZDR.
+6. OPS (P0, carried): undeploy `phil-chat` / `phil-chat-openai` on Supabase project
+   `qssqbpllqkorfjcxgomh`; remove/revoke `PERPLEXITY_API_KEY`.
+7. **NEW:** merge (or explicitly decline) the two open research PRs from 2026-09-07
+   (Safe Harbor/NY CDPA research; education taxes-copy pass) so their findings land on
+   `main` and this log reflects the real current state next run.
+
+*End of 2026-09-20 entry. Future runs: append below this line.*
