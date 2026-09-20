@@ -58,6 +58,8 @@ export interface VillageLesson {
     question: string;
     philMessage: string;
   };
+  /** Optional override for the Intro comic panel (defaults to convention path). */
+  heroImage?: VillageComicVisual;
   concepts: VillageConcept[];
   simulator: DecisionSimulator;
   quiz: VillageQuizQuestion[];
@@ -68,12 +70,19 @@ export interface VillageLesson {
   teachBack?: TeachBackSpec;
 }
 
+export interface VillageComicVisual {
+  src: string;
+  alt: string;
+}
+
 export interface VillageConcept {
   id: string;
   title: string;
   body: string;
   realWorldExample: string;
   emoji: string;
+  /** Optional override for the Learn-step comic panel (defaults to convention path). */
+  image?: VillageComicVisual;
 }
 
 export interface DecisionSimulator {
