@@ -5,7 +5,7 @@ export const lesson2IncomeTypesTaxation: Lesson = {
   title: 'How Different Income Types Get Taxed',
   estimatedMinutes: 10,
   moduleOverview: 'This lesson explains how different types of income are taxed. You learn why wages, business income, and investment income face different rules, and how those rules affect planning.',
-  realityHook: 'You earn money from a job, sell items online, and invest a small amount. Each source pays you differently. At tax time, you notice each type of income is treated differently. Understanding those differences helps you keep more money legally.',
+  realityHook: "You clock hours at your retail job, resell a pair of sneakers for profit on the side, and just put $50 into your first brokerage app. At tax time, each of those three dollars gets treated differently, even though it all spends the same at checkout. Knowing the difference now means fewer surprises later.",
   outcomePreview: 'You will understand that income types face different taxes, wages are taxed regularly, investment income follows special rules, and structure affects take home results.',
   microLesson: `Not all income is taxed the same way. Money earned from a job usually faces income tax and payroll taxes. These taxes come out automatically before you receive your paycheck.
 
@@ -41,11 +41,11 @@ Understanding income types helps you plan smarter. Structure affects how much yo
   },
   miniReflection: { question: 'Which income type would require the most planning for you right now?', followUp: 'List your current income sources and note how each one would be taxed.' },
   quiz: [
-    { question: 'Wages are taxed mainly through:', options: ['Automatic withholding', 'End of year bills', 'Voluntary payments', 'Market rules'], correctIndex: 0, explanation: 'Employers automatically withhold taxes from wage payments.' },
-    { question: 'Self employment income requires:', options: ['No planning', 'Automatic withholding', 'Lower rates', 'Setting aside taxes'], correctIndex: 3, explanation: 'Self-employed people must set aside money for taxes since nothing is withheld.' },
-    { question: 'Investment income differs because:', options: ['It avoids taxes', 'It depends on timing', 'It is illegal', 'It is random'], correctIndex: 1, explanation: 'When you sell investments affects how they are taxed.' },
-    { question: 'Payroll taxes support:', options: ['Schools', 'Roads', 'Social programs', 'Businesses'], correctIndex: 2, explanation: 'Payroll taxes fund Social Security and Medicare.' },
-    { question: 'Capital gains apply when:', options: ['Assets are sold', 'Income is earned', 'Spending occurs', 'Wages increase'], correctIndex: 0, explanation: 'Capital gains tax applies when you sell an asset for profit.' }
+    { question: 'You get $200 from your retail shift and $200 from reselling sneakers. Which one already had taxes taken out before you got paid?', options: ['The retail paycheck', 'The sneaker resale cash', 'Both equally', 'Neither'], correctIndex: 0, explanation: 'Wages from an employer are taxed through automatic withholding; self-employment income is not.' },
+    { question: "You made $300 reselling shoes this month and nothing was withheld. What should you actually do?", options: ["Nothing, it's under the radar", 'Wait for the IRS to tell you', 'Set aside part of it for taxes yourself', 'Ask the buyer to pay the tax'], correctIndex: 2, explanation: 'Self-employment income requires you to plan ahead and set money aside since nothing is withheld automatically.' },
+    { question: 'You buy $50 of stock in your brokerage app. Whether that counts toward your taxes this year depends mostly on:', options: ['How much you originally deposited', 'Whether you actually sell it, and when', 'Which app you used', 'Your age'], correctIndex: 1, explanation: 'Investment income is taxed based on timing, such as when you sell an asset or receive a payout.' },
+    { question: 'Every retail paycheck has a line for Social Security and Medicare. What is that money actually for?', options: ['Company profit', 'Funding retirement and healthcare programs', 'Store maintenance', "Your manager's bonus"], correctIndex: 1, explanation: 'Payroll taxes fund Social Security and Medicare, not the business itself.' },
+    { question: 'You bought a stock for $50 and later sell it for $70. That $20 profit is called a capital gain, and it gets taxed:', options: ['The moment you sell it', 'Every year you hold it', "Only if you're over 18", 'Never, since it started as $50'], correctIndex: 0, explanation: 'Capital gains are taxed when you sell an asset for more than you paid for it.' }
   ],
   powerMove: 'List your current income sources and note how each one would be taxed.',
   realLifeAction: 'Ask someone with a side hustle how they plan for taxes during the year.'
