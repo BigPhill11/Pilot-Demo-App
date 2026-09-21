@@ -13,10 +13,13 @@ Small decisions made early create large differences later. Choosing how income i
 
 People who ignore taxes often react under pressure. People who plan stay calm and flexible. Planning turns taxes from a surprise into a known cost.
 
-A tax aware mindset protects growth over time. Understanding taxes helps you keep more of what you build and use money more intentionally.`,
+A tax aware mindset protects growth over time. Understanding taxes helps you keep more of what you build and use money more intentionally.
+
+One thing that trips people up: tax brackets do not tax your whole paycheck at one rate. The system is progressive, meaning your income is taxed in stacked layers, and each layer has its own rate. Only the slice of income inside a higher bracket gets taxed at that bracket's rate; every dollar below it stays taxed at the lower rates it already passed through. That is why a raise or a good year never lowers your take-home pay, even though people sometimes worry a raise will "push them into a higher bracket" and cost them money overall.`,
   flashcards: [
     { term: 'Tax Planning', definition: 'Tax planning is the ongoing process of arranging finances to reduce tax impact legally. Planning focuses on structure, timing, and awareness.', philsAnalogy: 'Choosing savings and investment options with tax benefits before income increases.' },
     { term: 'Effective Tax Rate', definition: 'The effective tax rate is the percentage of total income paid in taxes. This rate reflects real tax impact.', philsAnalogy: 'Paying less overall tax because of smart deductions and account choices.' },
+    { term: 'Tax Bracket', definition: 'A tax bracket is a range of income taxed at a specific rate under a progressive system. Higher brackets apply only to the income earned within that range, not to all income.', philsAnalogy: 'Filling stacked cups with water: once the bottom cup is full, extra water spills into the next cup at a new rate, but the water already in the bottom cup stays right where it is.' },
     { term: 'Timing Strategy', definition: 'A timing strategy involves choosing when income is received or assets are sold to manage taxes. Timing affects how much tax is owed.', philsAnalogy: 'Holding investments longer to reduce taxes on gains.' },
     { term: 'Long-Term Impact', definition: 'Long-term impact describes how decisions affect outcomes over many years. Small differences grow larger over time.', philsAnalogy: 'Early tax planning leading to much higher after-tax savings years later.' },
     { term: 'Tax Awareness', definition: 'Tax awareness is understanding how taxes affect financial decisions. Awareness reduces mistakes and stress.', philsAnalogy: 'Knowing how a raise changes take-home pay before spending it.' }
@@ -45,7 +48,8 @@ A tax aware mindset protects growth over time. Understanding taxes helps you kee
     { question: 'Effective tax rate matters because:', options: ['It looks impressive', 'It predicts markets', 'It removes taxes', 'It shows real cost'], correctIndex: 3, explanation: 'Effective tax rate shows what you actually pay as a percentage.' },
     { question: 'Timing strategies help because:', options: ['Markets change', 'Taxes apply at moments', 'Income disappears', 'Accounts close'], correctIndex: 1, explanation: 'When you take actions affects the tax consequences.' },
     { question: 'Long-term impact grows because:', options: ['Time compounds decisions', 'Income rises', 'Taxes vanish', 'Spending stops'], correctIndex: 0, explanation: 'Small decisions compound into big differences over time.' },
-    { question: 'Tax awareness helps by:', options: ['Increasing fear', 'Reducing planning', 'Improving decisions', 'Eliminating work'], correctIndex: 2, explanation: 'Understanding taxes leads to better financial decisions.' }
+    { question: 'Tax awareness helps by:', options: ['Increasing fear', 'Reducing planning', 'Improving decisions', 'Eliminating work'], correctIndex: 2, explanation: 'Understanding taxes leads to better financial decisions.' },
+    { question: 'You are offered a raise that would put part of your income into a higher tax bracket. What actually happens to your take-home pay?', options: ['It goes up, because only the new, higher slice of income is taxed at the higher rate', 'It goes down, because your whole paycheck jumps to the higher rate', 'It stays exactly the same no matter what', 'It goes up first, then drops back down at year-end'], correctIndex: 0, explanation: 'Brackets are progressive: only the income inside the new bracket is taxed at the higher rate. The income below it keeps its lower rate, so take-home pay always rises with a raise.' }
   ],
   powerMove: 'Write one future decision where tax planning could change the outcome.',
   realLifeAction: 'Ask an adult how planning ahead helped them keep more of their income.'
