@@ -10,6 +10,7 @@
  * These shapes must stay in step with:
  *   supabase/migrations/20260801000100_classrooms.sql
  *   supabase/migrations/20260801000200_teacher_rpcs.sql
+ *   supabase/migrations/20260921000000_module_growth_checks.sql
  */
 
 export type AppRole = 'admin' | 'user' | 'teacher';
@@ -219,4 +220,39 @@ export interface TeachBackOverview {
   };
   students: TeachBackStudent[];
   lessons: TeachBackLesson[];
+}
+
+/** Row shape returned by `teacher_get_growth_summary(classroom)`. */
+export interface GrowthSummaryRow {
+  student_id: string;
+  module_id: string;
+  module_type: string;
+  knowledge_score_pre: number | null;
+  knowledge_score_post: number | null;
+  knowledge_score_delta: number | null;
+  decision_quality_pre: number | null;
+  decision_quality_post: number | null;
+  decision_quality_delta: number | null;
+  confidence_gap_pre: number | null;
+  confidence_gap_post: number | null;
+  confidence_gap_delta: number | null;
+  captured_at: string | null;
+}
+
+export interface ModuleGrowthTrend {
+  module_id: string;
+  module_type: string;
+  students_with_growth_data: number;
+  avg_knowledge_pre: number | null;
+  avg_knowledge_post: number | null;
+  avg_knowledge_delta: number | null;
+  avg_decision_quality_pre: number | null;
+  avg_decision_quality_post: number | null;
+  avg_confidence_gap_pre: number | null;
+  avg_confidence_gap_post: number | null;
+}
+
+/** Payload returned by `teacher_get_class_growth_trend(classroom)`. */
+export interface ClassGrowthTrend {
+  by_module: ModuleGrowthTrend[];
 }

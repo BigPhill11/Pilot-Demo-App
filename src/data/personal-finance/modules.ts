@@ -251,6 +251,65 @@ export const incomeModule: PersonalFinanceModule = {
       correctIndex: 1,
     },
   ],
+  growthCheck: {
+    anchorQuestions: [
+      {
+        id: 'income-growth-active-income',
+        question: 'What is active income?',
+        options: [
+          'Money earned from investments',
+          'Money earned by trading time and effort for pay',
+          'Money that grows on its own while you sleep',
+          'Money earned from owning property',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'income-growth-raise-pay',
+        question: "What's the most reliable way to raise your hourly pay without adding hours?",
+        options: [
+          'Ask for more shifts',
+          'Work faster',
+          'Build a skill that solves a harder problem',
+          'Wait for a scheduled raise',
+        ],
+        correctIndex: 2,
+      },
+      {
+        id: 'income-growth-limiter',
+        question: "What's the biggest limiter on how much active income can grow?",
+        options: [
+          'Your available time and energy',
+          'Your employer’s budget',
+          'The minimum wage',
+          'How many jobs exist nearby',
+        ],
+        correctIndex: 0,
+      },
+      {
+        id: 'income-growth-stops',
+        question: 'If you stop showing up to work, what happens to active income?',
+        options: [
+          'It keeps paying out for a while',
+          'It stops right away',
+          'It slowly grows on its own',
+          'It converts into savings',
+        ],
+        correctIndex: 1,
+      },
+    ],
+    decisionScenario: {
+      id: 'income-growth-decision-raise',
+      prompt:
+        "You've been doing great work for six months and haven't had a raise. What's your move?",
+      choices: [
+        { id: 'ask-with-evidence', label: 'Ask your manager directly, pointing to specific work you’ve done', optimality: 95 },
+        { id: 'work-harder-silently', label: 'Just keep working hard and hope it gets noticed', optimality: 35 },
+        { id: 'complain-to-coworkers', label: 'Vent to coworkers about being underpaid', optimality: 10 },
+        { id: 'quit-on-the-spot', label: 'Quit immediately without another job lined up', optimality: 15 },
+      ],
+    },
+  },
 };
 
 // Full module with lessons (Financial Planning module)

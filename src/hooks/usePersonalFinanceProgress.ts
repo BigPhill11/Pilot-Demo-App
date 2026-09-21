@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { ModuleProgress, ModuleStatus } from '@/types/personal-finance';
+import { GrowthCheckPayload, ModuleProgress, ModuleStatus } from '@/types/personal-finance';
 import type { Json } from '@/integrations/supabase/types';
 import { getModuleById } from '@/data/personal-finance/modules';
 import {
@@ -11,6 +11,15 @@ import {
 } from '@/lib/userScopedStorage';
 
 const STORAGE_KEY_BASE = 'personal-finance-progress';
+
+// The generated Database type predates these columns/RPC, so they don't
+// typecheck against it — same workaround as src/lib/teacherApi.ts.
+const growthDb = supabase as unknown as {
+  rpc: (
+    fn: string,
+    args?: Record<string, unknown>
+  ) => Promise<{ data: unknown; error: { message: string } | null }>;
+};
 
 export const usePersonalFinanceProgress = () => {
   const { user } = useAuth();
@@ -30,6 +39,7 @@ export const usePersonalFinanceProgress = () => {
           const progress: Record<string, ModuleProgress> = {};
           data.forEach((item) => {
             const detailed = item.detailed_progress as Record<string, unknown> || {};
+            const growthRow = item as unknown as { growth_baseline: unknown; growth_final: unknown };
             progress[item.module_id] = {
               moduleId: item.module_id,
               status: (detailed.status as ModuleStatus) || 'locked',
@@ -37,6 +47,8 @@ export const usePersonalFinanceProgress = () => {
               testedOut: (detailed.testedOut as boolean) || false,
               xpEarned: (detailed.xpEarned as number) || 0,
               coinsEarned: (detailed.coinsEarned as number) || 0,
+              growthBaselineRecorded: growthRow.growth_baseline != null,
+              growthFinalRecorded: growthRow.growth_final != null,
             };
           });
           setModuleProgress(progress);
@@ -196,6 +208,49 @@ export const usePersonalFinanceProgress = () => {
     saveProgress(newProgress);
   }, [moduleProgress, saveProgress]);
 
+  /**
+   * Saves one warm-up (baseline) or wrap-up (final) growth check via a
+   * dedicated RPC — deliberately not folded into `saveProgress`'s
+   * `detailed_progress` blob, so it can't be silently clobbered by an
+   * unrelated progress save, and so the database (not the client) is the
+   * source of truth for whether a check has already been recorded.
+   * No-ops for guests, matching the rest of this hook's DB-only features.
+   */
+  const recordGrowthCheck = useCallback(
+    async (moduleId: string, phase: 'baseline' | 'final', payload: GrowthCheckPayload) => {
+      if (!user) return;
+      try {
+        const { error } = await growthDb.rpc('record_module_growth_check', {
+          p_module_id: moduleId,
+          p_module_type: 'personal-finance',
+          p_phase: phase,
+          p_payload: payload,
+        });
+        if (error) throw new Error(error.message);
+
+        setModuleProgress((prev) => ({
+          ...prev,
+          [moduleId]: {
+            ...(prev[moduleId] ?? {
+              moduleId,
+              status: 'active' as ModuleStatus,
+              completedLessons: [],
+              testedOut: false,
+              xpEarned: 0,
+              coinsEarned: 0,
+            }),
+            ...(phase === 'baseline'
+              ? { growthBaselineRecorded: true }
+              : { growthFinalRecorded: true }),
+          },
+        }));
+      } catch (error) {
+        console.error('Error recording growth check:', error);
+      }
+    },
+    [user]
+  );
+
   useEffect(() => {
     loadProgress();
   }, [loadProgress]);
@@ -207,6 +262,7 @@ export const usePersonalFinanceProgress = () => {
     completeLesson,
     handleTestOut,
     completeBossGame,
+    recordGrowthCheck,
     refresh: loadProgress,
   };
 };

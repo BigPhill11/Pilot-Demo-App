@@ -19,6 +19,7 @@ import CreateClassroomDialog from '@/components/teacher/CreateClassroomDialog';
 import EngagementHeatmap from '@/components/teacher/EngagementHeatmap';
 import StudentDetailSheet from '@/components/teacher/StudentDetailSheet';
 import ClassInsightsPanel from '@/components/teacher/ClassInsightsPanel';
+import GrowthPanel from '@/components/teacher/GrowthPanel';
 import { Button } from '@/components/ui/button';
 import { GraduationCap, Loader2, Plus } from 'lucide-react';
 import { summarizeClass } from '@/lib/teacherMetrics';
@@ -167,6 +168,8 @@ const TeachPage: React.FC = () => {
         )}
 
         {view === 'insights' && <ClassInsightsPanel classroomId={activeClassroomId ?? undefined} />}
+
+        {view === 'growth' && <GrowthPanel classroomId={activeClassroomId ?? undefined} />}
       </TeacherShell>
 
       <CreateClassroomDialog

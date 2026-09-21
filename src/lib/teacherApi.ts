@@ -12,7 +12,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { isTeacherPreview, teacherPreview } from '@/dev/teacherPreview';
 import type {
   ActivityEntry,
+  ClassGrowthTrend,
   ClassInsights,
+  GrowthSummaryRow,
   ModuleMatrixCell,
   QuestionBreakdown,
   RosterEntry,
@@ -124,6 +126,49 @@ export async function getClassInsights(classroomId: string): Promise<ClassInsigh
       ...g,
       miss_count: num(g.miss_count),
       student_count: num(g.student_count),
+    })),
+  };
+}
+
+export async function getGrowthSummary(classroomId: string): Promise<GrowthSummaryRow[]> {
+  if (isTeacherPreview()) return teacherPreview.getGrowthSummary(classroomId);
+  const rows = await callRpc<GrowthSummaryRow[]>('teacher_get_growth_summary', {
+    p_classroom_id: classroomId,
+  });
+  return (rows ?? []).map((r) => ({
+    ...r,
+    knowledge_score_pre: r.knowledge_score_pre === null ? null : num(r.knowledge_score_pre),
+    knowledge_score_post: r.knowledge_score_post === null ? null : num(r.knowledge_score_post),
+    knowledge_score_delta: r.knowledge_score_delta === null ? null : num(r.knowledge_score_delta),
+    decision_quality_pre: r.decision_quality_pre === null ? null : num(r.decision_quality_pre),
+    decision_quality_post: r.decision_quality_post === null ? null : num(r.decision_quality_post),
+    decision_quality_delta: r.decision_quality_delta === null ? null : num(r.decision_quality_delta),
+    confidence_gap_pre: r.confidence_gap_pre === null ? null : num(r.confidence_gap_pre),
+    confidence_gap_post: r.confidence_gap_post === null ? null : num(r.confidence_gap_post),
+    confidence_gap_delta: r.confidence_gap_delta === null ? null : num(r.confidence_gap_delta),
+  }));
+}
+
+export async function getClassGrowthTrend(classroomId: string): Promise<ClassGrowthTrend> {
+  if (isTeacherPreview()) return teacherPreview.getClassGrowthTrend(classroomId);
+  const data = await callRpc<ClassGrowthTrend>('teacher_get_class_growth_trend', {
+    p_classroom_id: classroomId,
+  });
+  return {
+    by_module: (data?.by_module ?? []).map((m) => ({
+      ...m,
+      students_with_growth_data: num(m.students_with_growth_data),
+      avg_knowledge_pre: m.avg_knowledge_pre === null ? null : num(m.avg_knowledge_pre),
+      avg_knowledge_post: m.avg_knowledge_post === null ? null : num(m.avg_knowledge_post),
+      avg_knowledge_delta: m.avg_knowledge_delta === null ? null : num(m.avg_knowledge_delta),
+      avg_decision_quality_pre:
+        m.avg_decision_quality_pre === null ? null : num(m.avg_decision_quality_pre),
+      avg_decision_quality_post:
+        m.avg_decision_quality_post === null ? null : num(m.avg_decision_quality_post),
+      avg_confidence_gap_pre:
+        m.avg_confidence_gap_pre === null ? null : num(m.avg_confidence_gap_pre),
+      avg_confidence_gap_post:
+        m.avg_confidence_gap_post === null ? null : num(m.avg_confidence_gap_post),
     })),
   };
 }

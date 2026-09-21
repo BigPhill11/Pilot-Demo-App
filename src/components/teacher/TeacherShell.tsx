@@ -25,12 +25,13 @@ import {
   LogOut,
   Plus,
   RefreshCw,
+  Sprout,
   Users,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { TeacherClassroomSummary } from '@/integrations/supabase/teacherTypes';
 
-export type TeacherView = 'overview' | 'roster' | 'insights';
+export type TeacherView = 'overview' | 'roster' | 'insights' | 'growth';
 
 interface TeacherShellProps {
   classrooms: TeacherClassroomSummary[];
@@ -48,6 +49,7 @@ const VIEWS: { id: TeacherView; label: string; shortLabel: string; icon: typeof 
   { id: 'overview', label: 'Overview', shortLabel: 'Overview', icon: LayoutDashboard },
   { id: 'roster', label: 'Students', shortLabel: 'Students', icon: Users },
   { id: 'insights', label: 'Class insights', shortLabel: 'Insights', icon: BookOpen },
+  { id: 'growth', label: 'Growth', shortLabel: 'Growth', icon: Sprout },
 ];
 
 /**
@@ -217,7 +219,7 @@ const TeacherShell: React.FC<TeacherShellProps> = ({
           className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 backdrop-blur md:hidden"
           style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
         >
-          <div className="grid grid-cols-3">
+          <div className="grid grid-cols-4">
             {VIEWS.map((item) => {
               const Icon = item.icon;
               const active = view === item.id;

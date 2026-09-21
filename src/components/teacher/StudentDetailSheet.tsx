@@ -16,9 +16,10 @@ import {
   Layers,
   Loader2,
   Sparkles,
+  Sprout,
   TriangleAlert,
 } from 'lucide-react';
-import { useStudentDetail } from '@/hooks/useTeacherDashboard';
+import { useGrowthSummary, useStudentDetail } from '@/hooks/useTeacherDashboard';
 import { moduleLabel, trackLabel } from '@/lib/teacherCurriculum';
 import { formatLastActive } from '@/lib/teacherMetrics';
 
@@ -44,9 +45,11 @@ const StudentDetailSheet: React.FC<StudentDetailSheetProps> = ({
   onClose,
 }) => {
   const { data, isLoading, error } = useStudentDetail(classroomId, studentId);
+  const { data: growthRows } = useGrowthSummary(classroomId);
 
   const profile = data?.profile;
   const modulesByType = groupByType(data?.modules ?? []);
+  const studentGrowth = (growthRows ?? []).filter((g) => g.student_id === studentId);
 
   // Concepts this student failed to explain back, most frequent first. This is
   // the one signal the app has about *what* they misunderstand, not just how
@@ -167,6 +170,50 @@ const StudentDetailSheet: React.FC<StudentDetailSheetProps> = ({
                 </div>
               )}
             </section>
+
+            {studentGrowth.length > 0 && (
+              <>
+                <Separator className="my-5" />
+                <section>
+                  <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
+                    <Sprout className="h-4 w-4 text-primary" />
+                    Growth (before vs. after)
+                  </h3>
+                  <div className="space-y-3">
+                    {studentGrowth.map((g) => (
+                      <div
+                        key={`${g.module_type}-${g.module_id}`}
+                        className="rounded-lg border bg-muted/20 p-3"
+                      >
+                        <p className="mb-2 text-sm font-medium">
+                          {moduleLabel(g.module_type, g.module_id)}
+                        </p>
+                        <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                          <div>
+                            <p className="text-muted-foreground">Knowledge</p>
+                            <p className="font-semibold">
+                              {g.knowledge_score_pre}% → {g.knowledge_score_post}%
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">Decisions</p>
+                            <p className="font-semibold">
+                              {g.decision_quality_pre}% → {g.decision_quality_post}%
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">Confidence gap</p>
+                            <p className="font-semibold">
+                              {g.confidence_gap_pre} → {g.confidence_gap_post}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </>
+            )}
 
             {data.careers.length > 0 && (
               <>

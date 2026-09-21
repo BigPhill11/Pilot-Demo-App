@@ -19,7 +19,8 @@ const PersonalFinanceTab: React.FC = () => {
     loading,
     completeLesson,
     handleTestOut,
-    completeBossGame
+    completeBossGame,
+    recordGrowthCheck
   } = usePersonalFinanceProgress();
   const {
     awardResources
@@ -137,7 +138,21 @@ const PersonalFinanceTab: React.FC = () => {
   };
   return <div className="space-y-6">
       <AnimatePresence mode="wait">
-        {viewState === 'boss-game' && activeModuleId ? renderBossGame() : viewState === 'lesson' && activeLesson ? <LessonContainer key="lesson" lesson={activeLesson} moduleId={activeModuleId ?? undefined} onComplete={handleLessonComplete} onBack={handleBackToModules} /> : viewState === 'module' && activeModule ? <ModuleLessonsView key="module" module={activeModule} progress={currentModuleProgress} onLessonClick={handleLessonClick} onBack={handleBackToTree} onBossGameClick={handleBossGameClick} /> : <div key="tree">
+        {viewState === 'boss-game' && activeModuleId ? renderBossGame() : viewState === 'lesson' && activeLesson ? <LessonContainer
+              key="lesson"
+              lesson={activeLesson}
+              moduleId={activeModuleId ?? undefined}
+              onComplete={handleLessonComplete}
+              onBack={handleBackToModules}
+              growthCheck={activeModule?.growthCheck}
+              isFirstLessonInModule={activeLessonIndex === 0}
+              isLastLessonInModule={activeLessonIndex === (activeModule?.lessons.length ?? 0) - 1}
+              hasGrowthBaseline={!!currentModuleProgress?.growthBaselineRecorded}
+              hasGrowthFinal={!!currentModuleProgress?.growthFinalRecorded}
+              onGrowthCheckComplete={(phase, payload) =>
+                activeModuleId && recordGrowthCheck(activeModuleId, phase, payload)
+              }
+            /> : viewState === 'module' && activeModule ? <ModuleLessonsView key="module" module={activeModule} progress={currentModuleProgress} onLessonClick={handleLessonClick} onBack={handleBackToTree} onBossGameClick={handleBossGameClick} /> : <div key="tree">
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold mb-2">Personal Finance Journey</h1>
               <p className="text-muted-foreground">Master your money, one module at a time</p>

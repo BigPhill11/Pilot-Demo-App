@@ -14,7 +14,9 @@
 
 import type {
   ActivityEntry,
+  ClassGrowthTrend,
   ClassInsights,
+  GrowthSummaryRow,
   ModuleMatrixCell,
   RosterEntry,
   StudentDetail,
@@ -231,6 +233,61 @@ function buildStudentDetail(classroomId: string, studentId: string): StudentDeta
   };
 }
 
+// Only the Income module has real growth-check content in this pilot, so
+// preview growth data covers just that module — students who "finished" it
+// (matrix progress at 100%) get a before/after row.
+function buildGrowthSummary(classroomId: string): GrowthSummaryRow[] {
+  return buildMatrix(classroomId)
+    .filter((c) => c.module_id === 'income' && c.progress_percentage >= 100)
+    .map((c, i) => {
+      const pre = 35 + ((i * 13) % 30);
+      const post = Math.min(100, pre + 25 + ((i * 7) % 30));
+      const decisionPre = 40 + ((i * 9) % 25);
+      const decisionPost = Math.min(100, decisionPre + 20 + ((i * 5) % 25));
+      const gapPre = 20 - ((i * 3) % 15);
+      const gapPost = Math.max(-10, gapPre - (10 + (i % 10)));
+      return {
+        student_id: c.student_id,
+        module_id: c.module_id,
+        module_type: c.module_type,
+        knowledge_score_pre: pre,
+        knowledge_score_post: post,
+        knowledge_score_delta: post - pre,
+        decision_quality_pre: decisionPre,
+        decision_quality_post: decisionPost,
+        decision_quality_delta: decisionPost - decisionPre,
+        confidence_gap_pre: gapPre,
+        confidence_gap_post: gapPost,
+        confidence_gap_delta: gapPost - gapPre,
+        captured_at: isoDaysAgo(2),
+      };
+    });
+}
+
+function buildClassGrowthTrend(classroomId: string): ClassGrowthTrend {
+  const rows = buildGrowthSummary(classroomId);
+  if (rows.length === 0) return { by_module: [] };
+
+  const avg = (nums: number[]) => Math.round(nums.reduce((a, b) => a + b, 0) / nums.length);
+
+  return {
+    by_module: [
+      {
+        module_id: 'income',
+        module_type: 'personal-finance',
+        students_with_growth_data: rows.length,
+        avg_knowledge_pre: avg(rows.map((r) => r.knowledge_score_pre ?? 0)),
+        avg_knowledge_post: avg(rows.map((r) => r.knowledge_score_post ?? 0)),
+        avg_knowledge_delta: avg(rows.map((r) => r.knowledge_score_delta ?? 0)),
+        avg_decision_quality_pre: avg(rows.map((r) => r.decision_quality_pre ?? 0)),
+        avg_decision_quality_post: avg(rows.map((r) => r.decision_quality_post ?? 0)),
+        avg_confidence_gap_pre: avg(rows.map((r) => r.confidence_gap_pre ?? 0)),
+        avg_confidence_gap_post: avg(rows.map((r) => r.confidence_gap_post ?? 0)),
+      },
+    ],
+  };
+}
+
 export const teacherPreview = {
   listClassrooms: async (): Promise<TeacherClassroomSummary[]> => CLASSROOMS,
   getRoster: async (classroomId: string): Promise<RosterEntry[]> => buildRoster(classroomId),
@@ -241,4 +298,8 @@ export const teacherPreview = {
   getClassInsights: async (): Promise<ClassInsights> => INSIGHTS,
   getStudentDetail: async (classroomId: string, studentId: string): Promise<StudentDetail> =>
     buildStudentDetail(classroomId, studentId),
+  getGrowthSummary: async (classroomId: string): Promise<GrowthSummaryRow[]> =>
+    buildGrowthSummary(classroomId),
+  getClassGrowthTrend: async (classroomId: string): Promise<ClassGrowthTrend> =>
+    buildClassGrowthTrend(classroomId),
 };

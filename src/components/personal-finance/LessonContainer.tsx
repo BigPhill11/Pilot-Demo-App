@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Clock, Trophy, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Lesson } from '@/types/personal-finance';
+import { GrowthCheckPayload, Lesson, ModuleGrowthCheck } from '@/types/personal-finance';
 import MicroLesson from './MicroLesson';
 import MicroLessonComic from './MicroLessonComic';
 import LessonFlashcards from './LessonFlashcards';
@@ -11,6 +11,8 @@ import TimeValueSimulator from './TimeValueSimulator';
 import LessonQuiz from './LessonQuiz';
 import MiniReflection from './MiniReflection';
 import PowerMove from './PowerMove';
+import GrowthWarmUp from './GrowthWarmUp';
+import GrowthWrapUp from './GrowthWrapUp';
 import TeachPhilPanel from '@/components/teach-phil/TeachPhilPanel';
 import { getPersonalFinancePhilAge, getPersonalFinanceTeachBackSpec } from '@/lib/teach-back-spec';
 import { cn } from '@/lib/utils';
@@ -69,18 +71,55 @@ interface LessonContainerProps {
   onBack: () => void;
   /** Module the lesson belongs to — sets Phil's default persona tier */
   moduleId?: string;
+  /** Invisible growth check content for this module, if it has one yet. */
+  growthCheck?: ModuleGrowthCheck;
+  /** Whether this is the first lesson in its module (warm-up eligibility). */
+  isFirstLessonInModule?: boolean;
+  /** Whether this is the last lesson in its module (wrap-up eligibility). */
+  isLastLessonInModule?: boolean;
+  /** Whether this module's baseline/final growth snapshot has already been recorded. */
+  hasGrowthBaseline?: boolean;
+  hasGrowthFinal?: boolean;
+  onGrowthCheckComplete?: (phase: 'baseline' | 'final', payload: GrowthCheckPayload) => void;
 }
 
-type LessonStep = 'intro' | 'micro-lesson' | 'flashcards' | 'simulator' | 'quiz' | 'teach-phil' | 'reflection' | 'power-move' | 'complete';
+type LessonStep =
+  | 'intro'
+  | 'warm-up'
+  | 'micro-lesson'
+  | 'flashcards'
+  | 'simulator'
+  | 'quiz'
+  | 'teach-phil'
+  | 'reflection'
+  | 'power-move'
+  | 'wrap-up'
+  | 'complete';
 
-const STEPS: LessonStep[] = ['intro', 'micro-lesson', 'flashcards', 'simulator', 'quiz', 'teach-phil', 'reflection', 'power-move', 'complete'];
+const BASE_STEPS: LessonStep[] = ['intro', 'micro-lesson', 'flashcards', 'simulator', 'quiz', 'teach-phil', 'reflection', 'power-move', 'complete'];
 
 const LessonContainer: React.FC<LessonContainerProps> = ({
   lesson,
   onComplete,
   onBack,
   moduleId,
+  growthCheck,
+  isFirstLessonInModule,
+  isLastLessonInModule,
+  hasGrowthBaseline,
+  hasGrowthFinal,
+  onGrowthCheckComplete,
 }) => {
+  const showWarmUp = !!growthCheck && !!isFirstLessonInModule && !hasGrowthBaseline;
+  const showWrapUp = !!growthCheck && !!isLastLessonInModule && !!hasGrowthBaseline && !hasGrowthFinal;
+
+  const STEPS = useMemo(() => {
+    const steps = [...BASE_STEPS];
+    if (showWarmUp) steps.splice(steps.indexOf('micro-lesson'), 0, 'warm-up');
+    if (showWrapUp) steps.splice(steps.indexOf('complete'), 0, 'wrap-up');
+    return steps;
+  }, [showWarmUp, showWrapUp]);
+
   const [currentStep, setCurrentStep] = useState<LessonStep>('intro');
   const [xpEarned, setXpEarned] = useState(0);
   const [coinsEarned, setCoinsEarned] = useState(0);
@@ -156,6 +195,18 @@ const LessonContainer: React.FC<LessonContainerProps> = ({
             </Button>
           </motion.div>
         );
+
+      case 'warm-up':
+        return growthCheck ? (
+          <GrowthWarmUp
+            growthCheck={growthCheck}
+            onComplete={(payload) => {
+              onGrowthCheckComplete?.('baseline', payload);
+              handleStepComplete(0, 0);
+              goToNextStep();
+            }}
+          />
+        ) : null;
 
       case 'micro-lesson':
         return COMIC_MICRO_LESSON_IDS.has(lesson.id) ? (
@@ -252,6 +303,18 @@ const LessonContainer: React.FC<LessonContainerProps> = ({
             }}
           />
         );
+
+      case 'wrap-up':
+        return growthCheck ? (
+          <GrowthWrapUp
+            growthCheck={growthCheck}
+            onComplete={(payload) => {
+              onGrowthCheckComplete?.('final', payload);
+              handleStepComplete(0, 0);
+              goToNextStep();
+            }}
+          />
+        ) : null;
 
       case 'complete':
         return (

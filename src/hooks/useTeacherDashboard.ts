@@ -9,7 +9,9 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getActivity,
+  getClassGrowthTrend,
   getClassInsights,
+  getGrowthSummary,
   getModuleMatrix,
   getRoster,
   getStudentDetail,
@@ -29,6 +31,8 @@ export const teacherKeys = {
   breakdown: (id: string, moduleType: string) =>
     ['teacher', 'breakdown', id, moduleType] as const,
   teachback: (id: string) => ['teacher', 'teachback', id] as const,
+  growthSummary: (id: string) => ['teacher', 'growthSummary', id] as const,
+  growthTrend: (id: string) => ['teacher', 'growthTrend', id] as const,
 };
 
 export function useClassrooms() {
@@ -75,6 +79,24 @@ export function useClassInsights(classroomId: string | undefined) {
   });
 }
 
+export function useGrowthSummary(classroomId: string | undefined) {
+  return useQuery({
+    queryKey: teacherKeys.growthSummary(classroomId ?? ''),
+    queryFn: () => getGrowthSummary(classroomId as string),
+    enabled: !!classroomId,
+    staleTime: STALE_MS,
+  });
+}
+
+export function useClassGrowthTrend(classroomId: string | undefined) {
+  return useQuery({
+    queryKey: teacherKeys.growthTrend(classroomId ?? ''),
+    queryFn: () => getClassGrowthTrend(classroomId as string),
+    enabled: !!classroomId,
+    staleTime: STALE_MS,
+  });
+}
+
 /** Only fetches once a student row is actually opened. */
 export function useStudentDetail(classroomId: string | undefined, studentId: string | null) {
   return useQuery({
@@ -95,5 +117,7 @@ export function useRefreshClassroom(classroomId: string | undefined) {
     queryClient.invalidateQueries({ queryKey: ['teacher', 'matrix', classroomId] });
     queryClient.invalidateQueries({ queryKey: ['teacher', 'insights', classroomId] });
     queryClient.invalidateQueries({ queryKey: ['teacher', 'activity', classroomId] });
+    queryClient.invalidateQueries({ queryKey: ['teacher', 'growthSummary', classroomId] });
+    queryClient.invalidateQueries({ queryKey: ['teacher', 'growthTrend', classroomId] });
   };
 }
