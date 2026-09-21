@@ -205,3 +205,59 @@ are now cleared. Doc-only update, auto-apply tier.
    hasn't reached this log yet. Once merged, re-verify those specific findings in source.
 
 *End of 2026-09-20 entry. Future runs: append below this line.*
+
+---
+
+## 2026-09-21 -- Closed sweep-queue item 1 (tax brackets): applied to lesson-5 (auto)
+
+**Run scope:** No items marked `APPROVED` in this log, so nothing from the propose-only
+queue was applied this run. Verified the 2026-07-06 taxes analogies and the 2026-09-20
+verification-queue closures are both still present in source on `main`.
+
+**Advanced the 2026-09-20 sweep queue's item 1 (first half):** drafted and applied the
+"how tax brackets actually work" addition to `taxes/lesson-5-tax-planning-mindset.ts`
+(auto-apply -- lesson copy, no logic/structure change):
+
+- **microLesson** -- added a paragraph explaining that the tax system is progressive:
+  income is taxed in stacked layers, each layer at its own rate, and a raise never lowers
+  take-home pay even though people sometimes worry a raise will "push them into a higher
+  bracket."
+- **New flashcard -- "Tax Bracket"** -- definition plus a `philsAnalogy` built around
+  stacked cups filling with water (money above the full cup spills into the next cup at a
+  new rate; the water already in the lower cup keeps its lower rate).
+- **New quiz item** -- decision-style (matches Finding 9's push away from recall-only
+  stems): a student is offered a raise that crosses into a higher bracket and has to
+  reason about what actually happens to take-home pay (correct answer: it still goes up,
+  because only the new slice is taxed at the higher rate).
+- String-literal-only change; no imports, types, or logic touched.
+
+**`GA_STANDARDS_ALIGNMENT.md` updated:** SSEPF5b moved from **GAP** to **PARTIAL** in §3
+and the §4 gap list (item 11) -- the bracket/marginal-rate mechanic is now taught, but
+regressive and proportional tax structures still are not, so the standard isn't fully
+closed yet.
+
+### Still OPEN / not done this run
+
+- **SSEPF5b full closure** -- would need a regressive-vs-proportional-vs-progressive
+  comparison (e.g. a short "who pays what share" visual comparing a flat sales tax to
+  income-tax brackets). Reasonable next step once Phil/counsel or a future run wants to
+  finish this standard.
+- **Generational-wealth beat for Wealth Fundamentals** (queue item 1, second half) --
+  not started this run; still OPEN.
+- **Week-1 (Income) 6+6 pre/post assessment blueprint in `ASSESSMENT_SPEC.md` v0.2** --
+  carried over again, still not started.
+- Reminder (carried from 2026-09-20): the 2026-09-07 taxes-focused copy pass (Findings 9
+  & 10) and the 2026-09-20 standards-verification pass are both still sitting in unmerged
+  PRs (#19, #23) -- once merged, re-verify those findings in source and fold this run's
+  changes in cleanly.
+
+### Next sweep queue (2026-09-21)
+
+1. Generational-wealth beat for Wealth Fundamentals (`lesson-1` addition or new
+   `lesson-4`) -- auto-apply lesson copy, carried from 2026-09-20.
+2. Regressive/proportional comparison to fully close SSEPF5b.
+3. Week-1 (Income) 6+6 pre/post assessment blueprint in `ASSESSMENT_SPEC.md` v0.2 --
+   carried over from 2026-07-06, still not started.
+
+*End of 2026-09-21 entry. Future runs: append below this line.*
+
