@@ -792,3 +792,67 @@ found in this range. **No new PROPOSED items from this re-audit.**
    `main` and this log reflects the real current state next run.
 
 *End of 2026-09-20 entry. Future runs: append below this line.*
+
+---
+
+# 2026-09-21 Run — Trademark web-layer re-verification (Item 1); tooling note
+
+**Run scope:** No items marked `APPROVED` in the status ledger, so nothing from the
+propose-only queue was applied this run. Confirmed none of the standing blockers (§D
+below, carried from 2026-09-20) have been resolved — no merges or approvals landed
+since yesterday's run.
+
+## A. Trademark clearance — web/common-law layer re-run (IP_CHECKLIST.md §1)
+
+Re-ran the common-law/web layer of the documented clearance protocol (§1 step 7):
+general web search for "Phil's Financials" trademark filings and for "Finance With Phil"
+(the F-15 confusion candidate flagged 2026-07-05).
+
+**Findings — no change from the 2026-07-05 baseline:**
+- No federal trademark registration or application found for "Phil's Financials" in
+  indexed web results.
+- **financewithphil.com / financewithphil.org is still active** (Atlanta-based financial
+  literacy app + courses) with no indexed federal registration — still appears to be a
+  common-law mark. F-15 (confusion candidate flagged for counsel) is unchanged and still
+  open.
+- No new third-party use of "Phil's Financials" or close variants surfaced.
+
+**Tooling limitation, logged plainly rather than glossed over:** the official USPTO
+expert-mode search (tmsearch.uspto.gov — the 7-query protocol documented in
+IP_CHECKLIST.md §1) is a JavaScript single-page app that returns no scrapable results to
+an automated fetch (repeated attempts returned 403 or no dynamic content). It cannot be
+run unattended from this environment. **This step genuinely needs a human** — Phil or
+Brian (trademark counsel) running the 7 queries directly in a browser session and saving
+hit counts/serial numbers per the protocol. Flagging this explicitly so it doesn't sit as
+a silently-stalled "IN PROGRESS" item.
+
+**IP_CHECKLIST.md §1 updated:** added a note under the clearance-search item pointing to
+this limitation and asking Phil/Brian to run the official USPTO expert-mode queries
+directly. Status remains `IN PROGRESS` (unchanged — no regression, just an honest note
+about what's left and why the agent can't finish it alone).
+
+## B. Re-audit of files changed since last log date (2026-09-20)
+
+Checked `git log` on `main` for commits since `196693c` (the commit re-audited in the
+2026-09-20 entry): **none** — no new commits landed on `main` in the last 24 hours.
+Nothing new to re-audit.
+
+## C. Standing blockers for Phil (unchanged, re-surfaced)
+
+1. Exact GA LLC legal name (ecorp.sos.ga.gov).
+2. Canonical privacy contact email + mailing address.
+3. Panda art / comic-panel authorship (human vs AI vs contractor).
+4. Repo visibility (public/private?).
+5. OPS (P0): confirm Gemini Cloud project billing tier (paid vs unpaid) + DPA + region + ZDR.
+6. OPS (P0, carried): undeploy `phil-chat` / `phil-chat-openai` on Supabase project
+   `qssqbpllqkorfjcxgomh`; remove/revoke `PERPLEXITY_API_KEY`.
+7. **Carried, getting louder:** there are now **five** open, unmerged legal/education
+   research PRs (#8, #10, #19, #20, #23 — see GitHub) stretching back to July. Merging
+   them (or explicitly telling the agent to abandon any that are stale) would let future
+   runs build on real, current source instead of re-deriving context from unmerged
+   branches every time.
+8. **NEW:** the official USPTO trademark clearance search (§A above) needs a human at
+   tmsearch.uspto.gov — it cannot be completed by this agent.
+
+*End of 2026-09-21 entry. Future runs: append below this line.*
+
