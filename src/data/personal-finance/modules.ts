@@ -424,6 +424,64 @@ export const financialPlanningModule: PersonalFinanceModule = {
       correctIndex: 2,
     },
   ],
+  growthCheck: {
+    anchorQuestions: [
+      {
+        id: 'fp-growth-clear-goals',
+        question: 'Why do clear financial goals reduce stress?',
+        options: [
+          'They guarantee you’ll succeed',
+          'They remove unnecessary choices',
+          'They automatically increase your income',
+          'They make saving unnecessary',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'fp-growth-time-horizon',
+        question: 'What is a "time horizon" in financial planning?',
+        options: [
+          'How much free time you have',
+          'The length of time before a goal needs to be reached',
+          'Your daily work schedule',
+          'How long it takes to get paid',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'fp-growth-opportunity-cost',
+        question: 'What does "opportunity cost" mean when making a money decision?',
+        options: [
+          'The sales tax on a purchase',
+          'The best alternative you give up by choosing something else',
+          'The interest a bank charges',
+          'The total cost printed on a receipt',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'fp-growth-alignment',
+        question: 'What does it mean for your spending to be "aligned" with your goals?',
+        options: [
+          'You spend as little as possible',
+          'Your actions actually match what you say you want',
+          'You never buy anything fun',
+          'You earn more than your friends',
+        ],
+        correctIndex: 1,
+      },
+    ],
+    decisionScenario: {
+      id: 'fp-growth-decision-bonus',
+      prompt: 'You get a surprise $300 bonus at work and haven’t written down any goals yet. What’s your best move?',
+      choices: [
+        { id: 'write-goal-first', label: 'Decide what goal it should go toward before spending any of it', optimality: 90 },
+        { id: 'spend-now', label: 'Spend it right away on something fun', optimality: 30 },
+        { id: 'let-it-sit', label: 'Let it sit in checking and decide later', optimality: 45 },
+        { id: 'copy-friend', label: 'Do whatever a friend says they’d do with theirs', optimality: 15 },
+      ],
+    },
+  },
 };
 
 // Full module with lessons (Saving module)
@@ -538,6 +596,64 @@ export const savingModule: PersonalFinanceModule = {
       correctIndex: 1,
     },
   ],
+  growthCheck: {
+    anchorQuestions: [
+      {
+        id: 'saving-growth-pay-yourself-first',
+        question: 'What does "pay yourself first" mean?',
+        options: [
+          'Save whatever is left after all bills',
+          'Move money to savings the moment you’re paid',
+          'Save once a year',
+          'Pay off debt before anything else',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'saving-growth-emergency-fund-purpose',
+        question: 'What is the main purpose of an emergency fund?',
+        options: [
+          'To earn the highest possible interest',
+          'To cover planned purchases',
+          'To prevent bad decisions when something unexpected happens',
+          'To replace investing entirely',
+        ],
+        correctIndex: 2,
+      },
+      {
+        id: 'saving-growth-automation',
+        question: 'Why does automating your savings help?',
+        options: [
+          'It increases your paycheck',
+          'It removes the need to decide every time',
+          'It raises interest rates',
+          'It stops you from ever spending money',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'saving-growth-opportunity-cost',
+        question: 'What are you giving up when you choose to save money instead of spending it now?',
+        options: [
+          'Nothing, saving has no trade-off',
+          'The chance to use that money on something else right now',
+          'Your ability to ever spend it',
+          'Your credit score',
+        ],
+        correctIndex: 1,
+      },
+    ],
+    decisionScenario: {
+      id: 'saving-growth-decision-payday',
+      prompt: 'You just got paid and have some money left after covering essentials. What’s the smartest move?',
+      choices: [
+        { id: 'auto-transfer', label: 'Have a set amount move to savings automatically before you can spend it', optimality: 95 },
+        { id: 'wait-end-of-month', label: 'Wait until the end of the month to see what’s left over', optimality: 35 },
+        { id: 'spend-now', label: 'Spend it now since you worked hard for it', optimality: 20 },
+        { id: 'inconsistent-amount', label: 'Save it, but change how much every month depending on mood', optimality: 40 },
+      ],
+    },
+  },
 };
 
 // Full module with lessons (Investing module)
@@ -652,6 +768,64 @@ export const investingModule: PersonalFinanceModule = {
       correctIndex: 2,
     },
   ],
+  growthCheck: {
+    anchorQuestions: [
+      {
+        id: 'investing-growth-what-it-is',
+        question: 'Investing is best described as:',
+        options: [
+          'Betting on which price will go up next',
+          'Buying ownership in something that creates value',
+          'A faster type of saving',
+          'A way to avoid all risk',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'investing-growth-time-horizon-risk',
+        question: 'What does a longer time horizon do to how much risk you can handle?',
+        options: [
+          'It has no effect',
+          'It removes risk completely',
+          'It lets you ride out more short-term ups and downs',
+          'It guarantees higher returns',
+        ],
+        correctIndex: 2,
+      },
+      {
+        id: 'investing-growth-diversification',
+        question: 'What does diversification mainly protect you from?',
+        options: [
+          'Losing money on any single investment ever',
+          'One investment’s bad performance sinking your whole plan',
+          'The stock market closing',
+          'Paying taxes',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'investing-growth-consistency',
+        question: 'Why does staying invested consistently usually beat trying to time the market?',
+        options: [
+          'Markets never drop if you’re consistent',
+          'Missing the best growth periods is very costly',
+          'Timing the market is easy once you learn how',
+          'Consistency guarantees profit',
+        ],
+        correctIndex: 1,
+      },
+    ],
+    decisionScenario: {
+      id: 'investing-growth-decision-drop',
+      prompt: 'The market drops 15% right after you invest your first paycheck. What’s the smart move?',
+      choices: [
+        { id: 'stay-invested', label: 'Stay invested and keep contributing on schedule', optimality: 95 },
+        { id: 'sell-everything', label: 'Sell everything to avoid losing more', optimality: 10 },
+        { id: 'pause-contributions', label: 'Stop contributing until it feels safe again', optimality: 30 },
+        { id: 'time-reentry', label: 'Try to guess the exact moment to buy back in', optimality: 25 },
+      ],
+    },
+  },
 };
 
 // Full module with lessons (Insurance module)
@@ -716,6 +890,64 @@ export const insuranceModule: PersonalFinanceModule = {
       correctIndex: 2,
     },
   ],
+  growthCheck: {
+    anchorQuestions: [
+      {
+        id: 'insurance-growth-purpose',
+        question: 'What is the main purpose of insurance?',
+        options: [
+          'To guarantee you never lose money',
+          'To limit the damage from a large, unexpected loss',
+          'To grow your savings faster',
+          'To replace an emergency fund',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'insurance-growth-premium',
+        question: 'What is a "premium"?',
+        options: [
+          'The maximum amount insurance will ever pay',
+          'The regular payment you make to keep coverage active',
+          'The amount you pay before coverage starts',
+          'A bonus you get for not filing a claim',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'insurance-growth-scam-urgency',
+        question: 'Why do scammers try to create a sense of urgency?',
+        options: [
+          'It builds trust with the victim',
+          'It stops you from thinking clearly before you act',
+          'It’s required by law',
+          'It helps verify your identity',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'insurance-growth-liability',
+        question: 'What does "liability" mean?',
+        options: [
+          'The assets you own',
+          'Legal responsibility for harm or damage you caused',
+          'The total coverage limit on a policy',
+          'A type of savings account',
+        ],
+        correctIndex: 1,
+      },
+    ],
+    decisionScenario: {
+      id: 'insurance-growth-decision-urgent-text',
+      prompt: 'You get an urgent text saying your bank account will be frozen unless you click a link right now. What’s the smart move?',
+      choices: [
+        { id: 'contact-bank-directly', label: 'Ignore the link and contact your bank using a number you already trust', optimality: 95 },
+        { id: 'click-link', label: 'Click the link quickly before the deadline', optimality: 5 },
+        { id: 'reply-for-info', label: 'Reply to the text asking for more information', optimality: 20 },
+        { id: 'ignore-fully', label: 'Delete it and don’t look into it at all', optimality: 55 },
+      ],
+    },
+  },
 };
 
 // Full module with lessons (Taxes module)
@@ -780,6 +1012,64 @@ export const taxesModule: PersonalFinanceModule = {
       correctIndex: 1,
     },
   ],
+  growthCheck: {
+    anchorQuestions: [
+      {
+        id: 'taxes-growth-purpose',
+        question: 'What do taxes mainly fund?',
+        options: [
+          'Bank profits',
+          'Public systems and services',
+          'Employer bonuses',
+          'Stock market growth',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'taxes-growth-takehome',
+        question: 'What does "take-home pay" mean?',
+        options: [
+          'Your total salary before anything is taken out',
+          'The money you actually receive after taxes',
+          'Your hourly wage',
+          'Money you save each month',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'taxes-growth-deductions-vs-credits',
+        question: 'How do tax credits reduce what you owe, compared to deductions?',
+        options: [
+          'They work the exact same way',
+          'Credits reduce your taxes owed directly; deductions reduce your taxable income first',
+          'Credits only apply to businesses',
+          'Deductions are always worth more than credits',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'taxes-growth-tax-advantaged',
+        question: 'How do tax-advantaged accounts (like a 401k) help you?',
+        options: [
+          'They guarantee higher investment returns',
+          'They delay or reduce the taxes you pay on that money',
+          'They remove all investment risk',
+          'They’re only available after retirement',
+        ],
+        correctIndex: 1,
+      },
+    ],
+    decisionScenario: {
+      id: 'taxes-growth-decision-side-hustle',
+      prompt: 'You start a side hustle that pays you directly, with no taxes withheld. What’s the smart move?',
+      choices: [
+        { id: 'set-aside-portion', label: 'Set aside a portion of each payment for taxes as you earn it', optimality: 95 },
+        { id: 'spend-and-figure-out-later', label: 'Spend it all and figure out taxes at the end of the year', optimality: 15 },
+        { id: 'assume-not-taxed', label: 'Assume side income isn’t taxed since it’s not a real job', optimality: 5 },
+        { id: 'wait-for-form', label: 'Wait for a tax form to show up before thinking about it', optimality: 40 },
+      ],
+    },
+  },
 };
 
 // Full module with lessons (Credit & Debt module)
@@ -804,6 +1094,64 @@ export const creditDebtModule: PersonalFinanceModule = {
     { question: 'Responsible credit use means:', options: ['Spending often', 'Borrowing maximum amounts', 'Paying late occasionally', 'Using credit lightly'], correctIndex: 3 },
     { question: 'Building credit works best when you:', options: ['Rush decisions', 'Chase rewards', 'Follow simple rules', 'Avoid planning'], correctIndex: 2 },
   ],
+  growthCheck: {
+    anchorQuestions: [
+      {
+        id: 'credit-debt-growth-harmful',
+        question: 'When does debt become harmful?',
+        options: [
+          'The moment you borrow anything',
+          'When it’s unmanaged',
+          'When it’s short term',
+          'When it supports long-term growth',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'credit-debt-growth-credit-score',
+        question: 'What does your credit score mainly measure?',
+        options: [
+          'How much money you have',
+          'Your job title',
+          'Your repayment behavior',
+          'How many credit cards you own',
+        ],
+        correctIndex: 2,
+      },
+      {
+        id: 'credit-debt-growth-avalanche',
+        question: 'How does the "avalanche method" help you pay off debt faster?',
+        options: [
+          'It pays off the smallest balance first for motivation',
+          'It targets the highest-interest debt first, reducing total interest paid',
+          'It pays every debt equally each month',
+          'It skips payments on low-interest debt',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'credit-debt-growth-responsible-use',
+        question: 'What does responsible credit use look like?',
+        options: [
+          'Maxing out every card you have',
+          'Using credit lightly and paying on time',
+          'Paying late occasionally to build history',
+          'Avoiding credit completely forever',
+        ],
+        correctIndex: 1,
+      },
+    ],
+    decisionScenario: {
+      id: 'credit-debt-growth-decision-extra-payment',
+      prompt: 'You have $200 extra this month and two debts: a $500 balance at 24% interest, and a $2,000 balance at 4% interest. What’s the smartest move?',
+      choices: [
+        { id: 'pay-high-interest', label: 'Put the extra $200 toward the 24% interest debt first', optimality: 95 },
+        { id: 'split-evenly', label: 'Split it evenly between both debts', optimality: 45 },
+        { id: 'pay-bigger-balance', label: 'Put it all toward the bigger $2,000 balance', optimality: 25 },
+        { id: 'save-instead', label: 'Save it instead of paying down any debt', optimality: 20 },
+      ],
+    },
+  },
 };
 
 // Full module with lessons (Career Income module)
@@ -828,6 +1176,64 @@ export const careerIncomeModule: PersonalFinanceModule = {
     { question: 'Financial freedom is achieved when:', options: ['You earn $1 million', 'Passive income exceeds expenses', 'You retire at 65', 'You have zero debt'], correctIndex: 1 },
     { question: 'The best first step to build income streams is:', options: ['Quit your job immediately', 'Join a get-rich-quick scheme', 'Maximize your primary career income', 'Start 5 businesses at once'], correctIndex: 2 },
   ],
+  growthCheck: {
+    anchorQuestions: [
+      {
+        id: 'career-growth-human-capital',
+        question: 'What is "human capital"?',
+        options: [
+          'Cash you have saved',
+          'Your future earning potential from skills and experience',
+          'The stocks you own',
+          'Physical assets like a car or home',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'career-growth-market-value',
+        question: 'What mainly determines your market value at work?',
+        options: [
+          'Years of experience alone',
+          'How many degrees you have',
+          'Supply and demand for your specific skills',
+          'How long you’ve been loyal to one company',
+        ],
+        correctIndex: 2,
+      },
+      {
+        id: 'career-growth-skill-stacking',
+        question: 'How does "skill stacking" increase your value?',
+        options: [
+          'It doesn’t — one deep skill is always better',
+          'Combining skills creates a unique, harder-to-replace combination',
+          'It only matters for certifications',
+          'It guarantees a promotion',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'career-growth-passive-income',
+        question: 'What does building real passive income actually require?',
+        options: [
+          'No work at all, ever',
+          'Upfront work or investment before it pays off passively',
+          'Quitting your main job first',
+          'Pure luck and timing',
+        ],
+        correctIndex: 1,
+      },
+    ],
+    decisionScenario: {
+      id: 'career-growth-decision-raise',
+      prompt: 'You want to ask for a raise but have no other job offer or alternative lined up. What’s the smartest move?',
+      choices: [
+        { id: 'build-alternative-first', label: 'Build a real alternative (another offer or in-demand skill) first, then ask from a position of strength', optimality: 90 },
+        { id: 'threaten-quit', label: 'Ask immediately and threaten to quit if they say no', optimality: 15 },
+        { id: 'wait-quietly', label: 'Wait quietly and hope your work gets noticed', optimality: 35 },
+        { id: 'vent-to-coworkers', label: 'Complain to coworkers about being underpaid', optimality: 10 },
+      ],
+    },
+  },
 };
 
 // Full module with lessons (Wealth Fundamentals module)
@@ -846,6 +1252,64 @@ export const wealthFundamentalsModule: PersonalFinanceModule = {
     { question: 'Risk capacity is highest when:', options: ['Income is highest', 'Responsibilities are lowest', 'Age is advanced', 'Markets are stable'], correctIndex: 1 },
     { question: 'Smart investors adjust risk by:', options: ['Following market trends', 'Copying experts', 'Matching their life stage', 'Avoiding all risk'], correctIndex: 2 },
   ],
+  growthCheck: {
+    anchorQuestions: [
+      {
+        id: 'wealth-growth-net-worth',
+        question: 'What is net worth?',
+        options: [
+          'Income minus taxes',
+          'Assets minus liabilities',
+          'Spending minus saving',
+          'Cash minus monthly bills',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'wealth-growth-wealth-vs-income',
+        question: 'How does wealth differ from income?',
+        options: [
+          'Wealth is taxed more heavily',
+          'Wealth is ownership that can keep growing on its own',
+          'Income is always more valuable long-term',
+          'They mean exactly the same thing',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'wealth-growth-systems',
+        question: 'Why do systems (automatic habits) beat relying on motivation?',
+        options: [
+          'They require more willpower',
+          'They keep running even when motivation is low',
+          'They guarantee you’ll get rich',
+          'They increase your income directly',
+        ],
+        correctIndex: 1,
+      },
+      {
+        id: 'wealth-growth-risk-capacity',
+        question: 'When is your capacity to take on financial risk usually highest?',
+        options: [
+          'When you have the most responsibilities',
+          'When you’re young with few dependents and time to recover',
+          'Right before retirement',
+          'Only when markets are already rising',
+        ],
+        correctIndex: 1,
+      },
+    ],
+    decisionScenario: {
+      id: 'wealth-growth-decision-first-paycheck',
+      prompt: 'You just landed your first stable paycheck with low expenses and no dependents. What’s the smart move with risk?',
+      choices: [
+        { id: 'use-high-capacity', label: 'Take advantage of your high risk capacity now, while you have time to recover from setbacks', optimality: 90 },
+        { id: 'avoid-all-risk', label: 'Avoid all risk until you’re much older', optimality: 30 },
+        { id: 'copy-influencer', label: 'Copy exactly what an influencer online is investing in', optimality: 15 },
+        { id: 'wait-for-perfect-moment', label: 'Wait for the "perfect" moment to start', optimality: 25 },
+      ],
+    },
+  },
 };
 
 // Get all modules for display
