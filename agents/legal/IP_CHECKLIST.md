@@ -5,7 +5,7 @@
 > attorney, offered guidance on the June 9, 2026 call).
 
 Status key: `NOT STARTED` · `IN PROGRESS` · `BLOCKED (needs Phil/counsel)` · `FILED` · `DONE`
-Last updated: **2026-07-05**. Open risk from the plan: **nothing is filed yet** while an
+Last updated: **2026-09-21** (trademark web-layer re-verification; see AUDIT_LOG.md). Open risk from the plan: **nothing is filed yet** while an
 APS partnership is actively being pursued.
 
 ---
@@ -13,16 +13,24 @@ APS partnership is actively being pursued.
 ## 1. Federal trademark — "Phil's Financials" (HIGHEST PRIORITY)
 
 **Status:** IN PROGRESS (protocol documented 2026-07-05 AM; common-law + indexed-DB
-layers run 2026-07-05 PM — see AUDIT_LOG Run 2 §B; official USPTO expert-mode queries
-still pending) · **Owner:** Phil (with trademark counsel — Brian can advise)
+layers run 2026-07-05 PM, re-verified 2026-09-21 — see AUDIT_LOG Run 2 §B and the
+2026-09-21 entry §A; official USPTO expert-mode queries still pending) · **Owner:** Phil
+(with trademark counsel — Brian can advise)
 
 > **Preliminary results (2026-07-05, aggregator/web layer only — NOT a substitute for
-> the official USPTO search):** no identical "Phil's Financials" mark found in indexed
-> federal databases or third-party web use. **One confusion candidate found and flagged
-> for counsel (F-15): "Finance With Phil"** — Atlanta-based financial-literacy app +
-> courses (financewithphil.com/.org, @financewithphil), apparently common-law
-> (no federal registration indexed). Same city/field/channel, "Phil" dominant element,
-> adult-skewing audience. Counsel must assess before filing.
+> the official USPTO search; re-checked 2026-09-21, no change): no identical "Phil's
+> Financials" mark found in indexed federal databases or third-party web use. **One
+> confusion candidate found and flagged for counsel (F-15): "Finance With Phil"** —
+> Atlanta-based financial-literacy app + courses (financewithphil.com/.org,
+> @financewithphil), apparently common-law (no federal registration indexed, still true
+> as of 2026-09-21). Same city/field/channel, "Phil" dominant element, adult-skewing
+> audience. Counsel must assess before filing.
+>
+> **Blocker, stated plainly (2026-09-21):** the official USPTO expert-mode search at
+> tmsearch.uspto.gov is a JavaScript app this agent cannot query automatically (fetch
+> attempts return 403 / no scrapable results). Someone with a browser — Phil or Brian —
+> needs to run the 7 queries in §1 below directly and record hit counts/serial numbers.
+> This item cannot move past IN PROGRESS without that.
 
 - [ ] **Clearance search first.** USPTO trademark search (successor to TESS):
       https://tmsearch.uspto.gov — search "Phil's Financials," "Phils Financials,"
@@ -77,7 +85,11 @@ still pending) · **Owner:** Phil (with trademark counsel — Brian can advise)
 
 ## 2. Patent landscape — "gamified financial decisions → virtual kingdom" (Bamboo Empire)
 
-**Status:** NOT STARTED · **Owner:** Legal agent can draft the search; counsel interprets
+**Status:** IN PROGRESS (initial Google Patents + CPC-code search run 2026-09-20 — see
+AUDIT_LOG.md same date for the five closest references found; none match the specific
+persistent-virtual-kingdom-tied-to-a-financial-literacy-curriculum combination, but this is
+landscape awareness, not a freedom-to-operate clearance opinion) · **Owner:** Legal agent
+can draft the search; counsel interprets
 
 - [ ] **Google Patents search:** https://patents.google.com — suggested queries:
       - `("financial literacy" OR "financial education") AND (game OR gamified) AND ("virtual world" OR "virtual city" OR kingdom OR empire)`
