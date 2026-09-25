@@ -695,3 +695,80 @@ All other PC statuses unchanged from the 2026-07-05 Run 3 tables.
 - Safe Harbor (C4) and NY CDPA (N1) decisions remain the next research gates for PC-18 (d).
 
 *End of 2026-07-06 entry. Future runs: append below this line.*
+
+---
+
+# 2026-09-25 Run — Copyright registration (IP_CHECKLIST §3) fee/process research; Federal Register fee-hike alert; re-audit
+
+> Not legal advice. Attorney review required before reliance.
+
+## A. Ledger check + APPROVED-item application
+
+No items are marked `APPROVED` in the status ledger, so nothing from the propose-only
+queue was applied this run. Standing blockers (GA LLC legal name, privacy contact
+email/address, panda-art authorship, repo visibility, Gemini billing-tier ops
+confirmation, Supabase function undeploy) remain unresolved — none have changed since
+the 2026-09-21 entry (which is sitting in unmerged PR #25, not yet on `main`; this run's
+baseline is `main`'s 2026-07-06 state per the standard "read CHARTER + latest AUDIT_LOG
+entry" process, since that is what's actually merged).
+
+## B. Queue item advanced: Copyright registration (§3), previously NOT STARTED
+
+Researched current eCO registration process and fees (primary source: copyright.gov and
+the Federal Register). Two findings worth Phil's attention now, before any filing:
+
+1. **A real fee increase is in motion, not yet final.** The Copyright Office published a
+   fee-schedule rule in the Federal Register on 2026-03-20 (Federal Register document
+   2026-05529, "Copyright Office Fees"). It raises the Standard Application fee from **$65
+   to $85** (~31% increase) and is projected to take effect roughly 120 days after
+   publication — reporting puts that at **mid-November 2026** — unless Congress objects
+   during its statutory review window. **This has not taken effect yet** as of today; the
+   $65 fee is still current. **Recommendation for Phil:** if the app UI, panda art, and
+   curriculum content are going to be registered anyway, filing before the increase takes
+   effect saves real money across multiple works (UI, character art, marketing materials,
+   curriculum/lesson content — §3 already lists these as separate registerable works).
+2. **The cheaper "Single Application" option ($45, one author/one work, not-for-hire) is
+   being eliminated entirely** in the same rulemaking — the Office's stated reason is a
+   high refusal rate and inefficiency. Any registration going forward should be planned and
+   budgeted as a **Standard Application** ($65 now, $85 later), not the cheaper option.
+3. **Verification limits, stated plainly:** this agent cannot monitor the Federal Register
+   for the rule's actual effective date or whether Congress intervenes between runs. Before
+   Phil or counsel relies on the $85 figure or November timing, someone should re-check
+   copyright.gov/about/fees.html or the docket for the rule's final status.
+
+**`IP_CHECKLIST.md` §3 updated** (auto-apply tier: additive doc content, no app behavior
+changed): status moved from `NOT STARTED` to `IN PROGRESS`; fee bullet rewritten with the
+current/upcoming fee numbers, the Single Application elimination, the mid-November 2026
+target effective date, and an explicit "NEEDS ATTORNEY/PHIL VERIFICATION" flag on the
+effective-date timing. The pre-existing blocked question (who created the panda art —
+human vs. AI vs. contractor, which governs registrability and the work-for-hire chain)
+is unchanged and still blocks moving §3 past research into an actual filing decision.
+
+## C. Re-audit of files changed since last log date (2026-07-06)
+
+`git log` on `main` shows no new commits since `196693c` (last audited 2026-09-20/21 on
+unmerged branches; `main`'s tip is unchanged at that commit). Nothing new to re-audit this
+run beyond what the 2026-09-20 and 2026-09-21 entries already covered (both sitting in
+unmerged PRs #22/#25 — see standing blocker #7 below).
+
+## D. Standing blockers for Phil (re-surfaced, unchanged)
+
+1. Exact GA LLC legal name (ecorp.sos.ga.gov).
+2. Canonical privacy contact email + mailing address.
+3. Panda art / comic-panel authorship (human vs. AI vs. contractor) — now also blocks
+   §3 copyright registration decisions, not just the design-mark filing.
+4. Repo visibility (public/private?).
+5. OPS (P0): confirm Gemini Cloud project billing tier (paid vs. unpaid) + DPA + region + ZDR.
+6. OPS (P0, carried): undeploy `phil-chat` / `phil-chat-openai` on Supabase project
+   `qssqbpllqkorfjcxgomh`; remove/revoke `PERPLEXITY_API_KEY`.
+7. **Carried, still growing:** legal/education research PRs remain unmerged on GitHub
+   (now 6+ across both agents, oldest from July) — see the translator digest for the full
+   count. Each stays open, the next run risks re-deriving or duplicating research that's
+   already sitting on a branch.
+8. **NEW:** the Copyright Office Standard Application fee is set to rise from $65 to $85
+   around mid-November 2026, and the cheaper Single Application option is being retired —
+   if Phil wants to register the app UI, panda art, or curriculum content, filing before
+   that date is worth roughly $20/work saved, multiplied by however many separate works
+   get registered.
+
+*End of 2026-09-25 entry. Future runs: append below this line.*

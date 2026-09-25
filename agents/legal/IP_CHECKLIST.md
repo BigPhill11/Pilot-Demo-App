@@ -5,8 +5,8 @@
 > attorney, offered guidance on the June 9, 2026 call).
 
 Status key: `NOT STARTED` · `IN PROGRESS` · `BLOCKED (needs Phil/counsel)` · `FILED` · `DONE`
-Last updated: **2026-07-05**. Open risk from the plan: **nothing is filed yet** while an
-APS partnership is actively being pursued.
+Last updated: **2026-09-25** (§3 copyright fees/process). Open risk from the plan:
+**nothing is filed yet** while an APS partnership is actively being pursued.
 
 ---
 
@@ -95,11 +95,20 @@ still pending) · **Owner:** Phil (with trademark counsel — Brian can advise)
 
 ## 3. Copyright registration — interface design + marketing materials (parallel with TM)
 
-**Status:** NOT STARTED · **Owner:** Phil (self-file is feasible; counsel review helpful)
+**Status:** IN PROGRESS (fee/process research done 2026-09-25 — see below; nothing filed) · **Owner:** Phil (self-file is feasible; counsel review helpful)
 
 - [ ] Register via the U.S. Copyright Office eCO portal: https://www.copyright.gov/registration/
-      — Standard Application **$65** (or Single Application $45 where eligible, one author/
-      one work).
+      — Standard Application **$65 today**, rising to **$85** in a fee change published in
+      the Federal Register 2026-03-20 (effective ~120 days later absent a Congressional
+      objection, i.e. **mid-November 2026** — file before then if cost matters). **Single
+      Application ($45, one author/claimant/work) is being eliminated entirely** in the
+      same rulemaking (cited reason: highest refusal rate, inefficient for applicants and
+      the Office) — do not plan around that cheaper option; budget for Standard
+      Application ($65 now / $85 post-effective-date) for every work filed.
+      **NEEDS ATTORNEY/PHIL VERIFICATION** that the rule has actually taken effect and the
+      final numbers match before Phil pays — Congress has a 120-day window to object, and
+      this agent cannot monitor federal-register status changes between runs. Source:
+      Federal Register 2026-05529 (Copyright Office Fees), published 2026-03-20.
 - [ ] **Works to register (discuss bundling with counsel):**
       1. App UI as a visual/audiovisual work — deposit: curated screenshots of key screens
          (onboarding, Learn, Bamboo Empire, dashboard, Ask Phil).
