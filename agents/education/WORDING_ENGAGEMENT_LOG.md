@@ -152,3 +152,66 @@ Voice matches the module's contraction-light style; string-literal only, no esca
 1. Taxes-focused copy pass: apply Findings 9 (quiz→decision) and 10 (Atlanta/teen hooks) across `taxes/lesson-1/2` (auto-apply copy).
 2. Read `wealth-fundamentals/lesson-3-risk-life-stages.ts` (SSEPF1e legacy check) and `taxes/lesson-3/4/5` + boss (residual SSEPF5 check) to close the two remaining §5 verification items.
 3. Draft the Week-1 (Income) 6+6 pre/post item blueprint in `ASSESSMENT_SPEC.md` v0.2 (doc-only, auto-apply) — the next P0 #2 step.
+
+---
+
+## 2026-09-25 — Generational-wealth beat added to Wealth Fundamentals (closes SSEPF1e gap)
+
+**Run scope:** No items marked `APPROVED` in this log, so nothing from the propose-only
+queue was applied this run. `main` had no new commits since the 2026-07-06 entry (the
+2026-09-07/09-20/09-21 passes are sitting in unmerged PRs #19, #23, #24 — see the
+translator digest / SUGGESTIONS_LOG for the growing-backlog note). Re-verified the
+2026-07-06 auto-applied edits are all still present and unchanged in source.
+
+**Advanced the next-sweep-queue item carried since 2026-09-20/21: the generational-wealth
+beat for Wealth Fundamentals.** Applied directly to
+`src/data/personal-finance/wealth-fundamentals/lesson-1-what-wealth-is.ts` (auto-apply —
+lesson copy, no logic/structure change):
+
+- **microLesson** — added a closing paragraph introducing generational wealth: money,
+  property, or a business passed down to family, or built now to help them later. Concrete
+  examples (paid-off house, a grandchild's savings account, a family business) and an
+  explicit "you don't have to be rich to start it" framing so it doesn't read as
+  aspirational-only for this audience.
+- **New flashcard — "Generational Wealth"** — definition plus a `philsAnalogy` extending
+  the module's existing bamboo-forest theme: inheriting a bamboo grove already growing
+  instead of starting from a bare field.
+- **New quiz item** — decision/concept style (not recall): distinguishes generational
+  wealth from high current income, matching the module's existing quiz pattern.
+- String-literal-only change; no imports, types, scoring logic, or component code touched.
+  Diff reviewed line-by-line after editing; quotes/commas/brackets balanced.
+- **Not run this pass:** `npx tsc --noEmit` — no `node_modules` installed in this run's
+  workspace checkout. The 2026-07-06 run's precedent (0 pre-existing errors under
+  `src/data/personal-finance/`) and a manual diff review are the verification for this
+  string-literal-only change; flagging for a future run to confirm with a real compile
+  once dependencies are available.
+
+**`GA_STANDARDS_ALIGNMENT.md` updated:** SSEPF1e moved from **PARTIAL** to **STRONG** in
+§3 (Wealth Fundamentals row); verification-queue item 8 (verify `lesson-3` for
+legacy/transfer content) closed — confirmed `lesson-3-risk-life-stages.ts` covers
+investment-risk-by-age only, so the gap was closed with new `lesson-1` content instead of
+being found already covered.
+
+### Still OPEN / not done this run
+
+- **SSEPF5b full closure** (regressive-vs-proportional-vs-flat comparison) — carried from
+  2026-09-21, still not started. (Note: the 2026-09-21 partial fix for this, the tax-bracket
+  addition to `taxes/lesson-5`, is sitting in unmerged PR #24 and hasn't reached `main`.)
+- **Week-1 (Income) 6+6 pre/post assessment blueprint in `ASSESSMENT_SPEC.md` v0.2** —
+  carried over since 2026-07-06, still not started.
+- **Finding 6** (microLesson-after-simulator ordering, PROPOSE-ONLY) — still OPEN,
+  unchanged, awaiting Phil.
+- **STD-TAG-1** (`gaStandards?: string[]` type addition, PROPOSE-ONLY) — still OPEN,
+  awaiting Phil.
+
+### Next sweep queue (2026-09-25)
+
+1. SSEPF5b full closure: a short "who pays what share" comparison (flat sales tax vs.
+   income-tax brackets) in the Taxes module — auto-apply lesson copy.
+2. Week-1 (Income) 6+6 pre/post assessment blueprint in `ASSESSMENT_SPEC.md` v0.2.
+3. **Reminder, getting louder:** merging PRs #19 (2026-09-07 taxes copy pass), #23
+   (2026-09-20 standards verification), and #24 (2026-09-21 tax-bracket addition) would
+   let future runs build on real current source instead of re-deriving/duplicating this
+   context every single run.
+
+*End of 2026-09-25 entry. Future runs: append below this line.*
