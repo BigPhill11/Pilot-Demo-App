@@ -97,6 +97,38 @@ second full pass same day if there's something genuinely new to work from
 (e.g. Phil merged a PR or left new instructions).
 
 ---
+---
+
+## 2026-09-25 — Status check + new suggestion: the PR backlog is now the #1 problem
+
+**Checked what Phil acted on since 2026-09-20/21:** nothing. No PRs merged or closed, no
+new commits to `main` other than the two translator-run notes already in this log. PRs
+#18-#25 (8 of them, oldest from 2026-09-04) are all still open. This run added two more
+(#26 education, #27 legal), bringing the **total open PRs to 17**.
+
+**#5 (merge/close PRs on a cadence)** — Status: **still offered, not acted on**. Restating
+because it's now the clearest bottleneck: today's legal and education passes both had to
+build on `main`'s stale 2026-07-06 baseline (the newer 2026-09-07/09-20/09-21 research is
+still sitting unmerged on branches), and both runs' new PRs (#26, #27) will make the next
+run's context problem worse if left unmerged too.
+
+**#7 (skip duplicate same-day firing)** — Status: **accepted / working as intended** — no
+duplicate firing happened between 2026-09-21 and today (2026-09-25), so this hasn't been
+tested again, but the logic is in place and this run didn't need it.
+
+**#8 — NEW: the backlog itself, not just the review cadence, needs a decision**
+Status: offered
+17 open PRs is no longer a "review when you get a chance" situation — it's grown every
+week since July. A few of the oldest ones (#8, #9, #10 from July) may no longer even be
+worth merging if their findings are now superseded by later research on other branches.
+Suggestion: rather than reviewing all 17 individually, spend 10 minutes once doing a
+**triage pass**, not a review pass — for each PR, decide only "still relevant" (merge
+later) or "stale, superseded, or not needed" (close, no read required). This turns 17
+overwhelming reviews into a short sort, and this agent can merge the "still relevant" pile
+into a clean, self-consistent state on `main` afterward so future runs stop working from
+a four-month-old baseline.
+
+---
 
 *Next run: check whether Phil acted on offered suggestions above before
 adding new ones. Mark accepted/dismissed based on what actually happened, not
