@@ -695,3 +695,76 @@ All other PC statuses unchanged from the 2026-07-05 Run 3 tables.
 - Safe Harbor (C4) and NY CDPA (N1) decisions remain the next research gates for PC-18 (d).
 
 *End of 2026-07-06 entry. Future runs: append below this line.*
+
+---
+
+# 2026-09-26 — Georgia LLC annual-registration research (IP_CHECKLIST §4); backlog re-flagged
+
+> Not legal advice. Attorney review required before reliance.
+
+## A. Ledger check + APPROVED-item application
+
+No items are marked `APPROVED` in the status ledger, so nothing from the propose-only
+queue was applied this run. Standing blockers (GA LLC legal name, privacy contact
+email/address, panda-art authorship, repo visibility, Gemini billing-tier ops
+confirmation, Supabase function undeploy) remain unresolved. As with the 2026-09-25 run,
+this run's baseline is `main`'s tip (still `dccf46a` / content-wise last real legal entry
+2026-07-06) per the standard "read CHARTER + latest merged AUDIT_LOG entry" process —
+several newer legal passes (Safe Harbor/NY CDPA research, patent landscape search,
+trademark web-layer re-verification, copyright fee research) are sitting on unmerged
+branches and are **not** reflected in this baseline. See §D for the growing-backlog note.
+
+## B. Queue item advanced: Georgia LLC reporting compliance (§4), previously NOT STARTED
+
+Verified the current general process and fee schedule directly against the Georgia
+Secretary of State's own site (primary source, checked today):
+
+1. **The checklist's $50 annual-registration fee figure was stale — the actual fee is
+   $60** (online and paper filings cost the same), confirmed on sos.ga.gov's official
+   "How to File Annual Registration" guide. This is a real, actionable correction, not a
+   rounding difference.
+2. **Filing window confirmed unchanged:** January 1 – April 1 each year, filed through
+   eCorp's "One Click Annual Registration" tool.
+3. **New detail not previously in the checklist:** a **$25 late-filing penalty** applies
+   after April 1, and mailing a paper filing adds a further **$10** surcharge (filing
+   online avoids that surcharge).
+4. **This agent cannot look up Phil's specific LLC** (name, control number, or whether the
+   2026 registration was actually filed) — that still requires Phil or someone with
+   authorized eCorp access to check https://ecorp.sos.ga.gov directly. Flagged as a
+   standing blocker (§D) with an explicit "put next year's window on the calendar" ask,
+   since a lapsed registration risking administrative dissolution would be a bad thing to
+   discover for the first time during APS procurement review.
+
+**`IP_CHECKLIST.md` §4 updated** (auto-apply tier: additive doc content, no app behavior
+changed): status moved from `NOT STARTED` to `IN PROGRESS`; fee/deadline/penalty bullets
+rewritten with the corrected $60 figure, the $25 late penalty, the $10 mail surcharge, and
+sources. The pre-existing blocked question (exact LLC legal name/control number) is
+unchanged and still blocks every other Part 1 item that depends on the LLC's legal name
+(PC-5, PC-8, PC-18(a), trademark filing).
+
+## C. Re-audit of files changed since last log date (2026-07-06)
+
+`git log` on `main` shows no new commits since `196693c` other than translator-agent
+housekeeping (charter/suggestions-log updates) — nothing in `src/` or `supabase/` changed
+on `main` since the 2026-07-06 re-audit, so there is nothing new to re-audit against the
+PROPOSE-ONLY / AUTO-APPLY tiers this run.
+
+## D. Standing blockers for Phil (re-surfaced, unchanged + one addition)
+
+1. Exact GA LLC legal name (ecorp.sos.ga.gov) — **now also directly blocks confirming
+   whether the 2026 annual registration was filed** (see §B.4).
+2. Canonical privacy contact email + mailing address.
+3. Panda art / comic-panel authorship (human vs. AI vs. contractor).
+4. Repo visibility (public/private?).
+5. OPS (P0): confirm Gemini Cloud project billing tier (paid vs. unpaid) + DPA + region + ZDR.
+6. OPS (P0, carried): undeploy `phil-chat` / `phil-chat-openai` on Supabase project
+   `qssqbpllqkorfjcxgomh`; remove/revoke `PERPLEXITY_API_KEY`.
+7. **Carried, still growing:** legal/education research PRs remain unmerged on GitHub —
+   17 open as of this run (oldest from July), including four unmerged legal-agent research
+   passes newer than this log's own merged baseline. Every week they stay open, the next
+   run risks re-deriving research that already exists on a branch. See the translator
+   digest for the full count and today's suggestion.
+8. **NEW (carried from 2026-09-26):** confirm the LLC's 2026 Georgia annual registration
+   was actually filed in the Jan 1 – Apr 1 window, and calendar the 2027 window now.
+
+*End of 2026-09-26 entry. Future runs: append below this line.*
