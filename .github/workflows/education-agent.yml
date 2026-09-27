@@ -26,6 +26,9 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # TEMPORARY: exposes the full API error so the auth/billing issue can be diagnosed.
+          # Remove once the ANTHROPIC_API_KEY is confirmed valid and the agents run successfully.
+          show_full_output: true
           prompt: |
             REPO: ${{ github.repository }}
 

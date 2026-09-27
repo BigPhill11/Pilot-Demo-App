@@ -53,3 +53,32 @@ git push
 Tell Claude "cloud runs are working" so the duplicate local Mac schedules get
 paused. If a key ever leaks or you're unsure, delete it in the Anthropic
 Console and repeat Steps 1–2 with a fresh one.
+
+## Troubleshooting — agent runs fail immediately with no PR
+
+**Symptom:** The GitHub Actions job shows red (failure), the run takes < 30 s,
+and the error is `Claude execution failed: result is_error:true` with
+`total_cost_usd: 0`. No pull request is opened.
+
+**What this means:** Claude Code initialised but the Anthropic API rejected the
+request before processing a single token. The three most common causes are:
+
+1. **API key not set or set incorrectly.** Go to the repo →
+   Settings → Secrets and variables → Actions. Confirm that `ANTHROPIC_API_KEY`
+   exists and that its value starts with `sk-ant-api03-`. If it's missing or
+   looks wrong, delete it and repeat Steps 1–2 above with a fresh key.
+
+2. **No billing on the Anthropic account.** Even a valid API key returns an
+   error if the account has no payment method. Log in to
+   https://console.anthropic.com → Settings → Billing and confirm a card is
+   saved and the account is not over its spend limit.
+
+3. **Model access.** The agent uses `claude-opus-5` by default, which requires
+   a paid plan. A free-trial account may not have access to it. Adding billing
+   (step 2 above) normally resolves this; or contact Anthropic support if
+   billing is already set up.
+
+**To see the exact error:** The workflows now include `show_full_output: true`,
+so the next run will print the full API error message in the job log under
+"Run anthropics/claude-code-action@v1". Look for a line like
+`"error": "..."` or `"status": 401/402/403` to pinpoint the cause.
