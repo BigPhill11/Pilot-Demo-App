@@ -13,7 +13,9 @@ Income and wealth are not the same thing. A person can earn a lot and still have
 
 Wealth is not about showing status. It is about ownership and systems. Your net worth, which is what you own minus what you owe, is the real measure. The goal is to build a system that creates stability, choices, and room to breathe.
 
-Resilience is part of wealth too. Savings help with emergencies. Investments help with long-term growth. Skills help with earning. Good planning connects those pieces so you stop chasing appearances and start building ownership, stability, and long-term freedom.`,
+Resilience is part of wealth too. Savings help with emergencies. Investments help with long-term growth. Skills help with earning. Good planning connects those pieces so you stop chasing appearances and start building ownership, stability, and long-term freedom.
+
+Wealth can also outlast you. This is called generational wealth: money, property, or a business passed down to family members after you're gone, or built now to help them while you're still here. A paid-off house left to a child, a savings account started for a grandchild, or a family business handed down are all examples. You don't have to be rich to start it. It grows from the same assets you're already learning to build in this module. The bamboo forest you plant can keep growing long after you step away from it.`,
   flashcards: [
     {
       term: 'Wealth',
@@ -39,6 +41,11 @@ Resilience is part of wealth too. Savings help with emergencies. Investments hel
       term: 'Cash Flow',
       definition: 'Money that comes in and goes out over time. Positive cash flow means keeping money after expenses.',
       philsAnalogy: "Cash flow is the tide. Positive flow fills your pond higher each month. Negative flow drains it slowly."
+    },
+    {
+      term: 'Generational Wealth',
+      definition: 'Assets, money, or property passed down from one generation to the next, or built specifically to benefit family members in the future.',
+      philsAnalogy: "Generational wealth is planting a bamboo grove your kids inherit already growing, so they don't start from a bare field like you did."
     }
   ],
   simulatorGame: {
@@ -180,6 +187,12 @@ Resilience is part of wealth too. Savings help with emergencies. Investments hel
       options: ["It forces you to spend more", "It creates room to save and invest", "It prevents all emergencies", "It guarantees you'll become wealthy"],
       correctIndex: 1,
       explanation: "Positive cash flow means money left after expenses, which can be saved and invested to build wealth."
+    },
+    {
+      question: "Generational wealth means",
+      options: ["Getting rich quickly through investments", "Assets or money passed down or built to benefit family in the future", "Having a high income right now", "Avoiding all debt for your whole life"],
+      correctIndex: 1,
+      explanation: "Generational wealth is about what gets passed on or built for family members, like a paid-off home, savings, or a business, not about how much you earn today."
     }
   ],
   powerMove: "Track your net worth monthly by listing assets and liabilities in one simple note. Watch the trend, not the number.",
