@@ -5,7 +5,8 @@
 > attorney, offered guidance on the June 9, 2026 call).
 
 Status key: `NOT STARTED` · `IN PROGRESS` · `BLOCKED (needs Phil/counsel)` · `FILED` · `DONE`
-Last updated: **2026-07-05**. Open risk from the plan: **nothing is filed yet** while an
+Last updated: **2026-09-26** (§4 Georgia LLC annual-registration fee/process). Open risk
+from the plan: **nothing is filed yet** while an
 APS partnership is actively being pursued.
 
 ---
@@ -118,15 +119,27 @@ still pending) · **Owner:** Phil (with trademark counsel — Brian can advise)
 
 ## 4. Georgia LLC reporting compliance
 
-**Status:** NOT STARTED (verify current standing) · **Owner:** Phil
+**Status:** IN PROGRESS (general process/fee research done 2026-09-26 — see AUDIT_LOG;
+still blocked on the LLC's own name/control number) · **Owner:** Phil
 
 - [ ] Confirm the LLC's exact legal name + control number: https://ecorp.sos.ga.gov
       (Business Search). The legal name must then be used in the Privacy Policy, Terms,
       APS paperwork, and USPTO filings.
-- [ ] **Annual registration:** due **January 1 – April 1** each year, $50 online via
-      eCorp. Verify 2026 registration was filed; calendar 2027.
+- [ ] **Annual registration:** window is **January 1 – April 1** each year (filed via
+      eCorp's "One Click Annual Registration": https://ecorp.sos.ga.gov/oneClickAR). Fee is
+      **$60** (online and paper are the same fee) — this is **higher than the $50 this
+      checklist previously assumed**; re-verify at filing time in case it changes again.
+      A late filing (after April 1) adds a **$25 penalty**; mailed paper filings also add a
+      **$10** mail-in surcharge on top of the $60. **NEEDS PHIL VERIFICATION:** confirm the
+      LLC's 2026 annual registration was actually filed (Jan 1–Apr 1 window) and put the
+      2027 window (Jan 1–Apr 1, 2027) on Phil's calendar now so it isn't missed.
+      Source: Georgia Secretary of State, "How to File Annual Registration"
+      (https://sos.ga.gov/how-to-guide/how-file-annual-registration) and
+      https://georgia.gov/renew-llc, both checked 2026-09-26.
 - [ ] Confirm registered agent info is current; check good-standing status (districts run
-      this check during procurement).
+      this check during procurement). A lapsed annual registration risks administrative
+      dissolution, which would be a serious problem to discover mid-APS-procurement — this
+      is why the reminder above matters even before the LLC's legal name is confirmed.
 - [ ] Consider: does the LLC own the IP? If code/art was created before the LLC existed
       or personally, execute an **assignment to the LLC** before trademark/copyright
       filings name the LLC as owner. **NEEDS ATTORNEY.**
