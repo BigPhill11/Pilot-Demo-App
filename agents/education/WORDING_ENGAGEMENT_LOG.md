@@ -152,3 +152,58 @@ Voice matches the module's contraction-light style; string-literal only, no esca
 1. Taxes-focused copy pass: apply Findings 9 (quiz→decision) and 10 (Atlanta/teen hooks) across `taxes/lesson-1/2` (auto-apply copy).
 2. Read `wealth-fundamentals/lesson-3-risk-life-stages.ts` (SSEPF1e legacy check) and `taxes/lesson-3/4/5` + boss (residual SSEPF5 check) to close the two remaining §5 verification items.
 3. Draft the Week-1 (Income) 6+6 pre/post item blueprint in `ASSESSMENT_SPEC.md` v0.2 (doc-only, auto-apply) — the next P0 #2 step.
+
+---
+
+## 2026-09-26 — Drafted Week 1 (Income) pre/post assessment blueprint (P0 #2); backlog re-flagged
+
+**Run scope:** No items are marked `APPROVED` in the logs, so nothing from the
+propose-only queue was applied this run. As with prior runs, this run's baseline is
+`main`'s tip, which is unchanged in `src/` since 2026-07-06 — several newer education
+passes (taxes copy pass, standards-verification close-out, tax-bracket lesson addition,
+generational-wealth beat) are sitting on unmerged branches and are not reflected here. To
+avoid re-doing that already-completed work on top of a stale baseline, this run picked a
+genuinely untouched item instead: the pre/post assessment instrumentation (P0 #2 in
+`MODULE_GAP_ANALYSIS.md`), which no other branch has worked on.
+
+### Deep item this run — `ASSESSMENT_SPEC.md` v0.2: Week 1 (Income) 6+6 item blueprint
+
+Drafted the full pilot blueprint queued as the 2026-07-06 log's next-sweep item #3: 6 pre
+items + 6 parallel post items (2 anchors), tagged to SSEPF2a/2c/8c, grounded in the actual
+Week-1 lesson content (`income/lesson-1-active-income.ts` hours-vs-hourly-value framing,
+`lessons/lesson-2-controlling-pay.ts` gross-vs-net pay). See `ASSESSMENT_SPEC.md` §7 for
+the full item tables. This is **doc-only** (auto-apply tier: new content under
+`agents/education/`) — nothing in `src/` changed, and wiring these items into the app
+still requires Phil's APPROVED mark on proposals P1–P4 in `ASSESSMENT_SPEC.md` §5.
+
+Also flagged Saving (Week 3) as the next module to draft a parallel 6+6 blueprint for,
+since it has the next-clearest single-topic lessons to build items from.
+
+### Standing carried items (unchanged, still queued from 2026-07-06)
+
+1. Taxes-focused copy pass (Findings 9 & 10) — **already done on unmerged branch**
+   `education-agent/2026-09-07-taxes-copy-pass-v2` (PR #19/#20); will land once that PR is
+   merged, no need to redo.
+2. Wealth-fundamentals `lesson-3` / taxes `lesson-3/4/5` + boss residual SSEPF5/SSEPF1e
+   verification — **already done on unmerged branches**
+   `education-agent/2026-09-20-standards-verification` (PR #23),
+   `education-agent/2026-09-21-taxes-bracket-addition` (PR #24), and
+   `education-agent/2026-09-25-daily-pass` (PR #26); will land once merged.
+3. **Carried, still growing:** 17 open PRs across both agents as of this run, several of
+   which (see items 1–2 above) contain content this run would otherwise have duplicated.
+   Restating the translator's backlog suggestion: merging or closing the oldest PRs would
+   let future runs build on the real current state of the lesson content instead of
+   July's baseline.
+
+### Next sweep queue (2026-09-26)
+1. Draft the Saving (Week 3) 6+6 pre/post item blueprint in `ASSESSMENT_SPEC.md` (doc-only,
+   auto-apply) — continues P0 #2.
+2. Once the PR backlog clears, re-audit which `WORDING_ENGAGEMENT_LOG.md` findings from
+   09-07/09-20/09-21/09-25 are now actually in `main`'s `src/`, and pick up the rotation
+   (reading level → cultural relevance → decision-density → standards alignment) on a
+   module not yet covered this way: Career Readiness's four content-less modules
+   (Business Etiquette, Networking, Professional Habits, Personal Brand — see
+   `career-readiness/modules.ts`, which has only title/description/`learningPoints` for
+   each, no lesson content file at all) are the largest remaining gap, but building real
+   lesson content for them is a bigger structural addition than a single low-risk copy
+   pass — flagging for Phil's input on priority before the next run scopes it.
