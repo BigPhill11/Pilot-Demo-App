@@ -6,6 +6,12 @@ import VillageLessonSimulator from './simulators/VillageLessonSimulator';
 import VillageQuizStep from './VillageQuizStep';
 import VillageTeachPhilStep from './VillageTeachPhilStep';
 import type { TeachPhilResult } from '@/hooks/useTeachPhilSession';
+import ComicPanel from '@/components/comic/ComicPanel';
+import {
+  getVillageComicPlaceholderUrl,
+  getVillageConceptPanelUrl,
+  getVillageLessonHeroUrl,
+} from '@/data/village-lessons/comic-panels';
 
 type Step = 'intro' | 'learn' | 'simulate' | 'quiz' | 'teach' | 'empire';
 
@@ -127,6 +133,14 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
         {/* ══ INTRO STEP ══ */}
         {step === 'intro' && (
           <div className="space-y-4">
+            <ComicPanel
+              imageUrl={lesson.heroImage?.src ?? getVillageLessonHeroUrl(lesson.moduleId, lesson.id)}
+              imageFallbackUrl={getVillageComicPlaceholderUrl(lesson.title)}
+              caption={lesson.title}
+              speechBubble={{ text: lesson.hook.question, speaker: 'Phil' }}
+              panelStyle="wide"
+            />
+
             {/* Hero hook card */}
             <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-green-600 to-emerald-700 p-5 text-white shadow-lg">
               <Sparkles className="absolute top-3 right-3 w-10 h-10 text-white/10" aria-hidden />
@@ -209,6 +223,17 @@ const VillageLessonShell: React.FC<Props> = ({ lesson, module, onComplete, onBac
                   />
                 ))}
               </div>
+
+              <ComicPanel
+                imageUrl={
+                  concept.image?.src ??
+                  getVillageConceptPanelUrl(lesson.moduleId, lesson.id, concept.id)
+                }
+                imageFallbackUrl={getVillageComicPlaceholderUrl(concept.title)}
+                caption={`Concept ${conceptIndex + 1} of ${lesson.concepts.length}`}
+                speechBubble={{ text: concept.title, speaker: 'Phil' }}
+                panelStyle="wide"
+              />
 
               {/* Concept card */}
               <div className="bg-card border rounded-xl overflow-hidden">
