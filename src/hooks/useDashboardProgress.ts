@@ -7,13 +7,11 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { usePersonalFinanceProgress } from '@/hooks/usePersonalFinanceProgress';
 import { useVillageLessonProgress } from '@/hooks/useVillageLessonProgress';
-import { useCareerReadinessProgress } from '@/hooks/useCareerReadinessProgress';
 import { useFounderJourneyProgress } from '@/hooks/useFounderJourneyProgress';
 import { FOUNDER_MISSIONS } from '@/data/founder-journey/missions';
 import {
   calculatePersonalFinanceProgress,
   calculateMarketIntelligenceProgress,
-  calculateCareerReadinessProgress,
   calculateOverallProgress,
 } from '@/lib/dashboardProgressCalculations';
 import {
@@ -64,7 +62,6 @@ function readLastTouched() {
 export function useDashboardProgress() {
   const { moduleProgress, loading: pfLoading } = usePersonalFinanceProgress();
   const { completedLessons } = useVillageLessonProgress();
-  const { moduleProgress: careerModuleProgress } = useCareerReadinessProgress();
   const { progress: founderProgress, completionPercent: founderCompletion } = useFounderJourneyProgress();
   const [lastTouched, setLastTouched] = useState(readLastTouched);
   const [progressRevision, setProgressRevision] = useState(0);
@@ -100,12 +97,6 @@ export function useDashboardProgress() {
     [completedLessons, progressRevision]
   );
 
-  const careersProgress = useMemo(
-    () => calculateCareerReadinessProgress(careerModuleProgress),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [careerModuleProgress, progressRevision]
-  );
-
   const paths: DashboardPath[] = useMemo(
     () => [
       {
@@ -135,19 +126,6 @@ export function useDashboardProgress() {
         icon: '📊',
       },
       {
-        id: 'careers-finance',
-        title: 'Careers in Finance',
-        description: 'Build interview, resume, and professional skills for finance careers',
-        progressPct: careersProgress.progressPct,
-        lessonsCompleted: careersProgress.lessonsCompleted,
-        totalLessons: careersProgress.totalLessons,
-        estimatedTime: '3 hours',
-        nextActionLabel: careersProgress.nextAction,
-        targetTab: '/career',
-        lastTouchedAt: lastTouched.careersFinance,
-        icon: '🎯',
-      },
-      {
         id: 'founder-journey',
         title: 'Founder Journey',
         description: 'Test an idea, make startup decisions, and build your own Lean Canvas',
@@ -161,7 +139,7 @@ export function useDashboardProgress() {
         icon: '🚀',
       },
     ],
-    [pfProgress, miProgress, careersProgress, founderCompletion, founderProgress.completedMissionIds, lastTouched]
+    [pfProgress, miProgress, founderCompletion, founderProgress.completedMissionIds, lastTouched]
   );
 
   const overallProgress = useMemo(
