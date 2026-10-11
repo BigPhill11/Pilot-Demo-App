@@ -32,9 +32,9 @@ const LearningPathCards: React.FC<LearningPathCardsProps> = ({ paths, loading, o
         <Lightbulb className="h-5 w-5 text-primary" />
         Your Learning Paths
       </h2>
-      <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-3'} gap-4`}>
+      <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2 xl:grid-cols-4'} gap-4`}>
         {loading
-          ? Array.from({ length: 3 }).map((_, i) => (
+          ? Array.from({ length: 4 }).map((_, i) => (
               <Card key={i} className="animate-pulse border-primary/10 rounded-xl">
                 <CardHeader className="pb-3">
                   <div className="h-8 w-8 bg-muted rounded-lg mb-2" />

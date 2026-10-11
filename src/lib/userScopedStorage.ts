@@ -54,11 +54,13 @@ export function migrateAllLegacyStorageKeys(userId?: string | null): void {
     'village_lesson_progress_v1',
     'personal-finance-progress',
     'career_readiness_progress',
+    'founder_journey_progress_v1',
     'unified_streak',
     'daily_goals_progress',
     'lastTouched_pf',
     'lastTouched_cd',
     'lastTouched_cf',
+    'lastTouched_fj',
   ];
 
   for (const key of keys) {

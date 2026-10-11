@@ -8,6 +8,8 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { usePersonalFinanceProgress } from '@/hooks/usePersonalFinanceProgress';
 import { useVillageLessonProgress } from '@/hooks/useVillageLessonProgress';
 import { useCareerReadinessProgress } from '@/hooks/useCareerReadinessProgress';
+import { useFounderJourneyProgress } from '@/hooks/useFounderJourneyProgress';
+import { FOUNDER_MISSIONS } from '@/data/founder-journey/missions';
 import {
   calculatePersonalFinanceProgress,
   calculateMarketIntelligenceProgress,
@@ -38,6 +40,7 @@ const LAST_TOUCHED_KEYS = {
   personalFinance: 'lastTouched_pf',
   companyDiscovery: 'lastTouched_cd',
   careersFinance: 'lastTouched_cf',
+  founderJourney: 'lastTouched_fj',
 } as const;
 
 function getLastTouchedAt(key: string): number {
@@ -54,6 +57,7 @@ function readLastTouched() {
     personalFinance: getLastTouchedAt(LAST_TOUCHED_KEYS.personalFinance),
     companyDiscovery: getLastTouchedAt(LAST_TOUCHED_KEYS.companyDiscovery),
     careersFinance: getLastTouchedAt(LAST_TOUCHED_KEYS.careersFinance),
+    founderJourney: getLastTouchedAt(LAST_TOUCHED_KEYS.founderJourney),
   };
 }
 
@@ -61,6 +65,7 @@ export function useDashboardProgress() {
   const { moduleProgress, loading: pfLoading } = usePersonalFinanceProgress();
   const { completedLessons } = useVillageLessonProgress();
   const { moduleProgress: careerModuleProgress } = useCareerReadinessProgress();
+  const { progress: founderProgress, completionPercent: founderCompletion } = useFounderJourneyProgress();
   const [lastTouched, setLastTouched] = useState(readLastTouched);
   const [progressRevision, setProgressRevision] = useState(0);
 
@@ -142,8 +147,21 @@ export function useDashboardProgress() {
         lastTouchedAt: lastTouched.careersFinance,
         icon: '🎯',
       },
+      {
+        id: 'founder-journey',
+        title: 'Founder Journey',
+        description: 'Test an idea, make startup decisions, and build your own Lean Canvas',
+        progressPct: founderCompletion,
+        lessonsCompleted: founderProgress.completedMissionIds.length,
+        totalLessons: FOUNDER_MISSIONS.length,
+        estimatedTime: '1 hour',
+        nextActionLabel: FOUNDER_MISSIONS.find((mission) => !founderProgress.completedMissionIds.includes(mission.id))?.title ?? 'Review your Founder Plan',
+        targetTab: 'founder-journey',
+        lastTouchedAt: lastTouched.founderJourney,
+        icon: '🚀',
+      },
     ],
-    [pfProgress, miProgress, careersProgress, lastTouched]
+    [pfProgress, miProgress, careersProgress, founderCompletion, founderProgress.completedMissionIds, lastTouched]
   );
 
   const overallProgress = useMemo(

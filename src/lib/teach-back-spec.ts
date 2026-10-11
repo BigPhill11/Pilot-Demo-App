@@ -10,6 +10,7 @@
 
 import type { VillageLesson, VillageModuleId } from '@/types/village-lesson';
 import type { Lesson as PersonalFinanceLesson } from '@/types/personal-finance';
+import type { FounderMission } from '@/types/founder-journey';
 import type { PhilAge, TeachBackSpec } from '@/types/teach-back';
 
 const DEFAULT_PHIL_AGE_BY_MODULE: Record<VillageModuleId, PhilAge> = {
@@ -108,4 +109,10 @@ export function getPersonalFinanceTeachBackSpec(lesson: PersonalFinanceLesson): 
     keyFacts,
     misconceptions: [],
   };
+}
+
+/* ─── Founder Journey missions ─── */
+
+export function getFounderTeachBackSpec(mission: FounderMission): TeachBackSpec {
+  return mission.teachBack;
 }
