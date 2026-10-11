@@ -87,14 +87,17 @@ function App() {
                     <Route path="/privacy" element={<PrivacyPage />} />
                     <Route path="/terms" element={<TermsPage />} />
                     {import.meta.env.DEV && (
-                      <Route
-                        path="/founders-preview"
-                        element={
-                          <main className="min-h-screen bg-background px-4 py-6 sm:px-6">
-                            <FounderJourneyTab />
-                          </main>
-                        }
-                      />
+                      <>
+                        <Route
+                          path="/founders-preview"
+                          element={
+                            <main className="min-h-screen bg-background px-4 py-6 sm:px-6">
+                              <FounderJourneyTab />
+                            </main>
+                          }
+                        />
+                        <Route path="/learn-preview" element={<LearnPage />} />
+                      </>
                     )}
 
                     {/* The teacher dashboard is desktop-first and brings its own
