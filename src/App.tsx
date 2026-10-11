@@ -59,6 +59,7 @@ import AdminPage from "./pages/AdminPage";
 import TeachPage from "./pages/TeachPage";
 import SplashScreen from "@/components/onboarding/SplashScreen";
 import OnboardingOrchestrator from "@/components/onboarding/OnboardingOrchestrator";
+import FounderJourneyTab from "@/components/learn/FounderJourneyTab";
 
 const queryClient = new QueryClient();
 
@@ -85,6 +86,16 @@ function App() {
                         Apple requires a publicly accessible Privacy Policy URL. */}
                     <Route path="/privacy" element={<PrivacyPage />} />
                     <Route path="/terms" element={<TermsPage />} />
+                    {import.meta.env.DEV && (
+                      <Route
+                        path="/founders-preview"
+                        element={
+                          <main className="min-h-screen bg-background px-4 py-6 sm:px-6">
+                            <FounderJourneyTab />
+                          </main>
+                        }
+                      />
+                    )}
 
                     {/* The teacher dashboard is desktop-first and brings its own
                         sidebar shell, so it skips MinimalLayout's mobile chrome
