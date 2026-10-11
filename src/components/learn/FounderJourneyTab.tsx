@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import FounderJourneyDashboard from '@/components/founder-journey/FounderJourneyDashboard';
 import FounderMissionFlow from '@/components/founder-journey/FounderMissionFlow';
 import { FOUNDER_MISSIONS, getFounderMission } from '@/data/founder-journey/missions';
@@ -14,11 +14,7 @@ const FounderJourneyTab: React.FC = () => {
     completeMission,
     saveCanvasSection,
   } = useFounderJourneyProgress();
-  const [openMissionId, setOpenMissionId] = useState<FounderMissionId | null>(progress.activeMissionId);
-
-  useEffect(() => {
-    if (!openMissionId && progress.activeMissionId) setOpenMissionId(progress.activeMissionId);
-  }, [openMissionId, progress.activeMissionId]);
+  const [openMissionId, setOpenMissionId] = useState<FounderMissionId | null>(null);
 
   const openMission = (missionId: FounderMissionId) => {
     const missionIndex = FOUNDER_MISSIONS.findIndex((mission) => mission.id === missionId);

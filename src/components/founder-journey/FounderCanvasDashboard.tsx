@@ -57,6 +57,7 @@ const FounderCanvasDashboard: React.FC<Props> = ({
 
   const filledCount = sectionOrder.filter((sectionId) => (progress.canvas[sectionId] ?? '').trim().length > 0).length;
   const completion = Math.round((filledCount / sectionOrder.length) * 100);
+  const planComplete = progress.completedMissionIds.length === FOUNDER_MISSIONS.length && filledCount === sectionOrder.length;
 
   const save = (sectionId: FounderCanvasSectionId) => {
     onSave(sectionId, (drafts[sectionId] ?? '').trim());
@@ -89,6 +90,21 @@ const FounderCanvasDashboard: React.FC<Props> = ({
           </div>
         </div>
       </div>
+
+      {planComplete && (
+        <div className="mx-4 mt-4 flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 sm:mx-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <div className="rounded-xl bg-amber-400/20 p-2 text-amber-700"><Sparkles className="h-5 w-5" /></div>
+            <div>
+              <p className="font-bold text-amber-950">Your Founder Plan is ready</p>
+              <p className="text-sm text-amber-900">You can use this dashboard as a one-page summary when you explain or test your idea.</p>
+            </div>
+          </div>
+          <Button type="button" variant="outline" className="shrink-0 bg-white" onClick={() => window.print()}>
+            Print My Plan
+          </Button>
+        </div>
+      )}
 
       <div className={cn('grid gap-3 p-4 sm:p-6', compact ? 'sm:grid-cols-2' : 'lg:grid-cols-3')}>
         {visibleSections.map((sectionId) => {
