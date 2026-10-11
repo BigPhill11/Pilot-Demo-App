@@ -63,6 +63,7 @@ const FounderComicLesson: React.FC<Props> = ({ mission, onComplete }) => {
         <ComicPanel
           imageUrl={panel.imageUrl}
           imageFallbackUrl="/logo.png"
+          imageAlt={panel.alt}
           caption={`Part ${panelIndex + 1} of ${mission.comicPanels.length}`}
           speechBubble={{ speaker: 'Phil', text: panel.text }}
           panelStyle="splash"

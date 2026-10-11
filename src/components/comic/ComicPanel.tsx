@@ -14,6 +14,8 @@ export interface ComicPanelProps {
   imageUrl: string;
   /** If the primary image fails to load (e.g. file not uploaded yet), show this URL instead. */
   imageFallbackUrl?: string;
+  /** Describes the scene; captions such as "Part 1" are not meaningful alt text. */
+  imageAlt?: string;
   caption?: string;
   speechBubble?: ComicPanelSpeechBubble;
   panelStyle?: ComicPanelStyle;
@@ -30,6 +32,7 @@ const panelStyleClasses: Record<ComicPanelStyle, string> = {
 const ComicPanel: React.FC<ComicPanelProps> = ({
   imageUrl,
   imageFallbackUrl,
+  imageAlt,
   caption,
   speechBubble,
   panelStyle = 'normal',
@@ -59,7 +62,7 @@ const ComicPanel: React.FC<ComicPanelProps> = ({
           <img
             key={resolvedSrc}
             src={resolvedSrc}
-            alt={caption || 'Comic panel'}
+            alt={imageAlt || caption || 'Comic panel'}
             className="h-full w-full object-cover"
             loading="eager"
             decoding="async"
