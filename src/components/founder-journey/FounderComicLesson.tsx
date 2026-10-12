@@ -55,7 +55,7 @@ const FounderComicLesson: React.FC<Props> = ({ mission, onComplete }) => {
         </div>
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-primary">Founder Comic</p>
-          <h2 className="text-lg font-semibold">{mission.title}</h2>
+          <h2 className="text-lg font-semibold">{panel.title ?? mission.title}</h2>
         </div>
       </div>
 
@@ -69,6 +69,11 @@ const FounderComicLesson: React.FC<Props> = ({ mission, onComplete }) => {
           panelStyle="splash"
           className="rounded-2xl"
         />
+        <div className="mt-5 space-y-4 text-sm leading-relaxed sm:text-base">
+          {panel.explanation && <p>{panel.explanation}</p>}
+          {panel.example && <div className="rounded-2xl border bg-card p-4"><p className="mb-1 text-xs font-bold uppercase tracking-wide text-primary">Work through an example</p><p>{panel.example}</p></div>}
+          {panel.takeaway && <div className="rounded-2xl bg-primary/10 p-4"><p className="mb-1 text-xs font-bold uppercase tracking-wide text-primary">Remember this</p><p>{panel.takeaway}</p></div>}
+        </div>
       </div>
 
       <Button
@@ -81,6 +86,7 @@ const FounderComicLesson: React.FC<Props> = ({ mission, onComplete }) => {
         {isLast ? 'Try the Simulation' : 'Next Panel'}
         <ArrowRight className="ml-2 h-4 w-4" />
       </Button>
+      {isLast && mission.sources && <details className="rounded-xl border p-4 text-sm"><summary className="cursor-pointer font-medium">Lesson sources</summary><ul className="mt-3 space-y-2">{mission.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noreferrer" className="text-primary underline">{source.title}</a></li>)}</ul></details>}
     </div>
   );
 };

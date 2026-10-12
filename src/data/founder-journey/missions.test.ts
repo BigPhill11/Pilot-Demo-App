@@ -1,19 +1,33 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { FOUNDER_MODULES, FOUNDER_SECTIONS } from './curriculum';
 import { FOUNDER_MISSIONS } from './missions';
 import { normalizeFounderProgress } from '@/hooks/useFounderJourneyProgress';
 
 describe('Founder Journey curriculum', () => {
-  it('defines four ordered missions with the complete interactive flow', () => {
-    expect(FOUNDER_MISSIONS).toHaveLength(4);
-    expect(FOUNDER_MISSIONS.map((mission) => mission.order)).toEqual([1, 2, 3, 4]);
+  it('defines six modules with three ordered lessons each with the complete interactive flow', () => {
+    expect(FOUNDER_SECTIONS).toHaveLength(3);
+    expect(FOUNDER_MODULES).toHaveLength(6);
+    expect(FOUNDER_MISSIONS).toHaveLength(18);
+    expect(new Set(FOUNDER_MISSIONS.map((lesson) => lesson.id)).size).toBe(18);
+    for (const module of FOUNDER_MODULES) expect(module.lessonIds).toHaveLength(3);
+    expect(FOUNDER_MISSIONS.map((mission) => mission.order)).toEqual(Array.from({ length: 18 }, (_, i) => i + 1));
 
     for (const mission of FOUNDER_MISSIONS) {
       expect(mission.comicPanels).toHaveLength(5);
       expect(mission.simulator.rounds).toHaveLength(3);
       expect(mission.simulator.meters).toHaveLength(3);
       expect(mission.quiz).toHaveLength(4);
+      for (const question of mission.quiz) {
+        expect(question.options).toHaveLength(4);
+        expect(question.options.some((option) => option.id === question.correctId)).toBe(true);
+      }
+      for (const panel of mission.comicPanels) {
+        expect(panel.explanation?.split(/\s+/).length).toBeGreaterThanOrEqual(40);
+        expect(panel.example?.length).toBeGreaterThan(25);
+        expect(panel.takeaway?.length).toBeGreaterThan(15);
+      }
       expect(mission.teachBack.keyFacts.length).toBeGreaterThanOrEqual(3);
       expect(mission.canvasPrompts.length).toBeGreaterThan(0);
     }
@@ -29,11 +43,11 @@ describe('Founder Journey curriculum', () => {
     }
   });
 
-  it('covers every Lean Canvas section exactly once', () => {
+  it('covers all nine Lean Canvas sections while revisiting the plan', () => {
     const sectionIds = FOUNDER_MISSIONS.flatMap((mission) =>
       mission.canvasPrompts.map((prompt) => prompt.sectionId),
     );
-    expect(sectionIds).toHaveLength(9);
+
     expect(new Set(sectionIds).size).toBe(9);
     expect(sectionIds).toEqual(expect.arrayContaining([
       'idea',

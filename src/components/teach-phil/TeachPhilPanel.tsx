@@ -39,6 +39,7 @@ interface Props {
   spec: TeachBackSpec;
   defaultPhilAge: PhilAge;
   onComplete: (result: TeachPhilResult) => void;
+  requireExplanation?: boolean;
 }
 
 const PERSONA_META: Record<PhilAge, { name: string; icon: React.ElementType; blurb: string }> = {
@@ -47,7 +48,7 @@ const PERSONA_META: Record<PhilAge, { name: string; icon: React.ElementType; blu
   elder: { name: 'Elder Phil', icon: User,      blurb: 'Will push on what-ifs and edge cases.' },
 };
 
-const TeachPhilPanel: React.FC<Props> = ({ lessonId, spec, defaultPhilAge, onComplete }) => {
+const TeachPhilPanel: React.FC<Props> = ({ lessonId, spec, defaultPhilAge, onComplete, requireExplanation = false }) => {
   const {
     phase, turn, attempt, chatLog, assessment,
     isThinking, sendError, passThreshold, choosePersona, sendMessage,
@@ -55,6 +56,7 @@ const TeachPhilPanel: React.FC<Props> = ({ lessonId, spec, defaultPhilAge, onCom
   } = useTeachPhilSession({ lessonId, spec, defaultPhilAge });
 
   const [input, setInput] = useState('');
+  const [fallbackExplanation, setFallbackExplanation] = useState('');
   const chatEndRef = useRef<HTMLDivElement>(null);
   const score = assessment?.understandingScore ?? 0;
 
@@ -85,19 +87,36 @@ const TeachPhilPanel: React.FC<Props> = ({ lessonId, spec, defaultPhilAge, onCom
           <h3 className="text-sm font-medium text-primary uppercase tracking-wider mb-1">Teach It Back</h3>
           <p className="text-sm text-muted-foreground">
             The best way to master something is to teach it. Explain{' '}
-            <span className="font-medium text-foreground">{spec.conceptName}</span> to Phil in your own words — or skip if you'd rather move on.
+            <span className="font-medium text-foreground">{spec.conceptName}</span> to Phil in your own words{requireExplanation ? '. Include an example from your own idea.' : ' — or skip if you would rather move on.'}
           </p>
         </div>
       </div>
     </div>
   );
 
-  const skipButton = (
+  const skipButton = requireExplanation ? null : (
     <Button variant="ghost" onClick={skip} className="w-full text-muted-foreground">
       Skip this step
       <ArrowRight className="w-4 h-4 ml-2" />
     </Button>
   );
+
+  // Founder lessons still require an explanation if AI is unavailable. This
+  // reflection is ungraded and earns no AI bonus; it is not an assessed pass.
+  const needsReflection = requireExplanation && ['guest', 'quota', 'unavailable'].includes(phase);
+  if (needsReflection) {
+    const wordCount = fallbackExplanation.trim().split(/\s+/).filter(Boolean).length;
+    return <div className="space-y-4">
+      {banner}
+      <div className="rounded-xl border bg-muted/30 p-4">
+        <h3 className="font-semibold">Explain the lesson while Phil is offline</h3>
+        <p className="mt-2 text-sm text-muted-foreground">Write at least 25 words using your own idea. Cover the lesson’s main point and a decision you would make. This reflection is ungraded and does not earn the Teach Phil bonus.</p>
+      </div>
+      <textarea aria-label="Your founder explanation" value={fallbackExplanation} onChange={(event) => setFallbackExplanation(event.target.value)} rows={6} maxLength={3000} className="w-full rounded-xl border bg-background p-4 text-base" />
+      <p className="text-xs text-muted-foreground">{wordCount} / 25 words minimum</p>
+      <Button className="h-12 w-full" disabled={wordCount < 25} onClick={() => onComplete({ ...buildSkipResult(), outcome: 'completed-after-fallback' })}>Continue to My Canvas</Button>
+    </div>;
+  }
 
   /* ─── Shared: understanding meter ─── */
   const meter = (

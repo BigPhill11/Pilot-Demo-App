@@ -128,11 +128,11 @@ export function useDashboardProgress() {
       {
         id: 'founder-journey',
         title: 'Founder Journey',
-        description: 'Test an idea, make startup decisions, and build your own Lean Canvas',
+        description: 'Six modules and eighteen founder lessons, from idea to first launch',
         progressPct: founderCompletion,
         lessonsCompleted: founderProgress.completedMissionIds.length,
         totalLessons: FOUNDER_MISSIONS.length,
-        estimatedTime: '1 hour',
+        estimatedTime: '18 min per lesson',
         nextActionLabel: FOUNDER_MISSIONS.find((mission) => !founderProgress.completedMissionIds.includes(mission.id))?.title ?? 'Review your Founder Plan',
         targetTab: 'founder-journey',
         lastTouchedAt: lastTouched.founderJourney,

@@ -11,6 +11,7 @@ import type {
   FounderMissionId,
 } from '@/types/founder-journey';
 import { cn } from '@/lib/utils';
+import { printFounderPlan } from '@/lib/printFounderPlan';
 
 interface Props {
   progress: FounderJourneyProgress;
@@ -29,7 +30,7 @@ const promptEntries = FOUNDER_MISSIONS.flatMap((mission) =>
 );
 
 const promptBySection = Object.fromEntries(
-  promptEntries.map((entry) => [entry.prompt.sectionId, entry]),
+  [...promptEntries].reverse().map((entry) => [entry.prompt.sectionId, entry]),
 ) as Record<FounderCanvasSectionId, { prompt: FounderCanvasPrompt; missionId: FounderMissionId; missionOrder: number }>;
 
 const FounderCanvasDashboard: React.FC<Props> = ({
@@ -78,7 +79,7 @@ const FounderCanvasDashboard: React.FC<Props> = ({
             </div>
             <h2 className="text-2xl font-bold sm:text-3xl">Lean Canvas</h2>
             <p className="mt-1 max-w-xl text-sm text-emerald-100">
-              Turn each mission into one clear piece of your business idea. You can always come back and improve it.
+              Turn each lesson into one clear piece of your business idea. You can always come back and improve it.
             </p>
           </div>
           <div className="min-w-36 rounded-2xl bg-white/10 p-3 backdrop-blur-sm">
@@ -100,7 +101,7 @@ const FounderCanvasDashboard: React.FC<Props> = ({
               <p className="text-sm text-amber-900">You can use this dashboard as a one-page summary when you explain or test your idea.</p>
             </div>
           </div>
-          <Button type="button" variant="outline" className="shrink-0 bg-white" onClick={() => window.print()}>
+          <Button type="button" variant="outline" className="shrink-0 bg-white" onClick={() => printFounderPlan(sectionOrder.map((id) => ({ title: promptBySection[id].prompt.title, answer: progress.canvas[id] ?? '' })))}>
             Print My Plan
           </Button>
         </div>
@@ -109,6 +110,7 @@ const FounderCanvasDashboard: React.FC<Props> = ({
       <div className={cn('grid gap-3 p-4 sm:p-6', compact ? 'sm:grid-cols-2' : 'lg:grid-cols-3')}>
         {visibleSections.map((sectionId) => {
           const entry = promptBySection[sectionId];
+          const prompt = FOUNDER_MISSIONS.find((lesson) => lesson.id === focusMissionId)?.canvasPrompts.find((value) => value.sectionId === sectionId) ?? entry.prompt;
           const isUnlocked = unlocked.has(sectionId);
           const isExpanded = expanded === sectionId;
           const hasValue = Boolean((progress.canvas[sectionId] ?? '').trim());
@@ -136,9 +138,9 @@ const FounderCanvasDashboard: React.FC<Props> = ({
                   {!isUnlocked ? <Lock className="h-4 w-4" /> : hasValue ? <Check className="h-5 w-5" /> : <Sparkles className="h-5 w-5" />}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-semibold">{entry.prompt.title}</h3>
+                  <h3 className="font-semibold">{prompt.title}</h3>
                   <p className="truncate text-xs text-muted-foreground">
-                    {isUnlocked ? (progress.canvas[sectionId] || entry.prompt.prompt) : `Unlock in Mission ${entry.missionOrder}`}
+                    {isUnlocked ? (progress.canvas[sectionId] || prompt.prompt) : `Unlock in Lesson ${entry.missionOrder}`}
                   </p>
                 </div>
                 {isUnlocked && (isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />)}
@@ -146,17 +148,22 @@ const FounderCanvasDashboard: React.FC<Props> = ({
 
               {isUnlocked && isExpanded && (
                 <div className="space-y-3 border-t p-4">
-                  <p className="text-sm font-medium">{entry.prompt.prompt}</p>
+                  <p className="text-sm font-medium">{prompt.prompt}</p>
                   <Textarea
+                    aria-label={prompt.title}
                     value={drafts[sectionId] ?? ''}
-                    onChange={(event) => setDrafts((current) => ({ ...current, [sectionId]: event.target.value }))}
+                    onChange={(event) => {
+                      const text = event.target.value;
+                      setDrafts((current) => ({ ...current, [sectionId]: text }));
+                      onSave(sectionId, text);
+                    }}
                     onBlur={() => save(sectionId)}
-                    placeholder={entry.prompt.placeholder}
+                    placeholder={prompt.placeholder}
                     className="min-h-28 resize-y text-base"
                     maxLength={500}
                   />
                   <div className="rounded-xl bg-emerald-50 p-3 text-xs text-emerald-900">
-                    <span className="font-bold">Example: </span>{entry.prompt.example}
+                    <span className="font-bold">Example: </span>{prompt.example}
                   </div>
                   <Button type="button" onClick={() => save(sectionId)} className="h-11 w-full">
                     {isSaved ? <Check className="mr-2 h-4 w-4" /> : <Save className="mr-2 h-4 w-4" />}
@@ -171,7 +178,7 @@ const FounderCanvasDashboard: React.FC<Props> = ({
 
       {compact && (
         <div className="border-t bg-muted/20 px-5 py-3 text-center text-xs text-muted-foreground">
-          Complete missions to unlock all nine canvas sections.
+          Complete lessons to unlock all nine canvas sections.
         </div>
       )}
     </section>

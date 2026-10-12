@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import FounderJourneyDashboard from '@/components/founder-journey/FounderJourneyDashboard';
 import FounderMissionFlow from '@/components/founder-journey/FounderMissionFlow';
-import { FOUNDER_MISSIONS, getFounderMission } from '@/data/founder-journey/missions';
+import { getFounderMission } from '@/data/founder-journey/missions';
 import { useFounderJourneyProgress } from '@/hooks/useFounderJourneyProgress';
+import FounderJourneyIntro from '@/components/founder-journey/FounderJourneyIntro';
+import { isFounderLessonUnlocked } from '@/lib/founderJourneyProgress';
 import type { FounderMissionId } from '@/types/founder-journey';
 
 const FounderJourneyTab: React.FC = () => {
@@ -13,16 +15,16 @@ const FounderJourneyTab: React.FC = () => {
     saveMissionStep,
     completeMission,
     saveCanvasSection,
+    completeIntro,
+    saveTeachResult,
+    ready,
   } = useFounderJourneyProgress();
   const [openMissionId, setOpenMissionId] = useState<FounderMissionId | null>(null);
 
+  const [replayIntro, setReplayIntro] = useState(false);
+
   const openMission = (missionId: FounderMissionId) => {
-    const missionIndex = FOUNDER_MISSIONS.findIndex((mission) => mission.id === missionId);
-    const previous = FOUNDER_MISSIONS[missionIndex - 1];
-    const unlocked = missionIndex === 0
-      || progress.completedMissionIds.includes(missionId)
-      || (previous && progress.completedMissionIds.includes(previous.id));
-    if (!unlocked) return;
+    if (!isFounderLessonUnlocked(missionId, progress)) return;
     startMission(missionId);
     setOpenMissionId(missionId);
   };
@@ -32,6 +34,7 @@ const FounderJourneyTab: React.FC = () => {
   if (mission) {
     return (
       <FounderMissionFlow
+        key={mission.id}
         mission={mission}
         progress={progress}
         initialStep={progress.missionStepById[mission.id]}
@@ -39,6 +42,7 @@ const FounderJourneyTab: React.FC = () => {
         onBack={() => setOpenMissionId(null)}
         onSaveStep={(step) => saveMissionStep(mission.id, step)}
         onSaveCanvas={saveCanvasSection}
+        onSaveTeachResult={(result) => saveTeachResult(mission.id, result)}
         onComplete={() => {
           completeMission(mission.id);
           setOpenMissionId(null);
@@ -48,12 +52,16 @@ const FounderJourneyTab: React.FC = () => {
   }
 
   return (
+    <>
     <FounderJourneyDashboard
       progress={progress}
       completionPercent={completionPercent}
       onStartMission={openMission}
       onSaveCanvas={saveCanvasSection}
+      onShowIntro={() => setReplayIntro(true)}
     />
+    {ready && (!progress.introCompleted || replayIntro) && <FounderJourneyIntro onComplete={() => { completeIntro(); setReplayIntro(false); }} />}
+    </>
   );
 };
 

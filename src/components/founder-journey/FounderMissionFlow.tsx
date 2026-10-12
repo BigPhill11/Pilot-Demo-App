@@ -20,6 +20,7 @@ import type { TeachPhilResult } from '@/hooks/useTeachPhilSession';
 import type { FounderJourneyProgress, FounderMission } from '@/types/founder-journey';
 import { cn } from '@/lib/utils';
 import { usePlatformIntegration } from '@/hooks/usePlatformIntegration';
+import { getFounderModule } from '@/data/founder-journey/curriculum';
 import { getFounderTeachBackSpec } from '@/lib/teach-back-spec';
 
 type FounderStep = 'comic' | 'simulate' | 'quiz' | 'teach' | 'canvas' | 'complete';
@@ -42,6 +43,7 @@ interface Props {
   onSaveStep: (step: FounderStep) => void;
   onSaveCanvas: (sectionId: Parameters<React.ComponentProps<typeof FounderCanvasDashboard>['onSave']>[0], value: string) => void;
   onComplete: () => void;
+  onSaveTeachResult: (result: TeachPhilResult) => void;
 }
 
 const FounderMissionFlow: React.FC<Props> = ({
@@ -53,12 +55,15 @@ const FounderMissionFlow: React.FC<Props> = ({
   onSaveStep,
   onSaveCanvas,
   onComplete,
+  onSaveTeachResult,
 }) => {
   const validInitial = STEPS.some(({ id }) => id === initialStep) ? initialStep as FounderStep : 'comic';
-  const [step, setStep] = useState<FounderStep>(alreadyCompleted ? 'complete' : validInitial);
-  const [teachResult, setTeachResult] = useState<TeachPhilResult | null>(null);
+  const [step, setStep] = useState<FounderStep>(alreadyCompleted ? 'comic' : validInitial);
+  const [teachResult, setTeachResult] = useState<TeachPhilResult | null>(progress.teachResults?.[mission.id] ?? null);
   const [quizAttempt, setQuizAttempt] = useState(0);
   const { awardResources } = usePlatformIntegration();
+  const module = getFounderModule(mission.id)!;
+  const lessonNumber = module.lessonIds.indexOf(mission.id) + 1;
   const stepIndex = STEPS.findIndex(({ id }) => id === step);
 
   const currentCanvasComplete = useMemo(
@@ -68,7 +73,7 @@ const FounderMissionFlow: React.FC<Props> = ({
 
   const moveTo = (next: FounderStep) => {
     setStep(next);
-    onSaveStep(next);
+    if (!alreadyCompleted) onSaveStep(next);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -92,7 +97,7 @@ const FounderMissionFlow: React.FC<Props> = ({
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-bold uppercase tracking-wider text-primary">Mission {mission.order} of 4</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-primary">{module.title} · Lesson {lessonNumber} of {module.lessonIds.length}</p>
             <h1 className="truncate text-lg font-bold sm:text-xl">{mission.title}</h1>
           </div>
           <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{mission.estimatedMinutes} min</span>
@@ -141,11 +146,13 @@ const FounderMissionFlow: React.FC<Props> = ({
       {step === 'teach' && (
         <div className="mx-auto max-w-2xl">
           <TeachPhilPanel
+            requireExplanation
             lessonId={`founder-${mission.id}`}
             spec={getFounderTeachBackSpec(mission)}
             defaultPhilAge="teen"
             onComplete={(result) => {
               setTeachResult(result);
+              if (!alreadyCompleted) onSaveTeachResult(result);
               moveTo('canvas');
             }}
           />
@@ -159,7 +166,7 @@ const FounderMissionFlow: React.FC<Props> = ({
           </div>
           <FounderCanvasDashboard progress={progress} onSave={onSaveCanvas} focusMissionId={mission.id} />
           <Button className="h-12 w-full text-base" disabled={!currentCanvasComplete} onClick={() => moveTo('complete')}>
-            {currentCanvasComplete ? 'Finish Mission' : `Fill ${mission.canvasPrompts.length} mission section${mission.canvasPrompts.length === 1 ? '' : 's'} to continue`}
+            {currentCanvasComplete ? 'Finish Lesson' : `Fill ${mission.canvasPrompts.length} lesson section${mission.canvasPrompts.length === 1 ? '' : 's'} to continue`}
             {currentCanvasComplete && <ArrowRight className="ml-2 h-4 w-4" />}
           </Button>
         </div>
@@ -170,7 +177,7 @@ const FounderMissionFlow: React.FC<Props> = ({
             <Trophy className="h-10 w-10" />
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-700">Mission complete</p>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-700">Lesson complete</p>
             <h2 className="mt-2 text-2xl font-bold sm:text-3xl">{mission.title}</h2>
             <p className="mx-auto mt-2 max-w-lg text-muted-foreground">
               You turned the lesson into decisions, explained it in your own words, and added it to your Founder Plan.

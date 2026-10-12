@@ -1,180 +1,86 @@
 import React, { useState } from 'react';
-import {
-  ArrowRight,
-  CheckCircle2,
-  Clock3,
-  Flag,
-  LayoutDashboard,
-  Lock,
-  Map,
-  Rocket,
-  Sparkles,
-} from 'lucide-react';
+import { ArrowRight, BookOpen, CheckCircle2, Clock3, LayoutDashboard, Lock, Map, Rocket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { FOUNDER_MISSIONS } from '@/data/founder-journey/missions';
-import type {
-  FounderCanvasSectionId,
-  FounderJourneyProgress,
-  FounderMissionId,
-} from '@/types/founder-journey';
+import { FOUNDER_MISSIONS, getFounderMission } from '@/data/founder-journey/missions';
+import { FOUNDER_MODULES, FOUNDER_SECTIONS } from '@/data/founder-journey/curriculum';
+import { isFounderLessonUnlocked } from '@/lib/founderJourneyProgress';
+import type { FounderCanvasSectionId, FounderJourneyProgress, FounderMissionId } from '@/types/founder-journey';
 import FounderCanvasDashboard from './FounderCanvasDashboard';
-import { cn } from '@/lib/utils';
 
 interface Props {
   progress: FounderJourneyProgress;
   completionPercent: number;
   onStartMission: (missionId: FounderMissionId) => void;
   onSaveCanvas: (sectionId: FounderCanvasSectionId, value: string) => void;
+  onShowIntro: () => void;
 }
 
-const FounderJourneyDashboard: React.FC<Props> = ({
-  progress,
-  completionPercent,
-  onStartMission,
-  onSaveCanvas,
-}) => {
+const FounderJourneyDashboard: React.FC<Props> = ({ progress, completionPercent, onStartMission, onSaveCanvas, onShowIntro }) => {
   const [showFullCanvas, setShowFullCanvas] = useState(false);
   const completed = new Set(progress.completedMissionIds);
-  const nextMission = FOUNDER_MISSIONS.find((mission) => !completed.has(mission.id));
+  const nextLesson = FOUNDER_MISSIONS.find((lesson) => !completed.has(lesson.id));
+  const resumeLesson = getFounderMission(progress.activeMissionId);
+  const next = resumeLesson && !completed.has(resumeLesson.id) && isFounderLessonUnlocked(resumeLesson.id, progress) ? resumeLesson : nextLesson;
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 pb-12">
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-950 via-green-800 to-emerald-600 p-6 text-white shadow-xl sm:p-9">
-        <div className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10" />
-        <div className="absolute -bottom-20 left-1/3 h-52 w-52 rounded-full bg-lime-300/10" />
-        <div className="relative grid gap-7 lg:grid-cols-[1fr_280px] lg:items-center">
+    <div className="mx-auto max-w-6xl space-y-7 pb-12">
+      <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-950 via-green-800 to-emerald-600 p-6 text-white shadow-xl sm:p-9">
+        <div className="grid gap-7 lg:grid-cols-[1fr_280px] lg:items-center">
           <div>
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-emerald-100">
-              <Rocket className="h-4 w-4" /> Founder Journey
-            </div>
-            <h1 className="max-w-2xl text-3xl font-black leading-tight sm:text-5xl">
-              Build an idea people actually want.
-            </h1>
+            <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wider"><Rocket className="h-4 w-4" /> Founder Journey</p>
+            <h1 className="max-w-2xl text-3xl font-black leading-tight sm:text-5xl">Build an idea people want.</h1>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-emerald-100 sm:text-base">
-              Follow Phil through four founder missions. Make startup decisions, prove what you learned, and build your own plan along the way.
+              Three sections. Six modules. Eighteen lessons. Follow Phil, practice startup decisions, and build a plan for your own idea.
             </p>
-            {nextMission ? (
-              <Button
-                size="lg"
-                className="mt-6 h-12 bg-white text-emerald-900 hover:bg-emerald-50"
-                onClick={() => onStartMission(nextMission.id)}
-              >
-                {completionPercent > 0 ? 'Continue Journey' : 'Start Mission 1'}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            ) : (
-              <div className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-white/15 px-4 py-3 font-semibold">
-                <CheckCircle2 className="h-5 w-5" /> Founder Journey complete
-              </div>
-            )}
-          </div>
-          <div className="rounded-3xl border border-white/20 bg-white/10 p-5 backdrop-blur-sm">
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <p className="text-xs uppercase tracking-wider text-emerald-200">Journey progress</p>
-                <p className="text-3xl font-black">{completionPercent}%</p>
-              </div>
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15">
-                <Map className="h-7 w-7" />
-              </div>
+            <div className="mt-6 flex flex-wrap gap-3">
+              {next ? <Button size="lg" className="h-12 bg-white text-emerald-900 hover:bg-emerald-50" onClick={() => onStartMission(next.id)}>
+                {progress.activeMissionId || completed.size > 0 ? 'Continue Journey' : 'Start First Lesson'}<ArrowRight className="ml-2 h-4 w-4" />
+              </Button> : <p className="flex items-center gap-2 rounded-2xl bg-white/15 px-4 py-3 font-semibold"><CheckCircle2 className="h-5 w-5" /> Founder Journey complete</p>}
+              <Button variant="ghost" className="h-12 text-white hover:bg-white/15 hover:text-white" onClick={onShowIntro}><BookOpen className="mr-2 h-4 w-4" /> Journey Intro</Button>
             </div>
+            {next && <p className="mt-3 text-xs text-emerald-100">Next: {next.title}</p>}
+          </div>
+          <div className="rounded-3xl border border-white/20 bg-white/10 p-5">
+            <div className="mb-4 flex items-center justify-between"><div><p className="text-xs uppercase tracking-wider text-emerald-200">Journey progress</p><p className="text-3xl font-black">{completionPercent}%</p></div><Map className="h-8 w-8" /></div>
             <Progress value={completionPercent} className="h-3 bg-white/20" />
-            <div className="mt-3 flex justify-between text-xs text-emerald-100">
-              <span>{progress.completedMissionIds.length} of {FOUNDER_MISSIONS.length} missions</span>
-              <span>{Object.values(progress.canvas).filter((value) => value?.trim()).length}/9 canvas blocks</span>
-            </div>
+            <p className="mt-3 text-xs text-emerald-100">{completed.size} of {FOUNDER_MISSIONS.length} lessons complete</p>
+            <p className="mt-1 text-xs text-emerald-100">{Object.values(progress.canvas).filter((value) => value?.trim()).length} of 9 Founder Plan blocks filled</p>
           </div>
         </div>
       </section>
 
-      <section>
-        <div className="mb-4 flex items-end justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2 text-primary">
-              <Flag className="h-5 w-5" />
-              <span className="text-xs font-bold uppercase tracking-wider">Your route</span>
-            </div>
-            <h2 className="mt-1 text-2xl font-bold">Four founder missions</h2>
+      {FOUNDER_SECTIONS.map((section, sectionIndex) => (
+        <section key={section.id} aria-labelledby={`founder-section-${section.id}`}>
+          <div className="mb-4"><p className="text-xs font-bold uppercase tracking-wider text-primary">Section {sectionIndex + 1} of {FOUNDER_SECTIONS.length}</p><h2 id={`founder-section-${section.id}`} className="mt-1 text-2xl font-bold">{section.title}</h2><p className="mt-1 text-sm text-muted-foreground">{section.description}</p></div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            {FOUNDER_MODULES.filter((module) => module.sectionId === section.id).map((module) => {
+              const done = module.lessonIds.filter((id) => completed.has(id)).length;
+              return <article key={module.id} className="min-w-0 overflow-hidden rounded-3xl border bg-card shadow-sm">
+                <div className="border-b bg-primary/5 p-5"><div className="flex items-start justify-between gap-3"><h3 className="text-lg font-bold">{module.title}</h3><span className="shrink-0 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{done}/{module.lessonIds.length}</span></div><p className="mt-1 text-sm text-muted-foreground">{module.description}</p><Progress value={done / module.lessonIds.length * 100} className="mt-3 h-2" /></div>
+                <ol className="divide-y">
+                  {module.lessonIds.map((id, index) => {
+                    const lesson = getFounderMission(id)!;
+                    const isComplete = completed.has(id);
+                    const unlocked = isFounderLessonUnlocked(id, progress);
+                    const active = progress.activeMissionId === id;
+                    return <li key={id} className="p-4">
+                      <div className="flex items-start gap-3"><div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">{isComplete ? <CheckCircle2 className="h-4 w-4" /> : !unlocked ? <Lock className="h-4 w-4" /> : index + 1}</div><div className="min-w-0 flex-1"><h4 className="font-semibold leading-snug">{lesson.title}</h4><p className="mt-1 text-xs leading-relaxed text-muted-foreground">{lesson.tagline}</p><p className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted-foreground"><span className="inline-flex items-center gap-1"><Clock3 className="h-3 w-3" />{lesson.estimatedMinutes} min</span><span>+{lesson.rewards.xp} XP · +{lesson.rewards.bamboo} bamboo</span></p></div></div>
+                      <Button disabled={!unlocked} variant={isComplete ? 'outline' : 'default'} className="mt-3 h-11 w-full whitespace-normal" onClick={() => onStartMission(id)}>{isComplete ? 'Review Lesson' : !unlocked ? 'Complete the previous lesson' : active ? 'Resume Lesson' : 'Start Lesson'}{unlocked && <ArrowRight className="ml-2 h-4 w-4 shrink-0" />}</Button>
+                    </li>;
+                  })}
+                </ol>
+              </article>;
+            })}
           </div>
-          <p className="hidden text-sm text-muted-foreground sm:block">Comic → Play → Check → Teach → Build</p>
-        </div>
+        </section>
+      ))}
 
-        <div className="grid gap-4 md:grid-cols-2">
-          {FOUNDER_MISSIONS.map((mission, index) => {
-            const isComplete = completed.has(mission.id);
-            const isUnlocked = index === 0 || completed.has(FOUNDER_MISSIONS[index - 1].id) || isComplete;
-            const isActive = progress.activeMissionId === mission.id;
-
-            return (
-              <article
-                key={mission.id}
-                className={cn(
-                  'relative overflow-hidden rounded-3xl border-2 bg-card p-5 transition-all',
-                  isUnlocked ? 'border-emerald-200 hover:-translate-y-0.5 hover:border-emerald-400 hover:shadow-lg' : 'border-border bg-muted/30 opacity-70',
-                  isActive && 'ring-2 ring-primary/30',
-                )}
-              >
-                <div className="mb-4 flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className={cn(
-                      'flex h-12 w-12 items-center justify-center rounded-2xl text-2xl',
-                      isComplete ? 'bg-emerald-600 text-white' : isUnlocked ? 'bg-emerald-100' : 'bg-muted',
-                    )}>
-                      {isComplete ? <CheckCircle2 className="h-6 w-6" /> : isUnlocked ? mission.icon : <Lock className="h-5 w-5" />}
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-primary">Mission {mission.order}</p>
-                      <h3 className="text-lg font-bold">{mission.title}</h3>
-                    </div>
-                  </div>
-                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Clock3 className="h-3.5 w-3.5" /> {mission.estimatedMinutes}m
-                  </span>
-                </div>
-                <p className="min-h-10 text-sm text-muted-foreground">{mission.tagline}</p>
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  {['5-panel comic', 'Simulation', 'Quiz', 'Teach Phil'].map((label) => (
-                    <span key={label} className="rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium">{label}</span>
-                  ))}
-                </div>
-                <Button
-                  className="mt-5 h-11 w-full"
-                  variant={isComplete ? 'outline' : 'default'}
-                  disabled={!isUnlocked}
-                  onClick={() => onStartMission(mission.id)}
-                >
-                  {!isUnlocked ? 'Complete the previous mission' : isComplete ? 'Review Mission' : isActive ? 'Resume Mission' : 'Start Mission'}
-                  {isUnlocked && <ArrowRight className="ml-2 h-4 w-4" />}
-                </Button>
-              </article>
-            );
-          })}
-        </div>
+      <section className="space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3"><div><p className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary"><LayoutDashboard className="h-4 w-4" /> My Founder Plan</p><h2 className="mt-1 text-2xl font-bold">Your idea, one page at a time</h2></div><Button variant="outline" className="h-11" onClick={() => setShowFullCanvas((value) => !value)}>{showFullCanvas ? 'Show Summary' : 'Open Full Canvas'}</Button></div>
+        <FounderCanvasDashboard progress={progress} onSave={onSaveCanvas} compact={!showFullCanvas} />
       </section>
-
-      <div>
-        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="flex items-center gap-2 text-primary">
-              <LayoutDashboard className="h-5 w-5" />
-              <span className="text-xs font-bold uppercase tracking-wider">Build as you learn</span>
-            </div>
-            <h2 className="mt-1 text-2xl font-bold">Your founder dashboard</h2>
-          </div>
-          <Button variant="outline" className="h-11" onClick={() => setShowFullCanvas((show) => !show)}>
-            <Sparkles className="mr-2 h-4 w-4" />
-            {showFullCanvas ? 'Show Compact View' : 'Open Full Canvas'}
-          </Button>
-        </div>
-        <FounderCanvasDashboard
-          progress={progress}
-          onSave={onSaveCanvas}
-          compact={!showFullCanvas}
-        />
-      </div>
     </div>
   );
 };
-
 export default FounderJourneyDashboard;
