@@ -191,7 +191,7 @@ const TeacherShell: React.FC<TeacherShellProps> = ({
         onChangeView={onChangeView}
       />
 
-      <SidebarInset>
+      <SidebarInset className="min-w-0">
         <header
           className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur"
           style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
@@ -211,7 +211,7 @@ const TeacherShell: React.FC<TeacherShellProps> = ({
         </header>
 
         {/* Extra bottom padding on mobile keeps the last card clear of the tab bar. */}
-        <main className="flex-1 space-y-6 p-4 pb-28 md:p-6 md:pb-6">{children}</main>
+        <main className="min-w-0 flex-1 space-y-6 p-4 pb-28 md:p-6 md:pb-6">{children}</main>
 
         <nav
           className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 backdrop-blur md:hidden"

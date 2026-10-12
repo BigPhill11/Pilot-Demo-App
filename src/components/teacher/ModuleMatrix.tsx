@@ -63,9 +63,9 @@ const ModuleMatrix: React.FC<ModuleMatrixProps> = ({
           <h2 className="font-semibold">Module completion</h2>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4">
-          <Tabs value={track.moduleType} onValueChange={setActiveType}>
-            <TabsList>
+        <div className="min-w-0 flex flex-wrap items-center gap-4">
+          <Tabs className="min-w-0 max-w-full" value={track.moduleType} onValueChange={setActiveType}>
+            <TabsList className="h-auto max-w-full flex-wrap justify-start">
               {availableTracks.map((t) => (
                 <TabsTrigger key={t.moduleType} value={t.moduleType} className="text-xs">
                   {t.label}

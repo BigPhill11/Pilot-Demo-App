@@ -20,6 +20,7 @@ import type {
   StudentDetail,
   TeacherClassroomSummary,
 } from '@/integrations/supabase/teacherTypes';
+import { FOUNDER_MODULES } from '@/data/founder-journey/curriculum';
 
 export function isTeacherPreview(): boolean {
   if (!import.meta.env.DEV) return false;
@@ -125,6 +126,10 @@ function buildMatrix(classroomId: string): ModuleMatrixCell[] {
     CR.forEach((id, m) => {
       push(student.student_id, id, 'career-readiness', m < 2 - (i % 3) ? 100 : 0);
     });
+    FOUNDER_MODULES.forEach((module, m) => {
+      const edge = 3 - (i % 4);
+      push(student.student_id, module.id, 'founder-journey', m < edge ? 100 : m === edge ? 33 : 0);
+    });
   });
 
   return cells;
@@ -148,6 +153,7 @@ function buildActivity(classroomId: string, days: number): ActivityEntry[] {
 
 const INSIGHTS: ClassInsights = {
   modules: [
+    { module_id: 'customer-validation', module_type: 'founder-journey', students_started: 8, students_completed: 3, avg_progress: 48, avg_post_test_score: null },
     { module_id: 'taxes', module_type: 'personal-finance', students_started: 9, students_completed: 1, avg_progress: 22, avg_post_test_score: 58 },
     { module_id: 'insurance', module_type: 'personal-finance', students_started: 7, students_completed: 1, avg_progress: 31, avg_post_test_score: 61 },
     { module_id: 'investing', module_type: 'personal-finance', students_started: 11, students_completed: 4, avg_progress: 42, avg_post_test_score: 72 },
@@ -207,6 +213,11 @@ function buildStudentDetail(classroomId: string, studentId: string): StudentDeta
       { xp_amount: 150, source: 'teach_back', created_at: isoDaysAgo(2) },
     ],
     teach_backs: [
+      {
+        lesson_id: 'founder-interview-customers', difficulty_tier: 'teen',
+        final_understanding_score: 65, passed: false,
+        key_facts_missing: ['Label evidence and assumptions separately.'], created_at: isoDaysAgo(1),
+      },
       {
         lesson_id: 'income-1',
         difficulty_tier: 'teen',

@@ -3,6 +3,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { FOUNDER_MISSIONS } from '@/data/founder-journey/missions';
 import type { FounderCanvasSectionId, FounderJourneyProgress, FounderMissionId } from '@/types/founder-journey';
 import { notifyProgressUpdated, scopedStorageKey } from '@/lib/userScopedStorage';
+import { queueModuleProgressSync } from '@/lib/progressSync';
+import { founderProgressSyncEntries } from '@/lib/founderJourneyProgress';
 import type { TeachPhilResult } from '@/hooks/useTeachPhilSession';
 
 const STORAGE_KEY = 'founder_journey_progress_v1';
@@ -47,6 +49,7 @@ export function useFounderJourneyProgress() {
     const restored = { key: storageKey, progress: loadProgress(storageKey) };
     current.current = restored;
     setState(restored);
+    if (user?.id && !loading) queueModuleProgressSync(founderProgressSyncEntries(restored.progress), user.id);
   }, [storageKey, user?.id, loading]);
 
   const update = useCallback((recipe: (value: FounderJourneyProgress) => FounderJourneyProgress) => {
@@ -58,6 +61,7 @@ export function useFounderJourneyProgress() {
       localStorage.setItem(storageKey, JSON.stringify(next));
       localStorage.setItem(scopedStorageKey('lastTouched_fj', user?.id), Date.now().toString());
     } catch { /* Keep session progress usable if storage is unavailable. */ }
+    if (user?.id) queueModuleProgressSync(founderProgressSyncEntries(next), user.id);
     notifyProgressUpdated();
   }, [storageKey, user?.id]);
 
