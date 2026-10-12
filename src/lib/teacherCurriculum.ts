@@ -17,6 +17,9 @@ import { EMAIL_LESSONS } from '@/data/career-readiness/email-etiquette';
 import { languageOfFinanceLessons } from '@/data/market-intelligence/language-of-finance-lessons';
 import { ownershipLessons } from '@/data/market-intelligence/ownership-lessons';
 import { allHeadlinesLessons } from '@/data/market-intelligence/headlines-lessons';
+import { FOUNDER_MODULES } from '@/data/founder-journey/curriculum';
+import { FOUNDER_MISSIONS } from '@/data/founder-journey/missions';
+import { FOUNDER_MODULE_TYPE } from '@/lib/founderJourneyProgress';
 
 export interface CurriculumColumn {
   moduleId: string;
@@ -76,6 +79,11 @@ export const CURRICULUM_TRACKS: CurriculumTrack[] = [
     moduleType: 'personal-finance',
     label: 'Personal Finance',
     columns: toColumns(PERSONAL_FINANCE_MODULES.map((m) => ({ id: m.id, label: m.name }))),
+  },
+  {
+    moduleType: FOUNDER_MODULE_TYPE,
+    label: 'Founder Journey',
+    columns: toColumns(FOUNDER_MODULES.map((module) => ({ id: module.id, label: module.title }))),
   },
   {
     moduleType: 'market-intelligence',
@@ -139,6 +147,10 @@ let lessonTitles: Map<string, string> | null = null;
 
 function buildLessonTitles(): Map<string, string> {
   const titles = new Map<string, string>();
+  for (const lesson of FOUNDER_MISSIONS) {
+    titles.set(lesson.id, lesson.title);
+    titles.set(`founder-${lesson.id}`, `Founder Journey · ${lesson.title}`);
+  }
   // PERSONAL_FINANCE_MODULES is the metadata registry and omits lessons; the
   // assembled modules that carry them come from getModuleById.
   for (const summary of PERSONAL_FINANCE_MODULES) {

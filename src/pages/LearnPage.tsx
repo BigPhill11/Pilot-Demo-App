@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import PersonalFinanceTab from "@/components/learn/PersonalFinanceTab";
 import LearningDashboard from "@/components/learning/LearningDashboard";
 import MarketIntelligenceTab from "@/components/learn/MarketIntelligenceTab";
-import CareersInFinanceTab from "@/components/learn/CareersInFinanceTab";
+import FounderJourneyTab from "@/components/learn/FounderJourneyTab";
 import { useDailyLogin } from "@/hooks/useDailyLogin";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,7 @@ import {
   LayoutDashboard,
   Wallet,
   TrendingUp,
-  Briefcase,
+  Rocket,
   Menu,
 } from 'lucide-react';
 
@@ -22,7 +22,7 @@ const TABS = [
   { value: 'interactive-hub',     label: 'Dashboard',   icon: LayoutDashboard },
   { value: 'personal-finance',    label: 'Finance',     icon: Wallet },
   { value: 'companies',           label: 'Markets',     icon: TrendingUp },
-  { value: 'careers',             label: 'Careers',     icon: Briefcase },
+  { value: 'founder-journey',     label: 'Founders',    icon: Rocket },
 ];
 
 const DEFAULT_TAB = 'interactive-hub';
@@ -144,8 +144,8 @@ const LearnPage = () => {
           <MarketIntelligenceTab />
         </TabsContent>
 
-        <TabsContent value="careers" className="mt-0">
-          <CareersInFinanceTab />
+        <TabsContent value="founder-journey" className="mt-0">
+          <FounderJourneyTab />
         </TabsContent>
       </Tabs>
     </div>

@@ -18,7 +18,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import { scopedStorageKey } from '@/lib/userScopedStorage';
+import { getActiveStorageUserId, scopedStorageKey } from '@/lib/userScopedStorage';
 
 export interface ProgressSyncEntry {
   moduleId: string;
@@ -31,7 +31,7 @@ export interface ProgressSyncEntry {
 const DEBOUNCE_MS = 1500;
 const SYNCED_KEY = 'module_progress_synced_v1';
 
-const pending = new Map<string, ProgressSyncEntry>();
+const pending = new Map<string, ProgressSyncEntry & { ownerId: string | null }>();
 let flushTimer: ReturnType<typeof setTimeout> | null = null;
 
 const entryKey = (e: ProgressSyncEntry) => `${e.moduleType}::${e.moduleId}`;
@@ -69,7 +69,7 @@ async function flush(): Promise<void> {
     // is what keeps the first render after sign-in from re-posting the whole
     // curriculum on every app open.
     const synced = readSyncedMap(userId);
-    const changed = batch.filter((e) => synced[entryKey(e)] !== e.progressPercentage);
+    const changed = batch.filter((e) => e.ownerId === userId && synced[entryKey(e)] !== e.progressPercentage);
     if (changed.length === 0) return;
 
     const rpc = supabase as unknown as {
@@ -102,12 +102,12 @@ async function flush(): Promise<void> {
  * Queue per-module percentages for the signed-in user. Safe to call on every
  * state change: calls coalesce, and unchanged modules never hit the network.
  */
-export function queueModuleProgressSync(entries: ProgressSyncEntry[]): void {
+export function queueModuleProgressSync(entries: ProgressSyncEntry[], userId = getActiveStorageUserId()): void {
   if (typeof window === 'undefined' || entries.length === 0) return;
 
   for (const entry of entries) {
     if (!entry.moduleId || !entry.moduleType) continue;
-    pending.set(entryKey(entry), entry);
+    pending.set(`${userId ?? 'anon'}::${entryKey(entry)}`, { ...entry, ownerId: userId });
   }
 
   if (flushTimer) clearTimeout(flushTimer);
